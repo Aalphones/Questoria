@@ -132,6 +132,7 @@ das gilt besonders für Karten.
 | Map | 1920×1080 | 1536×864, dann hochskalieren | **1920×1080 direkt** | 2048×1152, dann verkleinern |
 | Sprite | ~1024×1536 | **1024×1536 direkt** | 1024×1536 direkt | 1024×1536 direkt |
 | Karte / Rahmen | 630×880 | **1024×1432, dann verkleinern** | 1024×1432, dann verkleinern | 1024×1440, dann verkleinern |
+| Bildantwort | ≥ 512×512 | **1024×1024, dann verkleinern** | 1024×1024, dann verkleinern | 1024×1024, dann verkleinern |
 
 Warum Karten nicht in 630×880 generiert werden: das liegt unter dem
 768-px-Minimum von FLUX.2 klein und bei Krea am unteren Rand des trainierten
