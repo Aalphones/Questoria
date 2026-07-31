@@ -63,8 +63,16 @@ Trotzdem legen die Phasen bereits die Datenverträge fest, die Meilenstein 2
 ## Follow-ups (nicht Teil dieses Plans)
 
 - Content-API + echtes Frontend↔Backend-Wiring → Meilenstein 2
+- Etappen-/Ortskarte mit Prozent-Koordinaten → Meilenstein 2
 - Repository-Klassen auf dem Phase-3-Schema → Meilenstein 4
-- Reale Theme-Assets (Cover, Sprites) → sobald ein Content-Autoring-Durchlauf ansteht
+- Vorlesemodus (Umschalter, Sprachausgabe, Bildantworten) → Meilenstein 3 + 4
+- Sammelkarten, Trophäenhalle und Druckbogen → Meilenstein 5 (eigener Plan)
+- Reale Theme-Assets (Cover, Sprites, Kartenbilder) → sobald ein Content-Autoring-Durchlauf ansteht
+
+Die Datenbank-Tabellen aus Phase 3 tragen bereits, was die späteren
+Meilensteine brauchen — Kartenbesitz und Moduseinstellung sind Spielstand,
+kein Content. Beim Umsetzen von Phase 3 gegen `docs/PROJECT.md` gegenprüfen,
+ob das Schema beides abdeckt.
 
 ## Summary
 *(beim Archivieren befüllen)*

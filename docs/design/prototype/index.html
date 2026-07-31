@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="stylesheet" href="ds/styles.css">
+<script src="./image-slot.js"></script>
+<style>
+html,body{margin:0;padding:0;height:100%;overflow:hidden;background:var(--color-bg)}
+#dc-root,#dc-root>.sc-host{height:100%}
+.eq-scroll{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--color-neutral-400) transparent}
+a{color:var(--color-accent)}a:hover{color:var(--color-accent-600)}
+@keyframes eqPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
+@keyframes eqBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes eqPop{0%{transform:scale(.86);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes eqTwinkle{0%,100%{opacity:.55;transform:scale(.9)}50%{opacity:1;transform:scale(1.08)}}
+@keyframes eqRise{0%{transform:translateY(14px);opacity:0}100%{transform:translateY(0);opacity:1}}
+@media print{@page{size:A4;margin:0}html,body{height:auto!important;overflow:visible!important;background:#fff!important}body *{visibility:hidden!important}[data-printsheet],[data-printsheet] *{visibility:visible!important}[data-printsheet]{position:absolute!important;left:0;top:0;gap:0!important}[data-printsheet]>div{box-shadow:none!important;page-break-after:always}}
+</style>
+</helmet>
+
+<div style="height:100vh;display:flex;flex-direction:column;background:var(--color-bg);color:var(--color-text);overflow:hidden">
+
+  <sc-if value="{{ showHud }}" hint-placeholder-val="{{ true }}">
+    <div class="nav elev-sm" style="flex-wrap:wrap;gap:var(--space-3);background:var(--color-surface);position:sticky;top:0;z-index:40;border-bottom:1px solid var(--color-divider)">
+      <button onClick="{{ goBack }}" class="btn btn-secondary" style="font-size:17px;padding:var(--space-2) var(--space-4);min-height:46px;background:var(--color-neutral-100)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.75" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"></path></svg>Zurück</button>
+      <div style="display:flex;align-items:center;gap:var(--space-2);padding:var(--space-1) var(--space-3) var(--space-1) var(--space-1);background:var(--color-neutral-100);border-radius:999px">
+        <div style="width:36px;height:36px;border-radius:999px;background:conic-gradient(from 20deg,var(--color-accent-300),var(--color-accent-500),var(--color-accent-2-400),var(--color-accent-2-600),var(--color-accent-300))"></div>
+        <span style="font-family:var(--font-heading);font-size:17px">{{ profileName }}</span>
+      </div>
+      <span class="tag tag-accent" style="font-size:14px;padding:var(--space-1) var(--space-3);gap:7px">
+        <span style="width:10px;height:10px;transform:rotate(45deg);background:var(--color-accent);display:inline-block"></span>{{ levelLabel }}
+      </span>
+      <div style="flex:1;min-width:8px"></div>
+      <div style="display:flex;align-items:center;gap:var(--space-2);font-size:15px;font-weight:600">
+        <div style="width:130px;height:14px;border-radius:999px;background:var(--color-neutral-300);overflow:hidden">
+          <div style="height:100%;width:{{ progressPct }};background:var(--color-accent-2-500)"></div>
+        </div>
+        <span style="color:var(--color-accent-700)">{{ progressLabel }}</span>
+      </div>
+      <button onClick="{{ toggleMode }}" title="{{ modeTitle }}" class="btn" style="font-size:15px;font-weight:700;padding:var(--space-1) var(--space-4) var(--space-1) var(--space-1);min-height:46px;border:2px solid var(--color-divider);border-radius:999px;background:var(--color-neutral-100);color:var(--color-text);gap:9px;cursor:pointer" style-hover="box-shadow:var(--shadow-sm)">
+        <span style="width:34px;height:34px;border-radius:999px;background:{{ modeDot }};display:flex;align-items:center;justify-content:center;color:var(--color-neutral-100)">{{ modeIcon }}</span>{{ modeLabel }}
+      </button>
+      <button onClick="{{ goCards }}" title="Trophäenhalle – gesammelte Karten" class="btn" style="font-size:15px;font-weight:700;padding:var(--space-1) var(--space-4) var(--space-1) var(--space-3);min-height:46px;border:2px solid {{ hallBorder }};border-radius:999px;background:{{ hallBg }};color:{{ hallFg }};gap:10px;cursor:pointer" style-hover="box-shadow:var(--shadow-sm);transform:translateY(-1px)">
+        <span style="display:flex;align-items:flex-end;gap:3px">
+          <span style="width:15px;height:21px;border-radius:3px;background:currentColor;opacity:.45;transform:rotate(-9deg);display:inline-block"></span>
+          <span style="width:17px;height:24px;border-radius:3px;background:currentColor;display:inline-block"></span>
+        </span>
+        <span style="display:flex;flex-direction:column;align-items:flex-start;line-height:1.12">
+          <span style="font-family:var(--font-heading);font-size:16px">Karten</span>
+          <span style="font-size:12px;font-weight:700;opacity:.75">{{ cardCount }}</span>
+        </span>
+      </button>
+      <button onClick="{{ toggleSound }}" class="btn btn-secondary" title="Vorlesen an/aus" style="width:46px;height:46px;padding:0;background:var(--color-neutral-100)">
+        <sc-if value="{{ soundOn }}" hint-placeholder-val="{{ true }}">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.75" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"></path><path d="M16 9a5 5 0 0 1 0 6"></path><path d="M19.364 18.364a9 9 0 0 0 0-12.728"></path></svg>
+        </sc-if>
+        <sc-if value="{{ soundOff }}" hint-placeholder-val="{{ false }}">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.75" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"></path><path d="m22 9-6 6"></path><path d="m16 9 6 6"></path></svg>
+        </sc-if>
+      </button>
+    </div>
+  </sc-if>
+
+  <!-- ══ PROFILAUSWAHL ══ -->
+  <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ true }}">
+    <div style="flex:1;min-height:0;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--space-6);padding:var(--space-6) var(--space-6) 170px;overflow:hidden">
+      <div style="position:absolute;top:7%;right:10%;width:132px;height:132px;border-radius:999px;background:var(--color-accent-300)"></div>
+      <div style="position:absolute;top:20%;left:7%;width:190px;height:64px;border-radius:999px;background:var(--color-neutral-100);animation:eqBob 7s ease-in-out infinite"></div>
+      <div style="position:absolute;top:31%;left:27%;width:120px;height:44px;border-radius:999px;background:var(--color-neutral-200);animation:eqBob 9s ease-in-out infinite"></div>
+      <div style="position:absolute;left:-6%;right:-6%;bottom:-70px;height:220px;border-radius:50% 50% 0 0;background:var(--color-accent-2-400)"></div>
+      <div style="position:absolute;left:-10%;right:-10%;bottom:-96px;height:210px;border-radius:50% 50% 0 0;background:var(--color-accent-2-600)"></div>
+
+      <div style="position:relative;text-align:center">
+        <span class="tag tag-accent" style="font-size:13px;letter-spacing:.14em;text-transform:uppercase;padding:var(--space-1) var(--space-4)">Story-Lernabenteuer</span>
+        <h1 style="margin:var(--space-4) 0 0;font-size:clamp(52px,8vw,96px);color:var(--color-accent-700)">EduQuest</h1>
+        <div style="display:flex;align-items:center;justify-content:center;gap:var(--space-3);margin-top:var(--space-3)">
+          <button onClick="{{ sayLogin }}" title="Diesen Text vorlesen" style="flex:none;width:52px;height:52px;border-radius:999px;border:none;background:var(--color-accent-2-600);color:var(--color-neutral-100);cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="transform:translateY(-2px);box-shadow:var(--shadow-md)">
+            <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.75" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"></path><path d="M16 9a5 5 0 0 1 0 6"></path><path d="M19.364 18.364a9 9 0 0 0 0-12.728"></path></svg>
+          </button>
+          <p style="margin:0;font-size:23px;font-weight:600">Wer segelt heute mit?</p>
+        </div>
+      </div>
+      <div style="position:relative;display:flex;flex-wrap:wrap;gap:var(--space-6);justify-content:center">
+        <sc-for list="{{ profiles }}" as="p" hint-placeholder-count="3">
+          <div class="card elev-md" style="width:220px;align-items:center;gap:var(--space-3);padding:var(--space-6) var(--space-4);border:2px solid var(--color-divider);background:{{ p.bg }}">
+            <div style="position:relative;width:108px;height:108px;border-radius:999px;background:{{ p.avatar }};overflow:hidden">
+              <image-slot id="{{ p.slot }}" shape="circle" placeholder="{{ p.avatarFile }}"></image-slot>
+            </div>
+            <button onClick="{{ p.pick }}" class="btn btn-primary" style="flex-direction:column;gap:1px;padding:var(--space-2) var(--space-6);min-height:56px;width:100%" style-hover="transform:translateY(-2px)">
+              <span style="font-family:var(--font-heading);font-size:24px">{{ p.name }}</span>
+              <span style="font-size:13px;font-weight:600;opacity:.85">{{ p.sub }}</span>
+            </button>
+          </div>
+        </sc-for>
+        <div style="width:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--space-2);padding:var(--space-6) var(--space-4);border:2px dashed var(--color-neutral-400);border-radius:calc(var(--radius-lg) * 1.15);color:var(--color-neutral-700)">
+          <div style="font-family:var(--font-heading);font-size:44px">+</div>
+          <div style="font-family:var(--font-heading);font-size:19px;text-align:center">Neues Profil</div>
+        </div>
+      </div>
+
+    </div>
+  </sc-if>
+
+  <!-- ══ MAIN-HUB · Planetenkarte (Positionen aus dem Karten-JSON) ══ -->
+  <sc-if value="{{ isHub }}" hint-placeholder-val="{{ true }}">
+    <div style="flex:1;min-height:0;position:relative;display:flex;overflow:hidden">
+      <div style="position:relative;flex:1;min-height:0;background:var(--color-neutral-300);overflow:hidden">
+        <image-slot id="eq-map-hub" shape="rect" placeholder="{{ hubMap.background }}" style="position:absolute;inset:0;z-index:0"></image-slot>
+        <svg viewBox="0 0 1600 900" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%;z-index:1">
+          <sc-for list="{{ hubMap.routes }}" as="r" hint-placeholder-count="2">
+            <path d="{{ r.d }}" fill="none" stroke="{{ r.stroke }}" strokeWidth="7" strokeLinecap="round" strokeDasharray="16 22" vectorEffect="non-scaling-stroke"></path>
+          </sc-for>
+        </svg>
+
+        <div style="position:absolute;left:var(--space-4);top:var(--space-4);max-width:min(36%,420px);display:flex;flex-direction:column;gap:var(--space-2);padding:var(--space-3) var(--space-6) var(--space-4);background:color-mix(in srgb,var(--color-neutral-100) 90%,transparent);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);z-index:6">
+          <span class="tag tag-accent" style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;align-self:flex-start">Planetenkarte</span>
+          <h2 style="margin:0;font-size:clamp(22px,2.4vw,32px)">Deine Themenwelten</h2>
+          <div style="display:flex;align-items:center;gap:var(--space-3)">
+            <button onClick="{{ sayHub }}" title="Diesen Text vorlesen" style="flex:none;width:44px;height:44px;border-radius:999px;border:none;background:var(--color-accent-2-600);color:var(--color-neutral-100);cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="transform:translateY(-2px)">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.75" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"></path><path d="M16 9a5 5 0 0 1 0 6"></path></svg>
+            </button>
+            <p style="margin:0;font-size:15px;font-weight:600;color:var(--color-neutral-700)">{{ hubHint }}</p>
+          </div>
+          <button onClick="{{ resume }}" class="btn btn-primary" style="font-size:18px;padding:var(--space-2) var(--space-6);min-height:50px;align-self:flex-start">Weiterspielen<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.75" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"></path></svg></button>
+        </div>
+
+        <div class="elev-md" style="position:absolute;right:var(--space-4);top:var(--space-4);display:flex;flex-direction:column;gap:7px;padding:var(--space-3) var(--space-4);background:var(--color-neutral-100);border-radius:var(--radius-lg);z-index:6">
+          <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--color-neutral-600)">Erfolge</span>
+          <sc-for list="{{ badges }}" as="b" hint-placeholder-count="4">
+            <span title="{{ b.title }}" style="display:flex;align-items:center;gap:var(--space-2);font-size:14px;font-weight:700;color:{{ b.fg }};opacity:{{ b.opacity }}">
+              <span style="width:16px;height:16px;border-radius:5px;transform:rotate(45deg);background:{{ b.icon }};display:inline-block"></span>{{ b.name }}
+            </span>
+          </sc-for>
+        </div>
+
+        <sc-for list="{{ hubMap.nodes }}" as="p" hint-placeholder-count="3">
+          <div style="position:absolute;left:{{ p.x }};top:{{ p.y }};transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:var(--space-2);opacity:{{ p.opacity }};z-index:3">
+            <div style="position:relative;width:{{ p.size }};height:{{ p.size }};border-radius:999px;overflow:hidden;box-shadow:0 0 0 8px {{ p.ring }},var(--shadow-lg);animation:{{ p.anim }}">
+              <image-slot id="{{ p.slot }}" shape="circle" placeholder="{{ p.file }}" style="position:absolute;inset:0"></image-slot>
+            </div>
+            <button onClick="{{ p.open }}" title="{{ p.title }}" class="elev-sm" style="display:flex;flex-direction:column;align-items:center;gap:1px;padding:var(--space-2) var(--space-4);border:none;border-radius:var(--radius-lg);background:var(--color-neutral-100);max-width:240px;cursor:pointer;color:var(--color-text)" style-hover="box-shadow:var(--shadow-md);transform:translateY(-2px)">
+              <span style="font-family:var(--font-heading);font-size:20px">{{ p.name }}</span>
+              <span style="font-size:13px;font-weight:700;color:{{ p.statusFg }}">{{ p.statusLabel }}</span>
+            </button>
+          </div>
+        </sc-for>
+
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ══ LERNSTUFE ══ -->
+  <sc-if value="{{ isLevel }}" hint-placeholder-val="{{ true }}">
+    <div class="eq-scroll" style="flex:1;min-height:0;position:relative;display:flex;flex-direction:column;gap:var(--space-6);padding:var(--space-6)"><div style="margin:auto;display:flex;flex-direction:column;align-items:center;gap:var(--space-6)">
+      <div style="text-align:center;max-width:660px">
+        <h2 style="margin:0 0 var(--space-3);font-size:clamp(30px,4vw,44px)">Wie schwer soll es werden?</h2>
+        <div style="display:flex;align-items:center;justify-content:center;gap:var(--space-3)">
+          <button onClick="{{ sayLevel }}" title="Diesen Text vorlesen" style="flex:none;width:48px;height:48px;border-radius:999px;border:none;background:var(--color-accent-2-600);color:var(--color-neutral-100);cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="transform:translateY(-2px)">
+            <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.75" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"></path><path d="M16 9a5 5 0 0 1 0 6"></path></svg>
+          </button>
+          <p style="margin:0;font-size:19px;font-weight:600;color:var(--color-neutral-700)">{{ levelHint }}</p>
+        </div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:var(--space-6);justify-content:center">
+        <sc-for list="{{ levels }}" as="l" hint-placeholder-count="3">
+          <button onClick="{{ l.pick }}" class="card elev-md" style="width:266px;padding:var(--space-6);cursor:pointer;text-align:left;background:{{ l.bg }};gap:var(--space-2)" style-hover="box-shadow:var(--shadow-lg);transform:translateY(-4px)">
+            <div style="display:flex;gap:var(--space-1);margin-bottom:var(--space-2)">
+              <sc-for list="{{ l.pips }}" as="pip" hint-placeholder-count="3">
+                <span style="width:28px;height:12px;border-radius:999px;background:{{ pip.bg }};display:inline-block"></span>
+              </sc-for>
+            </div>
+            <div style="font-family:var(--font-heading);font-size:29px;color:{{ l.fg }}">{{ l.name }}</div>
+            <div style="font-size:16px;line-height:1.45;color:{{ l.descFg }}">{{ l.desc }}</div>
+          </button>
+        </sc-for>
+      </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ══ TIMELINE ══ -->
+  <sc-if value="{{ isTimeline }}" hint-placeholder-val="{{ true }}">
+    <div style="flex:1;min-height:0;position:relative;display:flex;overflow:hidden">
+      <!-- Seekarte: Positionen & Routen aus dem Karten-JSON -->
+      <div style="flex:1;min-width:0;display:flex">
+        <div style="position:relative;flex:1;min-height:0;background:var(--color-accent-2-300);overflow:hidden">
+          <div style="position:absolute;left:var(--space-4);top:var(--space-4);max-width:min(38%,430px);display:flex;flex-direction:column;gap:var(--space-1);padding:var(--space-3) var(--space-6) var(--space-4);background:color-mix(in srgb,var(--color-neutral-100) 88%,transparent);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);z-index:6">
+            <span class="tag tag-accent-2" style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;align-self:flex-start">Piratenwelt · Sachkunde</span>
+            <h2 style="margin:var(--space-1) 0 0;font-size:clamp(24px,2.6vw,36px)">Die Reise der Windmühlen-Crew</h2>
+            <div style="display:flex;align-items:center;gap:var(--space-3)">
+              <button onClick="{{ sayArc }}" title="Diesen Text vorlesen" style="flex:none;width:44px;height:44px;border-radius:999px;border:none;background:var(--color-accent-2-600);color:var(--color-neutral-100);cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="transform:translateY(-2px)">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.75" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"></path><path d="M16 9a5 5 0 0 1 0 6"></path></svg>
+              </button>
+              <p style="margin:0;font-size:16px;font-weight:600;color:var(--color-neutral-700)">{{ arcHint }}</p>
+            </div>
+          </div>
+          <div style="position:absolute;inset:0;background:repeating-linear-gradient(90deg,color-mix(in srgb,var(--color-neutral-100) 42%,transparent) 0 2px,transparent 2px 58px),repeating-linear-gradient(0deg,color-mix(in srgb,var(--color-neutral-100) 42%,transparent) 0 2px,transparent 2px 58px)"></div>
+          <image-slot id="eq-map-arc" shape="rect" placeholder="{{ arcMap.background }}" style="position:absolute;inset:0;z-index:0"></image-slot>
+          <svg viewBox="0 0 1600 900" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%;z-index:1">
+            <sc-for list="{{ arcMap.routes }}" as="r" hint-placeholder-count="5">
+              <path d="{{ r.d }}" fill="none" stroke="{{ r.stroke }}" strokeWidth="7" strokeLinecap="round" strokeDasharray="16 22" vectorEffect="non-scaling-stroke"></path>
+            </sc-for>
+          </svg>
+          <sc-for list="{{ arcMap.nodes }}" as="n" hint-placeholder-count="6">
+            <button onClick="{{ n.open }}" title="{{ n.title }}" style="position:absolute;left:{{ n.x }};top:{{ n.y }};transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:var(--space-2);background:none;border:none;padding:0;cursor:pointer;opacity:{{ n.opacity }};z-index:3" style-hover="filter:brightness(1.06)">
+              <span style="width:{{ n.w }};height:{{ n.h }};border-radius:{{ n.shape }};background:{{ n.art }};display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 10px color-mix(in srgb,var(--color-accent-200) 70%,transparent),var(--shadow-md);animation:{{ n.anim }}">
+                <span style="width:52px;height:52px;border-radius:999px;background:{{ n.chip }};display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-size:22px;color:var(--color-neutral-100)">{{ n.num }}</span>
+              </span>
+              <span class="elev-sm" style="display:flex;align-items:center;gap:7px;font-family:var(--font-heading);font-size:16px;padding:var(--space-1) var(--space-3);border-radius:999px;background:var(--color-neutral-100);white-space:nowrap">
+                {{ n.name }}
+                <span style="display:flex;gap:3px">
+                  <sc-for list="{{ n.stars }}" as="s" hint-placeholder-count="3">
+                    <span style="width:12px;height:12px;transform:rotate(45deg);border-radius:3px;background:{{ s.bg }};display:inline-block"></span>
+                  </sc-for>
+                </span>
+              </span>
+            </button>
+          </sc-for>
+          <div class="elev-md" style="position:absolute;right:var(--space-4);bottom:var(--space-4);display:flex;flex-direction:column;gap:6px;padding:var(--space-3) var(--space-4);background:var(--color-neutral-100);border-radius:var(--radius-lg);z-index:5">
+            <sc-for list="{{ legend }}" as="lg" hint-placeholder-count="3">
+              <span style="display:flex;align-items:center;gap:var(--space-2);font-size:14px;font-weight:700;color:var(--color-neutral-700)">
+                <span style="width:14px;height:14px;border-radius:999px;background:{{ lg.bg }};display:inline-block"></span>{{ lg.label }}
+              </span>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </sc-if>
+
+  <!-- ══ MAP ══ -->
+  <sc-if value="{{ isMap }}" hint-placeholder-val="{{ true }}">
+    <div style="flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden">
+      <div style="position:relative;flex:1;min-height:0;background:var(--color-accent-2-300);overflow:hidden">
+        <div style="position:absolute;left:var(--space-4);top:var(--space-4);max-width:min(38%,430px);display:flex;flex-direction:column;gap:var(--space-1);padding:var(--space-3) var(--space-6) var(--space-4);background:color-mix(in srgb,var(--color-neutral-100) 88%,transparent);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);z-index:6">
+          <span class="tag tag-accent" style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;align-self:flex-start">Etappe 2</span>
+          <h2 style="margin:var(--space-1) 0 0;font-size:clamp(24px,2.6vw,36px)">East Blue</h2>
+          <div style="display:flex;align-items:center;gap:var(--space-3)">
+            <button onClick="{{ sayLoc }}" title="Diesen Text vorlesen" style="flex:none;width:44px;height:44px;border-radius:999px;border:none;background:var(--color-accent-2-600);color:var(--color-neutral-100);cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="transform:translateY(-2px)">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.75" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"></path><path d="M16 9a5 5 0 0 1 0 6"></path></svg>
+            </button>
+            <p style="margin:0;font-size:16px;font-weight:600;color:var(--color-neutral-700)">{{ locHint }}</p>
+          </div>
+        </div>
+        <div class="elev-md" style="position:absolute;right:var(--space-4);top:var(--space-4);display:flex;flex-direction:column;gap:6px;padding:var(--space-3) var(--space-4);background:var(--color-neutral-100);border-radius:var(--radius-lg);z-index:6">
+          <sc-for list="{{ legend }}" as="lg" hint-placeholder-count="3">
+            <span style="display:flex;align-items:center;gap:var(--space-2);font-size:14px;font-weight:700;color:var(--color-neutral-700)">
+              <span style="width:14px;height:14px;border-radius:999px;background:{{ lg.bg }};display:inline-block"></span>{{ lg.label }}
+            </span>
+          </sc-for>
+        </div>
+        <div style="position:absolute;inset:0;background:repeating-linear-gradient(90deg,color-mix(in srgb,var(--color-neutral-100) 42%,transparent) 0 2px,transparent 2px 58px),repeating-linear-gradient(0deg,color-mix(in srgb,var(--color-neutral-100) 42%,transparent) 0 2px,transparent 2px 58px)"></div>
+        <sc-for list="{{ locMap.islands }}" as="i" hint-placeholder-count="4">
+          <div style="position:absolute;left:{{ i.x }};top:{{ i.y }};transform:translate(-50%,-50%);width:{{ i.w }};height:{{ i.h }};border-radius:{{ i.shape }};background:{{ i.fill }};box-shadow:0 0 0 10px color-mix(in srgb,var(--color-accent-200) 55%,transparent),inset 0 -14px 26px color-mix(in srgb,var(--color-accent-2-900) 22%,transparent)"></div>
+        </sc-for>
+        <image-slot id="eq-map-loc" shape="rect" placeholder="{{ locMap.background }}" style="position:absolute;inset:0;z-index:0"></image-slot>
+        <svg viewBox="0 0 1600 900" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%;z-index:1">
+          <sc-for list="{{ locMap.routes }}" as="r" hint-placeholder-count="3">
+            <path d="{{ r.d }}" fill="none" stroke="{{ r.stroke }}" strokeWidth="7" strokeLinecap="round" strokeDasharray="16 22" vectorEffect="non-scaling-stroke"></path>
+          </sc-for>
+        </svg>
+
+        <div class="elev-md" style="position:absolute;left:var(--space-4);bottom:var(--space-4);width:100px;height:100px;border-radius:999px;background:var(--color-neutral-100);display:flex;align-items:center;justify-content:center;z-index:5">
+          <span style="position:absolute;top:7px;font-family:var(--font-heading);font-size:14px;color:var(--color-accent-700)">N</span>
+          <span style="position:absolute;bottom:7px;font-family:var(--font-heading);font-size:13px;color:var(--color-neutral-600)">S</span>
+          <span style="position:absolute;left:9px;font-family:var(--font-heading);font-size:13px;color:var(--color-neutral-600)">W</span>
+          <span style="position:absolute;right:9px;font-family:var(--font-heading);font-size:13px;color:var(--color-neutral-600)">O</span>
+          <span style="width:10px;height:54px;border-radius:999px;background:linear-gradient(180deg,var(--color-accent-600) 50%,var(--color-neutral-300) 50%);display:block"></span>
+        </div>
+
+        <sc-for list="{{ locMap.nodes }}" as="n" hint-placeholder-count="4">
+          <button onClick="{{ n.open }}" title="{{ n.title }}" style="position:absolute;left:{{ n.x }};top:{{ n.y }};transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:var(--space-2);background:none;border:none;cursor:pointer;padding:0;opacity:{{ n.opacity }};z-index:3" style-hover="filter:brightness(1.06)">
+            <span style="width:{{ n.size }};height:{{ n.size }};border-radius:999px;background:{{ n.fill }};box-shadow:0 0 0 6px color-mix(in srgb,var(--color-neutral-100) 70%,transparent);display:block;animation:{{ n.anim }}"></span>
+            <span class="elev-sm" style="font-family:var(--font-heading);font-size:16px;padding:var(--space-1) var(--space-3);border-radius:999px;background:var(--color-neutral-100);color:var(--color-text);white-space:nowrap">{{ n.name }}</span>
+          </button>
+        </sc-for>
+
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ══ DIALOG ══ -->
+  <sc-if value="{{ isDialog }}" hint-placeholder-val="{{ true }}">
+    <div style="flex:1;min-height:0;position:relative;display:flex;flex-direction:column;justify-content:flex-end;background:var(--color-accent-2-200);overflow:hidden">
+      <div style="position:absolute;top:7%;left:11%;width:112px;height:112px;border-radius:999px;background:var(--color-accent-300)"></div>
+      <div style="position:absolute;top:12%;right:16%;width:200px;height:60px;border-radius:999px;background:var(--color-neutral-100);animation:eqBob 8s ease-in-out infinite"></div>
+      <div style="position:absolute;top:26%;right:37%;width:126px;height:44px;border-radius:999px;background:var(--color-neutral-200);animation:eqBob 11s ease-in-out infinite"></div>
+      <div style="position:absolute;left:-6%;right:-6%;bottom:130px;height:200px;border-radius:50% 50% 0 0;background:var(--color-accent-2-500)"></div>
+      <div style="position:absolute;left:0;right:0;bottom:0;height:150px;background:repeating-linear-gradient(90deg,var(--color-accent-700) 0 48px,var(--color-accent-800) 48px 54px)"></div>
+      <image-slot id="eq-bg-hafendamm" shape="rect" placeholder="Hintergrund: hafendamm.webp" style="position:absolute;inset:0;z-index:1"></image-slot>
+
+      <div style="position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:space-between;padding:0 clamp(var(--space-2),4vw,var(--space-8)) 236px;z-index:2">
+        <div style="position:relative;width:min(28vw,286px);height:min(46vh,392px);border-radius:var(--radius-lg) var(--radius-lg) 0 0;background:{{ leftBg }};filter:{{ leftFilter }};animation:{{ leftAnim }};overflow:hidden">
+          <image-slot id="eq-sprite-left" shape="rect" fit="cover" placeholder="{{ leftSprite }}" style="position:absolute;inset:0"></image-slot>
+        </div>
+        <div style="position:relative;width:min(28vw,286px);height:min(46vh,392px);border-radius:var(--radius-lg) var(--radius-lg) 0 0;background:{{ rightBg }};filter:{{ rightFilter }};animation:{{ rightAnim }};overflow:hidden">
+          <image-slot id="eq-sprite-right" shape="rect" fit="cover" placeholder="{{ rightSprite }}" style="position:absolute;inset:0"></image-slot>
+        </div>
+      </div>
+
+
+      <div onClick="{{ nextLine }}" class="card elev-lg" style="position:relative;z-index:6;margin:0 clamp(var(--space-3),4vw,var(--space-8)) var(--space-8);padding:var(--space-8) var(--space-6) var(--space-6);cursor:pointer;background:var(--color-neutral-100)">
+        <div style="position:absolute;top:calc(var(--space-3) * -1);left:{{ nameLeft }};right:{{ nameRight }};display:inline-flex;align-items:center;padding:var(--space-2) var(--space-6);background:{{ nameBg }};border-radius:999px;font-family:var(--font-heading);font-size:22px;color:{{ nameFg }};width:fit-content">{{ speaker }}</div>
+        <p style="margin:var(--space-1) 0 0;font-size:{{ dialogSize }};font-weight:600;line-height:1.45;max-width:52ch;text-wrap:pretty">{{ dialogText }}</p>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--space-4);margin-top:var(--space-4)">
+          <button onClick="{{ readAgain }}" class="btn" title="Nochmal vorlesen" style="display:flex;align-items:center;gap:var(--space-3);font-size:16px;font-weight:700;padding:var(--space-2) var(--space-4) var(--space-2) var(--space-2);border:none;border-radius:999px;background:var(--color-accent-2-200);color:var(--color-accent-2-900);cursor:pointer;min-height:52px" style-hover="box-shadow:var(--shadow-md)">
+            <span style="width:38px;height:38px;border-radius:999px;background:var(--color-accent-2-600);display:flex;align-items:center;justify-content:center;color:var(--color-neutral-100)">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.75" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"></path><path d="M16 9a5 5 0 0 1 0 6"></path></svg>
+            </span>{{ audioLabel }}
+          </button>
+          <div style="display:flex;align-items:center;gap:var(--space-4)">
+            <span style="font-size:15px;font-weight:700;color:var(--color-neutral-600)">{{ dialogCounter }}</span>
+            <span class="btn btn-primary" style="font-size:20px;padding:var(--space-3) var(--space-6);min-height:56px">{{ nextLabel }}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.75" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"></path></svg></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ══ MINISPIEL ══ -->
+  <sc-if value="{{ isMinigame }}" hint-placeholder-val="{{ true }}">
+    <div style="flex:1;min-height:0;display:flex;padding:clamp(var(--space-4),3vh,var(--space-6)) var(--space-6);background:var(--color-accent-2-200);overflow:hidden">
+      <div class="card elev-lg" style="width:min(940px,100%);max-height:100%;margin:auto;position:relative;padding:clamp(var(--space-6),4.5vh,var(--space-8)) clamp(var(--space-6),4vw,var(--space-8));background:var(--color-neutral-100);animation:eqPop .22s ease-out;gap:0;overflow:hidden">
+        <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--space-4);margin-bottom:clamp(var(--space-4),2.4vh,var(--space-5))">
+          <span class="tag tag-accent" style="font-size:13px;letter-spacing:.14em;text-transform:uppercase;padding:var(--space-1) var(--space-4);gap:8px">
+            <span style="width:11px;height:11px;background:var(--color-accent);transform:rotate(45deg);display:inline-block"></span>Minispiel · Multiple Choice
+          </span>
+          <div style="display:flex;align-items:center;gap:var(--space-2)">
+            <sc-for list="{{ quizDots }}" as="d" hint-placeholder-count="3">
+              <span style="width:17px;height:17px;border-radius:999px;background:{{ d.bg }};display:inline-block"></span>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:var(--space-4);margin-top:var(--space-6);margin-bottom:var(--space-8)">
+          <button onClick="{{ readAgain }}" title="Frage vorlesen" style="flex:none;width:60px;height:60px;border-radius:999px;border:none;background:var(--color-accent-2-600);color:var(--color-neutral-100);cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="box-shadow:var(--shadow-md);transform:translateY(-2px)">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.75" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"></path><path d="M16 9a5 5 0 0 1 0 6"></path><path d="M19.364 18.364a9 9 0 0 0 0-12.728"></path></svg>
+          </button>
+          <h2 style="margin:0;font-size:clamp(24px,2.6vw,34px);line-height:1.22;max-width:34ch;text-wrap:pretty">{{ question }}</h2>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(var(--space-3),2vh,var(--space-4))">
+          <sc-for list="{{ answers }}" as="a" hint-placeholder-count="4">
+            <div style="display:flex;flex-direction:column;gap:var(--space-2)">
+            <sc-if value="{{ picMode }}" hint-placeholder-val="{{ true }}">
+              <div style="position:relative;height:clamp(64px,12vh,140px);border-radius:calc(var(--radius-lg) * 1.1);overflow:hidden;background:{{ a.keyBg }};border:2px solid {{ a.border }};opacity:{{ a.opacity }}">
+                <image-slot id="eq-answer-{{ $index }}" shape="rect" placeholder="{{ a.picFile }}" style="position:absolute;inset:0"></image-slot>
+              </div>
+            </sc-if>
+            <button onClick="{{ a.pick }}" class="elev-sm" style="display:flex;align-items:center;gap:var(--space-4);text-align:left;padding:var(--space-4);border:2px solid {{ a.border }};border-radius:999px;cursor:pointer;min-height:clamp(60px,8vh,78px);background:{{ a.bg }};color:{{ a.fg }};opacity:{{ a.opacity }}" style-hover="box-shadow:var(--shadow-md);transform:translateY(-3px)">
+              <span style="flex:none;width:44px;height:44px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-size:21px;background:{{ a.keyBg }}">{{ a.key }}</span>
+              <span style="font-family:var(--font-heading);font-size:clamp(18px,1.9vw,22px)">{{ a.text }}</span>
+              <span style="margin-left:auto;display:flex;align-items:center">
+                <sc-if value="{{ a.isRight }}" hint-placeholder-val="{{ false }}">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.75" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+                </sc-if>
+                <sc-if value="{{ a.isWrong }}" hint-placeholder-val="{{ false }}">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.75" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+                </sc-if>
+              </span>
+            </button>
+            </div>
+          </sc-for>
+        </div>
+        <sc-if value="{{ hasFeedback }}" hint-placeholder-val="{{ true }}">
+          <div style="margin-top:var(--space-8);margin-bottom:var(--space-2);display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-4);padding:var(--space-4) var(--space-6);background:{{ feedbackBg }};border-radius:var(--radius-lg);animation:eqRise .2s ease-out">
+            <span style="font-family:var(--font-heading);font-size:25px;color:{{ feedbackFg }}">{{ feedbackTitle }}</span>
+            <span style="font-size:18px;font-weight:600;line-height:1.4;color:{{ feedbackFg }};flex:1;min-width:220px">{{ feedbackText }}</span>
+            <button onClick="{{ nextQuestion }}" class="btn btn-primary" style="font-size:20px;padding:var(--space-3) var(--space-6);min-height:52px">{{ quizNextLabel }}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.75" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"></path></svg></button>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ══ ERGEBNIS ══ -->
+  <sc-if value="{{ isResult }}" hint-placeholder-val="{{ true }}">
+    <div class="eq-scroll" style="flex:1;min-height:0;position:relative;display:flex;flex-direction:column;padding:var(--space-6)"><div style="margin:auto;display:flex;flex-direction:column;align-items:center;gap:var(--space-3)">
+      <sc-for list="{{ confetti }}" as="c" hint-placeholder-count="10">
+        <span style="position:absolute;left:{{ c.x }};top:{{ c.y }};width:{{ c.size }};height:{{ c.size }};background:{{ c.bg }};border-radius:5px;transform:rotate(35deg);animation:{{ c.anim }}"></span>
+      </sc-for>
+      <div style="display:flex;gap:var(--space-3);position:relative">
+        <sc-for list="{{ stars }}" as="s" hint-placeholder-count="3">
+          <span class="elev-sm" style="width:68px;height:68px;border-radius:var(--radius-md);transform:rotate(45deg);background:{{ s.bg }};display:block;animation:{{ s.anim }}"></span>
+        </sc-for>
+      </div>
+      <h2 style="margin:var(--space-4) 0 0;font-size:clamp(32px,4.4vw,52px);text-align:center;position:relative">Ort geschafft!</h2>
+      <p style="margin:0;font-size:20px;font-weight:600;line-height:1.5;color:var(--color-neutral-700);text-align:center;max-width:46ch;position:relative">{{ resultHint }}</p>
+      <button onClick="{{ sayResult }}" title="Diesen Text vorlesen" style="position:relative;display:flex;align-items:center;gap:var(--space-2);font-size:16px;font-weight:700;padding:var(--space-2) var(--space-4) var(--space-2) var(--space-2);border:none;border-radius:999px;background:var(--color-accent-2-200);color:var(--color-accent-2-900);cursor:pointer;min-height:48px">
+        <span style="width:34px;height:34px;border-radius:999px;background:var(--color-accent-2-600);color:var(--color-neutral-100);display:flex;align-items:center;justify-content:center">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.75" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"></path><path d="M16 9a5 5 0 0 1 0 6"></path></svg>
+        </span>Vorlesen
+      </button>
+      <div style="display:flex;flex-wrap:wrap;gap:var(--space-4);justify-content:center;position:relative">
+        <sc-for list="{{ resultStats }}" as="st" hint-placeholder-count="3">
+          <div class="card elev-md" style="min-width:196px;padding:var(--space-4) var(--space-6);text-align:center;background:{{ st.bg }};gap:2px">
+            <div style="font-family:var(--font-heading);font-size:36px;color:{{ st.fg }}">{{ st.value }}</div>
+            <div style="font-size:15px;font-weight:700;color:{{ st.fg }};opacity:.8">{{ st.label }}</div>
+          </div>
+        </sc-for>
+      </div>
+      <div class="elev-md" style="display:flex;align-items:center;gap:var(--space-4);padding:var(--space-3) var(--space-6);background:var(--color-accent-200);border-radius:999px;position:relative">
+        <div style="width:54px;height:54px;border-radius:var(--radius-md);transform:rotate(45deg);background:var(--color-accent-500)"></div>
+        <div>
+          <div class="card-kicker" style="font-size:12px;color:var(--color-accent-800)">Neuer Erfolg</div>
+          <div style="font-family:var(--font-heading);font-size:24px;color:var(--color-accent-900)">Erster Landgang</div>
+        </div>
+      </div>
+      <sc-if value="{{ hasNewCard }}" hint-placeholder-val="{{ false }}">
+        <div class="card elev-lg" style="position:relative;flex-direction:row;align-items:center;gap:var(--space-6);padding:var(--space-4) var(--space-6);background:var(--color-neutral-100);border:3px solid var(--color-accent-500);animation:eqPop .34s ease-out .1s both">
+          <div style="position:relative;width:112px;aspect-ratio:63/88;border-radius:var(--radius-md);overflow:hidden;background:var(--color-accent-2-300);box-shadow:var(--shadow-md);animation:eqBob 4s ease-in-out infinite">
+            <image-slot id="eq-newcard" shape="rect" placeholder="{{ newCard.file }}" style="position:absolute;inset:0"></image-slot>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-start;gap:var(--space-2);text-align:left">
+            <span class="tag" style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;background:{{ newCard.rarBg }};color:{{ newCard.rarFg }}">Neue Sammelkarte · {{ newCard.rarity }}</span>
+            <div style="font-family:var(--font-heading);font-size:28px">{{ newCard.name }}</div>
+            <div style="font-size:16px;font-weight:600;color:var(--color-neutral-700);max-width:34ch">{{ newCard.flavor }}</div>
+            <button onClick="{{ goCards }}" class="btn btn-primary" style="font-size:17px;padding:var(--space-2) var(--space-6);min-height:50px">In die Trophäenhalle</button>
+          </div>
+        </div>
+      </sc-if>
+      <div style="display:flex;flex-wrap:wrap;gap:var(--space-3);justify-content:center;margin-top:var(--space-2);position:relative">
+        <button onClick="{{ backToMap }}" class="btn btn-primary" style="font-size:21px;padding:var(--space-3) var(--space-6);min-height:56px">Zurück zur Karte</button>
+        <button onClick="{{ backToTimeline }}" class="btn btn-secondary" style="font-size:21px;padding:var(--space-3) var(--space-6);min-height:56px;background:var(--color-surface)">Zur Karte der Etappen</button>
+      </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ══ TROPHÄENHALLE ══ -->
+  <sc-if value="{{ isCards }}" hint-placeholder-val="{{ false }}">
+    <div class="eq-scroll" style="flex:1;min-height:0;display:flex;flex-direction:column;gap:var(--space-6);padding:var(--space-6) var(--space-6) 140px;background:var(--color-bg)">
+
+      <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:var(--space-6)">
+        <div style="display:flex;flex-direction:column;gap:var(--space-2);max-width:640px">
+          <span class="tag tag-accent" style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;align-self:flex-start">Trophäenhalle · Piratenwelt</span>
+          <h2 style="margin:0;font-size:clamp(30px,4vw,46px)">Deine Sammelkarten</h2>
+          <div style="display:flex;align-items:center;gap:var(--space-3)">
+            <button onClick="{{ sayCards }}" title="Diesen Text vorlesen" style="flex:none;width:48px;height:48px;border-radius:999px;border:none;background:var(--color-accent-2-600);color:var(--color-neutral-100);cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="transform:translateY(-2px)">
+              <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.75" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"></path><path d="M16 9a5 5 0 0 1 0 6"></path></svg>
+            </button>
+            <p style="margin:0;font-size:17px;font-weight:600;color:var(--color-neutral-700)">{{ hallHint }}</p>
+          </div>
+        </div>
+        <div class="card elev-md" style="min-width:280px;padding:var(--space-4) var(--space-6);background:var(--color-neutral-100);gap:var(--space-2)">
+          <div style="display:flex;align-items:baseline;gap:var(--space-2)">
+            <span style="font-family:var(--font-heading);font-size:40px;color:var(--color-accent-700)">{{ ownedCount }}</span>
+            <span style="font-size:17px;font-weight:700;color:var(--color-neutral-700)">von {{ totalCount }} Karten</span>
+          </div>
+          <div style="height:14px;border-radius:999px;background:var(--color-neutral-300);overflow:hidden">
+            <div style="height:100%;width:{{ collectPct }};background:var(--color-accent-2-500)"></div>
+          </div>
+          <div style="font-size:14px;font-weight:600;color:var(--color-neutral-600)">Neue Karten gibt es für gelöste Minispiele.</div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-wrap:wrap;gap:var(--space-2)">
+        <sc-for list="{{ filters }}" as="f" hint-placeholder-count="3">
+          <button onClick="{{ f.pick }}" class="btn" style="font-size:16px;font-weight:700;padding:var(--space-2) var(--space-6);min-height:48px;border:2px solid {{ f.border }};border-radius:999px;background:{{ f.bg }};color:{{ f.fg }};cursor:pointer">{{ f.label }}</button>
+        </sc-for>
+      </div>
+
+      <sc-for list="{{ cardGroups }}" as="g" hint-placeholder-count="2">
+        <div style="display:flex;flex-direction:column;gap:var(--space-4)">
+          <div style="display:flex;align-items:center;gap:var(--space-3)">
+            <span style="font-family:var(--font-heading);font-size:22px">{{ g.name }}</span>
+            <span style="font-size:14px;font-weight:700;color:var(--color-neutral-600)">{{ g.count }}</span>
+            <span style="flex:1;height:2px;background:var(--color-divider)"></span>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:var(--space-4)">
+            <sc-for list="{{ g.cards }}" as="c" hint-placeholder-count="4">
+              <div style="position:relative;display:flex;flex-direction:column;gap:var(--space-2);width:184px">
+                <button onClick="{{ c.open }}" title="{{ c.title }}" style="position:relative;width:100%;aspect-ratio:63/88;padding:0;border:3px solid {{ c.border }};border-radius:calc(var(--radius-md) * 1.1);background:{{ c.bg }};cursor:{{ c.cursor }};overflow:hidden;box-shadow:{{ c.shadow }}" style-hover="transform:translateY(-4px)">
+                  <sc-if value="{{ c.owned }}" hint-placeholder-val="{{ true }}">
+                    <image-slot id="{{ c.slot }}" shape="rect" placeholder="{{ c.file }}" style="position:absolute;inset:0"></image-slot>
+                  </sc-if>
+                  <sc-if value="{{ c.locked }}" hint-placeholder-val="{{ false }}">
+                    <span style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--space-3);padding:var(--space-4);background:repeating-linear-gradient(135deg,var(--color-neutral-200) 0 12px,var(--color-neutral-300) 12px 24px)">
+                      <span style="width:44px;height:36px;border-radius:8px;background:var(--color-neutral-500);position:relative;display:block"><span style="position:absolute;left:50%;top:-18px;transform:translateX(-50%);width:26px;height:24px;border:6px solid var(--color-neutral-500);border-bottom:none;border-radius:14px 14px 0 0;display:block"></span></span>
+                      <span style="font-size:13px;font-weight:700;line-height:1.35;color:var(--color-neutral-700);text-align:center;text-wrap:pretty">{{ c.hint }}</span>
+                    </span>
+                  </sc-if>
+                  <span style="position:absolute;top:8px;left:8px;width:16px;height:16px;border-radius:999px;background:{{ c.dot }};box-shadow:0 0 0 3px color-mix(in srgb,var(--color-neutral-100) 80%,transparent);display:block"></span>
+                </button>
+                <sc-if value="{{ c.owned }}" hint-placeholder-val="{{ true }}">
+                  <button onClick="{{ c.toggle }}" title="{{ c.checkTitle }}" style="position:absolute;top:8px;right:8px;width:34px;height:34px;padding:0;border:2.5px solid {{ c.boxBorder }};border-radius:9px;background:{{ c.boxBg }};color:var(--color-neutral-100);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 0 0 3px color-mix(in srgb,var(--color-neutral-100) 80%,transparent);z-index:2" style-hover="transform:scale(1.08)">
+                    <sc-if value="{{ c.selected }}" hint-placeholder-val="{{ false }}">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+                    </sc-if>
+                  </button>
+                </sc-if>
+                <div style="display:flex;flex-direction:column;gap:1px">
+                  <span style="font-family:var(--font-heading);font-size:17px;color:{{ c.nameFg }};text-wrap:pretty">{{ c.name }}</span>
+                  <span style="font-size:13px;font-weight:700;color:{{ c.rarFg }}">{{ c.rarity }}</span>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
+    <sc-if value="{{ hasSelection }}" hint-placeholder-val="{{ false }}">
+      <div class="elev-lg" style="position:fixed;left:50%;bottom:var(--space-6);transform:translateX(-50%);display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-4);padding:var(--space-3) var(--space-4) var(--space-3) var(--space-6);background:var(--color-neutral-100);border:2px solid var(--color-accent-500);border-radius:999px;z-index:30">
+        <span style="font-family:var(--font-heading);font-size:19px">{{ selLabel }}</span>
+        <button onClick="{{ clearSel }}" class="btn btn-secondary" style="font-size:15px;padding:var(--space-2) var(--space-4);min-height:46px;background:var(--color-neutral-200)">Auswahl leeren</button>
+        <button onClick="{{ goPrint }}" class="btn btn-primary" style="font-size:18px;padding:var(--space-2) var(--space-6);min-height:52px">Druckbogen ansehen</button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ hasDetail }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ closeDetail }}" style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:var(--space-6);background:color-mix(in srgb,var(--color-accent-2-900) 62%,transparent);z-index:60">
+        <div onClick="{{ stopClick }}" class="card elev-lg" style="flex-direction:row;flex-wrap:wrap;align-items:center;gap:var(--space-8);max-width:820px;padding:var(--space-8);background:var(--color-neutral-100);animation:eqPop .2s ease-out">
+          <div style="position:relative;width:min(46vw,268px);aspect-ratio:63/88;border-radius:var(--radius-md);overflow:hidden;background:var(--color-accent-2-300);box-shadow:var(--shadow-lg)">
+            <image-slot id="{{ detail.slot }}" shape="rect" placeholder="{{ detail.file }}" style="position:absolute;inset:0"></image-slot>
+          </div>
+          <div style="flex:1;min-width:250px;display:flex;flex-direction:column;gap:var(--space-3)">
+            <span class="tag" style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;align-self:flex-start;background:{{ detail.rarBg }};color:{{ detail.rarFg }}">{{ detail.rarity }}</span>
+            <h3 style="margin:0;font-size:clamp(26px,3vw,36px)">{{ detail.name }}</h3>
+            <p style="margin:0;font-size:18px;font-weight:600;line-height:1.45;color:var(--color-neutral-700);text-wrap:pretty">{{ detail.flavor }}</p>
+            <div style="display:flex;flex-direction:column;gap:6px;padding:var(--space-3) var(--space-4);background:var(--color-neutral-200);border-radius:var(--radius-md);font-size:15px;font-weight:600;color:var(--color-neutral-800)">
+              <span>Fundort: {{ detail.set }}</span>
+              <span>Erhalten: {{ detail.earned }}</span>
+              <span>Druckformat: 63 × 88 mm · 300 dpi</span>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:var(--space-3)">
+              <button onClick="{{ toggleDetailSel }}" class="btn btn-primary" style="font-size:17px;padding:var(--space-2) var(--space-6);min-height:52px">{{ detail.selLabel }}</button>
+              <button onClick="{{ closeDetail }}" class="btn btn-secondary" style="font-size:17px;padding:var(--space-2) var(--space-6);min-height:52px;background:var(--color-neutral-200)">Schließen</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+  </sc-if>
+
+  <!-- ══ DRUCKBOGEN ══ -->
+  <sc-if value="{{ isPrint }}" hint-placeholder-val="{{ false }}">
+    <div class="eq-scroll" style="flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;gap:var(--space-6);padding:var(--space-6);background:var(--color-neutral-200)">
+      <div data-noprint="1" style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:var(--space-4);width:100%;max-width:900px">
+        <div style="display:flex;flex-direction:column;gap:2px;margin-right:auto">
+          <span style="font-family:var(--font-heading);font-size:26px">Druckbogen</span>
+          <span style="font-size:15px;font-weight:600;color:var(--color-neutral-700)">{{ printSummary }}</span>
+        </div>
+        <button onClick="{{ toggleMarks }}" class="btn" style="font-size:15px;font-weight:700;padding:var(--space-2) var(--space-4);min-height:48px;border:2px solid {{ marksBorder }};border-radius:999px;background:{{ marksBg }};color:{{ marksFg }};cursor:pointer">Schnittmarken</button>
+        <button onClick="{{ toggleGap }}" class="btn" style="font-size:15px;font-weight:700;padding:var(--space-2) var(--space-4);min-height:48px;border:2px solid {{ gapBorder }};border-radius:999px;background:{{ gapBg }};color:{{ gapFg }};cursor:pointer">Kartenabstand</button>
+        <button onClick="{{ backToCards }}" class="btn btn-secondary" style="font-size:16px;padding:var(--space-2) var(--space-4);min-height:48px;background:var(--color-neutral-100)">Zurück zur Halle</button>
+        <button onClick="{{ doPrint }}" class="btn btn-primary" style="font-size:18px;padding:var(--space-2) var(--space-6);min-height:52px">Drucken / PDF</button>
+      </div>
+
+      <div data-printsheet="1" style="display:flex;flex-direction:column;gap:var(--space-6);align-items:center">
+        <sc-for list="{{ sheets }}" as="s" hint-placeholder-count="1">
+          <div style="width:210mm;height:297mm;box-sizing:border-box;padding:12mm 10.5mm;background:#fff;box-shadow:var(--shadow-lg);display:grid;grid-template-columns:repeat(3,63mm);grid-template-rows:repeat(3,88mm);gap:{{ sheetGap }};justify-content:center;align-content:center">
+            <sc-for list="{{ s.slots }}" as="sl" hint-placeholder-count="9">
+              <div style="position:relative;width:63mm;height:88mm;outline:{{ sl.outline }};background:{{ sl.bg }};overflow:hidden">
+                <sc-if value="{{ sl.filled }}" hint-placeholder-val="{{ true }}">
+                  <image-slot id="{{ sl.slot }}" shape="rect" placeholder="{{ sl.file }}" style="position:absolute;inset:0"></image-slot>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;leseModus&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Vorlesen (ohne Lesen)&quot;,&quot;Selbst lesen&quot;],&quot;default&quot;:&quot;Vorlesen (ohne Lesen)&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Barrierefreiheit&quot;},&quot;bigText&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Barrierefreiheit&quot;}}">
+class Component extends DCLogic {
+  state = { config: null, modeOverride: null, screen: 'login', profile: 0, level: null, node: null, line: 0, q: 0, picked: null, correct: 0, sound: true, owned: null, sel: [], detail: null, filter: 'alle', newCard: null, marks: true, cardGap: false };
+
+
+  DATA = {
+    profiles: [
+      { name: 'Mia', sub: 'Stufe: Navigator', slot: 'eq-avatar-mia', avatarFile: 'avatar_mia.png', bg: 'var(--color-accent-2-200)', avatar: 'conic-gradient(from 30deg,var(--color-accent-300),var(--color-accent-500),var(--color-accent-2-400),var(--color-accent-2-600),var(--color-accent-300))' },
+      { name: 'Jonas', sub: 'Stufe: Matrose', slot: 'eq-avatar-jonas', avatarFile: 'avatar_jonas.png', bg: 'var(--color-accent-200)', avatar: 'conic-gradient(from 120deg,var(--color-accent-2-300),var(--color-accent-400),var(--color-accent-700),var(--color-accent-2-500),var(--color-accent-2-300))' },
+      { name: 'Leyla', sub: 'Neu hier', slot: 'eq-avatar-leyla', avatarFile: 'avatar_leyla.png', bg: 'var(--color-neutral-200)', avatar: 'conic-gradient(from 220deg,var(--color-accent-2-500),var(--color-accent-300),var(--color-accent-600),var(--color-accent-2-300),var(--color-accent-2-500))' }
+    ],
+    worlds: [
+      { name: 'Piratenwelt', desc: 'Sachkunde: Karten, Himmelsrichtungen, Wetter.', tag: 'Installiert', tagBg: 'var(--color-accent-2-200)', tagFg: 'var(--color-accent-2-900)', slot: 'eq-world-piraten', file: 'welt_piraten.webp', art: 'var(--color-accent-2-400)', cta: 'Reise fortsetzen', ctaColor: 'var(--color-accent-700)', locked: false },
+      { name: 'Sternenreise', desc: 'Weltraum-Welt für Mathe. Drei Karten geplant.', tag: 'Bald', tagBg: 'var(--color-neutral-200)', tagFg: 'var(--color-neutral-800)', slot: 'eq-world-sterne', file: 'welt_sterne.webp', art: 'var(--color-neutral-400)', cta: 'Noch nicht installiert', ctaColor: 'var(--color-neutral-600)', locked: true },
+      { name: 'Alte Zeiten', desc: 'Geschichtswelt mit vier Story-Arcs.', tag: 'Bald', tagBg: 'var(--color-neutral-200)', tagFg: 'var(--color-neutral-800)', slot: 'eq-world-antike', file: 'welt_antike.webp', art: 'var(--color-accent-300)', cta: 'Noch nicht installiert', ctaColor: 'var(--color-neutral-600)', locked: true }
+    ],
+    levels: [
+      { id: 'matrose', name: 'Matrose', desc: 'Leicht — kurze Aufgaben, viele Hinweise.', pips: 1, bg: 'var(--color-accent-2-200)', fg: 'var(--color-accent-2-900)', descFg: 'var(--color-accent-2-800)', pipOn: 'var(--color-accent-2-700)', pipOff: 'var(--color-accent-2-300)' },
+      { id: 'navigator', name: 'Navigator', desc: 'Mittel — mehr Auswahl, weniger Hilfe.', pips: 2, bg: 'var(--color-accent-200)', fg: 'var(--color-accent-900)', descFg: 'var(--color-accent-800)', pipOn: 'var(--color-accent-700)', pipOff: 'var(--color-accent-300)' },
+      { id: 'kapitaen', name: 'Kapitän', desc: 'Schwer — eigene Antworten, kein Hinweis.', pips: 3, bg: 'var(--color-accent-500)', fg: 'var(--color-neutral-100)', descFg: 'var(--color-accent-100)', pipOn: 'var(--color-neutral-100)', pipOff: 'var(--color-accent-700)' }
+    ],
+    dialogue: [
+      { pos: 'left', sprite: 'kapitaen_neutral.png', name: 'Kapitän Ruben', text: 'Da bist du ja! Die Karte von East Blue ist nass geworden — ich erkenne keine Himmelsrichtung mehr.', audio: 'kapitaen_001.mp3' },
+      { pos: 'right', sprite: 'nala_froehlich.png', name: 'Nala', text: 'Kein Problem, Kapitän! Ich habe meinen Kompass dabei. Der zeigt immer in dieselbe Richtung.' },
+      { pos: 'left', sprite: 'kapitaen_erstaunt.png', name: 'Kapitän Ruben', text: 'Aha! Und welche Richtung ist das? Wenn du das weißt, finden wir das Windmühlen-Dorf.', audio: 'kapitaen_002.mp3' },
+      { pos: 'right', sprite: 'nala_zeigt.png', name: 'Nala', text: 'Schauen wir zusammen nach. Hilf mir bei den drei Fragen im Logbuch!' }
+    ],
+    quiz: [
+      { q: 'Der Kompass zeigt mit dem großen N nach oben. Welche Himmelsrichtung ist das?', a: ['Norden', 'Süden', 'Osten', 'Westen'], c: 0, why: 'N steht für Norden — die Nadel zeigt immer dorthin.' },
+      { q: 'Welche Richtung liegt genau gegenüber von Norden?', a: ['Osten', 'Süden', 'Westen', 'Nirgendwo'], c: 1, why: 'Norden und Süden liegen sich immer gegenüber.' },
+      { q: 'Wo geht die Sonne morgens auf?', a: ['Im Westen', 'Im Norden', 'Im Osten', 'Im Süden'], c: 2, why: 'Die Sonne geht im Osten auf und im Westen unter.' }
+    ]
+  };
+
+  CONFETTI = [
+    ['8%', '14%', '18px', 'var(--color-accent-400)'], ['18%', '62%', '13px', 'var(--color-accent-2-500)'],
+    ['28%', '20%', '15px', 'var(--color-accent-500)'], ['42%', '8%', '11px', 'var(--color-accent-2-300)'],
+    ['58%', '16%', '16px', 'var(--color-accent-300)'], ['70%', '58%', '13px', 'var(--color-accent-2-600)'],
+    ['82%', '20%', '17px', 'var(--color-accent-600)'], ['90%', '66%', '12px', 'var(--color-accent-2-400)'],
+    ['12%', '84%', '14px', 'var(--color-accent-300)'], ['64%', '86%', '12px', 'var(--color-accent-500)']
+  ].map((c, i) => ({ x: c[0], y: c[1], size: c[2], bg: c[3], anim: 'eqBob ' + (3 + i * 0.4) + 's ease-in-out infinite' }));
+
+  LEGEND = [
+    { bg: 'var(--color-accent-500)', label: 'Jetzt dran' },
+    { bg: 'var(--color-accent-2-600)', label: 'Geschafft' },
+    { bg: 'var(--color-neutral-400)', label: 'Verschlossen' }
+  ];
+
+  BADGES = [
+    { name: 'Kartenleser', icon: 'var(--color-accent-2-600)', bg: 'var(--color-accent-2-200)', fg: 'var(--color-accent-2-900)', opacity: 1, title: 'Freigeschaltet' },
+    { name: 'Sturmfest', icon: 'var(--color-accent-500)', bg: 'var(--color-accent-200)', fg: 'var(--color-accent-900)', opacity: 1, title: 'Freigeschaltet' },
+    { name: 'Logbuch-Held', icon: 'var(--color-accent-700)', bg: 'var(--color-accent-300)', fg: 'var(--color-accent-900)', opacity: 1, title: 'Freigeschaltet' },
+    { name: 'Noch geheim', icon: 'var(--color-neutral-400)', bg: 'var(--color-neutral-200)', fg: 'var(--color-neutral-700)', opacity: .85, title: 'Noch nicht freigeschaltet' }
+  ];
+
+  /* Karten-Konfiguration: wird aus data/world_piraten.json geladen (gleiche Struktur
+     wie world_config.json im Content-Repo). Der Inline-Block ist nur der Fallback,
+     wenn die Datei nicht erreichbar ist. */
+  FALLBACK = {
+    cards: [
+      { id: 'kapitaen_ruben', name: 'Kapitän Ruben', set: 'Etappe 1 · Hafendamm', rarity: 'selten', asset: 'karte_kapitaen_ruben.png', status: 'owned', earned: '12.05.', flavor: 'Er kennt jede Strömung – nur seine Karte nicht mehr.', hint: '' },
+      { id: 'nala', name: 'Nala', set: 'Etappe 1 · Hafendamm', rarity: 'selten', asset: 'karte_nala.png', status: 'owned', earned: '12.05.', flavor: 'Ihr Kompass zeigt immer in dieselbe Richtung.', hint: '' },
+      { id: 'hafendamm', name: 'Der alte Hafendamm', set: 'Etappe 1 · Hafendamm', rarity: 'haeufig', asset: 'karte_hafendamm.png', status: 'owned', earned: '12.05.', flavor: 'Hier beginnt jede Reise.', hint: '' },
+      { id: 'moewe_pip', name: 'Möwe Pip', set: 'Etappe 1 · Hafendamm', rarity: 'haeufig', asset: 'karte_moewe_pip.png', status: 'locked', earned: '', flavor: 'Fliegt immer zum nächsten Land.', hint: 'Etappe 1 mit 3 Sternen abschließen' },
+      { id: 'windmuehlen_dorf', name: 'Windmühlen-Dorf', set: 'Etappe 2 · East Blue', rarity: 'haeufig', asset: 'karte_windmuehlen_dorf.png', status: 'owned', earned: 'heute', flavor: 'Vier Flügel, vier Richtungen.', hint: '' },
+      { id: 'kompassrose', name: 'Die Kompassrose', set: 'Etappe 2 · East Blue', rarity: 'legendaer', asset: 'karte_kompassrose.png', status: 'locked', earned: '', flavor: 'Norden, Osten, Süden, Westen – nie wieder verlaufen.', hint: 'Alle 3 Fragen im Windmühlen-Dorf lösen' },
+      { id: 'nordstern', name: 'Der Nordstern', set: 'Etappe 2 · East Blue', rarity: 'selten', asset: 'karte_nordstern.png', status: 'locked', earned: '', flavor: 'Steht nachts still am Himmel.', hint: 'Alten Hafen erkunden' },
+      { id: 'leuchtturm', name: 'Leuchtturm von East Blue', set: 'Etappe 2 · East Blue', rarity: 'selten', asset: 'karte_leuchtturm.png', status: 'locked', earned: '', flavor: 'Sein Licht dreht sich einmal pro Minute.', hint: 'Ort „Leuchtturm“ freispielen' },
+      { id: 'sturmwolke', name: 'Die Sturmwolke', set: 'Etappe 3 · Sturmbucht', rarity: 'haeufig', asset: 'karte_sturmwolke.png', status: 'locked', earned: '', flavor: 'Dunkel, laut und schnell vorbei.', hint: 'Etappe 3 freispielen' },
+      { id: 'wetterhahn', name: 'Der Wetterhahn', set: 'Etappe 3 · Sturmbucht', rarity: 'haeufig', asset: 'karte_wetterhahn.png', status: 'locked', earned: '', flavor: 'Zeigt, woher der Wind weht.', hint: 'Etappe 3 freispielen' },
+      { id: 'wolkeninsel', name: 'Die Wolkeninsel', set: 'Etappe 5 · Wolkeninsel', rarity: 'legendaer', asset: 'karte_wolkeninsel.png', status: 'locked', earned: '', flavor: 'Liegt höher als jeder Mast.', hint: 'Etappe 5 erreichen' },
+      { id: 'logbuch', name: 'Das letzte Logbuch', set: 'Etappe 6 · Logbuch', rarity: 'legendaer', asset: 'karte_logbuch.png', status: 'locked', earned: '', flavor: 'Alles, was die Crew gelernt hat.', hint: 'Die ganze Reise abschließen' }
+    ],
+    maps: [
+      {
+        id: 'hub_starchart', kind: 'hub_map', background: 'map_planetenkarte.webp',
+        nodes: [
+          { id: 'piraten', name: 'Piratenwelt', x: 25, y: 66, size: 200, status: 'current' },
+          { id: 'sterne', name: 'Sternenreise', x: 54, y: 30, size: 150, status: 'locked' },
+          { id: 'antike', name: 'Alte Zeiten', x: 82, y: 66, size: 168, status: 'locked' }
+        ],
+        routes: [['piraten', 'sterne'], ['sterne', 'antike']]
+      },
+      {
+        id: 'arc_overview', kind: 'arc_map', background: 'map_ostmeer_uebersicht.webp',
+        nodes: [
+          { id: 'hafendamm', name: 'Abschied am Hafendamm', x: 11, y: 62, width: 132, height: 96, shape: '52% 44% 58% 40%', status: 'done', stars: 3, asset: 'ep_01.webp' },
+          { id: 'east_blue', name: 'Die Karte von East Blue', x: 30, y: 45, width: 184, height: 132, shape: '46% 56% 40% 60%', status: 'current', stars: 1, asset: 'ep_02.webp' },
+          { id: 'sturmbucht', name: 'Sturm über der Bucht', x: 46, y: 66, width: 138, height: 100, shape: '56% 40% 50% 48%', status: 'locked', stars: 0, asset: 'ep_03.webp' },
+          { id: 'alabasta', name: 'Königreich Alabasta', x: 62, y: 28, width: 150, height: 104, shape: '44% 58% 42% 60%', status: 'locked', stars: 0, asset: 'ep_04.webp' },
+          { id: 'wolkeninsel', name: 'Die Wolkeninsel', x: 78, y: 66, width: 128, height: 92, shape: '58% 42% 54% 46%', status: 'locked', stars: 0, asset: 'ep_05.webp' },
+          { id: 'logbuch', name: 'Das letzte Logbuch', x: 91, y: 30, width: 120, height: 88, shape: '50% 50% 44% 56%', status: 'locked', stars: 0, asset: 'ep_06.webp' }
+        ],
+        routes: [['hafendamm', 'east_blue'], ['east_blue', 'sturmbucht'], ['sturmbucht', 'alabasta'], ['alabasta', 'wolkeninsel'], ['wolkeninsel', 'logbuch']]
+      },
+      {
+        id: 'east_blue', kind: 'location_map', background: 'map_east_blue.webp',
+        islands: [
+          { x: 23, y: 66, width: 300, height: 210, shape: '52% 44% 58% 40%', fill: 'accent-2-500' },
+          { x: 18, y: 74, width: 170, height: 110, shape: '56% 40% 50% 48%', fill: 'accent-2-600' },
+          { x: 50, y: 32, width: 250, height: 168, shape: '46% 56% 40% 60%', fill: 'accent-2-500' },
+          { x: 76, y: 68, width: 230, height: 156, shape: '44% 58% 42% 60%', fill: 'accent-300' },
+          { x: 90, y: 30, width: 150, height: 104, shape: '60% 40% 52% 48%', fill: 'neutral-300' }
+        ],
+        nodes: [
+          { id: 'dorf', name: 'Windmühlen-Dorf', x: 23, y: 64, status: 'current' },
+          { id: 'hafen', name: 'Alter Hafen', x: 50, y: 30, status: 'done' },
+          { id: 'leuchtturm', name: 'Leuchtturm', x: 76, y: 66, status: 'locked' },
+          { id: 'riff', name: 'Riff der Möwen', x: 90, y: 28, status: 'locked' }
+        ],
+        routes: [['dorf', 'hafen'], ['hafen', 'leuchtturm'], ['hafen', 'riff']]
+      }
+    ]
+  };
+
+  componentDidMount() {
+    fetch('data/world_piraten.json')
+      .then(r => r.ok ? r.json() : null)
+      .then(cfg => { if (cfg && cfg.maps) this.setState({ config: cfg }); })
+      .catch(() => {});
+    this._slotTimer = setInterval(() => this.cleanSlots(), 400);
+    this.cleanSlots();
+  }
+
+  /* Gestrichelte Platzhalter-Rahmen der Bild-Slots ausblenden. */
+  cleanSlots() {
+    document.querySelectorAll('image-slot').forEach(el => {
+      const r = el.shadowRoot;
+      if (!r || r.querySelector('[data-noring]')) return;
+      const st = document.createElement('style');
+      st.setAttribute('data-noring', '');
+      st.textContent = '.ring{display:none !important}';
+      r.appendChild(st);
+    });
+  }
+
+  cfg() { return this.state.config || this.FALLBACK; }
+  mapById(id) { return this.cfg().maps.find(m => m.id === id) || { nodes: [], routes: [] }; }
+  tok(name) { return 'var(--color-' + name + ')'; }
+
+  /* Routen als gebogene, gestrichelte Pfade zwischen zwei Knoten (viewBox 1600×900). */
+  routeVals(map) {
+    const by = {};
+    (map.nodes || []).forEach(n => { by[n.id] = n; });
+    return (map.routes || []).map(pair => {
+      const a = by[pair[0]], b = by[pair[1]];
+      if (!a || !b) return { d: '', stroke: 'transparent' };
+      const ax = a.x / 100 * 1600, ay = a.y / 100 * 900, bx = b.x / 100 * 1600, by2 = b.y / 100 * 900;
+      const dx = bx - ax, dy = by2 - ay, len = Math.hypot(dx, dy) || 1;
+      const bow = Math.min(110, len * 0.18);
+      const cx = (ax + bx) / 2 - dy / len * bow, cy = (ay + by2) / 2 + dx / len * bow;
+      const open = a.status !== 'locked' && b.status !== 'locked';
+      return {
+        d: 'M ' + ax + ' ' + ay + ' Q ' + cx + ' ' + cy + ' ' + bx + ' ' + by2,
+        stroke: open ? 'var(--color-accent-500)' : 'var(--color-neutral-400)'
+      };
+    });
+  }
+
+  hubMapVals() {
+    const map = this.mapById('hub_starchart');
+    const worlds = this.DATA.worlds;
+    const ring = { current: 'color-mix(in srgb,var(--color-accent-400) 75%,transparent)', locked: 'color-mix(in srgb,var(--color-neutral-100) 70%,transparent)' };
+    const label = { current: 'Offen · Etappe 2', locked: 'Noch nicht freigespielt' };
+    const fg = { current: 'var(--color-accent-700)', locked: 'var(--color-neutral-600)' };
+    return {
+      background: map.background,
+      routes: this.routeVals(map),
+      nodes: (map.nodes || []).map((n, i) => {
+        const w = worlds[i] || {};
+        return {
+          name: n.name, x: n.x + '%', y: n.y + '%', size: n.size + 'px',
+          slot: w.slot, file: w.file, src: w.src, credit: w.credit,
+          ring: ring[n.status], statusLabel: label[n.status], statusFg: fg[n.status],
+          title: n.name + ' — ' + label[n.status],
+          opacity: n.status === 'locked' ? .72 : 1,
+          anim: n.status === 'current' ? 'eqBob 5s ease-in-out infinite' : 'none',
+          open: () => { if (n.status !== 'locked') this.go('level'); }
+        };
+      })
+    };
+  }
+
+  arcMapVals() {
+    const map = this.mapById('arc_overview');
+    const art = { done: 'var(--color-accent-2-500)', current: 'var(--color-accent-300)', locked: 'var(--color-neutral-300)' };
+    const chip = { done: 'var(--color-accent-2-600)', current: 'var(--color-accent-500)', locked: 'var(--color-neutral-500)' };
+    const label = { done: 'Abgeschlossen', current: 'Jetzt dran', locked: 'Noch verschlossen' };
+    return {
+      background: map.background,
+      routes: this.routeVals(map),
+      nodes: (map.nodes || []).map((n, i) => ({
+        num: i + 1, name: n.name,
+        stars: [0, 1, 2].map(k => ({ bg: k < (n.stars || 0) ? 'var(--color-accent-500)' : 'var(--color-neutral-300)' })),
+        x: n.x + '%', y: n.y + '%', w: n.width + 'px', h: n.height + 'px', shape: n.shape,
+        art: art[n.status], chip: chip[n.status],
+        title: n.name + ' — ' + label[n.status] + ' · ' + n.asset,
+        opacity: n.status === 'locked' ? .68 : 1,
+        anim: n.status === 'current' ? 'eqBob 4s ease-in-out infinite' : 'none',
+        open: () => { if (n.status !== 'locked') this.go('map'); }
+      }))
+    };
+  }
+
+  locMapVals() {
+    const map = this.mapById('east_blue');
+    const fill = { done: 'var(--color-accent-2-600)', current: 'var(--color-accent-500)', locked: 'var(--color-neutral-400)' };
+    const label = { done: 'Erkundet', current: 'Jetzt dran', locked: 'Noch verschlossen' };
+    return {
+      background: map.background,
+      routes: this.routeVals(map),
+      islands: (map.islands || []).map(i => ({
+        x: i.x + '%', y: i.y + '%', w: i.width + 'px', h: i.height + 'px', shape: i.shape, fill: this.tok(i.fill)
+      })),
+      nodes: (map.nodes || []).map(n => ({
+        name: n.name, x: n.x + '%', y: n.y + '%',
+        size: n.status === 'current' ? '46px' : '32px',
+        fill: fill[n.status],
+        title: n.name + ' — ' + label[n.status],
+        opacity: n.status === 'locked' ? .68 : 1,
+        anim: n.status === 'current' ? 'eqPulse 2s ease-in-out infinite' : 'none',
+        open: () => { if (n.status !== 'locked') this.setState({ screen: 'dialog', line: 0, node: n.id }); }
+      }))
+    };
+  }
+
+  /* ── Sammelkarten ──────────────────────────────────────────────────────
+     Karten werden in einer separaten App gebaut und liegen als fertige
+     PNG-Dateien (630×880 px = 63×88 mm bei 300 dpi) im Content-Paket.
+     Dieses Spiel schaltet sie nur frei, zeigt und druckt sie. */
+  RARITY = {
+    haeufig: { label: 'Häufig', bg: 'var(--color-neutral-200)', fg: 'var(--color-neutral-700)', dot: 'var(--color-neutral-500)' },
+    selten: { label: 'Selten', bg: 'var(--color-accent-2-200)', fg: 'var(--color-accent-2-900)', dot: 'var(--color-accent-2-600)' },
+    legendaer: { label: 'Legendär', bg: 'var(--color-accent-300)', fg: 'var(--color-accent-900)', dot: 'var(--color-accent-600)' }
+  };
+
+  cards() { return this.cfg().cards || this.FALLBACK.cards; }
+  cardById(id) { return this.cards().find(c => c.id === id); }
+  ownedIds() { return this.state.owned || this.cards().filter(c => c.status === 'owned').map(c => c.id); }
+  rar(c) { return this.RARITY[c.rarity] || this.RARITY.haeufig; }
+  toggleSel = (id) => {
+    const sel = this.state.sel;
+    this.setState({ sel: sel.includes(id) ? sel.filter(x => x !== id) : sel.concat(id) });
+  };
+
+  cardVals() {
+    const S = this.state, all = this.cards(), own = this.ownedIds(), sel = S.sel;
+    const filters = [
+      { id: 'alle', label: 'Alle Karten' },
+      { id: 'offen', label: 'Freigespielt' },
+      { id: 'fehlt', label: 'Noch offen' }
+    ].map(f => ({
+      label: f.label,
+      bg: S.filter === f.id ? 'var(--color-accent-500)' : 'var(--color-neutral-100)',
+      fg: S.filter === f.id ? 'var(--color-neutral-100)' : 'var(--color-neutral-800)',
+      border: S.filter === f.id ? 'var(--color-accent-500)' : 'var(--color-divider)',
+      pick: () => this.setState({ filter: f.id })
+    }));
+
+    const groups = [];
+    all.filter(c => S.filter === 'alle' || (S.filter === 'offen' ? own.includes(c.id) : !own.includes(c.id))).forEach(c => {
+      let g = groups.find(x => x.name === c.set);
+      if (!g) { g = { name: c.set, cards: [] }; groups.push(g); }
+      const o = own.includes(c.id), r = this.rar(c), on = sel.includes(c.id);
+      g.cards.push({
+        name: c.name, rarity: o ? r.label : 'Noch verschlossen', rarFg: o ? r.fg : 'var(--color-neutral-600)',
+        dot: o ? r.dot : 'var(--color-neutral-400)', owned: o, locked: !o,
+        hint: c.hint || 'Spiele weiter, um sie zu finden',
+        slot: 'eq-card-' + c.id, file: c.asset, selected: on,
+        border: on ? 'var(--color-accent-600)' : (o ? 'var(--color-neutral-100)' : 'var(--color-neutral-300)'),
+        bg: o ? 'var(--color-accent-2-300)' : 'var(--color-neutral-200)',
+        shadow: o ? 'var(--shadow-md)' : 'none', cursor: o ? 'pointer' : 'default',
+        nameFg: o ? 'var(--color-text)' : 'var(--color-neutral-600)',
+        title: o ? c.name + ' — ansehen' : 'Noch verschlossen',
+        checkLabel: on ? 'Zum Drucken gewählt' : 'Zum Drucken wählen',
+        checkTitle: (on ? 'Aus der Druckauswahl entfernen: ' : 'Zum Drucken auswählen: ') + c.name,
+        checkBg: on ? 'var(--color-accent-200)' : 'var(--color-neutral-100)',
+        checkFg: on ? 'var(--color-accent-900)' : 'var(--color-neutral-800)',
+        checkBorder: on ? 'var(--color-accent-500)' : 'var(--color-divider)',
+        boxBg: on ? 'var(--color-accent-600)' : 'color-mix(in srgb,var(--color-neutral-100) 88%,transparent)',
+        boxBorder: on ? 'var(--color-accent-600)' : 'var(--color-neutral-500)',
+        toggle: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.toggleSel(c.id); },
+        open: () => { if (o) this.setState({ detail: c.id }); }
+      });
+    });
+    groups.forEach(g => { g.count = g.cards.length + (g.cards.length === 1 ? ' Karte' : ' Karten'); });
+
+    const d = S.detail ? this.cardById(S.detail) : null;
+    const nc = S.newCard ? this.cardById(S.newCard) : null;
+    const selCards = sel.map(id => this.cardById(id)).filter(Boolean);
+    const pages = Math.max(1, Math.ceil(selCards.length / 9));
+    const sheets = [];
+    for (let p = 0; p < pages; p++) {
+      const slots = [];
+      for (let k = 0; k < 9; k++) {
+        const c = selCards[p * 9 + k];
+        slots.push(c
+          ? { filled: true, slot: 'eq-print-' + c.id, file: c.asset, bg: '#fff', outline: S.marks ? '0.3mm dashed var(--color-neutral-500)' : 'none' }
+          : { filled: false, slot: '', file: '', bg: '#fff', outline: S.marks ? '0.3mm dashed var(--color-neutral-300)' : 'none' });
+      }
+      sheets.push({ slots });
+    }
+
+    return {
+      cardGroups: groups, filters,
+      ownedCount: own.length, totalCount: all.length,
+      collectPct: Math.round(own.length / Math.max(1, all.length) * 100) + '%',
+      cardCount: own.length + ' / ' + all.length,
+      hallBg: S.screen === 'cards' ? 'var(--color-accent-300)' : 'var(--color-neutral-100)',
+      hallFg: S.screen === 'cards' ? 'var(--color-accent-900)' : 'var(--color-text)',
+      hallBorder: S.screen === 'cards' ? 'var(--color-accent-500)' : 'var(--color-divider)',
+      hallHint: this.isPic() ? 'Tippe auf eine Karte, die du schon hast.' : 'Karten kommen aus den Minispielen. Ausgewählte Karten kannst du auf DIN A4 ausdrucken.',
+      sayCards: () => this.speak('Deine Trophäenhalle. Du hast ' + own.length + ' von ' + all.length + ' Karten. Tippe eine Karte an.'),
+      goCards: () => { this.setState({ screen: 'cards', newCard: null }); },
+      backToCards: () => this.setState({ screen: 'cards' }),
+      goPrint: () => this.setState({ screen: 'print', detail: null }),
+      hasSelection: sel.length > 0,
+      selLabel: sel.length + (sel.length === 1 ? ' Karte gewählt' : ' Karten gewählt'),
+      clearSel: () => this.setState({ sel: [] }),
+      hasDetail: !!d,
+      stopClick: (e) => { if (e && e.stopPropagation) e.stopPropagation(); },
+      closeDetail: () => this.setState({ detail: null }),
+      toggleDetailSel: (e) => { if (e && e.stopPropagation) e.stopPropagation(); if (d) this.toggleSel(d.id); },
+      detail: d ? {
+        name: d.name, flavor: d.flavor, set: d.set, earned: d.earned || 'heute',
+        slot: 'eq-detail-' + d.id, file: d.asset,
+        rarity: this.rar(d).label, rarBg: this.rar(d).bg, rarFg: this.rar(d).fg,
+        selLabel: sel.includes(d.id) ? 'Aus Druckauswahl entfernen' : 'Zum Drucken auswählen'
+      } : {},
+      hasNewCard: !!nc,
+      newCard: nc ? { name: nc.name, flavor: nc.flavor, file: nc.asset, rarity: this.rar(nc).label, rarBg: this.rar(nc).bg, rarFg: this.rar(nc).fg } : {},
+      printSummary: selCards.length + ' Karten · ' + pages + (pages === 1 ? ' Blatt' : ' Blätter') + ' DIN A4 · je 63 × 88 mm',
+      sheets, sheetGap: S.cardGap ? '3mm' : '0mm',
+      marksBg: S.marks ? 'var(--color-accent-500)' : 'var(--color-neutral-100)',
+      marksFg: S.marks ? 'var(--color-neutral-100)' : 'var(--color-neutral-800)',
+      marksBorder: S.marks ? 'var(--color-accent-500)' : 'var(--color-divider)',
+      gapBg: S.cardGap ? 'var(--color-accent-500)' : 'var(--color-neutral-100)',
+      gapFg: S.cardGap ? 'var(--color-neutral-100)' : 'var(--color-neutral-800)',
+      gapBorder: S.cardGap ? 'var(--color-accent-500)' : 'var(--color-divider)',
+      toggleMarks: () => this.setState({ marks: !S.marks }),
+      toggleGap: () => this.setState({ cardGap: !S.cardGap }),
+      doPrint: () => { try { window.print(); } catch (e) {} }
+    };
+  }
+
+  go = (s) => this.setState({ screen: s });
+
+  componentWillUnmount() { clearInterval(this._slotTimer); this.stopSpeech(); }
+
+  /* ── Sprachführung ─────────────────────────────────────────────────────
+     Vorlesemodus: kurze Sätze, Bild-Antworten, automatisches Vorlesen.
+     Lesemodus: längere Texte, Vorlesen nur auf Knopfdruck. */
+  isPic() {
+    if (this.state.modeOverride) return this.state.modeOverride === 'bild';
+    return (this.props.leseModus ?? 'Vorlesen (ohne Lesen)') !== 'Selbst lesen';
+  }
+
+  stopSpeech() { try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch (e) {} }
+
+  speak = (text) => {
+    if (!text || !this.state.sound || !window.speechSynthesis) return;
+    try {
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'de-DE'; u.rate = this.isPic() ? 0.86 : 0.95; u.pitch = 1.05;
+      window.speechSynthesis.speak(u);
+    } catch (e) {}
+  };
+
+  script() {
+    const S = this.state, D = this.DATA;
+    if (S.screen === 'login') return 'Willkommen bei EduQuest. Wer spielt heute mit? Tippe auf dein Bild.';
+    if (S.screen === 'hub') return 'Das ist deine Planetenkarte. Tippe auf eine Welt. Die Piratenwelt ist offen.';
+    if (S.screen === 'level') return 'Wie schwer soll es werden? Ein Punkt heißt leicht. Zwei Punkte heißt mittel. Drei Punkte heißt schwer. Tippe auf eine Karte.';
+    if (S.screen === 'timeline') return 'Das ist die Reise der Crew. Tippe auf die Insel, die sich bewegt.';
+    if (S.screen === 'map') return 'Das ist die Insel East Blue. Tippe auf den Punkt, der blinkt.';
+    if (S.screen === 'dialog') { const l = D.dialogue[Math.min(S.line, D.dialogue.length - 1)]; return l.name + ' sagt: ' + l.text; }
+    if (S.screen === 'minigame') {
+      const q = D.quiz[S.q];
+      if (S.picked !== null) return (S.picked === q.c ? 'Richtig! ' : 'Fast! ') + q.why;
+      return q.q + ' ' + q.a.map((t, i) => 'Bild ' + (i + 1) + ': ' + t).join('. ') + '.';
+    }
+    if (S.screen === 'cards') return 'Das ist deine Trophäenhalle. Hier sind alle Sammelkarten. Tippe auf eine Karte, die du schon hast.';
+    if (S.screen === 'print') return 'Das ist dein Druckbogen. Neun Karten passen auf ein Blatt Papier.';
+    if (S.screen === 'result') return 'Super gemacht! Du hast ' + S.correct + ' von 3 Fragen richtig. Tippe auf den großen Knopf, um zur Karte zu gehen.';
+    return '';
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const S = this.state;
+    if (!S.sound) { this.stopSpeech(); return; }
+    if (!this.isPic()) return;
+    const key = S.screen + '|' + S.line + '|' + S.q + '|' + S.picked;
+    if (key === this._lastSpoken) return;
+    this._lastSpoken = key;
+    this.speak(this.script());
+  }
+
+  renderVals() {
+    const S = this.state, D = this.DATA;
+    const big = this.props.bigText ?? false;
+    const pic = this.isPic();
+    const shorts = { matrose: 'Leicht', navigator: 'Mittel', kapitaen: 'Schwer' };
+    const slug = (t) => 'antwort_' + t.toLowerCase().replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss').replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '') + '.png';
+    const q = D.quiz[S.q];
+    const picked = S.picked, isCorrect = picked !== null && picked === q.c;
+    const line = D.dialogue[Math.min(S.line, D.dialogue.length - 1)];
+
+    return {
+      showHud: S.screen !== 'login',
+      isLogin: S.screen === 'login', isHub: S.screen === 'hub', isLevel: S.screen === 'level',
+      isTimeline: S.screen === 'timeline', isMap: S.screen === 'map', isDialog: S.screen === 'dialog',
+      isMinigame: S.screen === 'minigame', isResult: S.screen === 'result',
+      isCards: S.screen === 'cards', isPrint: S.screen === 'print',
+      ...this.cardVals(),
+
+      profileName: D.profiles[S.profile].name,
+      levelLabel: S.level ? D.levels.find(l => l.id === S.level).name : 'Stufe wählen',
+      progressPct: (S.screen === 'result' ? 100 : 18 + S.line * 8 + S.correct * 12) + '%',
+      progressLabel: (S.screen === 'result' ? '3/3' : S.correct + '/3'),
+      soundOn: S.sound, soundOff: !S.sound,
+      toggleSound: () => { if (S.sound) this.stopSpeech(); this.setState({ sound: !S.sound }); },
+      picMode: pic, readMode: !pic,
+      modeLabel: pic ? 'Bilder & Vorlesen' : 'Selbst lesen',
+      modeDot: pic ? 'var(--color-accent-2-600)' : 'var(--color-accent-600)',
+      modeTitle: pic ? 'Bilder-Modus — tippen für Lese-Modus' : 'Lese-Modus — tippen für Bilder-Modus',
+      modeIcon: pic ? '◉' : 'Aa',
+      toggleMode: () => { this.stopSpeech(); this.setState({ modeOverride: pic ? 'text' : 'bild' }); },
+      readAgain: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.speak(this.script()); },
+      sayLogin: () => this.speak('Willkommen bei EduQuest. Wer segelt heute mit? Tippe auf dein Bild.'),
+      sayHub: () => this.speak('Deine Themenwelten. ' + (pic ? 'Tippe auf eine Welt.' : 'Wandere von Welt zu Welt. Die Piratenwelt ist offen, Etappe 2 wartet.')),
+      sayLevel: () => this.speak('Wie schwer soll es werden? ' + (pic ? 'Mehr Punkte heißt schwerer. Tippe auf eine Karte.' : 'Die Geschichte bleibt gleich, nur die Aufgaben wachsen mit dir. Wechseln geht jederzeit.')),
+      sayArc: () => this.speak('Die Reise der Windmühlen-Crew. ' + (pic ? 'Tippe die Insel an, die sich bewegt.' : 'Sechs Inseln, eine Route. Tippe eine Insel an.')),
+      sayLoc: () => this.speak('East Blue. ' + (pic ? 'Tippe den Punkt an, der blinkt.' : 'Tippe auf einen Ort an der Küste.')),
+      sayResult: () => this.speak('Ort geschafft! Du hast ' + S.correct + ' von 3 Fragen richtig. ' + (pic ? 'Der Leuchtturm ist jetzt offen.' : 'Das Windmühlen-Dorf ist erkundet, der Leuchtturm auf der Karte ist jetzt offen.')),
+      hubHint: pic ? 'Tippe auf eine Welt.' : 'Wandere von Welt zu Welt. Piratenwelt ist offen — Etappe 2 wartet.',
+      levelHint: pic ? 'Mehr Punkte heißt schwerer.' : 'Die Geschichte bleibt gleich — nur die Aufgaben wachsen mit dir. Wechseln geht jederzeit.',
+      arcHint: pic ? 'Tippe die Insel an, die sich bewegt.' : 'Sechs Inseln, eine Route. Tippe eine Insel an.',
+      locHint: pic ? 'Tippe den Punkt an, der blinkt.' : 'Tippe auf einen Ort an der Küste.',
+      resultHint: pic ? 'Der Leuchtturm ist jetzt offen.' : 'Das Windmühlen-Dorf ist erkundet. Der Leuchtturm auf der Karte ist jetzt offen.',
+      goBack: () => {
+        const back = { hub: 'login', level: 'hub', timeline: 'level', map: 'timeline', dialog: 'map', minigame: 'dialog', result: 'map', cards: 'hub', print: 'cards' };
+        this.setState({ screen: back[S.screen] || 'login' });
+      },
+      resume: () => this.setState({ screen: S.level ? 'timeline' : 'level' }),
+
+      profiles: D.profiles.map((p, i) => ({ ...p, pick: () => this.setState({ profile: i, screen: 'hub' }) })),
+      badges: this.BADGES,
+      legend: this.LEGEND,
+      confetti: this.CONFETTI,
+      levels: D.levels.map(l => ({
+        ...l,
+        desc: pic ? shorts[l.id] : l.desc,
+        pips: [0, 1, 2].map(i => ({ bg: i < l.pips ? l.pipOn : l.pipOff })),
+        pick: () => this.setState({ level: l.id, screen: 'timeline' })
+      })),
+      hubMap: this.hubMapVals(),
+      arcMap: this.arcMapVals(),
+      locMap: this.locMapVals(),
+
+      leftSprite: line.pos === 'left' ? line.sprite : 'kapitaen_neutral.png',
+      rightSprite: line.pos === 'right' ? line.sprite : 'nala_neutral.png',
+      leftBg: 'var(--color-accent-400)',
+      rightBg: 'var(--color-accent-2-500)',
+      leftFilter: line.pos === 'left' ? 'none' : 'saturate(.5) brightness(1.06) opacity(.75)',
+      rightFilter: line.pos === 'right' ? 'none' : 'saturate(.5) brightness(1.06) opacity(.75)',
+      leftAnim: line.pos === 'left' ? 'eqBob 3.4s ease-in-out infinite' : 'none',
+      rightAnim: line.pos === 'right' ? 'eqBob 3.8s ease-in-out infinite' : 'none',
+      speaker: line.name,
+      dialogText: line.text,
+      dialogSize: big ? '30px' : '25px',
+      nameLeft: line.pos === 'left' ? 'var(--space-6)' : 'auto',
+      nameRight: line.pos === 'right' ? 'var(--space-6)' : 'auto',
+      nameBg: line.pos === 'left' ? 'var(--color-accent-500)' : 'var(--color-accent-2-600)',
+      nameFg: 'var(--color-neutral-100)',
+      audioLabel: pic ? 'Nochmal vorlesen' : (line.audio ? 'Vorlesen: ' + line.audio : 'Ohne Sprachaufnahme'),
+      dialogCounter: (Math.min(S.line, D.dialogue.length - 1) + 1) + ' / ' + D.dialogue.length,
+      nextLabel: S.line >= D.dialogue.length - 1 ? 'Minispiel starten' : 'Weiter',
+      nextLine: () => {
+        if (S.line >= D.dialogue.length - 1) this.setState({ screen: 'minigame', q: 0, picked: null, correct: 0 });
+        else this.setState({ line: S.line + 1 });
+      },
+
+      question: q.q,
+      quizDots: D.quiz.map((_, i) => ({ bg: i < S.q ? 'var(--color-accent-2-600)' : i === S.q ? 'var(--color-accent-500)' : 'var(--color-neutral-300)' })),
+      answers: q.a.map((t, i) => {
+        const reveal = picked !== null;
+        let bg = 'var(--color-surface)', border = 'var(--color-divider)', fg = 'var(--color-text)', keyBg = 'var(--color-accent-200)', mark = '', opacity = 1;
+        if (reveal && i === q.c) { bg = 'var(--color-accent-2-200)'; border = 'var(--color-accent-2-600)'; fg = 'var(--color-accent-2-900)'; keyBg = 'var(--color-accent-2-300)'; mark = 'right'; }
+        else if (reveal && picked === i) { bg = 'var(--color-accent-200)'; border = 'var(--color-accent-600)'; fg = 'var(--color-accent-900)'; keyBg = 'var(--color-accent-300)'; mark = 'wrong'; }
+        else if (reveal) { opacity = .6; }
+        return { text: t, key: pic ? String(i + 1) : ['A', 'B', 'C', 'D'][i], slot: 'eq-answer-' + S.q + '-' + i, picFile: slug(t), bg, border, fg, keyBg, isRight: mark === 'right', isWrong: mark === 'wrong', opacity, pick: () => { if (picked === null) this.setState({ picked: i, correct: S.correct + (i === q.c ? 1 : 0) }); } };
+      }),
+      hasFeedback: picked !== null,
+      feedbackBg: isCorrect ? 'var(--color-accent-2-200)' : 'var(--color-accent-200)',
+      feedbackFg: isCorrect ? 'var(--color-accent-2-900)' : 'var(--color-accent-900)',
+      feedbackTitle: isCorrect ? 'Richtig!' : 'Fast!',
+      feedbackText: q.why,
+      quizNextLabel: S.q >= D.quiz.length - 1 ? 'Ergebnis' : 'Nächste Frage',
+      nextQuestion: () => {
+        if (S.q >= D.quiz.length - 1) {
+          const nid = 'kompassrose', own = this.ownedIds();
+          this.setState({ screen: 'result', owned: own.includes(nid) ? own : own.concat(nid), newCard: nid });
+        }
+        else this.setState({ q: S.q + 1, picked: null });
+      },
+
+      stars: [0, 1, 2].map(i => ({
+        bg: i < Math.max(1, S.correct) ? 'var(--color-accent-400)' : 'var(--color-neutral-300)',
+        anim: i < Math.max(1, S.correct) ? 'eqPop .3s ease-out ' + (i * 0.12) + 's both' : 'none'
+      })),
+      resultStats: [
+        { value: S.correct + '/3', label: 'Richtige Antworten', bg: 'var(--color-accent-2-200)', fg: 'var(--color-accent-2-900)' },
+        { value: '4', label: 'Dialogzeilen gehört', bg: 'var(--color-neutral-200)', fg: 'var(--color-neutral-900)' },
+        { value: '3', label: 'Neue Wörter gelernt', bg: 'var(--color-accent-200)', fg: 'var(--color-accent-900)' }
+      ],
+      backToMap: () => this.go('map'),
+      backToTimeline: () => this.go('timeline')
+    };
+  }
+}
+</script>
+</body>
+</html>

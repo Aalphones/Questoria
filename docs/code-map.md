@@ -22,13 +22,16 @@ im Frontend-Ordnernamen, PascalCase in PHP-Klassen):
 
 | Feature | Ordner | Zweck |
 |---|---|---|
-| Main-Hub | `features/main-hub/` | Einstieg, installierte Themenwelten, aktives Profil/Lernstufe |
-| Timeline | `features/timeline/` | Episodenübersicht pro Welt, Fortschrittsmarkierung |
-| Map | `features/map/` | Interaktive Location-Karte pro Arc |
+| Main-Hub | `features/main-hub/` | Einstieg, Planetenkarte mit installierten Themenwelten, Lernstufen-Auswahl |
+| Timeline | `features/timeline/` | Etappenkarte pro Welt, Fortschrittsmarkierung mit Sternen |
+| Map | `features/map/` | Interaktive Ortskarte pro Arc |
 | Dialog | `features/dialog/` | Speech-Bubble-Engine, zwei Bühnenplätze `left`/`right` |
 | Minispiele | `features/minigames/<game_type>/` | Eine Komponente pro `game_type` (`MultipleChoiceComponent` etc.), dynamisch geladen über `ngComponentOutlet` |
+| Ergebnis | `features/result/` | Sterne, Statistiken, Erfolge, Banner für die neu gewonnene Sammelkarte |
+| Sammelkarten | `features/cards/`, `features/cards/print/` | Trophäenhalle (Gruppen, Filter, Detail, Druckauswahl) und A4-Druckbogen |
 | Nutzerverwaltung | `features/auth/`, `features/profile/` | Login, Profile anlegen/wechseln |
-| Zentrale Services | `services/game-state.service.ts`, `services/content.service.ts`, `services/savegame.service.ts` | Aktive Welt/Profil/Lernstufe, JSON-Content lesen, Speichern/Laden |
+| Gemeinsame UI | `ui/hud/`, `ui/speech-bubble/` | Kopfleiste auf allen Spiel-Screens, Sprechblasen |
+| Zentrale Services | `services/game-state.service.ts`, `services/content.service.ts`, `services/savegame.service.ts`, `services/narration.service.ts` | Aktive Welt/Profil/Lernstufe, JSON-Content lesen, Speichern/Laden, Vorlesemodus + Sprachausgabe |
 
 ## Backend (`backend/src/`)
 
@@ -51,9 +54,11 @@ Struktur übernommen aus promptigofant (gleiches Muster, eigenes Repo):
 | Ordner | Zweck |
 |---|---|
 | `data/_authoring/` | LLM-Prompt-Toolkit + Schema-Referenz — kein Runtime-Code |
-| `data/themes/<theme_id>/world_config.json` | Lernstufen + alle Maps/Arcs der Welt |
-| `data/themes/<theme_id>/episodes/` | Level-Nodes (Hintergrund, Dialog, Minispiel-Referenz) |
+| `data/themes/<theme_id>/world_config.json` | Lernstufen, Etappenkarte, Ortskarten mit Node-Koordinaten |
+| `data/themes/<theme_id>/cards.json` | Kartenformat + alle Sammelkarten der Welt |
+| `data/themes/<theme_id>/episodes/` | Level-Nodes (Hintergrund, Dialog, Minispiel-Referenz, Belohnungskarte) |
 | `data/themes/<theme_id>/minigames/` | Minispiel-Payloads, eine Variante pro Lernstufe |
-| `data/themes/<theme_id>/{maps,backgrounds,sprites,audio}/` | Assets, siehe `data/_authoring/ASSET_REQUIREMENTS.md` |
+| `data/themes/<theme_id>/{maps,backgrounds,sprites,audio,cards,answers}/` | Assets, siehe `data/_authoring/ASSET_REQUIREMENTS.md` |
 
 Vollständiges Content-Schema (verbindlich): `data/_authoring/JSON_SCHEMA_REFERENCE.md`.
+Visuelles Zielbild dazu: `docs/design/README.md`.

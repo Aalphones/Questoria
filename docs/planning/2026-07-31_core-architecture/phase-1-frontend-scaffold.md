@@ -8,7 +8,15 @@ Rating: **standard**
 - [docs/conventions/typescript.md](../../conventions/typescript.md) — Discriminated Unions statt Magic Strings
 - [docs/code-map.md](../../code-map.md) — Namensschema, Feature-Ordner
 - [data/_authoring/JSON_SCHEMA_REFERENCE.md](../../../data/_authoring/JSON_SCHEMA_REFERENCE.md) Abschnitt 1+2 — `main_hub.json` + `world_config.json` Schema (verbindlich, hier 1:1 übernehmen)
+- [docs/design/README.md](../../design/README.md) — Design-Tokens und Zielbild des Main-Hubs; die Token-Werte selbst in `docs/design/prototype/ds/styles.css`
 - README.md dieses Plan-Ordners → Kontrakt-Sektion (Content-Delivery-Entscheidung)
+
+> ⚠️ **Schema-Stand vom 31.07.2026 beachten.** `main_hub.json` und
+> `world_config.json` haben mit dem Design-Handoff Kartendaten dazubekommen
+> (Planetenkarte, Etappenkarte, Node-Koordinaten). Die Fixtures unten sind
+> bereits darauf angepasst. Phase 1 **rendert** davon nichts — die Karten
+> entstehen mit Meilenstein 2 —, aber die Fixtures und Interfaces sind von
+> Anfang an schema-konform, damit später nichts nachgezogen werden muss.
 
 ## Architektur-Entscheidung (bereits getroffen, hier nur umsetzen)
 
@@ -33,7 +41,10 @@ Kontext/Optionen/Entscheidung/Konsequenzen).
 3. Klick auf eine Themenwelt-Karte lädt deren `world_config.json` und zeigt die `difficulty_levels` als auswählbare Karten/Radio-Buttons mit Label.
 4. Neben dem Lernstufen-Picker steht ein kleines Info-Icon mit Tooltip/Erklärtext ("Die Lernstufe bestimmt den Schwierigkeitsgrad der Aufgaben — Story und Charaktere bleiben für alle gleich.").
 5. Auswahl einer Lernstufe ruft `GameStateService.setActiveTheme()` + `.setActiveDifficultyLevel()` auf und zeigt sichtbar eine Bestätigungszeile ("Ausgewählt: `<Titel>` · `<Lernstufe-Label>`").
-6. `ng lint` (bzw. `npm run lint`) läuft ohne Fehler.
+6. Die Oberfläche nutzt die Design-Tokens: Hintergrund, Schriften und
+   Kartenflächen sehen aus wie im Prototyp, und in den Komponenten-Styles
+   steht kein einziger Hex-Wert.
+7. `ng lint` (bzw. `npm run lint`) läuft ohne Fehler.
 
 ## Implementation
 
@@ -47,12 +58,30 @@ Kontext/Optionen/Entscheidung/Konsequenzen).
       ```json
       {
         "theme_id": "dev_fixture",
+        "title": "Entwickler-Testwelt",
+        "subject": "Test",
         "difficulty_levels": [
           { "id": "einfach", "label": "Einfach" },
           { "id": "schwer", "label": "Schwer" }
         ],
+        "arc_overview": {
+          "title": "Test-Reise",
+          "background": "map_test_uebersicht.webp",
+          "stages": [
+            { "map_id": "test_insel", "name": "Test-Etappe", "x": 30, "y": 50, "size": 12, "aspect": 0.72, "shape": "46% 56% 40% 60%", "illustration": "ep_01.webp" }
+          ],
+          "routes": []
+        },
         "maps": [
-          { "id": "test_insel", "name": "Test-Insel", "file": "map_test_insel.webp" }
+          {
+            "id": "test_insel",
+            "name": "Test-Insel",
+            "file": "map_test_insel.webp",
+            "nodes": [
+              { "id": "test_node", "name": "Test-Ort", "x": 40, "y": 60, "episode_ref": "test_episode" }
+            ],
+            "routes": []
+          }
         ]
       }
       ```
@@ -62,17 +91,24 @@ Kontext/Optionen/Entscheidung/Konsequenzen).
 - [ ] `frontend/public/assets/main_hub.json` anlegen (schema-konform, Abschnitt 1):
       ```json
       {
+        "hub_map": {
+          "background": "hub/map_planetenkarte.webp",
+          "routes": []
+        },
         "installed_themes": [
           {
             "id": "dev_fixture",
             "title": "Entwickler-Testwelt",
             "cover": "data/themes/dev_fixture/cover.webp",
-            "config_path": "data/themes/dev_fixture/world_config.json"
+            "config_path": "data/themes/dev_fixture/world_config.json",
+            "x": 25,
+            "y": 66,
+            "size": 13
           }
         ]
       }
       ```
-- [ ] `frontend/src/app/models/content.types.ts`: Interfaces `MainHub`, `InstalledTheme`, `WorldConfig`, `DifficultyLevel`, `MapEntry` — Felder exakt nach Schema-Referenz Abschnitt 1+2
+- [ ] `frontend/src/app/models/content.types.ts`: Interfaces `MainHub`, `HubMap`, `InstalledTheme`, `WorldConfig`, `DifficultyLevel`, `ArcOverview`, `ArcStage`, `MapEntry`, `MapNode` — Felder exakt nach Schema-Referenz Abschnitt 1+2
 - [ ] `frontend/src/app/models/game-state.types.ts`: `type LoadState<T> = { status: 'loading' } | { status: 'loaded'; data: T } | { status: 'error'; message: string }` (Discriminated Union statt Boolean-Flags, siehe `typescript.md`)
 - [ ] `ng generate service services/content --skip-tests` → `ContentService`: `getMainHub(): Observable<MainHub>` (GET `/assets/main_hub.json`), `getWorldConfig(configPath: string): Observable<WorldConfig>` (GET `/${configPath}`)
 - [ ] `ng generate service services/game-state --skip-tests` → `GameStateService`: `readonly activeThemeId = signal<string | null>(null)`, `readonly activeDifficultyLevel = signal<string | null>(null)`, Methoden `setActiveTheme(themeId: string): void`, `setActiveDifficultyLevel(levelId: string): void`, `reset(): void`
@@ -84,7 +120,15 @@ Kontext/Optionen/Entscheidung/Konsequenzen).
 - [ ] `ng generate component features/main-hub/theme-card --skip-tests` → reine Präsentationskomponente, `input.required<InstalledTheme>()`, `output<string>()` für "ausgewählt"
 - [ ] `ng generate component features/main-hub/difficulty-picker --skip-tests` → `input.required<DifficultyLevel[]>()`, `output<string>()`, Info-Icon mit Tooltip (nativ `title`-Attribut reicht für Phase 1, kein Tooltip-Lib-Overhead)
 - [ ] `HttpClient` in `app.config.ts` per `provideHttpClient()` registrieren
-- [ ] BEM-SCSS für `theme-card`, `difficulty-picker`, `main-hub` gemäß `angular.md`
+- [ ] `frontend/src/styles/_tokens.scss` anlegen: die Custom-Properties aus
+      `docs/design/prototype/ds/styles.css` **wertgleich** übernehmen (Farben,
+      Schrift, Abstände, Radien, Schatten) und global in `styles.scss`
+      einbinden. Schriften `Caprasimo` (Headings) und `Figtree` (Body) lokal
+      unter `frontend/public/fonts/` ablegen und per `@font-face` einbinden —
+      kein CDN, das Spiel soll offline laufen.
+- [ ] BEM-SCSS für `theme-card`, `difficulty-picker`, `main-hub` gemäß
+      `angular.md` — **ausschließlich** mit den Tokens aus `_tokens.scss`,
+      keine Hex-Werte oder px-Abstände direkt in Komponenten
 - [ ] `docs/decisions/001-content-delivery-mvp-phase1.md` schreiben (ADR, siehe oben)
 
 ## Doc-Updates

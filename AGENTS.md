@@ -33,23 +33,28 @@ werden zu Lernspielen. Voller Kontext: [docs/PROJECT.md](docs/PROJECT.md).
 | [docs/PROJECT.md](docs/PROJECT.md) | Ziel, Scope, Nicht-Ziele, Constraints, Meilensteine |
 | [docs/glossary.md](docs/glossary.md) | Gemeinsames Vokabular (Themenwelt, Lernstufe, Minispiel, ...) |
 | [docs/code-map.md](docs/code-map.md) | Feature → Ordner, Namensschema über alle Layer |
+| [docs/design/](docs/design/) | Visuelles Zielbild: Design-Tokens, alle Screens, lauffähiger Prototyp |
 | [docs/decisions/](docs/decisions/) | Architektur-Entscheidungen (ADRs) |
 | [docs/planning/](docs/planning/) | Aktive Pläne (Git-Dateien, kein Manager-Tracker für dieses Solo-Projekt) |
 | [docs/archive/](docs/archive/) | Abgeschlossene Pläne + Ursprungskonzept |
 | [docs/knowledge/INDEX.md](docs/knowledge/INDEX.md) | Projekt-Wissenskatalog |
-| `data/_authoring/README.md` | Content-Authoring-Toolkit: JSON-Schema, LLM-Prompt, Asset-Vorgaben, Flux-Prompts |
+| `data/_authoring/README.md` | Content-Authoring-Toolkit: JSON-Schema, LLM-Prompt, Asset-Vorgaben, Bild-Prompts |
 
 ## Content-Repository
 
-Content (Welten, Episoden, Dialoge, Minispiele) lebt als statische JSON unter
-`data/themes/<theme_id>/` — versioniert wie Code, kein Editor im MVP. Das
-verbindliche Schema + LLM-Copy-Paste-Prompt liegt unter `data/_authoring/`.
-**Jede Engine-Änderung, die das Content-Format betrifft, zieht die vier
-Authoring-Toolkit-Dateien im selben Commit mit** — siehe
+Content (Welten, Episoden, Dialoge, Minispiele, Sammelkarten) lebt als statische
+JSON unter `data/themes/<theme_id>/` — versioniert wie Code, kein Editor im MVP.
+Das verbindliche Schema + LLM-Copy-Paste-Prompt liegt unter `data/_authoring/`.
+**Jede Engine-Änderung, die das Content-Format betrifft, zieht das
+Authoring-Toolkit im selben Commit mit** — siehe
 `data/_authoring/README.md` → „Pflegepflicht".
 
 ## Critical Rules
 
 1. **Content ist read-only über die API** — Schreibzugriff auf `data/themes/` gibt es nur per Git-Commit, nie über einen Endpoint.
-2. **`game_type` und `difficulty_level` sind geschlossene, dokumentierte Wertemengen** — neue Werte zuerst in `data/_authoring/JSON_SCHEMA_REFERENCE.md`, dann erst im Code.
+2. **`game_type`, `difficulty_level` und `rarity` sind geschlossene, dokumentierte Wertemengen** — neue Werte zuerst in `data/_authoring/JSON_SCHEMA_REFERENCE.md`, dann erst im Code.
 3. **Zwei Bühnenplätze (`left`/`right`), keine Koordinaten** — das ist eine bewusste Vereinfachung, kein Provisorium, das später "richtig" gebaut wird.
+4. **Fortschritt gehört nie ins Content** — was ein Kind geschafft, gesammelt oder eingestellt hat, liegt im Spielstand in der Datenbank. Kein `status`, `stars`, `earned` in einer JSON-Datei.
+5. **Die Engine erzeugt keine Sammelkarten** — sie zeigt fertige Kartenbilder, schaltet sie frei und druckt sie. Ein Kartengenerator ist ausdrücklich kein Teil dieses Projekts.
+6. **Kein öffentlich erreichbarer Zugang ohne Login** — der Betrieb ist auf einen privaten Nutzerkreis beschränkt, siehe `docs/PROJECT.md` → Constraints. Das ist eine Deploy-Bedingung, kein Feature-Wunsch.
+7. **Kartenkoordinaten sind Prozentwerte** — Positionen und Größen auf allen Karten beziehen sich auf das Kartenbild, nie auf Pixel des Bildschirms.

@@ -22,7 +22,7 @@ Conventional Commits, deutsch oder englisch im Body — Betreffzeile knapp:
 ## Content-Commits (Sonderfall)
 
 Jeder Commit, der `data/themes/**` ändert, hält sich an die Checkliste in
-`data/_authoring/JSON_SCHEMA_REFERENCE.md` Abschnitt 6, bevor er entsteht —
+`data/_authoring/JSON_SCHEMA_REFERENCE.md` Abschnitt 9, bevor er entsteht —
 kaputte Referenzen (fehlende Sprites, falsche `active_map_id`) sind hier
 kein Lint-Fehler, sondern ein Laufzeit-Crash im Spiel.
 

@@ -1,0 +1,83 @@
+{
+  "theme_id": "piraten_sachkunde",
+  "name": "Piratenwelt",
+  "difficulty_levels": [
+    { "id": "matrose", "label": "Matrose (Leicht)" },
+    { "id": "navigator", "label": "Navigator (Mittel)" },
+    { "id": "kapitaen", "label": "Kapitän (Schwer)" }
+  ],
+  "card_format": { "width_mm": 63, "height_mm": 88, "canvas": [630, 880], "dpi": 300, "sheet": "A4", "grid": [3, 3] },
+  "cards": [
+    { "id": "kapitaen_ruben", "name": "Kapitän Ruben", "set": "Etappe 1 · Hafendamm", "rarity": "selten", "asset": "karte_kapitaen_ruben.png", "status": "owned", "earned": "12.05.", "flavor": "Er kennt jede Strömung – nur seine Karte nicht mehr.", "hint": "" },
+    { "id": "nala", "name": "Nala", "set": "Etappe 1 · Hafendamm", "rarity": "selten", "asset": "karte_nala.png", "status": "owned", "earned": "12.05.", "flavor": "Ihr Kompass zeigt immer in dieselbe Richtung.", "hint": "" },
+    { "id": "hafendamm", "name": "Der alte Hafendamm", "set": "Etappe 1 · Hafendamm", "rarity": "haeufig", "asset": "karte_hafendamm.png", "status": "owned", "earned": "12.05.", "flavor": "Hier beginnt jede Reise.", "hint": "" },
+    { "id": "moewe_pip", "name": "Möwe Pip", "set": "Etappe 1 · Hafendamm", "rarity": "haeufig", "asset": "karte_moewe_pip.png", "status": "locked", "earned": "", "flavor": "Fliegt immer zum nächsten Land.", "hint": "Etappe 1 mit 3 Sternen abschließen" },
+    { "id": "windmuehlen_dorf", "name": "Windmühlen-Dorf", "set": "Etappe 2 · East Blue", "rarity": "haeufig", "asset": "karte_windmuehlen_dorf.png", "status": "owned", "earned": "heute", "flavor": "Vier Flügel, vier Richtungen.", "hint": "" },
+    { "id": "kompassrose", "name": "Die Kompassrose", "set": "Etappe 2 · East Blue", "rarity": "legendaer", "asset": "karte_kompassrose.png", "status": "locked", "earned": "", "flavor": "Norden, Osten, Süden, Westen – nie wieder verlaufen.", "hint": "Alle 3 Fragen im Windmühlen-Dorf lösen" },
+    { "id": "nordstern", "name": "Der Nordstern", "set": "Etappe 2 · East Blue", "rarity": "selten", "asset": "karte_nordstern.png", "status": "locked", "earned": "", "flavor": "Steht nachts still am Himmel.", "hint": "Alten Hafen erkunden" },
+    { "id": "leuchtturm", "name": "Leuchtturm von East Blue", "set": "Etappe 2 · East Blue", "rarity": "selten", "asset": "karte_leuchtturm.png", "status": "locked", "earned": "", "flavor": "Sein Licht dreht sich einmal pro Minute.", "hint": "Ort „Leuchtturm“ freispielen" },
+    { "id": "sturmwolke", "name": "Die Sturmwolke", "set": "Etappe 3 · Sturmbucht", "rarity": "haeufig", "asset": "karte_sturmwolke.png", "status": "locked", "earned": "", "flavor": "Dunkel, laut und schnell vorbei.", "hint": "Etappe 3 freispielen" },
+    { "id": "wetterhahn", "name": "Der Wetterhahn", "set": "Etappe 3 · Sturmbucht", "rarity": "haeufig", "asset": "karte_wetterhahn.png", "status": "locked", "earned": "", "flavor": "Zeigt, woher der Wind weht.", "hint": "Etappe 3 freispielen" },
+    { "id": "wolkeninsel", "name": "Die Wolkeninsel", "set": "Etappe 5 · Wolkeninsel", "rarity": "legendaer", "asset": "karte_wolkeninsel.png", "status": "locked", "earned": "", "flavor": "Liegt höher als jeder Mast.", "hint": "Etappe 5 erreichen" },
+    { "id": "logbuch", "name": "Das letzte Logbuch", "set": "Etappe 6 · Logbuch", "rarity": "legendaer", "asset": "karte_logbuch.png", "status": "locked", "earned": "", "flavor": "Alles, was die Crew gelernt hat.", "hint": "Die ganze Reise abschließen" }
+  ],
+  "maps": [
+    {
+      "id": "hub_starchart",
+      "kind": "hub_map",
+      "name": "Planetenkarte",
+      "background": "map_planetenkarte.webp",
+      "nodes": [
+        { "id": "piraten", "name": "Piratenwelt", "x": 25, "y": 66, "size": 200, "status": "current", "world_ref": "piraten_sachkunde" },
+        { "id": "sterne", "name": "Sternenreise", "x": 54, "y": 30, "size": 150, "status": "locked", "world_ref": "sternen_mathe" },
+        { "id": "antike", "name": "Alte Zeiten", "x": 82, "y": 66, "size": 168, "status": "locked", "world_ref": "antike_geschichte" }
+      ],
+      "routes": [["piraten", "sterne"], ["sterne", "antike"]]
+    },
+    {
+      "id": "arc_overview",
+      "kind": "arc_map",
+      "name": "Die Reise der Windmühlen-Crew",
+      "background": "map_ostmeer_uebersicht.webp",
+      "nodes": [
+        { "id": "hafendamm", "name": "Abschied am Hafendamm", "x": 11, "y": 62, "width": 132, "height": 96, "shape": "52% 44% 58% 40%", "status": "done", "stars": 3, "asset": "ep_01.webp" },
+        { "id": "east_blue", "name": "Die Karte von East Blue", "x": 30, "y": 46, "width": 184, "height": 132, "shape": "46% 56% 40% 60%", "status": "current", "stars": 1, "asset": "ep_02.webp" },
+        { "id": "sturmbucht", "name": "Sturm über der Bucht", "x": 46, "y": 66, "width": 138, "height": 100, "shape": "56% 40% 50% 48%", "status": "locked", "stars": 0, "asset": "ep_03.webp" },
+        { "id": "alabasta", "name": "Königreich Alabasta", "x": 62, "y": 28, "width": 150, "height": 104, "shape": "44% 58% 42% 60%", "status": "locked", "stars": 0, "asset": "ep_04.webp" },
+        { "id": "wolkeninsel", "name": "Die Wolkeninsel", "x": 78, "y": 66, "width": 128, "height": 92, "shape": "58% 42% 54% 46%", "status": "locked", "stars": 0, "asset": "ep_05.webp" },
+        { "id": "logbuch", "name": "Das letzte Logbuch", "x": 91, "y": 30, "width": 120, "height": 88, "shape": "50% 50% 44% 56%", "status": "locked", "stars": 0, "asset": "ep_06.webp" }
+      ],
+      "routes": [
+        ["hafendamm", "east_blue"],
+        ["east_blue", "sturmbucht"],
+        ["sturmbucht", "alabasta"],
+        ["alabasta", "wolkeninsel"],
+        ["wolkeninsel", "logbuch"]
+      ]
+    },
+    {
+      "id": "east_blue",
+      "kind": "location_map",
+      "name": "East Blue",
+      "background": "map_east_blue.webp",
+      "islands": [
+        { "x": 23, "y": 66, "width": 300, "height": 210, "shape": "52% 44% 58% 40%", "fill": "accent-2-500" },
+        { "x": 18, "y": 74, "width": 170, "height": 110, "shape": "56% 40% 50% 48%", "fill": "accent-2-600" },
+        { "x": 50, "y": 32, "width": 250, "height": 168, "shape": "46% 56% 40% 60%", "fill": "accent-2-500" },
+        { "x": 76, "y": 68, "width": 230, "height": 156, "shape": "44% 58% 42% 60%", "fill": "accent-300" },
+        { "x": 90, "y": 30, "width": 150, "height": 104, "shape": "60% 40% 52% 48%", "fill": "neutral-300" }
+      ],
+      "nodes": [
+        { "id": "dorf", "name": "Windmühlen-Dorf", "x": 23, "y": 64, "status": "current", "episode_ref": "arc_01_foosha" },
+        { "id": "hafen", "name": "Alter Hafen", "x": 50, "y": 30, "status": "done", "episode_ref": "arc_01_hafen" },
+        { "id": "leuchtturm", "name": "Leuchtturm", "x": 76, "y": 66, "status": "locked", "episode_ref": "arc_01_leuchtturm" },
+        { "id": "riff", "name": "Riff der Möwen", "x": 90, "y": 28, "status": "locked", "episode_ref": "arc_01_riff" }
+      ],
+      "routes": [
+        ["dorf", "hafen"],
+        ["hafen", "leuchtturm"],
+        ["hafen", "riff"]
+      ]
+    }
+  ]
+}
