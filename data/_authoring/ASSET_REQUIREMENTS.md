@@ -1,9 +1,10 @@
 # Asset Requirements
 
-Jede Welt braucht drei Asset-Typen: Hintergründe, Charakter-Sprites, Audio.
-Ohne diese Vorgaben generiert dir jedes Bildmodell eine andere Auflösung pro
-Bild — und die Engine positioniert Sprites auf zwei festen Plätzen, also
-reißt jede Abweichung im Seitenverhältnis die Komposition auseinander.
+Jede Welt braucht fünf Asset-Typen: Hintergründe, Charakter-Sprites, Audio,
+Kartengrafiken und Sammelkarten. Ohne diese Vorgaben generiert dir jedes
+Bildmodell eine andere Auflösung pro Bild — und die Engine positioniert Sprites
+auf zwei festen Plätzen, also reißt jede Abweichung im Seitenverhältnis die
+Komposition auseinander.
 
 ---
 
@@ -12,14 +13,21 @@ reißt jede Abweichung im Seitenverhältnis die Komposition auseinander.
 ```text
 /data/themes/<theme_id>/
 ├── world_config.json
+├── cards.json
 ├── cover.webp
 ├── maps/
-│   └── map_<map_id>.webp          ← pro Story-Arc eine Datei
+│   ├── map_<map_id>.webp           ← pro Story-Arc eine Ortskarte
+│   ├── <arc_overview_bg>.webp      ← Hintergrund der Etappenkarte
+│   └── ep_<nr>.webp                ← Etappen-Illustration je Story-Arc
 ├── backgrounds/
 │   └── <scene_name>.webp
 ├── sprites/
 │   └── <character_id>/
 │       └── <character_id>_<emotion>.png
+├── answers/
+│   └── antwort_<slug>.png          ← Bildantworten für den Vorlesemodus
+├── cards/
+│   └── karte_<card_id>.png         ← Sammelkarten, 630 × 880 px
 ├── audio/
 │   └── voices/
 │       └── <character_id>_<episode_id>_<line_nr>.mp3
@@ -92,9 +100,57 @@ Dialogzeile stumm oder bricht — nicht optional.
 nachträglich angeflanscht. Bei One Piece zum Beispiel: `map_east_blue.webp`,
 `map_alabasta.webp`, `map_skypiea.webp`, jede mit eigenen Episoden-Nodes.
 
-🟡 Exakte Koordinaten-Zuordnung (Map → Node → x/y) ist noch nicht final
-spezifiziert — wird mit Phase 2 der Engine nachgezogen, diese Datei dann
-entsprechend aktualisieren.
+Dazu kommt **eine Etappenkarte pro Welt** — die Übersicht über alle Arcs, mit
+eigenem Hintergrund und einer kleinen Illustration je Etappe (`ep_01.webp` …).
+Die Illustrationen werden als organische Inselformen beschnitten dargestellt,
+also motivisch mittig anlegen und keine wichtigen Details an den Rand legen.
+
+**Node-Koordinaten sind Prozentwerte, keine Pixel.** Position und Größe jedes
+Kartenpunkts stehen als Prozent der Kartenbildbreite bzw. -höhe in
+`world_config.json` (Schema-Referenz Abschnitt 2). Damit sitzt ein Punkt auf
+jedem Gerät auf derselben Landmarke. Praktisch heißt das beim Zeichnen: die
+Landmarken deutlich sichtbar und nicht zu nah am Bildrand platzieren, sonst
+liegt der Punkt später halb außerhalb.
+
+---
+
+## 5. Sammelkarten
+
+Fertige Kartenbilder, die als Belohnung freigeschaltet und auf DIN A4
+ausgedruckt werden. Die Engine erzeugt sie nicht — sie liefert sie aus.
+
+| Eigenschaft | Vorgabe |
+|---|---|
+| Format | `.png` |
+| Auflösung | **exakt 630 × 880 px** (63 × 88 mm bei 300 dpi) |
+| Dateiname | `karte_<card_id>.png`, `card_id` identisch zu `cards.json` |
+| Inhalt | randlos bis zur Kante — die Karte wird vollflächig gedruckt und ausgeschnitten |
+| Farbraum | sRGB |
+
+Randlos heißt wörtlich: Der Druckbogen legt die Bilder ohne Rahmen in ein
+3×3-Raster, und geschnitten wird auf der Linie. Wichtige Motivteile und Text
+mindestens 3 mm (= 30 px) von der Kante weghalten, sonst schneidet die Schere
+sie ab.
+
+Ein passender Prompt für Kartenrahmen und Kartenmotiv liegt in
+[image-prompts/CARDS.md](image-prompts/CARDS.md).
+
+---
+
+## 6. Bildantworten (Vorlesemodus)
+
+Für Kinder, die noch nicht lesen, zeigt jedes Multiple-Choice-Minispiel ein Bild
+über jeder Antwort. Ohne diese Bilder rät das Kind.
+
+| Eigenschaft | Vorgabe |
+|---|---|
+| Format | `.png` mit Alpha-Kanal |
+| Seitenverhältnis | quadratisch, mind. 512 × 512 px |
+| Dateiname | `antwort_<slug>.png`, Slug in `snake_case` ohne Umlaute |
+| Inhalt | ein einzelnes, eindeutig erkennbares Motiv, kein Text im Bild |
+
+Der Dateiname steht als `image` im Minispiel-JSON und wird **nicht** aus dem
+Antworttext berechnet — sonst bricht jede Textkorrektur das Bild.
 
 ---
 

@@ -30,16 +30,32 @@ Episoden pro Arc: {z. B. 3}
 Cast: {z. B. "Shanks, Luffy (Kind), Nami, Ace" — Beschreibung reicht, keine
   separate Stammdatendatei nötig}
 Ton/Stil: {z. B. "abenteuerlich, leicht augenzwinkernd"}
+Zielalter: {z. B. "6-10 Jahre, auch Kinder die noch nicht lesen"}
 
 Erzeuge folgende Dateien vollständig:
-1. world_config.json — mit ALLEN genannten Maps in maps[]
-2. Pro Episode: episodes/<arc_id>_<episode_nr>.json — vollständige
+1. world_config.json — mit ALLEN genannten Maps in maps[], je Map die
+   nodes[] mit Prozent-Koordinaten (x/y zwischen 0 und 100), plus
+   arc_overview mit einem stages[]-Eintrag pro Arc
+2. cards.json — card_format unverändert übernehmen, plus eine Sammelkarte
+   pro Episode und zusätzlich 1-2 seltene Karten pro Arc. Jede Karte:
+   id, name, set (= "Etappe N · <Arc-Name>"), rarity, asset, flavor, hint.
+   Der hint sagt in EINEM kindgerechten Satz, wie man die Karte bekommt.
+3. Pro Episode: episodes/<arc_id>_<episode_nr>.json — vollständige
    dialogue_sequence (mind. 4 Zeilen, abwechselnd position left/right,
-   pro Zeile sprite + name + text), background, korrektes active_map_id,
-   ein minigame_event
-3. Pro Episode genau ein minigames/<minigame_id>.json mit EINER Variante
+   pro Zeile sprite + name + text + text_simple), background, korrektes
+   active_map_id, passendes node_id, ein minigame_event und eine
+   reward_card_id aus cards.json
+4. Pro Episode genau ein minigames/<minigame_id>.json mit EINER Variante
    pro übergebener Lernstufe — Inhalt muss sich nach Schwierigkeit
-   unterscheiden, nicht nur im Wortlaut
+   unterscheiden, nicht nur im Wortlaut. Bei MultipleChoiceGame hat jede
+   Option ein image (antwort_<slug>.png), und die leichteste Lernstufe
+   bekommt zusätzlich question_simple.
+
+Regeln für text_simple und question_simple:
+- kurze Hauptsätze, keine Nebensatz-Ketten, keine Fremdwörter
+- inhaltlich dasselbe wie die Langfassung, nur einfacher — nichts weglassen,
+  was zum Verständnis der Aufgabe nötig ist
+- maximal etwa 12 Wörter pro Satz
 
 === AUSGABEFORMAT ===
 Gib jede Datei einzeln aus, in dieser Form:
@@ -59,7 +75,7 @@ Keine Erklärungen zwischen den Dateien. Keine zusammenfassende Antwort danach.
 - **Ein Durchlauf = eine Welt, alle Arcs.** Bei vielen Arcs/Episoden lieber
   pro Arc einen eigenen Lauf machen (Iterations-Prompt unten) — lange Outputs
   verlieren Schema-Disziplin.
-- **Nach der Generierung: Checkliste aus `JSON_SCHEMA_REFERENCE.md` Abschnitt 6
+- **Nach der Generierung: Checkliste aus `JSON_SCHEMA_REFERENCE.md` Abschnitt 9
   manuell durchgehen.** Referenzintegrität über viele Dateien hält kein Modell
   zuverlässig durch.
 - **`correct_index` und `accepted_answers` immer selbst gegenlesen.**
@@ -69,8 +85,17 @@ Keine Erklärungen zwischen den Dateien. Keine zusammenfassende Antwort danach.
   Wechselgesprächs. Fehler ist es, wenn eine Figur fälschlich die Seite
   wechselt, ohne dass das dramaturgisch Sinn ergibt.
 - Sprite-Dateinamen generiert das Modell nur als String — die Bilder selbst
-  entstehen über `FLUX_PROMPT_LIBRARY.md`. Namen vorher festlegen und in
-  beide Prompts konsistent einspeisen.
+  entstehen über `image-prompts/SPRITES.md`. Namen vorher festlegen und in
+  beide Prompts konsistent einspeisen. Das gilt genauso für Kartenbilder
+  (`karte_<id>.png`) und Bildantworten (`antwort_<slug>.png`).
+- **Koordinaten immer nachjustieren.** Das Modell kann die Kartenillustration
+  nicht sehen und rät die Prozentwerte. Nach der Generierung einmal die Karte
+  im Spiel öffnen und die Punkte auf die tatsächlichen Landmarken schieben.
+- **`hint` gegenlesen.** Er ist das einzige, was ein Kind vor einer
+  verschlossenen Karte sieht — „Alle 3 Fragen im Windmühlen-Dorf lösen" ist
+  brauchbar, „Fortschritt erzielen" ist wertlos.
+- **`text_simple` laut lesen.** Was beim Vorlesen stolpert, stolpert auch bei
+  der Sprachausgabe.
 
 ## Iterations-Prompt (weiteren Arc / weitere Episode nachbauen)
 
@@ -82,7 +107,7 @@ Hier eine bestehende Episode als Stilreferenz:
 [episode_xy.json einfügen]
 
 Hier das Schema zur Kontrolle:
-[JSON_SCHEMA_REFERENCE.md, Abschnitt 3 + 4]
+[JSON_SCHEMA_REFERENCE.md, Abschnitt 4 + 5]
 
 Erstelle einen neuen Arc "{NEUER_ARC_NAME}" als zusätzlichen Eintrag in
 maps[], plus {ANZAHL} neue Episoden mit Lerninhalt {NEUER_INHALT}. Cast und

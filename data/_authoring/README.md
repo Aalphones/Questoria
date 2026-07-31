@@ -12,7 +12,7 @@ verstehen, plus fertige Prompts für Text- und Bildgenerierung.
 | `JSON_SCHEMA_REFERENCE.md` | Vollständige, verbindliche Struktur aller Content-JSON-Dateien |
 | `LLM_WORLD_BUILDER_PROMPT.md` | Copy-Paste-Prompt für Claude/ChatGPT/Gemini, der eine komplette Welt erzeugt |
 | `ASSET_REQUIREMENTS.md` | Welche Dateien (Bilder, Audio) in welchem Format wo liegen müssen |
-| `FLUX_PROMPT_LIBRARY.md` | Prompt-Vorlagen für Hintergrund-Clearing und Sprite-Erstellung |
+| `image-prompts/` | Bild-Prompt-Werkstatt: Modellwahl und Einstellungen plus Vorlagen für Hintergründe, Sprites, Karten, Sammelkarten und Bildantworten |
 
 ## Designentscheidungen, die hier verbindlich gelten
 
@@ -28,20 +28,31 @@ verstehen, plus fertige Prompts für Text- und Bildgenerierung.
   lässt — Multiple Choice ist der Anfang, nicht das Konzept.
 - **Mehrere Karten pro Welt sind Standard, kein Sonderfall.** Eine Welt
   bildet typischerweise mehrere Story-Arcs ab, jede mit eigener Map.
+- **Kartenpunkte werden in Prozent positioniert, nie in Pixeln.** Die
+  Koordinaten beziehen sich auf das Kartenbild, nicht auf den Bildschirm —
+  nur so sitzt ein Punkt auf jedem Gerät auf derselben Landmarke.
+- **Fortschritt gehört nie ins Content.** Was ein Kind geschafft, gesammelt
+  oder eingestellt hat, liegt im Spielstand. Content ist für alle gleich.
+- **Sammelkarten sind fertige Bilder.** Die Engine erzeugt keine Karten, sie
+  zeigt und druckt sie. Kartenrahmen und Motive entstehen vorher als PNG.
+- **Jeder vorgelesene Text hat eine eigene Fassung.** `text_simple` ist kein
+  Duplikat von `text`, sondern die kindgerechte Kurzform.
 
 ## Pflegepflicht — nicht verhandelbar
 
 Jede Engine-Änderung, die das Content-Format betrifft, ist erst fertig, wenn
-diese vier Dateien mitgezogen wurden — vor allem ein neuer `game_type` in
-der Tabelle aus `JSON_SCHEMA_REFERENCE.md` Abschnitt 4.
+das ganze Toolkit mitgezogen wurde — vor allem ein neuer `game_type` in
+der Tabelle aus `JSON_SCHEMA_REFERENCE.md` Abschnitt 5.
 
 **Definition of Done bei Schema-Änderungen:**
 
 1. `JSON_SCHEMA_REFERENCE.md` aktualisieren — Feld dokumentieren, Beispiel anpassen
 2. `LLM_WORLD_BUILDER_PROMPT.md` aktualisieren — neue Regel/Constraint aufnehmen
 3. `ASSET_REQUIREMENTS.md` aktualisieren, falls neue Asset-Typen nötig sind
-4. `FLUX_PROMPT_LIBRARY.md` aktualisieren, falls neue Bildtypen nötig sind
-5. Gleicher Pull Request wie die Engine-Änderung. Kein „mach ich später".
+4. `image-prompts/` aktualisieren, falls neue Bildtypen nötig sind — neue
+   Vorlage anlegen und in `image-prompts/README.md` eintragen
+5. `docs/design/README.md` prüfen, falls die Änderung das Zielbild betrifft
+6. Gleicher Pull Request wie die Engine-Änderung. Kein „mach ich später".
 
 Wird das nicht eingehalten, generieren LLMs gegen ein Schema von letzter
 Woche — und du debuggst Montagmorgen ein Minispiel, das nie geladen hätte
