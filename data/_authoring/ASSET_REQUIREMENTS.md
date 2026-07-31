@@ -48,9 +48,15 @@ zentrale Charakterdatei wäre eine zweite Wahrheitsquelle ohne Mehrwert.
 |---|---|
 | Format | `.webp` |
 | Seitenverhältnis | 16:9 |
-| Auflösung | 1920×1080 (Minimum 1280×720) |
+| Auflösung | 1920×1080, **Untergrenze 1280×720** — und die nur für vorhandenes Material |
 | Inhalt | Szenerie OHNE Charaktere — die kommen als separate Sprites obendrauf |
 | Stil | konsistent pro Welt, ein Look durchziehen |
+
+**1280×720 ist keine Generierungsgröße.** Die kurze Kante liegt damit unter dem
+Minimum der eingesetzten Bildmodelle — neu erzeugte Hintergründe entstehen
+mindestens in 1536×864, siehe
+[image-prompts/MODEL_SETTINGS.md](image-prompts/MODEL_SETTINGS.md). Die
+Untergrenze gilt nur für Bilder, die schon existieren.
 
 Bosskampf-/Dramatik-Varianten desselben Hintergrunds (z. B. „verdorben")
 werden als eigene Datei gespeichert, gleicher Präfix:
@@ -122,7 +128,7 @@ ausgedruckt werden. Die Engine erzeugt sie nicht — sie liefert sie aus.
 | Eigenschaft | Vorgabe |
 |---|---|
 | Format | `.png` |
-| Auflösung | **exakt 630 × 880 px** (63 × 88 mm bei 300 dpi) |
+| Auflösung | **exakt 630 × 880 px** (63 × 88 mm bei 300 dpi) — Ausgabegröße |
 | Dateiname | `karte_<card_id>.png`, `card_id` identisch zu `cards.json` |
 | Inhalt | randlos bis zur Kante — die Karte wird vollflächig gedruckt und ausgeschnitten |
 | Farbraum | sRGB |
@@ -131,6 +137,10 @@ Randlos heißt wörtlich: Der Druckbogen legt die Bilder ohne Rahmen in ein
 3×3-Raster, und geschnitten wird auf der Linie. Wichtige Motivteile und Text
 mindestens 3 mm (= 30 px) von der Kante weghalten, sonst schneidet die Schere
 sie ab.
+
+**Nie in 630 × 880 generieren.** Das liegt unter dem Minimum der eingesetzten
+Bildmodelle — erzeugt wird in 1024 × 1432 (bzw. 1024 × 1440) und anschließend
+verkleinert.
 
 Ein passender Prompt für Kartenrahmen und Kartenmotiv liegt in
 [image-prompts/CARDS.md](image-prompts/CARDS.md).
@@ -145,12 +155,17 @@ Für Kinder, die noch nicht lesen, zeigt jedes Multiple-Choice-Minispiel ein Bil
 | Eigenschaft | Vorgabe |
 |---|---|
 | Format | `.png` mit Alpha-Kanal |
-| Seitenverhältnis | quadratisch, mind. 512 × 512 px |
+| Seitenverhältnis | quadratisch, **Ausgabegröße** mind. 512 × 512 px |
 | Dateiname | `antwort_<slug>.png`, Slug in `snake_case` ohne Umlaute |
 | Inhalt | ein einzelnes, eindeutig erkennbares Motiv, kein Text im Bild |
 
 Der Dateiname steht als `image` im Minispiel-JSON und wird **nicht** aus dem
 Antworttext berechnet — sonst bricht jede Textkorrektur das Bild.
+
+**512 × 512 ist die Ausgabegröße, nicht die Generierungsgröße.** Sie liegt
+unter dem Minimum aller eingesetzten Bildmodelle — erzeugt wird in 1024 × 1024
+und anschließend verkleinert, siehe
+[image-prompts/ANSWER_IMAGES.md](image-prompts/ANSWER_IMAGES.md).
 
 ---
 
