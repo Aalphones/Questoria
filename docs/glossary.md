@@ -1,4 +1,4 @@
-# Glossar — EduQuest
+# Glossar — Questoria
 
 Ein Begriff, eine Bedeutung. Neu abgeklärte Fachbegriffe hier ergänzen, sobald
 sie im Code, in Docs oder Tickets auftauchen.

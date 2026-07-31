@@ -1,4 +1,4 @@
-# Knowledge Gaps — EduQuest
+# Knowledge Gaps — Questoria
 
 Bemerkte, aber noch nicht gefüllte Wissenslücken. Aufnahme-Schwelle:
 wiederverwendbar, haltbar, nicht jetzt billig zu klären.

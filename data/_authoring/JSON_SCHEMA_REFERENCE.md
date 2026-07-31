@@ -1,4 +1,4 @@
-# JSON Schema Reference — EduQuest Engine Content
+# JSON Schema Reference — Questoria Engine Content
 
 Verbindliche Struktur für alle Content-Dateien. Jede Abweichung ist ein Bug,
 keine Variante. Ein LLM, das Content generiert, MUSS diese Schemas exakt

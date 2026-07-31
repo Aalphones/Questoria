@@ -1,4 +1,4 @@
-# EduQuest
+# Questoria
 
 Story-basierte Lernplattform: bekannte Fandom-Welten (One Piece, Miraculous,
 ...) werden zu Lernspielen. Kinder erkunden eine Themenwelt über eine

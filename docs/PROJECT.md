@@ -1,4 +1,4 @@
-# EduQuest — Kontext
+# Questoria — Kontext
 
 ## Ziel & Vision
 
@@ -47,6 +47,7 @@ der Praxis bewährt hat (Phase 5+).
 | Datenbank | MySQL/MariaDB | Nutzerdaten, Profile, Spielstände, Statistiken — referenziert nur Content-IDs, nie Content selbst |
 | Content | Statische, versionierte JSON-Dateien im Repo | Zweite Wahrheitsquelle vermeiden; Editor kommt erst, wenn das Format sich bewährt hat |
 | Hosting | Shared-Hosting-kompatibel: PHP 8.2+, MySQL/MariaDB, Apache/Nginx, HTTPS | Kein Docker/Kubernetes/Cloud im MVP |
+| Domain | `questoria.info` | |
 
 ## Constraints
 

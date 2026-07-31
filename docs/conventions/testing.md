@@ -1,4 +1,4 @@
-# Testing Conventions — EduQuest
+# Testing Conventions — Questoria
 
 ## Frontend (`frontend/`)
 

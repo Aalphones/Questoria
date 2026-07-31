@@ -1,4 +1,4 @@
-# Code Map — EduQuest
+# Code Map — Questoria
 
 Feature → Ordner, grob gehalten (kein Zeilen-Tracking — das veraltet sofort
 und lügt dann). Ziel: „wo ist Feature X" wird ein Read statt N Greps.

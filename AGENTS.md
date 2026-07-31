@@ -1,4 +1,4 @@
-# EduQuest — Agenten-Hub
+# Questoria — Agenten-Hub
 
 Story-basierte Lernplattform: Fandom-Welten (One Piece, Miraculous, ...)
 werden zu Lernspielen. Voller Kontext: [docs/PROJECT.md](docs/PROJECT.md).

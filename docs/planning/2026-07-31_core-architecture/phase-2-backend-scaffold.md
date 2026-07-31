@@ -22,8 +22,8 @@ Rating: **heikel** (JWT/Auth-Skelett ist security-relevant, auch als Stub)
 - [ ] `backend/composer.json` anlegen (PSR-4 `App\` → `src/`, `Tests\` → `tests/`):
       ```json
       {
-        "name": "eduquest/backend",
-        "description": "EduQuest PHP REST API",
+        "name": "questoria/backend",
+        "description": "Questoria PHP REST API",
         "type": "project",
         "require": {
           "php": ">=8.2",
@@ -54,8 +54,8 @@ Rating: **heikel** (JWT/Auth-Skelett ist security-relevant, auch als Stub)
       APP_ENV=local
       DB_HOST=127.0.0.1
       DB_PORT=3306
-      DB_NAME=eduquest
-      DB_USER=eduquest
+      DB_NAME=questoria
+      DB_USER=questoria
       DB_PASS=
       JWT_SECRET=change-me-in-production
       ```

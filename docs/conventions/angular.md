@@ -1,4 +1,4 @@
-# Angular Conventions — EduQuest
+# Angular Conventions — Questoria
 
 > **Source-of-truth references:**
 > - [angular.dev/assets/context/best-practices.md](https://angular.dev/assets/context/best-practices.md)
@@ -15,7 +15,7 @@
 | State | Local signals + services with signals; `@ngrx/signals` only if shared UI state across features grows |
 | Tests | Vitest (Angular's current direction — not Karma/Jasmine) |
 | Build | Angular CLI (`ng build`, `ng serve`) |
-| Selector prefix | `eq-` (e.g. `eq-speech-bubble`) — set in `angular.json` |
+| Selector prefix | `qst-` (e.g. `qst-speech-bubble`) — set in `angular.json` |
 
 ## File & Class Naming (v20+ style guide)
 
@@ -57,7 +57,7 @@ Style `:host` directly instead of wrapping the template in a root `<div>`.
 
 ## Styling — BEM + scoped SCSS
 
-- Block name = component selector without the `eq-` prefix (`eq-speech-bubble` → block `speech-bubble`)
+- Block name = component selector without the `qst-` prefix (`qst-speech-bubble` → block `speech-bubble`)
 - No `ngClass`/`ngStyle` — `[class.bem-modifier]` bindings
 - Animations via `@keyframes` in component SCSS
 

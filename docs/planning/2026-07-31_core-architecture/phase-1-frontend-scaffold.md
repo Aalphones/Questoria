@@ -39,7 +39,7 @@ Kontext/Optionen/Entscheidung/Konsequenzen).
 
 - [ ] `node -v` prüfen (Konfidenz-Ausweis README) — Node 22 erwartet, sonst Version in diesem Task-File korrigieren
 - [ ] `ng new frontend --directory=frontend --style=scss --routing --skip-git --package-manager=npm` im Repo-Root ausführen
-- [ ] `frontend/angular.json`: `"prefix": "eq"` setzen
+- [ ] `frontend/angular.json`: `"prefix": "qst"` setzen
 - [ ] `frontend/angular.json`: Assets-Konfiguration um zwei Einträge erweitern, die zur Build-Zeit kopieren:
       - `../data/themes` (Repo-Root) → `data/themes` im Output
       - `public/assets/main_hub.json` bleibt regulärer Teil von `public/`

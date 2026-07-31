@@ -1,4 +1,4 @@
-# PHP Conventions — EduQuest
+# PHP Conventions — Questoria
 
 > **Source-of-truth references:**
 > - Schwesterprojekt `promptigofant/backend` (gleicher Stack, `.php-cs-fixer.php`, `composer.json`)

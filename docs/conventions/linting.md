@@ -1,4 +1,4 @@
-# Linting Conventions — EduQuest
+# Linting Conventions — Questoria
 
 ## Frontend (`frontend/`)
 

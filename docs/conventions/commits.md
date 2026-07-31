@@ -1,4 +1,4 @@
-# Commit Conventions — EduQuest
+# Commit Conventions — Questoria
 
 > Privates Solo-Projekt (siehe `docs/PROJECT.md` → Constraints) — direkt auf
 > dem Default-Branch, kein Pflicht-Feature-Branch für Kleinkram.

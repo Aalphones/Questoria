@@ -1,4 +1,4 @@
-# TypeScript Conventions — EduQuest
+# TypeScript Conventions — Questoria
 
 > **Source-of-truth references:**
 > - This file is self-contained — the rules below are the full baseline for this project.
@@ -63,7 +63,7 @@ export type GameType = typeof GAME_TYPES[number];
 
 - `import type` for type-only imports
 - No barrel files (`index.ts` re-exports) for large codebases
-- Absolute imports via path aliases (`@eduquest/...`) over `../../../`
+- Absolute imports via path aliases (`@questoria/...`) over `../../../`
 
 ## Functions
 
