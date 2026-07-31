@@ -1,0 +1,18 @@
+# Machine-local / never committed
+.claude/settings.local.json
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+
+# Backend
+backend/vendor/
+backend/.env
+backend/logs/*.log
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+*.log

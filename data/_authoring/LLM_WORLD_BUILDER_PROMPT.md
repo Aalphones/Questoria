@@ -1,0 +1,90 @@
+# LLM World Builder Prompt
+
+Copy-Paste-Vorlage für Claude, ChatGPT, Gemini & Co. Zweck: aus einer kurzen
+Themenbeschreibung eine vollständige, schema-konforme Content-Welt generieren.
+
+Funktioniert nur zusammen mit `JSON_SCHEMA_REFERENCE.md` — beides im selben
+Prompt einfügen, sonst rät das Modell und erfindet Felder.
+
+---
+
+## Prompt-Vorlage
+
+```
+Du erstellst Content für eine Lernspiel-Engine. Halte dich EXAKT an das
+folgende JSON-Schema. Erfinde keine zusätzlichen Felder, lasse keine
+Pflichtfelder weg, ändere keine Feldnamen. Verwende NUR die in der Tabelle
+gelisteten game_type-Werte — keine neuen Spieltypen erfinden.
+
+=== SCHEMA ===
+[Hier den kompletten Inhalt von JSON_SCHEMA_REFERENCE.md einfügen]
+=== ENDE SCHEMA ===
+
+=== AUFGABE ===
+Thema der Welt: {THEMA, z. B. "One Piece - Die hohe See des Wissens"}
+Lerninhalt: {FACH, z. B. "Geometrie und Erdkunde"}
+Lernstufen: {z. B. "matrose, navigator, kapitaen"}
+Story-Arcs / Karten: {z. B. "East Blue, Alabasta, Skypiea" — jeder Arc wird
+  eine eigene Map mit eigenen Episoden}
+Episoden pro Arc: {z. B. 3}
+Cast: {z. B. "Shanks, Luffy (Kind), Nami, Ace" — Beschreibung reicht, keine
+  separate Stammdatendatei nötig}
+Ton/Stil: {z. B. "abenteuerlich, leicht augenzwinkernd"}
+
+Erzeuge folgende Dateien vollständig:
+1. world_config.json — mit ALLEN genannten Maps in maps[]
+2. Pro Episode: episodes/<arc_id>_<episode_nr>.json — vollständige
+   dialogue_sequence (mind. 4 Zeilen, abwechselnd position left/right,
+   pro Zeile sprite + name + text), background, korrektes active_map_id,
+   ein minigame_event
+3. Pro Episode genau ein minigames/<minigame_id>.json mit EINER Variante
+   pro übergebener Lernstufe — Inhalt muss sich nach Schwierigkeit
+   unterscheiden, nicht nur im Wortlaut
+
+=== AUSGABEFORMAT ===
+Gib jede Datei einzeln aus, in dieser Form:
+
+--- FILE: <relativer_pfad> ---
+<reines JSON, kein Markdown-Codeblock, keine Kommentare>
+--- END FILE ---
+
+Keine Erklärungen zwischen den Dateien. Keine zusammenfassende Antwort danach.
+=== ENDE AUFGABE ===
+```
+
+---
+
+## Nutzungshinweise
+
+- **Ein Durchlauf = eine Welt, alle Arcs.** Bei vielen Arcs/Episoden lieber
+  pro Arc einen eigenen Lauf machen (Iterations-Prompt unten) — lange Outputs
+  verlieren Schema-Disziplin.
+- **Nach der Generierung: Checkliste aus `JSON_SCHEMA_REFERENCE.md` Abschnitt 6
+  manuell durchgehen.** Referenzintegrität über viele Dateien hält kein Modell
+  zuverlässig durch.
+- **`correct_index` und `accepted_answers` immer selbst gegenlesen.**
+- **`position`-Werte prüfen:** zwei Figuren im selben Dialog dürfen sich
+  abwechseln, aber zwei direkt aufeinanderfolgende Zeilen auf `left` *und*
+  `right` gleichzeitig sind kein Fehler — das ist der Normalfall eines
+  Wechselgesprächs. Fehler ist es, wenn eine Figur fälschlich die Seite
+  wechselt, ohne dass das dramaturgisch Sinn ergibt.
+- Sprite-Dateinamen generiert das Modell nur als String — die Bilder selbst
+  entstehen über `FLUX_PROMPT_LIBRARY.md`. Namen vorher festlegen und in
+  beide Prompts konsistent einspeisen.
+
+## Iterations-Prompt (weiteren Arc / weitere Episode nachbauen)
+
+```
+Hier ist world_config.json der bestehenden Welt:
+[world_config.json einfügen]
+
+Hier eine bestehende Episode als Stilreferenz:
+[episode_xy.json einfügen]
+
+Hier das Schema zur Kontrolle:
+[JSON_SCHEMA_REFERENCE.md, Abschnitt 3 + 4]
+
+Erstelle einen neuen Arc "{NEUER_ARC_NAME}" als zusätzlichen Eintrag in
+maps[], plus {ANZAHL} neue Episoden mit Lerninhalt {NEUER_INHALT}. Cast und
+Ton bleiben konsistent zur Stilreferenz.
+```

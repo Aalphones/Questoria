@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  frontend:
+    name: Frontend (Angular)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check frontend exists
+        id: check
+        run: echo "exists=$( [ -f frontend/package.json ] && echo true || echo false )" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-node@v4
+        if: steps.check.outputs.exists == 'true'
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install
+        if: steps.check.outputs.exists == 'true'
+        working-directory: frontend
+        run: npm ci
+      - name: Lint
+        if: steps.check.outputs.exists == 'true'
+        working-directory: frontend
+        run: npm run lint
+      - name: Build
+        if: steps.check.outputs.exists == 'true'
+        working-directory: frontend
+        run: npm run build
+      - name: Test
+        if: steps.check.outputs.exists == 'true'
+        working-directory: frontend
+        run: npm test -- --watch=false
+
+  backend:
+    name: Backend (PHP)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check backend exists
+        id: check
+        run: echo "exists=$( [ -f backend/composer.json ] && echo true || echo false )" >> "$GITHUB_OUTPUT"
+      - uses: shivammathur/setup-php@v2
+        if: steps.check.outputs.exists == 'true'
+        with:
+          php-version: '8.2'
+      - name: Install
+        if: steps.check.outputs.exists == 'true'
+        working-directory: backend
+        run: composer install --prefer-dist --no-progress
+      - name: Lint
+        if: steps.check.outputs.exists == 'true'
+        working-directory: backend
+        run: composer lint
+      - name: Test
+        if: steps.check.outputs.exists == 'true'
+        working-directory: backend
+        run: composer test
