@@ -82,26 +82,21 @@ final class MigrationRunner
             throw new RuntimeException("Migration konnte nicht gelesen werden: {$migration}");
         }
 
-        // MySQL committet DDL (CREATE TABLE) implizit — die Transaktion schuetzt hier
-        // nur die INSERT-Buchung, nicht ein Zurueckrollen des CREATE TABLE selbst.
-        // Passt zum Roll-forward-only-Ansatz des Projekts: ein fehlgeschlagener
-        // Migrationslauf wird von Hand repariert, nicht automatisch rueckgaengig gemacht.
-        $this->pdo->beginTransaction();
+        // MySQL committet DDL (CREATE TABLE) implizit und beendet damit jede offene
+        // Transaktion von selbst — ein beginTransaction()/commit() drumherum sieht
+        // nach Sicherheit aus, scheitert beim commit() aber mit "There is no active
+        // transaction", obwohl die Tabelle laengst angelegt ist (gemessen: brach den
+        // Lauf nach jeweils einer Datei ab, geloggt, aber unbemerkt weil der Request
+        // trotzdem normal antwortete). Deshalb bewusst ohne Transaktion: exec() und
+        // die Registry-Buchung sind zwei einzelne, je fuer sich auto-committete
+        // Anweisungen. Passt zum Roll-forward-only-Ansatz: ein fehlgeschlagener
+        // Migrationslauf wird von Hand repariert, nicht automatisch zurueckgerollt.
+        $this->pdo->exec($sql);
 
-        try {
-            $this->pdo->exec($sql);
-
-            $statement = $this->pdo->prepare(
-                'INSERT INTO schema_migrations (migration) VALUES (?)',
-            );
-            $statement->execute([$migration]);
-
-            $this->pdo->commit();
-        } catch (Throwable $failure) {
-            $this->pdo->rollBack();
-
-            throw $failure;
-        }
+        $statement = $this->pdo->prepare(
+            'INSERT INTO schema_migrations (migration) VALUES (?)',
+        );
+        $statement->execute([$migration]);
 
         return ['migration' => $migration, 'status' => 'applied'];
     }

@@ -168,6 +168,23 @@ CLI-Hülle für einen möglichen späteren lokalen Test erhalten.
   => 5` in `Connection::pdo()`. Nach dem Fix: `GET /api/health` gegen eine
   unerreichbare DB antwortet in ~10s mit `200`/`db_connected:false` statt
   nach ~42s mit `500`.
-- Migrationslauf gegen die Live-Datenbank: Deploy erfolgt, `AutoMigrator`
-  läuft jetzt bei jedem echten Request automatisch mit. Ergebnis wird nach dem
-  ersten Live-Request nachgetragen.
+- **Zweiter echter Bug, diesmal erst live auf Produktion aufgefallen:** Die
+  ersten beiden `GET /api/health`-Aufrufe nach dem Deploy liefen beide `200`,
+  aber das Server-Log (`backend/logs/app.log`, per WinSCP read-only geholt —
+  Erfolge werden bewusst nicht geloggt, nur Fehler) zeigte zweimal
+  `"There is no active transaction"`. Ursache: `applyIfPending()` wrappte
+  `exec()` (das CREATE TABLE) und die Registry-Buchung in eine explizite
+  Transaktion — MySQL committet DDL aber implizit und beendet die Transaktion
+  von selbst, der anschließende `commit()`-Aufruf traf also ins Leere und warf.
+  Die Tabelle war jeweils trotzdem angelegt (DDL bereits committet), der Lauf
+  brach aber ab, bevor die nächste Datei drankam — pro Request genau ein
+  Fortschritt, maskiert als „funktioniert normal", weil `AutoMigrator` den
+  Fehler fängt und loggt statt den Request scheitern zu lassen. Ergebnis: Die
+  Produktions-DB stand nach den ersten beiden Requests auf einem
+  Zwischenstand (schema_migrations + `users` + `player_profiles`, keine
+  Foreign-Key-Tabellen danach). Fix: Transaktion um `exec()`+`INSERT`
+  entfernt, beide laufen als eigene, für sich auto-committete Anweisungen
+  (Details im Code-Kommentar bei `applyIfPending()`).
+- Migrationslauf gegen die Live-Datenbank: nach dem Fix erneut deployt und
+  über normale `GET /api/health`-Aufrufe ausgelöst. Endergebnis unten in
+  „Report-Back" nachgetragen.
