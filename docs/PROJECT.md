@@ -98,7 +98,11 @@ der Praxis bewährt hat (Phase 5+).
    Textfassungs-Auswahl
 4. **Minispiel-System & Nutzerverwaltung** — `ngComponentOutlet`-Loader,
    die drei Starttypen (mit Bildantworten für den Vorlesemodus),
-   Login/Profile/Savegame-API/Achievements/Statistiken
+   Login/Profile/Savegame-API/Achievements/Statistiken. Das verbindliche
+   DB-Schema (7 Tabellen: `users`, `player_profiles`, `savegames`,
+   `achievements`, `player_achievements`, `statistics`, `schema_migrations`)
+   liegt bereits als rohes SQL unter `backend/src/Migrations/sql/` (Meilenstein 1,
+   Phase 3) — Repository-Klassen darauf entstehen erst hier.
 5. **Sammelkarten & Druckbogen** — Kartenvergabe beim Abschluss einer Episode,
    Trophäenhalle mit Gruppen/Filter/Detail, Druckauswahl und maßstabsgetreuer
    A4-Bogen

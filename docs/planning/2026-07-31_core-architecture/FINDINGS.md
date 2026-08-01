@@ -15,12 +15,14 @@ Erkenntnisse während der Umsetzung, die eine spätere Phase betreffen. Format:
 - [x] → Phase 2 (Backend): PHP und MySQL sind auf dieser Maschine **nicht im
   PATH**. Vor Phase 2 installieren oder Pfade setzen, sonst scheitert schon
   `composer install`.
-  **Erledigt (2026-08-01):** PHP 8.2.31 (ohne Threads) nach `C:\Tools\php-8.2`,
-  Composer 2.10.2 nach `C:\Tools\composer`, beides im Suchpfad des Benutzers.
-  Der winget-Eintrag für PHP 8.2 zeigt auf einen toten Link (php.net hat die
-  Fassung ins Archiv verschoben) — der Weg ging über das Archiv von php.net
-  direkt. MySQL bleibt bewusst uninstalliert.
-- [ ] → Phase 3 (Schema): Das Ziel-Hosting hat **keinen Kommandozeilenzugang**.
+  **Erledigt (2026-08-01):** PHP 8.2.31 (ohne Threads) und Composer 2.10.2
+  liegen unter `C:\Users\sasch\develop\.tools\` (`php.cmd`/`composer.cmd`) —
+  **nicht** im Suchpfad des Benutzers, entgegen der ursprünglichen Notiz hier
+  (Phase 3 hat das beim Nacharbeiten festgestellt und über den vollen Pfad
+  gearbeitet). Der winget-Eintrag für PHP 8.2 zeigt auf einen toten Link
+  (php.net hat die Fassung ins Archiv verschoben) — der Weg ging über das
+  Archiv von php.net direkt. MySQL bleibt bewusst uninstalliert.
+- [x] → Phase 3 (Schema): Das Ziel-Hosting hat **keinen Kommandozeilenzugang**.
   Ein Migrations-Runner, der per `php bin/migrate.php` auf dem Server gestartet
   wird, ist damit unmöglich. Vor dem Bauen klären: erlaubt Strato Fernzugriff
   auf MySQL (dann läuft der Runner lokal gegen die entfernte Datenbank), oder
@@ -29,6 +31,10 @@ Erkenntnisse während der Umsetzung, die eine spätere Phase betreffen. Format:
   **Hinweis aus Phase 2:** Das Muster für einen tokengeschützten Aufruf steht
   bereits — `api-bridge/diag.php` prüft `X-Diag-Token` gegen `DIAG_TOKEN` aus
   der Konfiguration und antwortet ohne gültigen Wert mit `404`.
+  **Erledigt (2026-08-01):** Fernzugriff getestet und verworfen (5s-Timeout
+  von dieser Maschine gegen die entfernte MySQL). Endpoint gebaut wie hier
+  skizziert: `POST /api/migrate`, Token `MIGRATE_TOKEN`, gleiches
+  404-bei-falschem-Token-Muster wie `diag.php`.
 - [ ] → alle weiteren Phasen: **Das Paket beantwortet jeden unbekannten Pfad mit
   der Startseite und Status `200`.** Ein `200` auf `/irgendwas` beweist also
   nicht, dass es dort etwas gibt — beim Prüfen immer den Inhalt ansehen, nicht

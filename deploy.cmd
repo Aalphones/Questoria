@@ -53,6 +53,7 @@ call :needValue DB_NAME
 call :needValue DB_USER
 call :needValue JWT_SECRET
 call :needValue DIAG_TOKEN
+call :needValue MIGRATE_TOKEN
 call :needValue CORS_ORIGINS
 call :needValue PUBLIC_BASE_URL
 if defined MISSING goto :fail
@@ -138,6 +139,7 @@ echo [3/5] backend\.env schreiben ...
 >>"backend\.env" echo DB_PASS='!DB_PASS!'
 >>"backend\.env" echo JWT_SECRET='!JWT_SECRET!'
 >>"backend\.env" echo DIAG_TOKEN='!DIAG_TOKEN!'
+>>"backend\.env" echo MIGRATE_TOKEN='!MIGRATE_TOKEN!'
 >>"backend\.env" echo CORS_ORIGINS='!CORS_ORIGINS!'
 >>"backend\.env" echo PUBLIC_BASE_URL='!PUBLIC_BASE_URL!'
 

@@ -25,7 +25,18 @@ Rating: **standard**
 
 ## Implementation
 
-- [ ] `backend/src/Migrations/sql/001_create_schema_migrations.sql`:
+**Abweichung von der ursprünglichen Formulierung:** `backend/bin/migrate.php`
+existiert wie geplant, ist aber gegen die Live-Datenbank **nicht ausführbar** —
+ein lokaler Verbindungstest gegen den entfernten MySQL-Host lief nach 5s in
+einen Timeout (Strato lässt keinen Fernzugriff zu), und eine Kommandozeile auf
+dem Server gibt es nicht (siehe `knowledge/topics/strato-shared-hosting.md`,
+Zeile „einen Migrations-Runner als CLI-Skript planen"). Tatsächlicher Weg: ein
+tokengeschützter Endpoint `POST /api/migrate` (`MigrateController`), der
+denselben `MigrationRunner` aufruft — gleiches Muster wie `api-bridge/diag.php`,
+gleicher Weg wie beim Schwesterprojekt CardMaker. `bin/migrate.php` bleibt als
+CLI-Hülle für einen möglichen späteren lokalen Test erhalten.
+
+- [x] `backend/src/Migrations/sql/001_create_schema_migrations.sql`:
       ```sql
       CREATE TABLE schema_migrations (
         id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -33,7 +44,7 @@ Rating: **standard**
         applied_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
       ```
-- [ ] `backend/src/Migrations/sql/002_create_users.sql`:
+- [x] `backend/src/Migrations/sql/002_create_users.sql`:
       ```sql
       CREATE TABLE users (
         id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -45,7 +56,7 @@ Rating: **standard**
         last_login DATETIME NULL
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
       ```
-- [ ] `backend/src/Migrations/sql/003_create_player_profiles.sql`:
+- [x] `backend/src/Migrations/sql/003_create_player_profiles.sql`:
       ```sql
       CREATE TABLE player_profiles (
         id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -59,7 +70,7 @@ Rating: **standard**
           FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
       ```
-- [ ] `backend/src/Migrations/sql/004_create_savegames.sql`:
+- [x] `backend/src/Migrations/sql/004_create_savegames.sql`:
       ```sql
       CREATE TABLE savegames (
         id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -74,7 +85,7 @@ Rating: **standard**
         UNIQUE KEY uniq_profile_theme (profile_id, theme_id)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
       ```
-- [ ] `backend/src/Migrations/sql/005_create_achievements.sql`:
+- [x] `backend/src/Migrations/sql/005_create_achievements.sql`:
       ```sql
       CREATE TABLE achievements (
         id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -86,7 +97,7 @@ Rating: **standard**
         UNIQUE KEY uniq_theme_key (theme_id, achievement_key)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
       ```
-- [ ] `backend/src/Migrations/sql/006_create_player_achievements.sql`:
+- [x] `backend/src/Migrations/sql/006_create_player_achievements.sql`:
       ```sql
       CREATE TABLE player_achievements (
         profile_id INT UNSIGNED NOT NULL,
@@ -99,7 +110,7 @@ Rating: **standard**
           FOREIGN KEY (achievement_id) REFERENCES achievements(id) ON DELETE CASCADE
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
       ```
-- [ ] `backend/src/Migrations/sql/007_create_statistics.sql`:
+- [x] `backend/src/Migrations/sql/007_create_statistics.sql`:
       ```sql
       CREATE TABLE statistics (
         id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -115,16 +126,36 @@ Rating: **standard**
         UNIQUE KEY uniq_profile_theme_stats (profile_id, theme_id)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
       ```
-- [ ] `backend/bin/migrate.php`:
+- [x] `backend/bin/migrate.php` + `backend/src/Migrations/MigrationRunner.php` (Logik in eine wiederverwendbare Klasse gezogen, damit sowohl die CLI-Hülle als auch `MigrateController` denselben Runner nutzen):
       - Lädt `.env` (wie `public/index.php`), holt `Connection::pdo()`
       - Legt `schema_migrations` an, falls sie noch nicht existiert (Migration 001 läuft immer zuerst, per Existenz-Check statt Registry-Eintrag)
       - Liest `src/Migrations/sql/*.sql` sortiert nach Dateiname
       - Pro Datei: `SELECT 1 FROM schema_migrations WHERE migration = ?` — existiert der Eintrag, skip; sonst `PDO::exec()` des SQL-Inhalts in einer Transaktion, dann `INSERT INTO schema_migrations (migration) VALUES (?)`
       - Gibt pro Datei eine Zeile auf STDOUT aus (`applied: 002_create_users.sql` bzw. `skip (already applied): ...`)
+- [x] `backend/src/Controllers/MigrateController.php` + Route `POST /api/migrate` in `backend/public/index.php`: prüft `X-Migrate-Token` gegen `MIGRATE_TOKEN` (gleiches Muster wie `diag.php`, bei falschem/fehlendem Token `404` statt `401`), ruft dann `MigrationRunner` auf und gibt die Ergebnisliste als JSON zurück. `MIGRATE_TOKEN` durch `backend/.env(.example)`, `deploy.env(.example)` und `deploy.cmd` gezogen (eigenständiger Wert, nicht `DIAG_TOKEN` wiederverwendet).
 
 ## Doc-Updates
 
-- [ ] `docs/PROJECT.md` Abschnitt „Nutzerverwaltung & Persistenz" — Verweis auf die jetzt verbindlichen DDLs ergänzen (ein Satz + Pfad auf `backend/src/Migrations/sql/`), Spalten-Typen müssen nicht dupliziert werden
+- [x] `docs/PROJECT.md` — Verweis auf die jetzt verbindlichen DDLs ergänzt bei Meilenstein 4 („Minispiel-System & Nutzerverwaltung"); der Plan nannte „Abschnitt 8", das gibt es in der aktuellen `PROJECT.md`-Gliederung nicht (vermutlich ein Verweis auf eine ältere Fassung) — inhaltlich nächstliegender Ort gewählt.
+- [x] `docs/code-map.md` — `Migrations/`- und `Controllers/MigrateController.php`-Zeile im Ist-Stand ergänzt.
 
 ## Report-Back
-*(leer, wird beim Umsetzen befüllt)*
+
+- Migrations-Weg per Rückfrage geklärt (Entscheidungsblock vor der Umsetzung):
+  tokengeschützter Endpoint statt CLI, siehe Abweichung oben. Beleg: lokaler
+  PDO-Verbindungsversuch gegen die entfernte MySQL lief nach 5s in einen
+  Timeout — Fernzugriff ist blockiert.
+- `composer lint` grün (10 Dateien, `bin/` in `.php-cs-fixer.php`-Finder ergänzt,
+  da neu). `php -l` auf allen neuen/geänderten Dateien fehlerfrei.
+- Lokaler Smoke-Test (`php -S localhost:8123 -t public`): `GET /api/health`
+  antwortet weiterhin `200` (mit `db_connected:false`, erwartbar ohne
+  Fernzugriff). `POST /api/migrate` ohne bzw. mit falschem Token antwortet
+  `404` mit demselben Rumpf wie ein echter unbekannter Pfad — das Token-Gate
+  greift, bevor überhaupt eine DB-Verbindung versucht wird (schnelle Antwort,
+  kein 21s-Timeout wie bei `/api/health`).
+- **Noch nicht durchgeführt: der eigentliche Migrationslauf gegen die
+  Live-Datenbank.** Das erfordert einen Deploy (neuer Code + `MIGRATE_TOKEN`
+  in `backend/.env` auf dem Server) und einen Aufruf von
+  `POST https://questoria.info/api/migrate` mit dem Token aus `deploy.env`.
+  Das ist ein Schreibzugriff auf die Produktionsdatenbank — bewusst nicht
+  automatisch ausgelöst, sondern der Nutzer entscheidet den Zeitpunkt.

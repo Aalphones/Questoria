@@ -1,0 +1,9 @@
+CREATE TABLE users (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(50) NOT NULL UNIQUE,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  role ENUM('elternteil','spieler') NOT NULL DEFAULT 'elternteil',
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  last_login DATETIME NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

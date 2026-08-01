@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Controllers\HealthController;
+use App\Controllers\MigrateController;
 use App\Exceptions\ApiException;
 use App\Http\JsonResponse;
 use App\Middleware\CorsMiddleware;
@@ -65,6 +66,7 @@ $corsMiddleware->handle($_SERVER['REQUEST_METHOD'] ?? 'GET', $_SERVER['HTTP_ORIG
 
 $dispatcher = FastRoute\simpleDispatcher(static function (RouteCollector $routes): void {
     $routes->addRoute('GET', '/api/health', [HealthController::class, 'handle']);
+    $routes->addRoute('POST', '/api/migrate', [MigrateController::class, 'handle']);
 });
 
 // Der angefragte Pfad wird bewusst nicht um ein Verzeichnis gekuerzt: Die Bruecke

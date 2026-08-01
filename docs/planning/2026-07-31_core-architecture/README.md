@@ -11,7 +11,7 @@ Meilenstein 2 ("Timeline & Map", eigener späterer Plan).
 |---|---|---|---|
 | 1 | Frontend-Scaffold: Angular-Projekt, `GameStateService`, Main-Hub mit Lernstufen-Filterung | standard | complete |
 | 2 | Backend-Scaffold: Composer-Projekt, FastRoute, JWT-Middleware-Skelett, Herkunftssperre, Health-Endpoint, Hochlade-Skript | heikel | complete — live auf questoria.info |
-| 3 | MySQL-Schema: 6 Tabellen + Migrations-Runner | standard | pending |
+| 3 | MySQL-Schema: 6 Tabellen + Migrations-Runner | standard | complete — Migrationslauf gegen die Live-DB noch ausstehend |
 
 ## Kontrakt (cross-modul, Phase 1 ↔ Phase 2/3)
 
@@ -59,12 +59,13 @@ Trotzdem legen die Phasen bereits die Datenverträge fest, die Meilenstein 2
    und einem Rumpf, der `status`, `php_version` und `db_connected` enthält.
 3. Das Schema aus Phase 3 wird in einer leeren MySQL-Datenbank ohne Fehler
    angelegt, ein zweiter Lauf ist idempotent (keine Doppel-Anwendung).
-   **Offen (Phase 3 entscheidet):** Auf dem Strato-Paket gibt es keinen
-   Kommandozeilenzugang, ein `php backend/bin/migrate.php` auf dem Server ist
-   also nicht möglich. Entweder läuft der Runner lokal gegen die entfernte
-   Datenbank (falls Strato Fernzugriff auf MySQL erlaubt) oder er wird über
-   einen tokengeschützten Endpoint ausgelöst. Das ist in Phase 3 zu klären,
-   bevor der Runner gebaut wird.
+   **Geklärt in Phase 3:** Fernzugriff auf die entfernte MySQL scheitert
+   (lokaler Verbindungsversuch lief nach 5s in einen Timeout) — der Runner
+   läuft daher über einen tokengeschützten Endpoint (`POST /api/migrate`,
+   gleiches Muster wie `diag.php`), nicht per CLI auf dem Server. Der
+   Migrationslauf selbst (Deploy + Endpoint-Aufruf gegen die Live-DB) ist noch
+   nicht erfolgt — bewusst dem Nutzer überlassen, da es ein Schreibzugriff auf
+   die Produktionsdatenbank ist.
 4. `docs/code-map.md` und `AGENTS.md` spiegeln die neu entstandene
    Ordnerstruktur (kein Stub-Text mehr in `frontend/README.md` /
    `backend/README.md`).
@@ -73,10 +74,14 @@ Trotzdem legen die Phasen bereits die Datenverträge fest, die Meilenstein 2
 
 - ✅ **Versionen geprüft (2026-08-01).** Node 26.4.0, npm 11.17.0. PHP war auf
   dieser Maschine gar nicht vorhanden und wurde nachinstalliert: PHP 8.2.31
-  (ohne Threads, `C:\Tools\php-8.2`) plus Composer 2.10.2 (`C:\Tools\composer`),
-  beide dauerhaft im Suchpfad des Benutzers. Bewusst 8.2 und nicht neuer: die
-  Abhängigkeiten werden damit gegen die Untergrenze aufgelöst, die das Projekt
-  zusagt — was so entsteht, läuft auch auf einem Server mit 8.3 oder höher.
+  (ohne Threads) plus Composer 2.10.2, beide unter
+  `C:\Users\sasch\develop\.tools\` — **nicht** im Suchpfad des Benutzers
+  (Korrektur zur ursprünglichen Notiz „`C:\Tools\...`, dauerhaft im Suchpfad" —
+  das stimmte zum Zeitpunkt dieser Zeile nicht mehr; Phase 3 hat direkt über
+  den vollen Pfad bzw. `.tools\php.cmd` / `.tools\composer.cmd` gearbeitet).
+  Bewusst 8.2 und nicht neuer: die Abhängigkeiten werden damit gegen die
+  Untergrenze aufgelöst, die das Projekt zusagt — was so entsteht, läuft auch
+  auf einem Server mit 8.3 oder höher.
 - 🟡 **MySQL gibt es lokal nicht und soll es auch nicht geben.** Die Datenbank
   lebt auf dem Strato-Paket; eine zweite lokale wäre eine zweite Wahrheit, die
   niemand pflegt. Folge: `db_connected` ist bei einem lokalen Start erwartbar
