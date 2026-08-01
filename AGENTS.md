@@ -13,7 +13,7 @@ werden zu Lernspielen. Voller Kontext: [docs/PROJECT.md](docs/PROJECT.md).
 | Backend | PHP 8.2+, kein Framework — FastRoute + JWT + phpdotenv + monolog + respect/validation |
 | Datenbank | MySQL/MariaDB |
 | Content | Statische, versionierte JSON-Dateien unter `data/themes/` |
-| Hosting | Shared-Hosting-kompatibel — kein Docker/Cloud |
+| Hosting | Shared Hosting ohne Kommandozeilenzugang — lokal bauen, per `deploy.cmd` hochladen ([ADR-002](docs/decisions/002-php-stack-und-betrieb.md)) |
 
 ## Conventions-Index
 
@@ -21,6 +21,7 @@ werden zu Lernspielen. Voller Kontext: [docs/PROJECT.md](docs/PROJECT.md).
 |---|---|
 | Angular | [docs/conventions/angular.md](docs/conventions/angular.md) |
 | TypeScript | [docs/conventions/typescript.md](docs/conventions/typescript.md) |
+| CSS / Styling | [docs/conventions/css.md](docs/conventions/css.md) |
 | PHP | [docs/conventions/php.md](docs/conventions/php.md) |
 | Commits | [docs/conventions/commits.md](docs/conventions/commits.md) |
 | Linting | [docs/conventions/linting.md](docs/conventions/linting.md) |

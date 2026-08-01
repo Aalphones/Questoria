@@ -1,0 +1,9 @@
+# Rueckfallebene: greift nur, wenn die Web-Wurzel NICHT auf public/ zeigt und
+# damit Quellcode, Zugangsdaten und Protokolle im Netz stuenden.
+Options -Indexes
+
+<FilesMatch "^\.env">
+    Require all denied
+</FilesMatch>
+
+RedirectMatch 404 ^/(src|vendor|logs)/

@@ -49,12 +49,25 @@ Struktur übernommen aus promptigofant (gleiches Muster, eigenes Repo):
 | `Controllers/` | HTTP-Endpunkte (Content-API, User-API, Savegame-API) |
 | `Services/` | Geschäftslogik (Content lesen, Savegame-Verwaltung, Auth) |
 | `Repositories/` | MySQL-Zugriff (users, player_profiles, savegames, achievements, statistics) |
-| `Middleware/` | JWT-Auth-Check, o.ä. |
+| `Middleware/` | Herkunftssperre (`CorsMiddleware`) und Anmelde-Token (`JwtAuthMiddleware`) |
 | `Validators/` | Request-Validierung (respect/validation) |
 | `Migrations/` | MySQL-Schema-Migrationen |
 | `Database/` | Connection/PDO-Setup |
 | `Exceptions/` | Domänen-Exceptions |
 | `Http/` | Request/Response-Helper |
+| `public/` | Einstiegspunkt `index.php` + `.htaccess`; das ist die Web-Wurzel auf dem Server |
+
+**Ist-Stand:** gebaut sind `Http/`, `Exceptions/`, `Database/`, `Middleware/`,
+`Controllers/HealthController.php` und der Einstiegspunkt. `Services/`,
+`Repositories/`, `Validators/` und `Migrations/` sind Soll-Zustand für spätere
+Meilensteine und existieren noch nicht als Ordner.
+
+## Projektstamm
+
+| Datei | Zweck |
+|---|---|
+| `deploy.cmd` | Bringt Backend und Frontend auf den Server (Ziel wählbar: `backend`, `frontend`, ohne Angabe beides) |
+| `deploy.env.example` | Vorlage für die Zugangsdaten; die echte `deploy.env` liegt nicht im Git |
 
 ## Content-Repository (`data/`)
 

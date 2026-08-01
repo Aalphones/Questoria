@@ -1,0 +1,7 @@
+# Windows-Skripte brauchen CRLF: ein cmd-Skript mit LF stolpert ueber seine
+# eigenen Sprungmarken und bricht mitten im Lauf ab.
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+# Shell-Skripte umgekehrt - CRLF in der Shebang-Zeile macht sie unbrauchbar.
+*.sh text eol=lf

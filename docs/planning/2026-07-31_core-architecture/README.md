@@ -10,7 +10,7 @@ Meilenstein 2 ("Timeline & Map", eigener späterer Plan).
 | Phase | Thema | Rating | Status |
 |---|---|---|---|
 | 1 | Frontend-Scaffold: Angular-Projekt, `GameStateService`, Main-Hub mit Lernstufen-Filterung | standard | complete |
-| 2 | Backend-Scaffold: Composer-Projekt, FastRoute, JWT-Middleware-Skelett, Health-Endpoint | heikel | pending |
+| 2 | Backend-Scaffold: Composer-Projekt, FastRoute, JWT-Middleware-Skelett, Herkunftssperre, Health-Endpoint, Hochlade-Skript | heikel | complete (Hochladen offen) |
 | 3 | MySQL-Schema: 6 Tabellen + Migrations-Runner | standard | pending |
 
 ## Kontrakt (cross-modul, Phase 1 ↔ Phase 2/3)
@@ -30,8 +30,21 @@ Trotzdem legen die Phasen bereits die Datenverträge fest, die Meilenstein 2
   außerhalb des Projektordners ab. Es liegt daher **alles** unter
   `frontend/public/`; echter Content kommt mit der Content-API.
 - **Backend-Health-Contract (Phase 2):** `GET /api/health` → `200
-  {"status":"ok"}` — das einzige Endpoint in diesem Plan, dient als Rauchtest
-  für Composer/FastRoute/Datenbankverbindung, keine Business-Logik dahinter.
+  {"status":"ok","php_version":"…","db_connected":true|false}` — das einzige
+  Endpoint in diesem Plan, dient als Rauchtest für
+  Composer/FastRoute/Datenbankverbindung, keine Business-Logik dahinter.
+  **Erweitert am 2026-08-01:** ursprünglich war nur `{"status":"ok"}` geplant.
+  Da das Backend auf dem Strato-Paket läuft und es dort keinen
+  Kommandozeilenzugang gibt, ist diese Antwort die einzige Möglichkeit, PHP-
+  Version und Datenbank-Zugangsdaten von außen zu prüfen. `db_connected: false`
+  ist ein gültiges Ergebnis, kein Fehler der Auskunft.
+- **Betriebsmodell (ab Phase 2):** Backend läuft auf dem Strato-Paket, Frontend
+  wird lokal entwickelt und spricht gegen die dort laufende API. Gebaut wird
+  lokal (PHP 8.2.31 + Composer 2.10.2 auf dieser Maschine), hochgeladen per
+  `deploy.cmd` — der Server hat weder Kommandozeile noch Composer. Daraus
+  folgen eine Herkunftssperre (CORS), Zugriffsregeln per `.htaccess` und das
+  Hochlade-Skript, alle drei nicht im Ursprungsplan.
+  Begründung: [ADR-002](../../decisions/002-php-stack-und-betrieb.md).
 - **DB-Schema (Phase 3):** legt die Tabellen fest, die Meilenstein 4
   (Nutzerverwaltung/Savegames) über Repositories anspricht. Keine
   Repository-Klassen in diesem Plan — nur das Schema selbst.
@@ -42,22 +55,33 @@ Trotzdem legen die Phasen bereits die Datenverträge fest, die Meilenstein 2
    Main-Hub mit mind. einer Themenwelt-Karte, Auswahl einer Lernstufe setzt
    sichtbar eine Bestätigung ("Ausgewählt: ...").
 2. `cd backend && composer install && composer lint` laufen grün;
-   `php -S localhost:8000 -t public` beantwortet
-   `GET /api/health` mit `200 {"status":"ok"}`.
-3. `php backend/bin/migrate.php` legt alle 6 Tabellen aus Phase 3 in einer
-   leeren MySQL-Datenbank an, ohne Fehler, zweiter Lauf ist idempotent
-   (keine Doppel-Anwendung).
+   `php -S localhost:8000 -t public` beantwortet `GET /api/health` mit `200`
+   und einem Rumpf, der `status`, `php_version` und `db_connected` enthält.
+3. Das Schema aus Phase 3 wird in einer leeren MySQL-Datenbank ohne Fehler
+   angelegt, ein zweiter Lauf ist idempotent (keine Doppel-Anwendung).
+   **Offen (Phase 3 entscheidet):** Auf dem Strato-Paket gibt es keinen
+   Kommandozeilenzugang, ein `php backend/bin/migrate.php` auf dem Server ist
+   also nicht möglich. Entweder läuft der Runner lokal gegen die entfernte
+   Datenbank (falls Strato Fernzugriff auf MySQL erlaubt) oder er wird über
+   einen tokengeschützten Endpoint ausgelöst. Das ist in Phase 3 zu klären,
+   bevor der Runner gebaut wird.
 4. `docs/code-map.md` und `AGENTS.md` spiegeln die neu entstandene
    Ordnerstruktur (kein Stub-Text mehr in `frontend/README.md` /
    `backend/README.md`).
 
 ## Konfidenz-Ausweis
 
-- 🟡 **Node-/PHP-/MySQL-Versionen auf dieser Maschine ungeprüft** — der Plan
-  geht von Node 22 (CI-Pin) und PHP 8.2+ (lokal installiert, siehe
-  `docs/PROJECT.md`) aus. Check: `node -v` und `php -v` vor Phase 1 bzw. 2
-  laufen lassen; weicht was ab, Versionsangaben in den Phasen-Dateien
-  anpassen, bevor gebaut wird.
+- ✅ **Versionen geprüft (2026-08-01).** Node 26.4.0, npm 11.17.0. PHP war auf
+  dieser Maschine gar nicht vorhanden und wurde nachinstalliert: PHP 8.2.31
+  (ohne Threads, `C:\Tools\php-8.2`) plus Composer 2.10.2 (`C:\Tools\composer`),
+  beide dauerhaft im Suchpfad des Benutzers. Bewusst 8.2 und nicht neuer: die
+  Abhängigkeiten werden damit gegen die Untergrenze aufgelöst, die das Projekt
+  zusagt — was so entsteht, läuft auch auf einem Server mit 8.3 oder höher.
+- 🟡 **MySQL gibt es lokal nicht und soll es auch nicht geben.** Die Datenbank
+  lebt auf dem Strato-Paket; eine zweite lokale wäre eine zweite Wahrheit, die
+  niemand pflegt. Folge: `db_connected` ist bei einem lokalen Start erwartbar
+  `false`, und Phase 3 muss klären, wie das Schema ohne Kommandozeile auf den
+  Server kommt.
 - 🟡 **Angular v20 CLI-Verhalten (Standalone-Default, neue Dateibenennung ohne
   `.component.`-Infix) ungeprüft an dieser Maschine** — Check: nach `ng new`
   in Phase 1 einmal `ng generate component features/main-hub/theme-card
