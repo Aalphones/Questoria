@@ -11,7 +11,7 @@ Meilenstein 2 ("Timeline & Map", eigener späterer Plan).
 |---|---|---|---|
 | 1 | Frontend-Scaffold: Angular-Projekt, `GameStateService`, Main-Hub mit Lernstufen-Filterung | standard | complete |
 | 2 | Backend-Scaffold: Composer-Projekt, FastRoute, JWT-Middleware-Skelett, Herkunftssperre, Health-Endpoint, Hochlade-Skript | heikel | complete — live auf questoria.info |
-| 3 | MySQL-Schema: 6 Tabellen + Migrations-Runner | standard | complete — Migrationslauf gegen die Live-DB noch ausstehend |
+| 3 | MySQL-Schema: 6 Tabellen + Migrations-Runner | standard | complete — live verifiziert |
 
 ## Kontrakt (cross-modul, Phase 1 ↔ Phase 2/3)
 

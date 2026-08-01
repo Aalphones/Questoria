@@ -185,6 +185,13 @@ CLI-Hülle für einen möglichen späteren lokalen Test erhalten.
   Foreign-Key-Tabellen danach). Fix: Transaktion um `exec()`+`INSERT`
   entfernt, beide laufen als eigene, für sich auto-committete Anweisungen
   (Details im Code-Kommentar bei `applyIfPending()`).
-- Migrationslauf gegen die Live-Datenbank: nach dem Fix erneut deployt und
-  über normale `GET /api/health`-Aufrufe ausgelöst. Endergebnis unten in
-  „Report-Back" nachgetragen.
+- **Nach dem Fix verifiziert:** erneut deployt, `GET /api/health` zweimal
+  aufgerufen. Server-Log (per WinSCP read-only geholt) zeigt danach **keinen**
+  neuen Fehler — alle sieben Dateien liefen ohne Unterbrechung durch. Zweiter
+  Aufruf antwortet in ~0,18s statt ~0,5s (Indiz für den schnellen Pfad:
+  `hasPending()` findet nichts mehr offen). AK 3 (Foreign Keys aktiv) indirekt
+  bestätigt statt per `SHOW CREATE TABLE` eingesehen: InnoDB prüft
+  FK-Referenzen beim `CREATE TABLE` selbst — wäre eine der vier
+  FK-tragenden Dateien (004, 006, 007) fehlgeschlagen, stünde das im Log.
+  Direkte Einsicht (phpMyAdmin o.ä.) habe ich nicht, das bleibt eine
+  Restunsicherheit, falls du es genauer sehen willst.
