@@ -61,11 +61,10 @@ Trotzdem legen die Phasen bereits die Datenverträge fest, die Meilenstein 2
    angelegt, ein zweiter Lauf ist idempotent (keine Doppel-Anwendung).
    **Geklärt in Phase 3:** Fernzugriff auf die entfernte MySQL scheitert
    (lokaler Verbindungsversuch lief nach 5s in einen Timeout) — der Runner
-   läuft daher über einen tokengeschützten Endpoint (`POST /api/migrate`,
-   gleiches Muster wie `diag.php`), nicht per CLI auf dem Server. Der
-   Migrationslauf selbst (Deploy + Endpoint-Aufruf gegen die Live-DB) ist noch
-   nicht erfolgt — bewusst dem Nutzer überlassen, da es ein Schreibzugriff auf
-   die Produktionsdatenbank ist.
+   läuft daher serverseitig, nicht per CLI. Zwei Wege dorthin: automatisch bei
+   jedem echten API-Aufruf (`AutoMigrator`, mit DB-Lock gegen Doppellauf und
+   `AUTO_MIGRATE`-Not-Aus in `.env`) und manuell über den tokengeschützten
+   `POST /api/migrate` (gleiches Muster wie `diag.php`) als Debug-Werkzeug.
 4. `docs/code-map.md` und `AGENTS.md` spiegeln die neu entstandene
    Ordnerstruktur (kein Stub-Text mehr in `frontend/README.md` /
    `backend/README.md`).

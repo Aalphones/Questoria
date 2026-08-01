@@ -61,9 +61,12 @@ Struktur übernommen aus promptigofant (gleiches Muster, eigenes Repo):
 `Controllers/HealthController.php`, `Controllers/MigrateController.php`,
 `Migrations/` (7 Tabellen-DDLs unter `sql/`, `MigrationRunner.php`, plus
 `backend/bin/migrate.php` als CLI-Hülle für den Fall eines späteren lokalen/
-Fernzugriff-Tests) und der Einstiegspunkt. `Services/`, `Repositories/` und
-`Validators/` sind Soll-Zustand für spätere Meilensteine und existieren noch
-nicht als Ordner.
+Fernzugriff-Tests) und der Einstiegspunkt. Fehlende Migrationen werden bei
+jedem echten API-Aufruf automatisch nachgezogen (`AutoMigrator`, verdrahtet in
+`public/index.php`, Not-Aus über `AUTO_MIGRATE` in `.env`) — `MigrateController`
+bleibt zusätzlich als manuell aufrufbares Debug-Werkzeug. `Services/`,
+`Repositories/` und `Validators/` sind Soll-Zustand für spätere Meilensteine
+und existieren noch nicht als Ordner.
 
 ## Projektstamm
 

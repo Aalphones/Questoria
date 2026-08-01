@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 use App\Controllers\HealthController;
 use App\Controllers\MigrateController;
+use App\Database\Connection;
 use App\Exceptions\ApiException;
 use App\Http\JsonResponse;
 use App\Middleware\CorsMiddleware;
+use App\Migrations\AutoMigrator;
 use Dotenv\Dotenv;
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
@@ -84,6 +86,21 @@ if ($route[0] === Dispatcher::METHOD_NOT_ALLOWED) {
     header('Allow: ' . implode(', ', $route[1]));
 
     JsonResponse::error(405, 'Method Not Allowed');
+}
+
+// Prueft bei jedem echten (gematchten) Request, ob eine SQL-Datei unter
+// Migrations/sql/ noch nicht angewendet wurde, und holt das nach — ohne
+// Kommandozeile auf dem Server ist das der einzige Weg, ein frisch
+// hochgeladenes Schema in Kraft zu setzen. AUTO_MIGRATE=false in .env ist der
+// Not-Aus, falls das je Aerger macht. Ein Ausfall hier (DB down, Migration
+// kaputt) darf den eigentlichen Request nicht mitreissen — geloggt, nicht
+// geworfen.
+if (($_ENV['AUTO_MIGRATE'] ?? 'true') !== 'false') {
+    try {
+        (new AutoMigrator(Connection::pdo(), $logger))->runIfPending();
+    } catch (Throwable $failure) {
+        $logger->error('Auto-Migrate-Bootstrap fehlgeschlagen', ['message' => $failure->getMessage()]);
+    }
 }
 
 [$controllerClass, $controllerMethod] = $route[1];

@@ -28,6 +28,12 @@ final class Connection
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES => false,
+            // Ohne Deckel haengt ein gescheiterter Verbindungsversuch am
+            // OS-TCP-Timeout (auf dieser Maschine ~21s). AutoMigrator und ein
+            // Controller koennen beide in einem Request eine eigene Verbindung
+            // versuchen — zwei ungedeckelte Versuche reissen PHPs
+            // max_execution_time, ein Fatal Error, den kein try/catch faengt.
+            PDO::ATTR_TIMEOUT => 5,
         ]);
 
         return self::$instance;

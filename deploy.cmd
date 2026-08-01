@@ -39,6 +39,7 @@ if not defined FRONTEND_DIST set "FRONTEND_DIST=frontend\dist\frontend\browser"
 if not defined API_URL_SEGMENT set "API_URL_SEGMENT=api"
 if not defined APP_ENV set "APP_ENV=production"
 if not defined DB_PORT set "DB_PORT=3306"
+if not defined AUTO_MIGRATE set "AUTO_MIGRATE=true"
 
 set "MISSING="
 call :needValue WINSCP_PATH
@@ -140,6 +141,7 @@ echo [3/5] backend\.env schreiben ...
 >>"backend\.env" echo JWT_SECRET='!JWT_SECRET!'
 >>"backend\.env" echo DIAG_TOKEN='!DIAG_TOKEN!'
 >>"backend\.env" echo MIGRATE_TOKEN='!MIGRATE_TOKEN!'
+>>"backend\.env" echo AUTO_MIGRATE='!AUTO_MIGRATE!'
 >>"backend\.env" echo CORS_ORIGINS='!CORS_ORIGINS!'
 >>"backend\.env" echo PUBLIC_BASE_URL='!PUBLIC_BASE_URL!'
 

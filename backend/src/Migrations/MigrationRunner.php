@@ -33,6 +33,22 @@ final class MigrationRunner
         return $results;
     }
 
+    // Billiger Vorab-Check fuer AutoMigrator: ein Zeilen-Zaehlvergleich statt des
+    // vollen Laufs mit einer Pruefung pro Datei. Existiert schema_migrations noch
+    // nicht, ist definitiv etwas offen.
+    public function hasPending(): bool
+    {
+        try {
+            $appliedCount = (int) $this->pdo->query('SELECT COUNT(*) FROM schema_migrations')->fetchColumn();
+        } catch (Throwable) {
+            return true;
+        }
+
+        $fileCount = count(glob(self::SQL_DIRECTORY . '/*.sql') ?: []);
+
+        return $appliedCount < $fileCount;
+    }
+
     // schema_migrations kann sich nicht selbst per Registry-Eintrag pruefen, bevor sie
     // existiert — deshalb legt der Bootstrap sie separat an und traegt Migration 001
     // direkt ein. Die Schleife unten sieht sie danach schon als angewendet.

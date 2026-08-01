@@ -1,13 +1,12 @@
 # STATE
 
 **Aktiver Plan:** `docs/planning/2026-07-31_core-architecture/`
-**Phase:** 3/3 — MySQL-Schema (Code fertig, Live-Lauf offen)
-**Nächster Schritt:** Deployen (`deploy.cmd`) und danach einmal
-`POST https://questoria.info/api/migrate` mit Header `X-Migrate-Token: <Wert
-aus deploy.env>` aufrufen — legt die 7 Tabellen auf der Live-Datenbank an.
-Das ist ein Schreibzugriff auf die Produktionsdatenbank, deshalb bewusst nicht
-automatisch ausgelöst. Danach AK 1-4 aus der Plan-README gegenprüfen und die
-Smoke-Checkliste abarbeiten (Plan ist damit fertig, dann archivieren).
+**Phase:** 3/3 — MySQL-Schema (Code fertig inkl. Auto-Migrate, Deploy läuft)
+**Nächster Schritt:** Backend erneut deployen (`deploy.cmd backend`), dann
+`GET https://questoria.info/api/health` aufrufen — löst `AutoMigrator`
+automatisch aus und legt die 7 Tabellen an. Danach AK 1-4 aus der Plan-README
+gegenprüfen und die Smoke-Checkliste abarbeiten (Plan ist damit fertig, dann
+archivieren).
 
 **Stand Phase 2:** erledigt und live. <https://questoria.info/api/health>
 antwortet, die Datenbank ist erreichbar, der Programmcode liegt außerhalb des

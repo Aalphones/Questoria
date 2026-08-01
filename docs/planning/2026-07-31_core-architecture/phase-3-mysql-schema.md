@@ -133,6 +133,7 @@ CLI-Hülle für einen möglichen späteren lokalen Test erhalten.
       - Pro Datei: `SELECT 1 FROM schema_migrations WHERE migration = ?` — existiert der Eintrag, skip; sonst `PDO::exec()` des SQL-Inhalts in einer Transaktion, dann `INSERT INTO schema_migrations (migration) VALUES (?)`
       - Gibt pro Datei eine Zeile auf STDOUT aus (`applied: 002_create_users.sql` bzw. `skip (already applied): ...`)
 - [x] `backend/src/Controllers/MigrateController.php` + Route `POST /api/migrate` in `backend/public/index.php`: prüft `X-Migrate-Token` gegen `MIGRATE_TOKEN` (gleiches Muster wie `diag.php`, bei falschem/fehlendem Token `404` statt `401`), ruft dann `MigrationRunner` auf und gibt die Ergebnisliste als JSON zurück. `MIGRATE_TOKEN` durch `backend/.env(.example)`, `deploy.env(.example)` und `deploy.cmd` gezogen (eigenständiger Wert, nicht `DIAG_TOKEN` wiederverwendet).
+- [x] **Nachtrag (Nutzerwunsch, noch am selben Tag):** `backend/src/Migrations/AutoMigrator.php` — prüft bei jedem echten (gematchten) Request in `public/index.php`, ob eine SQL-Datei noch aussteht (`MigrationRunner::hasPending()`, billiger Zeilen-Zählvergleich statt vollem Lauf), und holt das über `MySQL GET_LOCK`/`RELEASE_LOCK` gegen Doppellauf ab. Ein Fehlschlag wird geloggt, reißt aber nicht den Request mit. Not-Aus über `AUTO_MIGRATE=false` in `.env` (durch die ganze Kette gezogen: `backend/.env(.example)`, `deploy.env(.example)`, `deploy.cmd`). `POST /api/migrate` bleibt zusätzlich als manuelles Debug-Werkzeug bestehen — mit `AutoMigrator` aktiv meldet es in der Regel nur noch „skip (already applied)".
 
 ## Doc-Updates
 
@@ -153,9 +154,20 @@ CLI-Hülle für einen möglichen späteren lokalen Test erhalten.
   `404` mit demselben Rumpf wie ein echter unbekannter Pfad — das Token-Gate
   greift, bevor überhaupt eine DB-Verbindung versucht wird (schnelle Antwort,
   kein 21s-Timeout wie bei `/api/health`).
-- **Noch nicht durchgeführt: der eigentliche Migrationslauf gegen die
-  Live-Datenbank.** Das erfordert einen Deploy (neuer Code + `MIGRATE_TOKEN`
-  in `backend/.env` auf dem Server) und einen Aufruf von
-  `POST https://questoria.info/api/migrate` mit dem Token aus `deploy.env`.
-  Das ist ein Schreibzugriff auf die Produktionsdatenbank — bewusst nicht
-  automatisch ausgelöst, sondern der Nutzer entscheidet den Zeitpunkt.
+- **Nachtrag:** Nutzerwunsch war, ganz ohne manuellen Endpoint-Aufruf
+  auszukommen — `AutoMigrator` löst die Migration jetzt automatisch bei jedem
+  echten API-Aufruf aus (Details siehe Implementation oben).
+- **Beim lokalen Testen des Auto-Migrate-Pfads einen echten Bug gefunden:**
+  `Connection.php` setzte keinen Verbindungs-Timeout. Ein gescheiterter
+  MySQL-Verbindungsversuch hängt dadurch am OS-TCP-Timeout (~21s auf dieser
+  Maschine). Weil jetzt zwei Stellen pro Request eine eigene Verbindung
+  versuchen können (`AutoMigrator` und der jeweilige Controller), riss ein
+  zweiter gescheiterter Versuch PHPs `max_execution_time` (30s) — ein Fatal
+  Error, den kein `try/catch` fängt (erst als echter `500` beim lokalen
+  Smoke-Test aufgefallen, nicht beim Code-Review). Fix: `PDO::ATTR_TIMEOUT
+  => 5` in `Connection::pdo()`. Nach dem Fix: `GET /api/health` gegen eine
+  unerreichbare DB antwortet in ~10s mit `200`/`db_connected:false` statt
+  nach ~42s mit `500`.
+- Migrationslauf gegen die Live-Datenbank: Deploy erfolgt, `AutoMigrator`
+  läuft jetzt bei jedem echten Request automatisch mit. Ergebnis wird nach dem
+  ersten Live-Request nachgetragen.
