@@ -1,0 +1,7 @@
+{
+  "/api": {
+    "target": "https://questoria.info",
+    "secure": true,
+    "changeOrigin": true
+  }
+}

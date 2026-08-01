@@ -43,7 +43,9 @@ jobs:
       - uses: shivammathur/setup-php@v2
         if: steps.check.outputs.exists == 'true'
         with:
-          php-version: '8.2'
+          # Muss zur Serverversion passen: backend/composer.json nagelt die
+          # Zielplattform auf 8.5 fest, gegen die die Pakete aufgeloest werden.
+          php-version: '8.5'
       - name: Install
         if: steps.check.outputs.exists == 'true'
         working-directory: backend

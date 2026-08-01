@@ -152,34 +152,44 @@ im Report-Back festhalten.
 
 ## Report-Back
 
-**Stand:** Code steht und ist lokal geprüft. Das Hochladen steht aus — die vier
-Voraussetzungen oben (Adresse, Zugang, Datenbank, PHP-Version im Panel) sind noch
-nicht beigebracht, also wurde nichts übertragen.
+**Stand: erledigt und live.** <https://questoria.info/api/health> antwortet mit
+`{"status":"ok","php_version":"8.5.7","db_connected":true}`.
 
-### Werkzeug, das vorher fehlte
+### Werkzeug
 
-PHP gab es auf dieser Maschine gar nicht. Installiert wurden PHP 8.2.31 (ohne
-Threads) nach `C:\Tools\php-8.2` und Composer 2.10.2 nach `C:\Tools\composer`,
-beides dauerhaft im Suchpfad des Benutzers. Der winget-Eintrag für PHP 8.2 zeigt
-auf einen toten Link — php.net hat die Fassung ins Archiv verschoben; der Weg
-ging über das Archiv direkt. WinSCP liegt unter
-`C:\Users\sasch\AppData\Local\Programs\WinSCP\WinSCP.com`.
+PHP gab es auf dieser Maschine zunächst scheinbar nicht, also wurde 8.2
+nachinstalliert — überflüssig: Unter `develop/.tools` liegen längst ein
+portables PHP 8.5.9 und Composer 2.10.2, dieselbe Umgebung wie in den
+Schwesterprojekten. Die Doppelinstallation wurde wieder entfernt, gebaut wird mit
+dem portablen Werkzeug. Randnotiz für später: Der winget-Eintrag für PHP 8.2
+zeigt auf einen toten Link, php.net hat die Fassung ins Archiv verschoben.
 
-Wer ein Terminal offen hatte, als das passierte, muss es einmal schließen und neu
-öffnen — der Suchpfad wird nur beim Start gelesen.
+### Der Aufbau auf dem Server (ADR-003)
+
+Der SFTP-Zugang beginnt eine Ebene **über** dem ausgelieferten Bereich. Deshalb
+liegt der Programmcode neben `public/`, und im Webbereich steht nur die Brücke
+aus drei Dateien. Gemessen statt vermutet: `document_root` endet auf
+`/htdocs/questoria/public`, `open_basedir` ist leer.
+
+Die im ersten Entwurf eingebaute Pfadkürzung wurde wieder **entfernt** — sie
+hätte im Brücken-Aufbau genau das `/api`-Präfix weggeschnitten, das die Routen
+brauchen, und lautlos auf jeden Pfad mit 404 geantwortet. Jetzt wird der rohe
+angefragte Pfad benutzt.
 
 ### Was geprüft ist
 
 | Prüfung | Ergebnis |
 |---|---|
-| `composer install` | 45 Pakete, fehlerfrei |
+| `composer install` | fehlerfrei, gegen PHP 8.5 aufgelöst |
 | `composer lint` | 0 von 7 Dateien zu beanstanden |
-| `GET /api/health` | `200`, `{"status":"ok","php_version":"8.2.31","db_connected":false}` |
+| `GET /api/health` **live** | `200`, `{"status":"ok","php_version":"8.5.7","db_connected":true}` |
 | unbekannter Pfad | `404`, `{"error":{"code":404,"message":"Not Found"}}` |
 | falsche Methode | `405` im selben Format, mit `Allow: GET` |
 | Herkunft `localhost:4200` | Freigabe-Kopfzeile gesetzt, `Vary: Origin` |
 | fremde Herkunft | keine Freigabe-Kopfzeile |
 | Vorab-Anfrage (`OPTIONS`) | `204` mit erlaubten Methoden und Kopfzeilen |
+| `/api/.env`, `/api/src/…` **live** | `404` — der Programmcode liegt außerhalb des ausgelieferten Bereichs |
+| Serverauskunft ohne Token **live** | `404`; mit Token die vollständige Auskunft |
 
 **Anmelde-Token, von Hand gegengeprüft** (Wegwerf-Skript, außerhalb des Repos,
 danach gelöscht): Token ausgestellt und wieder ausgelesen (`sub` und `exp`
@@ -217,15 +227,36 @@ abgewiesen; ein abgelaufener Token ebenso. Beide Abweisungen kommen als
    Schwesterprojekt CardMaker. Der Bestand hielt die Doktrin bereits ein; die
    Datei schreibt sie nur fest und benennt einen offenen Punkt.
 
+### Was der erste echte Lauf gekostet hat
+
+Fünf Dinge, die der Trockenlauf **nicht** gefunden hat und die aus dem
+Schwesterprojekt bzw. dem Serverlauf kamen:
+
+1. **WinSCP legt Zielordner beim Abgleich nicht an.** Es braucht einen getrennten
+   Vorlauf mit `mkdir` und `option batch continue`.
+2. **`phpdotenv` schneidet unquotierte Werte am ersten `#` ab.** Die Werte in
+   `backend/.env` gehören in einfache Anführungszeichen — sonst käme ein Passwort
+   verstümmelt an, und der Fehler sähe aus wie falsche Zugangsdaten.
+3. **Der Frontend-Abgleich hätte die API weggeräumt.** Die Brücke kommt im
+   Frontend-Build nicht vor, `-delete` hätte sie beim nächsten Lauf gelöscht.
+4. **Composer-Scripts brauchen `@php vendor/bin/…`** statt des nackten
+   Binärnamens — sonst verlangen sie `php` im Suchpfad, was ein portables PHP
+   nicht liefert.
+5. **Der Fehlerbehandler muss `error_reporting()` respektieren.** Ohne diese
+   Bedingung wäre auf PHP 8.5 jede Veralterungswarnung einer Bibliothek zu einer
+   500 geworden.
+
+Alle fünf sind für künftige Projekte auf diesem Paket festgehalten
+(Wissensbestand, Thema „Strato Shared Hosting").
+
 ### Wo es klemmen kann
 
-- **Die Wegfindung erwartet die Pfade unter `/api/…`.** Der Einstiegspunkt kürzt
-  den angefragten Pfad um sein eigenes Verzeichnis, damit das auch in einem
-  Unterordner trägt. Geprüft ist bisher nur der Fall „Web-Wurzel zeigt auf
-  `public/`" — der andere zeigt sich erst auf dem Server, und zwar als `404` auf
-  jeden Pfad, nicht als Fehlermeldung.
-- **`db_connected` ist der erste echte Test der Zugangsdaten.** Steht dort nach
-  dem Hochladen `false`, liegt es an den Werten in `deploy.env`, nicht am Code.
+- **`/irgendwas` antwortet mit `200` und der Startseite.** Das Paket beantwortet
+  jeden unbekannten Pfad so. Beim Prüfen also den Inhalt ansehen, nicht den
+  Statuscode — sonst hält man den Fallback für eine offenliegende Datei. Genau
+  das ist beim ersten Lauf passiert.
 - **Die Protokolldatei braucht einen beschreibbaren Ordner.** Ist `logs/` auf dem
   Server nicht beschreibbar, antwortet die API trotzdem — der Fehlerbehandler
-  fängt das ab —, aber es steht dann nichts im Protokoll.
+  fängt das ab —, aber es steht dann nichts im Protokoll. Bisher ungeprüft.
+- **Die Brücke muss zum Backend passen.** Ändert sich der Name der
+  Eintrittsstelle, ändert sich `api-bridge/index.php` mit.

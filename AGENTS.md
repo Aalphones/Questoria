@@ -10,7 +10,7 @@ werden zu Lernspielen. Voller Kontext: [docs/PROJECT.md](docs/PROJECT.md).
 | Layer | Wahl |
 |---|---|
 | Frontend | Angular v20+, Standalone Components, Signals |
-| Backend | PHP 8.2+, kein Framework — FastRoute + JWT + phpdotenv + monolog + respect/validation |
+| Backend | PHP 8.5, kein Framework — FastRoute + JWT + phpdotenv + monolog + respect/validation |
 | Datenbank | MySQL/MariaDB |
 | Content | Statische, versionierte JSON-Dateien unter `data/themes/` |
 | Hosting | Shared Hosting ohne Kommandozeilenzugang — lokal bauen, per `deploy.cmd` hochladen ([ADR-002](docs/decisions/002-php-stack-und-betrieb.md)) |

@@ -26,6 +26,20 @@ Erkenntnisse während der Umsetzung, die eine spätere Phase betreffen. Format:
   auf MySQL (dann läuft der Runner lokal gegen die entfernte Datenbank), oder
   braucht es einen tokengeschützten Endpoint, der ihn auslöst? Das
   Schwesterprojekt CardMaker hat sich für den Endpoint entschieden.
+  **Hinweis aus Phase 2:** Das Muster für einen tokengeschützten Aufruf steht
+  bereits — `api-bridge/diag.php` prüft `X-Diag-Token` gegen `DIAG_TOKEN` aus
+  der Konfiguration und antwortet ohne gültigen Wert mit `404`.
+- [ ] → alle weiteren Phasen: **Das Paket beantwortet jeden unbekannten Pfad mit
+  der Startseite und Status `200`.** Ein `200` auf `/irgendwas` beweist also
+  nicht, dass es dort etwas gibt — beim Prüfen immer den Inhalt ansehen, nicht
+  den Statuscode. Praktischer Nebeneffekt: Angulars Deep-Links funktionieren
+  ohne eigene Umschreibungsregel im Webbereich. Verlassen sollte man sich darauf
+  nicht; ändert das Paket sein Verhalten, braucht der Frontend-Build eine eigene
+  Regel.
+- [ ] → Meilenstein 2 (Content-API): Beim lokalen Entwickeln leitet
+  `frontend/proxy.conf.json` alles unter `/api` an `questoria.info` weiter. Neue
+  Aufrufe im Frontend deshalb **relativ** schreiben (`/api/...`), nie mit
+  absoluter Adresse — sonst funktioniert lokal etwas anderes als in Betrieb.
 - [ ] → Phase 3 (Schema) / Meilenstein 4: Das Frontend wird lokal entwickelt und
   spricht gegen die API auf dem Server. Jeder neue Endpoint braucht die
   Herkunft `http://localhost:4200` in `CORS_ORIGINS`, sonst sieht der Browser

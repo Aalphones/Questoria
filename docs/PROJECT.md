@@ -55,12 +55,12 @@ der Praxis bewährt hat (Phase 5+).
 | Layer | Wahl | Begründung |
 |---|---|---|
 | Frontend | Angular v20+, Standalone Components, Signals | Aktueller Standard, kein NgModule-Ballast |
-| Backend | PHP 8.2+, kein Framework | Shared-Hosting-kompatibel, kein Overhead |
+| Backend | PHP 8.5, kein Framework | Shared-Hosting-kompatibel, kein Overhead |
 | Backend-Libs | FastRoute (Routing), firebase/php-jwt (Auth), vlucas/phpdotenv, monolog, respect/validation | Übernommen aus dem Schwesterprojekt promptigofant — bewährter Mini-Stack, gleiche Konventionen über beide Projekte |
 | Datenbank | MySQL/MariaDB | Nutzerdaten, Profile, Spielstände, Statistiken — referenziert nur Content-IDs, nie Content selbst |
 | Content | Statische, versionierte JSON-Dateien im Repo | Zweite Wahrheitsquelle vermeiden; Editor kommt erst, wenn das Format sich bewährt hat |
-| Hosting | Shared-Hosting-kompatibel: PHP 8.2+, MySQL/MariaDB, Apache/Nginx, HTTPS | Kein Docker/Kubernetes/Cloud im MVP |
-| Domain | `questoria.info` | |
+| Hosting | Strato Shared Hosting: PHP 8.5, MySQL, Apache, HTTPS — **kein Kommandozeilenzugang** | Kein Docker/Kubernetes/Cloud im MVP; lokal bauen, per `deploy.cmd` hochladen |
+| Domain | `questoria.info` — API darunter unter `/api` | |
 
 ## Constraints
 

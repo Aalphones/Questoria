@@ -64,10 +64,12 @@ Meilensteine und existieren noch nicht als Ordner.
 
 ## Projektstamm
 
-| Datei | Zweck |
+| Datei / Ordner | Zweck |
 |---|---|
 | `deploy.cmd` | Bringt Backend und Frontend auf den Server (Ziel wählbar: `backend`, `frontend`, ohne Angabe beides) |
 | `deploy.env.example` | Vorlage für die Zugangsdaten; die echte `deploy.env` liegt nicht im Git |
+| `api-bridge/` | Die drei Dateien, die im ausgelieferten Bereich stehen und auf das Backend daneben zeigen ([ADR-003](decisions/003-backend-ausserhalb-des-webbereichs.md)). Landen auf dem Server unter `public/api/` |
+| `frontend/proxy.conf.json` | Leitet `/api` beim lokalen Entwickeln an `questoria.info` weiter — so laufen die Aufrufe im Code relativ, lokal wie in Betrieb |
 
 ## Content-Repository (`data/`)
 

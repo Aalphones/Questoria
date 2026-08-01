@@ -19,14 +19,14 @@
         }
     },
     "scripts": {
-        "lint": "php-cs-fixer fix --config=.php-cs-fixer.php --dry-run --diff",
-        "lint:fix": "php-cs-fixer fix --config=.php-cs-fixer.php"
+        "lint": "@php vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.php --dry-run --diff",
+        "lint:fix": "@php vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.php"
     },
     "config": {
         "sort-packages": true,
         "optimize-autoloader": true,
         "platform": {
-            "php": "8.2.0"
+            "php": "8.5.9"
         }
     }
 }

@@ -11,7 +11,7 @@
 
 | Layer | Choice |
 |---|---|
-| PHP | 8.2+ |
+| PHP | 8.5 — auf dem Server und beim Bauen dieselbe Fassung ([ADR-002](../decisions/002-php-stack-und-betrieb.md)) |
 | Routing | `nikic/fast-route` |
 | Auth | `firebase/php-jwt` |
 | Config | `vlucas/phpdotenv` |
@@ -39,7 +39,7 @@
 backend/
 ├── composer.json
 ├── .php-cs-fixer.php
-├── public/            ← Front-Controller (index.php), Apache/Nginx-Docroot
+├── public/            ← Front-Controller (index.php)
 ├── src/
 │   ├── Controllers/    ← HTTP-Endpunkte (Content-API, User-API, Savegame-API)
 │   ├── Services/        ← Geschäftslogik
@@ -69,6 +69,23 @@ Kein `tests/`-Ordner — siehe `testing.md`.
 - Jeder Endpoint validiert Eingaben über `respect/validation`, bevor Business-Logik läuft
 - JWT im `Authorization: Bearer`-Header, Ablaufzeit kurz + Refresh-Flow
 - Fehlerantworten einheitlich als JSON (`{ "error": { "code": ..., "message": ... } }`), keine rohen PHP-Warnings/Stacktraces nach außen
+
+## Betrieb
+
+Das Backend läuft **nur auf dem Server**, gebaut wird lokal, hochgeladen per
+`deploy.cmd` im Projektstamm. Der Programmcode liegt **neben** dem ausgelieferten
+Bereich, im Webbereich steht nur die Brücke aus `api-bridge/`
+([ADR-003](../decisions/003-backend-ausserhalb-des-webbereichs.md)).
+
+Daraus folgt für jeden neuen Endpoint:
+
+- **Route mit vollem `/api`-Präfix registrieren**, und den angefragten Pfad nicht
+  kürzen — die Brücke liegt unter `/api/`, das Präfix wird gebraucht.
+- **Erlaubte Herkünfte im Blick behalten.** Das Frontend wird lokal entwickelt und
+  spricht gegen die Server-API; fehlt die Herkunft, sieht der Browser statt der
+  Antwort einen vermeintlichen Verbindungsfehler.
+- **Nichts auf einen Kommandozeilenlauf auf dem Server stützen** — es gibt keinen.
+  Was ausgelöst werden muss, braucht einen geschützten Endpoint.
 
 ## Critical Rules
 

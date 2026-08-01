@@ -16,7 +16,7 @@ use Monolog\Logger;
 require __DIR__ . '/../vendor/autoload.php';
 
 ini_set('display_errors', '0');
-error_reporting(E_ALL);
+error_reporting(E_ALL & ~E_DEPRECATED);
 
 // safeLoad statt load: ein fehlendes .env darf keine Ausnahme werfen, sonst
 // antwortet ein frisch hochgeladener Server mit einer weissen Seite statt mit
@@ -49,7 +49,14 @@ set_exception_handler(static function (Throwable $failure) use ($failWithServerE
     $failWithServerError($failure);
 });
 
+// Nur Meldungen eskalieren, die error_reporting auch durchlaesst. Ohne diese
+// Bedingung wuerde auf PHP 8.5 jede Veralterungswarnung aus einer Bibliothek zu
+// einer 500 — der Server laeuft eine Version ueber dem, was der Code verlangt.
 set_error_handler(static function (int $severity, string $message, string $file, int $line): bool {
+    if ((error_reporting() & $severity) === 0) {
+        return false;
+    }
+
     throw new ErrorException($message, 0, $severity, $file, $line);
 });
 
@@ -60,19 +67,10 @@ $dispatcher = FastRoute\simpleDispatcher(static function (RouteCollector $routes
     $routes->addRoute('GET', '/api/health', [HealthController::class, 'handle']);
 });
 
-// Liegt das Backend nicht auf einer eigenen Adresse, sondern in einem Unterordner,
-// kommt hier "/unterordner/public/api/health" an. Ohne diese Kuerzung liefe jeder
-// Pfad ins 404 — und zwar lautlos, was die Suche danach unnoetig teuer macht.
-$requestPath = rawurldecode(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/');
-$basePath = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '')), '/');
-
-if ($basePath !== '' && str_starts_with($requestPath, $basePath)) {
-    $requestPath = substr($requestPath, strlen($basePath));
-}
-
-if ($requestPath === '') {
-    $requestPath = '/';
-}
+// Der angefragte Pfad wird bewusst nicht um ein Verzeichnis gekuerzt: Die Bruecke
+// im ausgelieferten Bereich liegt unter /api/, und genau so heissen die Routen
+// auch. Eine Kuerzung wuerde das Praefix wegschneiden, das hier gebraucht wird.
+$requestPath = rawurldecode(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/');
 
 $route = $dispatcher->dispatch($_SERVER['REQUEST_METHOD'] ?? 'GET', $requestPath);
 

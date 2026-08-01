@@ -40,17 +40,19 @@ auf dem Server landet?
 
 **Stack: Option 2. Betrieb: Option (a).**
 
-PHP 8.2.31 und Composer 2.10.2 wurden auf der Entwicklungsmaschine
-installiert. Damit entsteht das Abhängigkeitsverzeichnis hier, und der Mini-Stack
-des Schwesterprojekts bleibt wie geplant bestehen — insbesondere die geprüfte
+Gebaut wird mit dem portablen PHP 8.5.9 und Composer 2.10.2 aus
+`develop/.tools` — dieselbe Umgebung, die auch die Schwesterprojekte benutzen.
+Damit entsteht das Abhängigkeitsverzeichnis hier, und der Mini-Stack des
+Schwesterprojekts bleibt wie geplant bestehen — insbesondere die geprüfte
 Bibliothek für die Anmelde-Token. **Kryptografie wird in diesem Projekt nicht
 selbst geschrieben**, und eine Lernplattform mit Kinderprofilen ist der falsche
 Ort, um damit anzufangen.
 
-Bewusst PHP 8.2 und nicht neuer: Die Abhängigkeiten werden gegen genau die
-Untergrenze aufgelöst, die das Projekt zusagt (`config.platform.php` in
-`backend/composer.json` nagelt das fest). Was so entsteht, läuft auch auf einem
-Server mit 8.3, 8.4 oder 8.5 — umgekehrt gilt das nicht.
+**Lokal dieselbe PHP-Fassung wie auf dem Server** (dort läuft 8.5.7):
+`config.platform.php` in `backend/composer.json` nagelt die Zielplattform auf
+8.5 fest, damit die Abhängigkeiten gegen die Umgebung aufgelöst werden, in der
+sie tatsächlich laufen. Der Prüflauf in der CI muss dieselbe Fassung benutzen,
+sonst scheitert er an den Plattform-Anforderungen.
 
 **Das Backend läuft nur auf dem Server.** Das Frontend wird lokal entwickelt und
 spricht gegen die dort laufende API. Hochgeladen wird per `deploy.cmd` im
@@ -70,10 +72,9 @@ nicht im Git.
   in Phase 3 zu klären — entweder ein Runner, der von hier aus gegen die
   entfernte Datenbank läuft (falls Strato Fernzugriff erlaubt), oder ein
   tokengeschützter Endpoint, der ihn dort auslöst.
-- **Zwei Zugriffsregel-Dateien statt einer.** `backend/public/.htaccess` leitet
-  alles auf den Einstiegspunkt um. `backend/.htaccess` eine Ebene darüber ist der
-  Notnagel für den Fall, dass die Web-Wurzel nicht auf `public/` gelegt werden
-  kann — ohne sie stünden Quellcode, Zugangsdaten und Protokolle im Netz.
+- **Wo der Programmcode auf dem Server liegt, regelt
+  [ADR-003](003-backend-ausserhalb-des-webbereichs.md)** — er liegt neben dem
+  ausgelieferten Bereich, nicht darin.
 - **Ein Tippfehler zeigt sich lokal, nicht erst nach dem Hochladen** — anders als
   im Schwesterprojekt CardMaker, wo mangels PHP gar nichts vorab geprüft werden
   kann. Der lokale Start und `composer lint` sind hier der Gate.
