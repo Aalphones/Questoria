@@ -36,8 +36,8 @@ Trotzdem legen die Phasen bereits die Datenverträge fest, die Meilenstein 2
 1. `cd frontend && npm ci && npm run build` läuft grün; `npm start` zeigt die
    Main-Hub mit mind. einer Themenwelt-Karte, Auswahl einer Lernstufe setzt
    sichtbar eine Bestätigung ("Ausgewählt: ...").
-2. `cd backend && composer install && composer lint && composer test` laufen
-   grün; `php -S localhost:8000 -t public` beantwortet
+2. `cd backend && composer install && composer lint` laufen grün;
+   `php -S localhost:8000 -t public` beantwortet
    `GET /api/health` mit `200 {"status":"ok"}`.
 3. `php backend/bin/migrate.php` legt alle 6 Tabellen aus Phase 3 in einer
    leeren MySQL-Datenbank an, ohne Fehler, zweiter Lauf ist idempotent

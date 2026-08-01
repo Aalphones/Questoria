@@ -1,39 +1,34 @@
 # Testing Conventions — Questoria
 
-## Frontend (`frontend/`)
+## Keine automatisierten Tests in diesem Projekt
 
-| Layer | Tool |
+Bewusste Entscheidung für dieses Ein-Personen-Projekt: **kein Karma, kein
+Jasmine, kein Vitest, kein PHPUnit, kein E2E-Framework.** Weder Frontend noch
+Backend bekommen ein Test-Setup — auch nicht „nur für die Kernlogik".
+
+Begründung: Der Aufwand, Tests von einem Assistenten schreiben und pflegen zu
+lassen, steht in keinem Verhältnis zum Nutzen bei einem privaten Projekt mit
+einem einzigen Entwickler. Statt Testpflege fließt die Zeit in manuelle
+Abnahme am laufenden Spiel.
+
+**Diese Datei überschreibt die User-Level-Vorgabe „Features mit Unit-Tests
+absichern".** Wer hier arbeitet, schreibt keine Tests — auch nicht ungefragt
+„zur Sicherheit".
+
+## Was stattdessen absichert
+
+| Mittel | Wo |
 |---|---|
-| Unit/Component | Vitest (Angular's current direction, siehe `angular.md`) |
-| E2E | noch nicht entschieden — erst ab Meilenstein 3/4 relevant (Dialog- + Minispiel-Flows testbar) |
+| Statische Prüfung | `npm run lint` (ESLint + strict TypeScript), `composer lint` (php-cs-fixer) |
+| Build als Rauchtest | `npm run build` bricht bei Typfehlern ab |
+| Manuelle Abnahme | Akzeptanzkriterien-Checkliste am Ende jedes Plans, durchgeklickt am laufenden Spiel |
+| Content-Schema | Checkliste in `data/_authoring/JSON_SCHEMA_REFERENCE.md` Abschnitt 6 |
 
-```bash
-npm test
-```
-
-## Backend (`backend/`)
-
-| Layer | Tool |
-|---|---|
-| Unit/Integration | PHPUnit (`Tests\` → `tests/`, siehe `php.md`) |
-
-```bash
-composer test
-```
-
-## Content-Schema
-
-Kein automatisierter Test im MVP — die Checkliste in
-`data/_authoring/JSON_SCHEMA_REFERENCE.md` Abschnitt 6 ist der manuelle
-Ersatz, bis eine Validierungs-Engine existiert (bewusst außerhalb MVP-Scope).
-
-## Kein Test-Zwang für Kleinkram (privates Projekt)
-
-Passend zum Ein-Personen-Projekt (`docs/PROJECT.md` → Constraints): Tests
-für Kernlogik (Content-Parsing, Lernstufen-Filterung,
-Savegame-Merge-Logik, Auth), aber kein Coverage-Ziel und kein Test-Zwang
-für triviale UI-Komponenten.
+Der Typ-Compiler ist hier das Sicherheitsnetz. Deshalb gilt strict mode ohne
+Ausnahmen und `any` ist tabu (siehe `typescript.md`) — das ist die Gegenleistung
+dafür, dass keine Tests laufen.
 
 ## Critical Rules
 
-1. **Content-Parsing- und Lernstufen-Filter-Logik brauchen Unit-Tests** — ein stiller Parsing-Fehler zeigt sich sonst erst als leeres Minispiel beim Kind am Bildschirm, nicht als roter Test.
+1. **Keine Test-Dateien, keine Test-Abhängigkeiten, keine Test-Skripte anlegen** — `ng generate` immer mit `--skip-tests`, `composer.json` ohne PHPUnit, CI ohne Test-Schritt.
+2. **Vor dem Commit läuft Lint + Build** — das ist der einzige automatisierte Gate, den es gibt, und er wird nicht übersprungen.

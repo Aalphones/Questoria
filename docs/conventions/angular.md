@@ -11,9 +11,9 @@
 |---|---|
 | Angular | v20+, Standalone Components (default, no explicit flag) |
 | Language | TypeScript strict mode — see `typescript.md` |
-| Styling | BEM + scoped SCSS (no Tailwind) |
+| Styling | BEM + scoped SCSS, Design-Tokens als CSS Custom Properties (kein Tailwind, keine Utility-Klassen) |
 | State | Local signals + services with signals; `@ngrx/signals` only if shared UI state across features grows |
-| Tests | Vitest (Angular's current direction — not Karma/Jasmine) |
+| Tests | keine — bewusste Projektentscheidung, siehe `testing.md` |
 | Build | Angular CLI (`ng build`, `ng serve`) |
 | Selector prefix | `qst-` (e.g. `qst-speech-bubble`) — set in `angular.json` |
 
@@ -60,6 +60,9 @@ Style `:host` directly instead of wrapping the template in a root `<div>`.
 - Block name = component selector without the `qst-` prefix (`qst-speech-bubble` → block `speech-bubble`)
 - No `ngClass`/`ngStyle` — `[class.bem-modifier]` bindings
 - Animations via `@keyframes` in component SCSS
+- **Kein Utility-CSS-Framework** (Tailwind, Bootstrap, UnoCSS) — Klassennamen benennen das Element, nicht sein Aussehen
+- **Design-Tokens als CSS Custom Properties** in `src/styles/_tokens.scss`, global eingebunden. Komponenten-SCSS greift ausschließlich auf `var(--…)` zu — kein Hex-Wert, keine rohe px-Größe, keine Schriftfamilie direkt im Komponenten-Stylesheet
+- Neuer Wert, der zweimal vorkommt → wird ein Token, kein zweites Literal
 
 ## Services & DI
 
@@ -86,7 +89,9 @@ Style `:host` directly instead of wrapping the template in a root `<div>`.
 
 ## Testing
 
-- New tests target **Vitest**, not Karma/Jasmine
+**Keine automatisierten Tests in diesem Projekt** — kein Karma, kein Jasmine,
+kein Vitest, kein E2E-Framework. Begründung und was stattdessen absichert:
+`testing.md`. `ng new` und jedes `ng generate` laufen mit `--skip-tests`.
 
 ## Generation
 
@@ -94,7 +99,7 @@ Style `:host` directly instead of wrapping the template in a root `<div>`.
 
 ```bash
 ng generate component features/timeline --skip-tests
-ng generate service services/game-state
+ng generate service services/game-state --skip-tests
 ng generate pipe pipes/time-ago --skip-tests
 ```
 

@@ -49,7 +49,7 @@ Kontext/Optionen/Entscheidung/Konsequenzen).
 ## Implementation
 
 - [ ] `node -v` prüfen (Konfidenz-Ausweis README) — Node 22 erwartet, sonst Version in diesem Task-File korrigieren
-- [ ] `ng new frontend --directory=frontend --style=scss --routing --skip-git --package-manager=npm` im Repo-Root ausführen
+- [ ] `ng new frontend --directory=frontend --style=scss --routing --skip-git --skip-tests --package-manager=npm` im Repo-Root ausführen (`--skip-tests`: dieses Projekt hat kein Test-Setup, siehe `testing.md`)
 - [ ] `frontend/angular.json`: `"prefix": "qst"` setzen
 - [ ] `frontend/angular.json`: Assets-Konfiguration um zwei Einträge erweitern, die zur Build-Zeit kopieren:
       - `../data/themes` (Repo-Root) → `data/themes` im Output

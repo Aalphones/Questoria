@@ -19,7 +19,7 @@
 | Validation | `respect/validation` |
 | Linting | `friendsofphp/php-cs-fixer` (`@PSR12`, `declare_strict_types`, short array syntax, single quotes, ordered imports, trailing comma) |
 | Autoload | PSR-4, `App\` → `src/` |
-| Tests | PHPUnit (`Tests\` → `tests/`) |
+| Tests | keine — bewusste Projektentscheidung, siehe `testing.md` |
 
 ## Library Policy
 
@@ -50,8 +50,9 @@ backend/
 │   ├── Database/        ← PDO-Connection-Setup
 │   ├── Exceptions/      ← Domänen-Exceptions
 │   └── Http/            ← Request/Response-Helper
-└── tests/
 ```
+
+Kein `tests/`-Ordner — siehe `testing.md`.
 
 ## Code Style
 
