@@ -1,0 +1,110 @@
+// Design-Tokens — wertgleich übernommen aus docs/design/prototype/ds/styles.css.
+// Zwei Ebenen: unten die Palette (rohe Werte), darüber die Zweck-Tokens.
+// Komponenten-Stylesheets greifen ausschließlich auf die Zweck-Tokens zu.
+
+:root {
+  // ── Palette ──────────────────────────────────────────────────────────────
+  --palette-neutral-100: #f9f4ed;
+  --palette-neutral-200: #eee7db;
+  --palette-neutral-300: #dcd3c4;
+  --palette-neutral-400: #c0b6a5;
+  --palette-neutral-500: #a19786;
+  --palette-neutral-600: #82796a;
+  --palette-neutral-700: #645c50;
+  --palette-neutral-800: #474238;
+  --palette-neutral-900: #2e2b25;
+
+  --palette-accent-100: #fff2eb;
+  --palette-accent-200: #ffe1d0;
+  --palette-accent-300: #ffc6a5;
+  --palette-accent-400: #f6a06b;
+  --palette-accent-500: #d67f48;
+  --palette-accent-600: #b2622d;
+  --palette-accent-700: #8c491a;
+  --palette-accent-800: #643312;
+  --palette-accent-900: #402310;
+
+  --palette-moss-100: #f0fae1;
+  --palette-moss-200: #e1eecc;
+  --palette-moss-300: #ccdbb2;
+  --palette-moss-400: #aebf92;
+  --palette-moss-500: #8fa073;
+  --palette-moss-600: #728157;
+  --palette-moss-700: #56633f;
+  --palette-moss-800: #3d472b;
+  --palette-moss-900: #272e1b;
+
+  --palette-parchment: #f5ead8;
+  --palette-parchment-deep: #ebddc5;
+  --palette-ink: #201e1d;
+  --palette-accent: #c67139;
+  --palette-moss: #7a8a5e;
+
+  // ── Farben nach Zweck ────────────────────────────────────────────────────
+  --color-bg: var(--palette-parchment);
+  --color-surface: var(--palette-parchment-deep);
+  --color-text: var(--palette-ink);
+  --color-text-muted: color-mix(in srgb, var(--palette-ink) 55%, transparent);
+  --color-text-on-accent: var(--palette-parchment);
+  --color-accent: var(--palette-accent);
+  --color-accent-hover: var(--palette-accent-600);
+  --color-accent-active: var(--palette-accent-700);
+  --color-accent-soft: var(--palette-accent-100);
+  --color-accent-soft-text: var(--palette-accent-800);
+  --color-support: var(--palette-moss);
+  --color-divider: color-mix(in srgb, var(--palette-ink) 16%, transparent);
+  --color-hover-wash: color-mix(in srgb, var(--palette-ink) 7%, transparent);
+  --color-active-wash: color-mix(in srgb, var(--palette-ink) 14%, transparent);
+  --color-focus-ring: var(--palette-accent);
+  --color-status-error: var(--palette-accent-700);
+
+  // ── Schrift ──────────────────────────────────────────────────────────────
+  --font-heading: 'Caprasimo', system-ui, sans-serif;
+  --font-heading-weight: 400;
+  --font-body: 'Figtree', system-ui, sans-serif;
+
+  --font-size-root: 15px;
+  --font-size-display: 42px;
+  --font-size-title: 32px;
+  --font-size-section: 25px;
+  --font-size-card-title: 17px;
+  --font-size-body: 15px;
+  --font-size-control: 14px;
+  --font-size-detail: 13px;
+  --font-size-kicker: 11px;
+
+  --line-height-body: 1.55;
+  --line-height-heading: 1.12;
+  --letter-spacing-heading: -0.015em;
+  --letter-spacing-kicker: 0.1em;
+
+  // ── Abstände ─────────────────────────────────────────────────────────────
+  --space-1: 4.4px;
+  --space-2: 8.8px;
+  --space-3: 13.2px;
+  --space-4: 17.6px;
+  --space-6: 26.4px;
+  --space-8: 35.2px;
+
+  // ── Radien ───────────────────────────────────────────────────────────────
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 28px;
+  --radius-card: calc(var(--radius-lg) * 1.15);
+  --radius-pill: 999px;
+
+  // ── Elevation ────────────────────────────────────────────────────────────
+  --shadow-sm: 0 1px 2px color-mix(in srgb, var(--palette-neutral-900) 14%, transparent);
+  --shadow-md: 0 3px 10px color-mix(in srgb, var(--palette-neutral-900) 16%, transparent);
+  --shadow-lg: 0 12px 32px color-mix(in srgb, var(--palette-neutral-900) 22%, transparent);
+
+  // ── Bewegung ─────────────────────────────────────────────────────────────
+  --duration-fast: 120ms;
+  --easing-standard: cubic-bezier(0.2, 0, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+  }
+}

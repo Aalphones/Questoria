@@ -32,6 +32,13 @@ im Frontend-Ordnernamen, PascalCase in PHP-Klassen):
 | Nutzerverwaltung | `features/auth/`, `features/profile/` | Login, Profile anlegen/wechseln |
 | Gemeinsame UI | `ui/hud/`, `ui/speech-bubble/` | Kopfleiste auf allen Spiel-Screens, Sprechblasen |
 | Zentrale Services | `services/game-state.service.ts`, `services/content.service.ts`, `services/savegame.service.ts`, `services/narration.service.ts` | Aktive Welt/Profil/Lernstufe, JSON-Content lesen, Speichern/Laden, Vorlesemodus + Sprachausgabe |
+| Content-Typen | `models/` | TypeScript-Abbild des JSON-Schemas (`content.types.ts`) und der Ladezustände (`game-state.types.ts`) |
+| Design-Tokens | `frontend/src/styles/` | `_tokens.scss` (Farben, Schrift, Abstände, Radien) und `_fonts.scss`; global über `src/styles.scss` eingebunden |
+| Statischer Content | `frontend/public/assets/`, `frontend/public/data/themes/` | `main_hub.json` und die Entwickler-Testwelt — bis die Content-API existiert (ADR-001) |
+
+**Ist-Stand:** gebaut sind bisher `features/main-hub/` (mit `theme-card/` und
+`difficulty-picker/`), `services/`, `models/` und `styles/`. Alle übrigen Zeilen
+sind Soll-Zustand für spätere Meilensteine.
 
 ## Backend (`backend/src/`)
 

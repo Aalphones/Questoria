@@ -9,7 +9,7 @@ Meilenstein 2 ("Timeline & Map", eigener späterer Plan).
 
 | Phase | Thema | Rating | Status |
 |---|---|---|---|
-| 1 | Frontend-Scaffold: Angular-Projekt, `GameStateService`, Main-Hub mit Lernstufen-Filterung | standard | pending |
+| 1 | Frontend-Scaffold: Angular-Projekt, `GameStateService`, Main-Hub mit Lernstufen-Filterung | standard | complete |
 | 2 | Backend-Scaffold: Composer-Projekt, FastRoute, JWT-Middleware-Skelett, Health-Endpoint | heikel | pending |
 | 3 | MySQL-Schema: 6 Tabellen + Migrations-Runner | standard | pending |
 
@@ -23,7 +23,12 @@ Trotzdem legen die Phasen bereits die Datenverträge fest, die Meilenstein 2
 - **Content-Delivery (Phase 1):** Das Frontend liest `main_hub.json` und
   `world_config.json` **direkt als statische Dateien** aus dem eigenen Build
   (`frontend/public/`), nicht über eine API. Details + Begründung: ADR-001
-  (`docs/decisions/001-content-delivery-mvp-phase1.md`, entsteht in Phase 1).
+  (`docs/decisions/001-content-delivery-mvp-phase1.md`).
+  **Korrektur aus der Umsetzung:** Der ursprünglich geplante Build-Schritt,
+  der `data/themes/` aus dem Repository-Wurzelverzeichnis in den Build
+  kopiert, ist nicht möglich — der Angular-Build lehnt Asset-Quellen
+  außerhalb des Projektordners ab. Es liegt daher **alles** unter
+  `frontend/public/`; echter Content kommt mit der Content-API.
 - **Backend-Health-Contract (Phase 2):** `GET /api/health` → `200
   {"status":"ok"}` — das einzige Endpoint in diesem Plan, dient als Rauchtest
   für Composer/FastRoute/Datenbankverbindung, keine Business-Logik dahinter.

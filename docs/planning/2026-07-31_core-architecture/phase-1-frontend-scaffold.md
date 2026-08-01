@@ -48,13 +48,17 @@ Kontext/Optionen/Entscheidung/Konsequenzen).
 
 ## Implementation
 
-- [ ] `node -v` prüfen (Konfidenz-Ausweis README) — Node 22 erwartet, sonst Version in diesem Task-File korrigieren
-- [ ] `ng new frontend --directory=frontend --style=scss --routing --skip-git --skip-tests --package-manager=npm` im Repo-Root ausführen (`--skip-tests`: dieses Projekt hat kein Test-Setup, siehe `testing.md`)
-- [ ] `frontend/angular.json`: `"prefix": "qst"` setzen
-- [ ] `frontend/angular.json`: Assets-Konfiguration um zwei Einträge erweitern, die zur Build-Zeit kopieren:
-      - `../data/themes` (Repo-Root) → `data/themes` im Output
-      - `public/assets/main_hub.json` bleibt regulärer Teil von `public/`
-- [ ] `frontend/public/data/themes/dev_fixture/world_config.json` anlegen (schema-konform, Abschnitt 2 der Schema-Referenz):
+- [x] `node -v` prüfen (Konfidenz-Ausweis README) — Node 22 erwartet, sonst Version in diesem Task-File korrigieren
+- [x] `ng new frontend --directory=frontend --style=scss --routing --skip-git --skip-tests --package-manager=npm` im Repo-Root ausführen (`--skip-tests`: dieses Projekt hat kein Test-Setup, siehe `testing.md`)
+- [x] `frontend/angular.json`: `"prefix": "qst"` setzen
+- [x] `frontend/angular.json`: Assets-Konfiguration
+      — **abgewichen:** der Eintrag `../data/themes` → `data/themes` ist
+      unmöglich, der Angular-Build lehnt Asset-Quellen außerhalb des
+      Projektordners ab („asset path must be within the workspace root").
+      Es bleibt beim Standard-Eintrag `public/`; die Testwelt liegt
+      vollständig unter `frontend/public/data/themes/`. Begründung und Folgen
+      in ADR-001, Kontrakt-Sektion der Plan-README nachgezogen.
+- [x] `frontend/public/data/themes/dev_fixture/world_config.json` anlegen (schema-konform, Abschnitt 2 der Schema-Referenz):
       ```json
       {
         "theme_id": "dev_fixture",
@@ -88,7 +92,7 @@ Kontext/Optionen/Entscheidung/Konsequenzen).
       **Hinweis:** Das ist Test-Fixture-Content für die Engine, kein echtes
       Fandom-Theme — bewusst kein Platz unter `data/themes/one_piece_sachkunde/`
       o.ä., damit später kein Autoring-Content mit Dev-Fixtures kollidiert.
-- [ ] `frontend/public/assets/main_hub.json` anlegen (schema-konform, Abschnitt 1):
+- [x] `frontend/public/assets/main_hub.json` anlegen (schema-konform, Abschnitt 1):
       ```json
       {
         "hub_map": {
@@ -108,34 +112,63 @@ Kontext/Optionen/Entscheidung/Konsequenzen).
         ]
       }
       ```
-- [ ] `frontend/src/app/models/content.types.ts`: Interfaces `MainHub`, `HubMap`, `InstalledTheme`, `WorldConfig`, `DifficultyLevel`, `ArcOverview`, `ArcStage`, `MapEntry`, `MapNode` — Felder exakt nach Schema-Referenz Abschnitt 1+2
-- [ ] `frontend/src/app/models/game-state.types.ts`: `type LoadState<T> = { status: 'loading' } | { status: 'loaded'; data: T } | { status: 'error'; message: string }` (Discriminated Union statt Boolean-Flags, siehe `typescript.md`)
-- [ ] `ng generate service services/content --skip-tests` → `ContentService`: `getMainHub(): Observable<MainHub>` (GET `/assets/main_hub.json`), `getWorldConfig(configPath: string): Observable<WorldConfig>` (GET `/${configPath}`)
-- [ ] `ng generate service services/game-state --skip-tests` → `GameStateService`: `readonly activeThemeId = signal<string | null>(null)`, `readonly activeDifficultyLevel = signal<string | null>(null)`, Methoden `setActiveTheme(themeId: string): void`, `setActiveDifficultyLevel(levelId: string): void`, `reset(): void`
-- [ ] `ng generate component features/main-hub --skip-tests` → `MainHub`-Komponente:
+- [x] `frontend/src/app/models/content.types.ts`: Interfaces `MainHub`, `HubMap`, `InstalledTheme`, `WorldConfig`, `DifficultyLevel`, `ArcOverview`, `ArcStage`, `MapEntry`, `MapNode` — Felder exakt nach Schema-Referenz Abschnitt 1+2
+- [x] `frontend/src/app/models/game-state.types.ts`: `type LoadState<T> = { status: 'loading' } | { status: 'loaded'; data: T } | { status: 'error'; message: string }` (Discriminated Union statt Boolean-Flags, siehe `typescript.md`)
+- [x] `ng generate service services/content --skip-tests` → `ContentService`: `getMainHub(): Observable<MainHub>` (GET `/assets/main_hub.json`), `getWorldConfig(configPath: string): Observable<WorldConfig>` (GET `/${configPath}`)
+- [x] `ng generate service services/game-state --skip-tests` → `GameStateService`: `readonly activeThemeId = signal<string | null>(null)`, `readonly activeDifficultyLevel = signal<string | null>(null)`, Methoden `setActiveTheme(themeId: string): void`, `setActiveDifficultyLevel(levelId: string): void`, `reset(): void`
+- [x] `ng generate component features/main-hub --skip-tests` → `MainHub`-Komponente:
       - `OnPush`, `inject(ContentService)`, `inject(GameStateService)`
       - `mainHubState = toSignal(...)` als `LoadState<MainHub>` (HttpClient-Call in `LoadState`-Wrapper, `catchError` → `{status:'error', message}`)
       - Auswahl einer Theme-Karte lädt per zweitem Call (`getWorldConfig`) den `WorldConfig` in ein zweites `LoadState<WorldConfig>`-Signal
       - Auswahl einer Lernstufe ruft `GameStateService`-Setter auf, danach Bestätigungszeile rendern (liest `activeThemeId`/`activeDifficultyLevel` per `computed()`)
-- [ ] `ng generate component features/main-hub/theme-card --skip-tests` → reine Präsentationskomponente, `input.required<InstalledTheme>()`, `output<string>()` für "ausgewählt"
-- [ ] `ng generate component features/main-hub/difficulty-picker --skip-tests` → `input.required<DifficultyLevel[]>()`, `output<string>()`, Info-Icon mit Tooltip (nativ `title`-Attribut reicht für Phase 1, kein Tooltip-Lib-Overhead)
-- [ ] `HttpClient` in `app.config.ts` per `provideHttpClient()` registrieren
-- [ ] `frontend/src/styles/_tokens.scss` anlegen: die Custom-Properties aus
+- [x] `ng generate component features/main-hub/theme-card --skip-tests` → reine Präsentationskomponente, `input.required<InstalledTheme>()`, `output<string>()` für "ausgewählt"
+- [x] `ng generate component features/main-hub/difficulty-picker --skip-tests` → `input.required<DifficultyLevel[]>()`, `output<string>()`, Info-Icon mit Tooltip (nativ `title`-Attribut reicht für Phase 1, kein Tooltip-Lib-Overhead)
+- [x] `HttpClient` in `app.config.ts` per `provideHttpClient()` registrieren
+- [x] `frontend/src/styles/_tokens.scss` anlegen: die Custom-Properties aus
       `docs/design/prototype/ds/styles.css` **wertgleich** übernehmen (Farben,
       Schrift, Abstände, Radien, Schatten) und global in `styles.scss`
       einbinden. Schriften `Caprasimo` (Headings) und `Figtree` (Body) lokal
       unter `frontend/public/fonts/` ablegen und per `@font-face` einbinden —
       kein CDN, das Spiel soll offline laufen.
-- [ ] BEM-SCSS für `theme-card`, `difficulty-picker`, `main-hub` gemäß
+- [x] BEM-SCSS für `theme-card`, `difficulty-picker`, `main-hub` gemäß
       `angular.md` — **ausschließlich** mit den Tokens aus `_tokens.scss`,
       keine Hex-Werte oder px-Abstände direkt in Komponenten
-- [ ] `docs/decisions/001-content-delivery-mvp-phase1.md` schreiben (ADR, siehe oben)
+- [x] `docs/decisions/001-content-delivery-mvp-phase1.md` schreiben (ADR, siehe oben)
 
 ## Doc-Updates
 
-- [ ] `docs/code-map.md`: Frontend-Tabelle um tatsächliche Ordner ergänzen (waren vorher Soll-Zustand, jetzt Ist)
-- [ ] `frontend/README.md`: Platzhaltertext durch echten Quickstart ersetzen (oder Datei löschen, falls Root-`README.md` genügt — Entscheidung beim Umsetzen: **löschen**, Root-`README.md` deckt den Quickstart bereits ab)
-- [ ] `AGENTS.md`: 🚧-Zeile bleibt bis Plan-Ende auf STATE.md zeigen (kein Update hier nötig)
+- [x] `docs/code-map.md`: Frontend-Tabelle um tatsächliche Ordner ergänzen (waren vorher Soll-Zustand, jetzt Ist)
+- [x] `frontend/README.md`: Platzhaltertext durch echten Quickstart ersetzen (oder Datei löschen, falls Root-`README.md` genügt — Entscheidung beim Umsetzen: **löschen**, Root-`README.md` deckt den Quickstart bereits ab)
+- [x] `AGENTS.md`: 🚧-Zeile bleibt bis Plan-Ende auf STATE.md zeigen (kein Update hier nötig)
 
 ## Report-Back
-*(leer, wird beim Umsetzen befüllt)*
+
+Umgesetzt am 01.08.2026. `npm run build` und `npm run lint` laufen grün, der
+Dev-Server liefert Startseite, `main_hub.json` und `world_config.json` mit
+Status 200 (gegen `http://localhost:4321` geprüft).
+
+**Abweichungen vom Plan:**
+
+1. **Angular 22.1 statt 20.** Die aktuelle Version erfüllt die Vorgabe „v20+"
+   und ist die einzige, die das hier installierte Node 26.4 offiziell
+   unterstützt (Angular 22 verlangt `>=26.0.0`). Der Node-Check aus dem
+   Konfidenz-Ausweis ist damit beantwortet: keine zweite Node-Version nötig.
+2. **Kein Asset-Eintrag für `data/themes/`** — siehe Task oben und ADR-001.
+3. **Services tragen `@Service()` statt `@Injectable({providedIn:'root'})`.**
+   Das ist die Kurzform, die Angular 22 selbst generiert und laut eigener
+   Dokumentation gleichbedeutend ist. Der Dateiname braucht dafür `--type=service`,
+   sonst benennt die aktuelle CLI Services ohne Suffix — die Projekt-Konvention
+   `game-state.service.ts` / `GameStateService` bleibt bestehen.
+4. **Tests komplett gestrichen** (Entscheidung vom 01.08.2026): `ng new` und
+   alle Generate-Aufrufe mit `--skip-tests`, `tsconfig.spec.json` und das
+   `test`-Skript entfernt, kein Test-Schritt in der CI.
+5. **ESLint nachträglich eingerichtet** (`ng add @angular-eslint/schematics`) —
+   das Scaffold bringt keinen Linter mit, Akzeptanzkriterium 7 verlangt aber
+   einen. Selektor-Präfix `qst` steckt sowohl in `angular.json` als auch in
+   der Lint-Regel.
+6. **Zoneless.** Das Projekt läuft ohne Zone.js — Änderungserkennung
+   ausschließlich über Signals. Passt zur Signal-Vorgabe der Konventionen.
+
+**Offen für die manuelle Abnahme:** Aussehen gegen den Prototyp (Akzeptanz-
+kriterium 6) — die Tokens sind wertgleich übernommen, aber der optische
+Abgleich am Bildschirm steht noch aus.

@@ -1,0 +1,59 @@
+<header class="main-hub__header">
+  <h1 class="main-hub__title">Questoria</h1>
+  <p class="main-hub__subtitle">Such dir eine Welt aus.</p>
+</header>
+
+@let hub = hubState();
+
+@switch (hub.status) {
+  @case ('loading') {
+    <p class="main-hub__note">Welten werden geladen …</p>
+  }
+  @case ('error') {
+    <p class="main-hub__note main-hub__note--error">
+      Die Welten konnten nicht geladen werden: {{ hub.message }}
+    </p>
+  }
+  @case ('loaded') {
+    <ul class="main-hub__themes">
+      @for (theme of hub.data.installed_themes; track theme.id) {
+        <li class="main-hub__theme">
+          <qst-theme-card
+            [theme]="theme"
+            [active]="theme.id === activeThemeId()"
+            (chosen)="chooseTheme($event)"
+          />
+        </li>
+      }
+    </ul>
+  }
+}
+
+@let world = worldState();
+
+@if (world !== null) {
+  <section class="main-hub__world">
+    @switch (world.status) {
+      @case ('loading') {
+        <p class="main-hub__note">Welt wird geladen …</p>
+      }
+      @case ('error') {
+        <p class="main-hub__note main-hub__note--error">
+          Diese Welt konnte nicht geladen werden: {{ world.message }}
+        </p>
+      }
+      @case ('loaded') {
+        <h2 class="main-hub__world-title">{{ world.data.title }}</h2>
+        <qst-difficulty-picker
+          [levels]="world.data.difficulty_levels"
+          [selectedLevelId]="activeDifficultyLevel()"
+          (chosen)="chooseDifficultyLevel($event)"
+        />
+      }
+    }
+  </section>
+}
+
+@if (confirmation(); as selection) {
+  <p class="main-hub__confirmation">Ausgewählt: {{ selection }}</p>
+}

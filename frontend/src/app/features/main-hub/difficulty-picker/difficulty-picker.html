@@ -1,0 +1,29 @@
+<fieldset class="difficulty-picker__group">
+  <legend class="difficulty-picker__legend">
+    Lernstufe
+    <span
+      class="difficulty-picker__info"
+      role="img"
+      tabindex="0"
+      [attr.aria-label]="explanation"
+      [title]="explanation"
+      >i</span
+    >
+  </legend>
+
+  <div class="difficulty-picker__options">
+    @for (level of levels(); track level.id) {
+      <label class="difficulty-picker__option">
+        <input
+          class="visually-hidden"
+          type="radio"
+          name="difficulty-level"
+          [value]="level.id"
+          [checked]="level.id === selectedLevelId()"
+          (change)="chosen.emit(level.id)"
+        />
+        <span class="difficulty-picker__label">{{ level.label }}</span>
+      </label>
+    }
+  </div>
+</fieldset>

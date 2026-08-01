@@ -3,7 +3,7 @@
 Story-basierte Lernplattform: Fandom-Welten (One Piece, Miraculous, ...)
 werden zu Lernspielen. Voller Kontext: [docs/PROJECT.md](docs/PROJECT.md).
 
-🚧 Aktive Arbeit → STATE.md *(wird beim ersten Plan angelegt)*
+🚧 Aktive Arbeit → [STATE.md](STATE.md)
 
 ## Stack
 
