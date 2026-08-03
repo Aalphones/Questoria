@@ -141,9 +141,9 @@ Oben steht, wo ich am unsichersten bin — dort zuerst schauen.
    Bilder und JSON noch da? (Der Abgleich löscht im Webbereich alles, was nicht
    im Build vorkommt — die Ausnahmeliste muss `content/` enthalten.)
 2. 🔴 **Der Server findet seinen Content-Ordner.** `/api/content/themes` auf
-   questoria.info aufrufen: kommt die Welt-Liste oder ein `404`? Bei `404`
-   stimmt die Annahme über das Verzeichnis des Webbereichs nicht (Phase 1,
-   erste Aufgabe).
+   questoria.info aufrufen: kommt die Welt-Liste oder ein `404`? Der Pfad
+   selbst ist vorab geprüft (siehe Konfidenz-Ausweis) — hier geht es nur noch
+   darum, ob der Content auch tatsächlich oben angekommen ist.
 3. 🔴 **Karten auf kleinem Fenster.** Browserfenster auf ~360 px Breite ziehen:
    Knoten dürfen nicht überlappen, Routen nicht neben den Knoten enden.
 4. Fortschritt: einen Ort abschließen, Seite neu laden — Zustand hält.
@@ -156,12 +156,13 @@ Oben steht, wo ich am unsichersten bin — dort zuerst schauen.
 
 ## Konfidenz-Ausweis
 
-- 🟡 **Wo der Content-Ordner auf dem Server im Dateisystem liegt.** Der Plan
-  leitet ihn aus dem Verzeichnis des Webbereichs ab (`DOCUMENT_ROOT`), weil das
-  ohne Konfiguration auskommt. Ob das auf dem Strato-Paket stimmt, ist
-  ungeprüft. **Check (erste Aufgabe in Phase 1):** `api-bridge/diag.php` mit
-  `X-Diag-Token` abrufen und `document_root` ansehen; passt es nicht, greift
-  der vorgesehene Not-Ausgang `CONTENT_PATH` in der Konfiguration.
+- ✅ **Wo der Content-Ordner auf dem Server liegt — geprüft am 03.08.2026.**
+  Die Serverauskunft meldet
+  `document_root = /home/strato/http/premium/rid/72/15/54287215/htdocs/questoria/public`,
+  und `deploy.cmd` lädt das Frontend nach `/public/` — beides derselbe Ordner.
+  Der abgeleitete Pfad `DOCUMENT_ROOT/content` stimmt also, `open_basedir` ist
+  leer (keine Lesesperre). `CONTENT_PATH` bleibt als Not-Ausgang im Code, wird
+  aber im Betrieb nicht gebraucht. Server läuft auf PHP 8.5.7.
 - 🟡 **Der Frontend-Abgleich löscht im Webbereich alles Fremde.** Die
   Ausnahmeliste in [deploy.cmd:173](../../../deploy.cmd) kennt bisher nur den
   Brücken-Ordner. **Check:** nach der Erweiterung zweimal `deploy.cmd frontend`

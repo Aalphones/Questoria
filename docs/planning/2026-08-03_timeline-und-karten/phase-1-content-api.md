@@ -42,13 +42,15 @@ gehen weiter direkt über den Webserver, ohne PHP dazwischen.
 
 ## Checkliste
 
-### Vorab-Prüfung (blockiert den Rest der Phase)
+### Vorab-Prüfung
 
-- [ ] `api-bridge/diag.php` mit gültigem `X-Diag-Token` abrufen und
-      `document_root` notieren. Ist das **nicht** der Ordner, in den
-      `deploy.cmd` das Frontend legt (`REMOTE_WEB_PATH`), dann in Phase 1
-      durchgängig den Not-Ausgang `CONTENT_PATH` benutzen und die Abweichung in
-      [FINDINGS.md](FINDINGS.md) festhalten.
+- [x] **Erledigt am 03.08.2026, vor Beginn der Umsetzung.** Die Serverauskunft
+      meldet `document_root = …/questoria/public`; dorthin lädt `deploy.cmd`
+      auch das Frontend (`REMOTE_WEB_PATH = /public/`). `DOCUMENT_ROOT/content`
+      ist damit der richtige Ort, `open_basedir` ist leer. Der Not-Ausgang
+      `CONTENT_PATH` wird trotzdem eingebaut — für den lokalen Server (er hat
+      ein anderes Wurzelverzeichnis) und als Reißleine, falls Strato den Pfad
+      je ändert.
 
 ### Backend
 
@@ -100,7 +102,9 @@ gehen weiter direkt über den Webserver, ohne PHP dazwischen.
       `DO_*`-Weichen, „ohne Angabe = alles drei").
 - [ ] Content-Abgleich mit Ausnahme des Autoren-Werkzeugs — sonst wandert die
       Python-Umgebung unter `data/_authoring/voice-tools/` mit auf den Server:
-      `synchronize remote -delete -filemask="^|_authoring/" "data" "<Webbereich>content/"`
+      `synchronize remote -delete -filemask="^|_authoring/" "data" "!REMOTE_WEB_PATH!content/"`
+      (der Webbereich ist `/public/`, der Content landet also unter
+      `/public/content/`)
 - [ ] Ordner-Vorlauf (`mkdir`) für den Content-Ordner ergänzen — WinSCP legt
       Zielordner beim Abgleich nicht selbst an.
 - [ ] **Ausnahmeliste des Frontend-Abgleichs um `content/` erweitern**
