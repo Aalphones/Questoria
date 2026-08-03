@@ -1,0 +1,38 @@
+{
+  "//": "Besetzungsliste: welche Figur klingt wie. Schluessel ist die character_id,",
+  "//1": "also der Sprite-Dateiname ohne Emotion (shanks_neutral.png -> shanks).",
+  "//2": "engine: orpheus | kokoro. voice: Stimmname der jeweiligen Engine.",
+  "//3": "speed: 1.0 ist normal, kleiner ist langsamer.",
+
+  "//4": "Deutsche Orpheus-Stimmen (Kartoffel-Modell), maennlich: Jakob, Anton,",
+  "//5": "Julian, Jan, Alexander, Emil, Ben, Elias, Felix, Jonas, Noah, Maximilian.",
+  "//6": "Weiblich: Sophie, Marie, Mia, Maria, Sophia, Lina, Lea. Nicht jede Stimme",
+  "//7": "ist sauber rekonstruiert — erst proben, dann besetzen.",
+  "//8": "Ein-Stimmen-Modelle kennen keinen Namen: dann voice leer lassen.",
+
+  "//9": "language: nur fuer 'kokoro' mit --backend torch (a=amerikanisch, b=britisch,",
+  "//10": "f=franzoesisch, j=japanisch, z=mandarin, e=spanisch, h=hindi, i=italienisch,",
+  "//11": "p=brasilianisch). Deutsch ist da nicht dabei — siehe README.md.",
+  "//12": "Ein Eintrag _default ist Pflicht: er faengt jede nicht besetzte Figur auf.",
+
+  "_default": {
+    "engine": "orpheus",
+    "voice": "Julian",
+    "speed": 1.0
+  },
+
+  "erzaehler": {
+    "engine": "orpheus",
+    "voice": "Sophie",
+    "speed": 0.95
+  },
+
+  "//13": "Beispiel fuer die schnelle Rohfassung ueber einen lokalen Kokoro-Server:",
+  "//14": "python generate_kokoro.py --backend http --endpoint http://localhost:8880",
+  "platzhalter": {
+    "engine": "kokoro",
+    "voice": "martin",
+    "speed": 0.95,
+    "language": "de"
+  }
+}

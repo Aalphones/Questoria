@@ -1,0 +1,19 @@
+# Feste Probe-Batterie für Stimmvergleiche. Jede Zeile prüft etwas anderes.
+# Zeilen mit # werden übersprungen. Immer dieselben Sätze nehmen — sonst
+# vergleicht man Stimmen anhand verschiedener Texte, und das sagt nichts.
+# Datei ist UTF-8. Die Umlaute sind der halbe Test, nicht Kosmetik.
+
+# Erzählton, ruhig und getragen
+Weit draußen, wo das Meer den Himmel berührt, beginnt unsere Geschichte.
+
+# Ausruf mit Schwung — hier trennt sich lebendig von abgelesen
+Bin ich nicht! Ich werde König der Piraten!
+
+# Direkte Ansprache ans Kind, freundlich und ohne Belehrton
+Kannst du mir helfen? Welche Tür führt zum Hafen?
+
+# Umlaute, Zahlen und ein Eigenname — die drei häufigsten Aussprachefallen
+Schanks zählte drei Fässer, vier Möwen und fünf müde Matrosen.
+
+# Kurz und dringlich, ohne dass es nach Schimpfen klingt
+Vorsicht! Der Steg ist morsch.

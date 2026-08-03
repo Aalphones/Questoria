@@ -1,6 +1,7 @@
 # Machine-local / never committed
 .claude/settings.local.json
 deploy.env
+.commit_msg.tmp
 
 # Frontend
 frontend/node_modules/
@@ -12,6 +13,11 @@ backend/vendor/
 backend/.env
 backend/logs/*.log
 backend/.php-cs-fixer.cache
+
+# Sprach-Werkstatt (lokale Umgebungen und Stimmproben)
+data/_authoring/voice-tools/.venv-*/
+data/_authoring/voice-tools/probe/
+data/_authoring/voice-tools/__pycache__/
 
 # OS / editor
 .DS_Store

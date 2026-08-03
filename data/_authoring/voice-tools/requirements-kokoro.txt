@@ -1,0 +1,5 @@
+# Umgebung fuer generate_kokoro.py — siehe SETUP.md
+# torch passend zur CUDA-Version separat installieren, nicht ueber diese Datei.
+kokoro>=0.9.4
+soundfile>=0.12.1
+numpy>=1.26

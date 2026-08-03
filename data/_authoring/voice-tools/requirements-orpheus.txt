@@ -1,0 +1,9 @@
+# Umgebung fuer generate_orpheus.py — siehe SETUP.md
+# torch passend zur CUDA-Version separat installieren, nicht ueber diese Datei.
+# Ab 4.56 heisst der Genauigkeits-Schalter "dtype" statt "torch_dtype".
+transformers>=4.56
+snac>=1.2.1
+soundfile>=0.12.1
+numpy>=1.26
+# Nur fuer --load-4bit noetig:
+# bitsandbytes>=0.43

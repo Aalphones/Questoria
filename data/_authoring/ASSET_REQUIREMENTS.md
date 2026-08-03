@@ -87,10 +87,24 @@ Dialogzeile stumm oder bricht — nicht optional.
 
 | Eigenschaft | Vorgabe |
 |---|---|
-| Format | `.mp3` (bevorzugt) oder `.wav` |
-| Bitrate | mind. 128 kbps mp3, 44.1 kHz |
-| Dateiname | `<character_id>_<episode_id>_<laufende_nummer>.mp3` |
-| Pflicht? | optional pro Dialogzeile — fehlt `audio_path`, läuft die Zeile stumm |
+| Format | `.mp3` (bevorzugt zum Ausliefern) oder `.wav` |
+| Abtastrate | **24 kHz, mono** — die Ausgabe der eingesetzten Sprachmodelle |
+| Bitrate | 96 kbps mp3 reicht für 24 kHz mono aus |
+| Dateiname | `<character_id>_<episode_id>_<laufende_nummer>.mp3`, Nummer dreistellig |
+| Pflicht? | optional pro Dialogzeile — fehlt `audio_path`, liest die Engine die Zeile über die Sprachausgabe des Geräts vor |
+
+Die `character_id` steckt nicht in der Dialogzeile, sondern im Sprite-Namen:
+aus `shanks_neutral.png` wird `shanks`. Die laufende Nummer ist die Position in
+`dialogue_sequence`, bei 001 beginnend.
+
+**44.1 kHz ergibt hier nichts.** Beide eingesetzten Sprachmodelle liefern
+24 kHz; Hochrechnen fügt keine Information hinzu, nur Dateigröße. Aufwendig
+selbst eingesprochenes Material darf höher liegen — dann bleibt die Datei, wie
+sie ist.
+
+Erzeugt werden die Dateien lokal mit den Skripten unter
+[voice-tools/](voice-tools/README.md). Die schreiben Name, Ordner und den
+Rückverweis `audio_path` selbst — von Hand benannt wird hier nichts.
 
 ---
 

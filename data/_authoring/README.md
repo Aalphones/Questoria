@@ -13,6 +13,7 @@ verstehen, plus fertige Prompts für Text- und Bildgenerierung.
 | `LLM_WORLD_BUILDER_PROMPT.md` | Copy-Paste-Prompt für Claude/ChatGPT/Gemini, der eine komplette Welt erzeugt |
 | `ASSET_REQUIREMENTS.md` | Welche Dateien (Bilder, Audio) in welchem Format wo liegen müssen |
 | `image-prompts/` | Bild-Prompt-Werkstatt: Modellwahl und Einstellungen plus Vorlagen für Hintergründe, Sprites, Karten, Sammelkarten und Bildantworten |
+| `voice-tools/` | Sprach-Werkstatt: Skripte, die aus den Dialogtexten lokal Sprachdateien erzeugen |
 
 ## Designentscheidungen, die hier verbindlich gelten
 
@@ -51,8 +52,11 @@ der Tabelle aus `JSON_SCHEMA_REFERENCE.md` Abschnitt 5.
 3. `ASSET_REQUIREMENTS.md` aktualisieren, falls neue Asset-Typen nötig sind
 4. `image-prompts/` aktualisieren, falls neue Bildtypen nötig sind — neue
    Vorlage anlegen und in `image-prompts/README.md` eintragen
-5. `docs/design/README.md` prüfen, falls die Änderung das Zielbild betrifft
-6. Gleicher Pull Request wie die Engine-Änderung. Kein „mach ich später".
+5. `voice-tools/` aktualisieren, falls sich die Dialogfelder, die Herkunft der
+   `character_id` oder die Audio-Benennung ändern — die Skripte lesen das
+   Episodenformat direkt und brechen still, wenn es sich unter ihnen wegdreht
+6. `docs/design/README.md` prüfen, falls die Änderung das Zielbild betrifft
+7. Gleicher Pull Request wie die Engine-Änderung. Kein „mach ich später".
 
 Wird das nicht eingehalten, generieren LLMs gegen ein Schema von letzter
 Woche — und du debuggst Montagmorgen ein Minispiel, das nie geladen hätte

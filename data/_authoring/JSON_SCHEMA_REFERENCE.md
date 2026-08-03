@@ -481,7 +481,7 @@ anzeigen. Ins echte Content-Repo gehören diese Felder nicht.
       "name": "Shanks",
       "text": "Hey Luffy, du bist noch viel zu jung, um allein auf die See hinauszufahren!",
       "text_simple": "Luffy, du bist noch zu klein für das Meer!",
-      "audio_path": "audio/voices/shanks_arc_01_001.mp3"
+      "audio_path": "audio/voices/shanks_arc_01_foosha_001.mp3"
     },
     {
       "position": "right",
