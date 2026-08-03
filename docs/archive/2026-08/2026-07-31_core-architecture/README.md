@@ -108,13 +108,63 @@ kein Content. Beim Umsetzen von Phase 3 gegen `docs/PROJECT.md` gegenprüfen,
 ob das Schema beides abdeckt.
 
 ## Summary
-*(beim Archivieren befüllen)*
+
+Meilenstein 1 fertig: Angular-Frontend mit Main-Hub und Lernstufen-Auswahl,
+PHP-Backend live auf questoria.info (Health-Endpoint, Herkunftssperre,
+Hochlade-Skript), 7-Tabellen-MySQL-Schema mit automatischem
+Migrations-Nachzug bei jedem echten API-Aufruf. Kein HTTP-Wiring zwischen
+Frontend und Backend — bewusste Grenze, kommt mit Meilenstein 2.
 
 ## Files touched
-*(beim Archivieren befüllen)*
+
+- `frontend/` — komplettes Angular-Scaffold (`app/`, `features/main-hub/`,
+  `services/`, `models/`, `styles/`), Konfiguration (`angular.json`,
+  `eslint.config.js`, `.prettierrc`), statischer Dev-Content unter `public/`.
+- `backend/` — Composer-Projekt (`src/Controllers`, `Database`, `Middleware`,
+  `Exceptions`, `Http`, `Migrations` inkl. `sql/`, `bin/migrate.php`),
+  Einstiegspunkt `public/index.php`, `.htaccess`.
+- `api-bridge/` — die drei Dateien im ausgelieferten Bereich (`index.php`,
+  `diag.php`, `.htaccess`).
+- Projektstamm — `deploy.cmd` + `deploy.env.example`, `.github/workflows/ci.yml`,
+  `.gitattributes`.
+- Doku — `docs/PROJECT.md`, `docs/code-map.md`, `docs/conventions/{css,php}.md`,
+  drei ADRs unter `docs/decisions/`, `AGENTS.md`.
 
 ## Commits
-*(beim Archivieren befüllen)*
+
+- `ed19a41` feat(frontend): Angular-Scaffold mit Startbildschirm und Lernstufen-Auswahl
+- `bd01da8` feat(backend): REST-API-Gerüst mit Health-Endpoint und Hochlade-Skript
+- `17055da` feat(backend): Backend live auf questoria.info, Programmcode außerhalb des Webbereichs
+- `5f68f9f` feat(backend): MySQL-Schema mit tokengeschütztem Migrations-Endpoint
+- `5b8ee44` feat(backend): Migrationen automatisch bei jedem Request nachziehen
+- `1dc0105` fix(backend): Migrationslauf brach nach je einer Datei ab
+- `d4d03a2` docs: Phase 3 als live verifiziert abschließen
 
 ## Deviations from plan
-*(beim Archivieren befüllen)*
+
+- **Phase 3, Migrations-Weg:** Ursprünglich als CLI-Skript geplant. Fernzugriff
+  auf die entfernte MySQL erwies sich als blockiert (gemessener 5s-Timeout),
+  Kommandozeile auf dem Server gibt es nicht — der Runner läuft stattdessen
+  über einen tokengeschützten Endpoint und, auf expliziten Nutzerwunsch
+  danach, zusätzlich automatisch bei jedem echten API-Aufruf (`AutoMigrator`).
+  Nicht im Ursprungsplan.
+- **Zwei während der Umsetzung gefundene Bugs, beide gefixt:** kein
+  Verbindungs-Timeout in `Connection.php` (hätte bei toter DB PHPs
+  Ausführungslimit reißen können) und eine PDO-Transaktion um `CREATE TABLE`,
+  die MySQLs impliziten DDL-Commit ignorierte und jeden Migrationslauf nach
+  einer Datei abbrechen ließ (live auf Produktion beobachtet, per Server-Log
+  aufgedeckt, nicht durch einen offensichtlichen Fehlerbildschirm).
+- **Content-Kopierschritt (Phase 1) entfällt:** siehe Kontrakt-Abschnitt oben
+  (Angular-Build akzeptiert keine Asset-Quellen außerhalb des Projektordners).
+- **`frontend/README.md` wurde in Phase 1 entfernt, nie neu befüllt** — AK 4
+  erwartet echten Inhalt statt Stub-Text; aktuell fehlt die Datei ganz. Nicht
+  in dieser Session nachgezogen, siehe Follow-ups.
+
+## Follow-ups (offen nach Archivierung)
+
+- `frontend/README.md` fehlt komplett — nachträglich befüllen (siehe Deviations).
+- AK 1 (Frontend-Build/Main-Hub) wurde in dieser Session nicht erneut geprüft —
+  vor dem nächsten Meilenstein einmal smoke-testen.
+- Direkte Einsicht ins Live-Schema (z. B. per phpMyAdmin) steht aus — die
+  Foreign-Key-Prüfung aus AK 3 ist nur indirekt über das fehlerfreie
+  Server-Log belegt, nicht per `SHOW CREATE TABLE` eingesehen.

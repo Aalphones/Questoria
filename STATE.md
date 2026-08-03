@@ -1,14 +1,11 @@
 # STATE
 
-**Aktiver Plan:** `docs/planning/2026-07-31_core-architecture/`
-**Phase:** 3/3 — MySQL-Schema (fertig, live verifiziert)
-**Nächster Schritt:** Smoke-Checkliste aus dem Chat abarbeiten (AK 1+4, die
-einzigen zwei, die noch niemand angeschaut hat), dann Plan archivieren.
+**Aktiver Plan:** (kein aktiver Plan)
 
-**Stand Phase 2:** erledigt und live. <https://questoria.info/api/health>
-antwortet, die Datenbank ist erreichbar, der Programmcode liegt außerhalb des
-ausgelieferten Bereichs. Hochladen per Doppelklick auf `deploy.cmd`.
+Meilenstein 1 (Core Architecture) ist fertig und archiviert:
+`docs/archive/2026-08/2026-07-31_core-architecture/`. Nächster Meilenstein
+laut [docs/PROJECT.md](docs/PROJECT.md) ist 2 ("Timeline & Map") — dafür
+existiert noch kein Plan.
 
-**Korrektur:** PHP/Composer liegen unter `C:\Users\sasch\develop\.tools\`
-(`php.cmd`/`composer.cmd`), nicht im Suchpfad des Benutzers und nicht unter
-`C:\Tools\...` wie eine ältere Notiz im Plan behauptete.
+**Merkposten:** PHP/Composer liegen unter `C:\Users\sasch\develop\.tools\`
+(`php.cmd`/`composer.cmd`), nicht im Suchpfad des Benutzers.
