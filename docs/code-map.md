@@ -40,15 +40,15 @@ im Frontend-Ordnernamen, PascalCase in PHP-Klassen):
 | Design-Tokens | `frontend/src/styles/` | `_tokens.scss` (Farben, Schrift, Abstände, Radien, Kartenmaße), `_fonts.scss` und `_motion.scss` (Bildfolgen, die mehrere Komponenten teilen); global über `src/styles.scss` eingebunden |
 
 **Ist-Stand:** gebaut sind bisher `features/main-hub/` (mit `theme-card/`,
-`difficulty-picker/` und dem eigenen Screen `level-select/`), `ui/map-canvas/`,
-`ui/image-slot/`, `ui/hud/`, `ui/content-error/`, `routing/`, `services/`,
-`models/` und `styles/`. `features/timeline/`, `features/map/` und
-`features/location/` existieren als schlanke Platzhalter (Kopfleiste +
-Hinweistext) — die echte Etappenkarte kommt in Phase 6, Ortskarte + Ort-
-Platzhalter in Phase 7; die Ordner bleiben, nur der Inhalt wird ersetzt. Dazu
-`features/map-demo/` als temporäres Prüfbild der Kartenfläche unter
-`/map-demo` — fällt mit der Ortskarte weg. Alle übrigen Zeilen sind Soll-
-Zustand für spätere Meilensteine.
+`difficulty-picker/` und dem eigenen Screen `level-select/`), `features/timeline/`
+(echte Etappenkarte: Inseln, Panel, Legende, Fortschritt-zurücksetzen-Dialog),
+`ui/map-canvas/`, `ui/image-slot/`, `ui/hud/`, `ui/content-error/`, `routing/`,
+`services/`, `models/` und `styles/`. `features/map/` und `features/location/`
+existieren noch als schlanke Platzhalter (Kopfleiste + Hinweistext) — die echte
+Ortskarte + Ort-Platzhalter kommen in Phase 7; die Ordner bleiben, nur der
+Inhalt wird ersetzt. Dazu `features/map-demo/` als temporäres Prüfbild der
+Kartenfläche unter `/map-demo` — fällt mit der Ortskarte weg. Alle übrigen
+Zeilen sind Soll-Zustand für spätere Meilensteine.
 
 ### Routen (Frontend)
 

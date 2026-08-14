@@ -1,9 +1,73 @@
-<qst-hud [backLink]="['/theme', themeId(), 'level']" [worldTitle]="world()?.title ?? null" />
+<qst-hud
+  [backLink]="['/theme', themeId(), 'level']"
+  [worldTitle]="world()?.title ?? null"
+  [levelLabel]="levelLabel()"
+  [levelLink]="['/theme', themeId(), 'level']"
+  [progress]="progress()"
+/>
 
 @if (world(); as loadedWorld) {
-  <p class="timeline__placeholder">
-    Etappenkarte von „{{ loadedWorld.title }}" — wird noch gebaut.
-  </p>
+  <div class="timeline">
+    <qst-map-canvas class="timeline__canvas" [background]="null" [points]="points()" [routes]="loadedWorld.arc_overview.routes" [dimmedPointIds]="lockedStageIds()">
+    @for (stage of loadedWorld.arc_overview.stages; track stage.map_id; let stageIndex = $index) {
+      <qst-map-point [x]="stage.x" [y]="stage.y" [size]="stage.size">
+        <div class="timeline__stage-wrapper">
+          @if (isReachable(stage.map_id)) {
+            <a
+              class="timeline__stage"
+              [class.timeline__stage--done]="stateOf(stage.map_id) === 'done'"
+              [class.timeline__stage--current]="stateOf(stage.map_id) === 'current'"
+              [style.--stage-shape]="stage.shape"
+              [style.--stage-aspect]="stage.aspect"
+              [routerLink]="['/theme', themeId(), 'map', stage.map_id]"
+            >
+              <span class="timeline__chip">{{ stageIndex + 1 }}</span>
+            </a>
+          } @else {
+            <div class="timeline__stage timeline__stage--locked" [style.--stage-shape]="stage.shape" [style.--stage-aspect]="stage.aspect">
+              <span class="timeline__chip">{{ stageIndex + 1 }}</span>
+            </div>
+          }
+
+          <span class="timeline__label">
+            <span class="timeline__label-name">{{ stage.name }}</span>
+            <span class="timeline__label-stars" [attr.aria-label]="starsLabel(stage.map_id)">
+              @for (starIndex of starIndexes; track starIndex) {
+                <span class="timeline__star" [class.timeline__star--filled]="starIndex < starsOf(stage.map_id)"></span>
+              }
+            </span>
+            @if (stateOf(stage.map_id) === 'locked') {
+              <span class="timeline__label-status">Verschlossen</span>
+            }
+          </span>
+        </div>
+      </qst-map-point>
+    }
+
+    <div class="timeline__panel">
+      <span class="timeline__panel-tag">{{ loadedWorld.title }} · {{ loadedWorld.subject }}</span>
+      <h1 class="timeline__panel-title">{{ loadedWorld.arc_overview.title }}</h1>
+      <p class="timeline__panel-hint">Wähle eine geschaffte oder aktuelle Etappe, um weiterzuspielen.</p>
+      <button type="button" class="timeline__reset" (click)="resetDialog.showModal()">Fortschritt zurücksetzen</button>
+    </div>
+
+    <ul class="timeline__legend">
+      <li class="timeline__legend-item timeline__legend-item--current">Jetzt dran</li>
+      <li class="timeline__legend-item timeline__legend-item--done">Geschafft</li>
+      <li class="timeline__legend-item timeline__legend-item--locked">Verschlossen</li>
+    </ul>
+    </qst-map-canvas>
+  </div>
+
+  <dialog #resetDialog class="timeline__reset-dialog">
+    <p class="timeline__reset-question">
+      Alles in dieser Welt auf Anfang setzen? Geschaffte Orte und Sterne gehen verloren.
+    </p>
+    <div class="timeline__reset-actions">
+      <button type="button" class="timeline__reset-cancel" (click)="resetDialog.close()">Abbrechen</button>
+      <button type="button" class="timeline__reset-confirm" (click)="confirmReset(resetDialog)">Zurücksetzen</button>
+    </div>
+  </dialog>
 } @else {
   <qst-content-error message="Diese Welt konnte nicht geladen werden." />
 }
