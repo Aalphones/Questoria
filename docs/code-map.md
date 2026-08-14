@@ -34,7 +34,7 @@ im Frontend-Ordnernamen, PascalCase in PHP-Klassen):
 | Kartenfläche | `ui/map-canvas/` | Gemeinsames Bauteil von Planeten-, Etappen- und Ortskarte: Fläche im Seitenverhältnis 16:9, Hintergrund, Routenlinien; `map-point/` setzt ein beliebiges Kind auf eine Prozent-Position |
 | Bildfläche | `ui/image-slot/` | Bild mit beschriftetem Platzhalter, wenn die Datei fehlt |
 | Gemeinsame UI | `ui/hud/`, `ui/speech-bubble/` | Kopfleiste auf allen Spiel-Screens, Sprechblasen |
-| Zentrale Services | `services/game-state.service.ts`, `services/content.service.ts`, `services/savegame.service.ts`, `services/narration.service.ts` | Aktive Welt/Profil/Lernstufe, JSON-Content lesen, Speichern/Laden, Vorlesemodus + Sprachausgabe. **`ContentService` ist die einzige Ladestelle für Content** — dort hängt später der Offline-Cache (Meilenstein 6) |
+| Zentrale Services | `services/game-state.service.ts`, `services/content.service.ts`, `services/progress.service.ts`, `services/progress.rules.ts`, `services/savegame.service.ts`, `services/narration.service.ts` | Aktive Welt/Profil/Lernstufe, JSON-Content lesen, Fortschritt im Browser-Speicher + Freischaltregeln als reine Funktionen (ADR-006), Speichern/Laden, Vorlesemodus + Sprachausgabe. **`ContentService` ist die einzige Ladestelle für Content** — dort hängt später der Offline-Cache (Meilenstein 6) |
 | Content-Typen | `models/` | TypeScript-Abbild des JSON-Schemas (`content.types.ts`) und der Ladezustände (`game-state.types.ts`) |
 | Design-Tokens | `frontend/src/styles/` | `_tokens.scss` (Farben, Schrift, Abstände, Radien, Kartenmaße), `_fonts.scss` und `_motion.scss` (Bildfolgen, die mehrere Komponenten teilen); global über `src/styles.scss` eingebunden |
 

@@ -22,7 +22,7 @@ statt `dialogue_sequence` + `minigame_event`.
 | 1 | [Content-Schnittstelle im Backend](phase-1-content-api.md) | heikel | complete |
 | 2 | [Testwelt im Repo + Frontend liest über die Schnittstelle](phase-2-testwelt-und-anbindung.md) | standard | complete |
 | 3 | [Kartenfläche: Knoten, Routen, Bildplatzhalter](phase-3-kartenflaeche.md) | heikel | complete |
-| 4 | [Fortschritts-Speicher + Freischaltregeln](phase-4-fortschritt.md) | standard | pending |
+| 4 | [Fortschritts-Speicher + Freischaltregeln](phase-4-fortschritt.md) | standard | complete |
 | 5 | [Router-Struktur + Kopfleiste](phase-5-routing-und-kopfleiste.md) | standard | pending |
 | 6 | [Etappenkarte](phase-6-etappenkarte.md) | standard | pending |
 | 7 | [Ortskarte + Ort-Platzhalter](phase-7-ortskarte.md) | standard | pending |

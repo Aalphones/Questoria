@@ -60,12 +60,12 @@ aktiven Welt — eine Regel für alle Screens, nicht je nach Ansicht eine andere
 
 ## Checkliste
 
-- [ ] `models/game-state.types.ts` erweitern: `ProgressState`
+- [x] `models/game-state.types.ts` erweitern: `ProgressState`
       (`'done' | 'current' | 'locked'`), `EpisodeProgress`
       (`stars: number`, `completedAt: string`), `ThemeProgress`
       (`Record<string, EpisodeProgress>`), `ProgressStore`
       (`Record<string, ThemeProgress>`).
-- [ ] `ng generate service services/progress --skip-tests`
+- [x] `ng generate service services/progress --skip-tests`
   - Signal `store` mit dem gesamten Stand, aus dem Browser-Speicher geladen
     (Schlüssel `questoria.progress.v1`)
   - Lesen in `try/catch`: ungültiges JSON → leerer Stand, eine Warnung in die
@@ -81,7 +81,7 @@ aktiven Welt — eine Regel für alle Screens, nicht je nach Ansicht eine andere
   - `completeEpisode` überschreibt einen bestehenden Eintrag **nur, wenn die
     neue Sternzahl höher ist** — ein zweiter, schlechterer Durchlauf darf ein
     Ergebnis nicht verschlechtern. `completedAt` bleibt dann der erste Termin.
-- [ ] `services/progress.rules.ts` — reine Funktionen, kein `inject`, kein
+- [x] `services/progress.rules.ts` — reine Funktionen, kein `inject`, kein
       Signal:
   - `stageStates(world: WorldConfig, isCompleted: (episodeId: string) => boolean): Map<string, ProgressState>`
     (Schlüssel = `map_id`)
@@ -90,22 +90,22 @@ aktiven Welt — eine Regel für alle Screens, nicht je nach Ansicht eine andere
   - `worldProgress(world: WorldConfig, isCompleted: (episodeId: string) => boolean): { done: number; total: number }`
   - Verweist eine Etappe auf eine Karte, die es nicht gibt, gilt sie als
     gesperrt — kein Absturz wegen eines Content-Tippfehlers.
-- [ ] Kurzer Kommentarkopf in beiden Dateien: **warum getrennt** — die Regeln
+- [x] Kurzer Kommentarkopf in beiden Dateien: **warum getrennt** — die Regeln
       sind reine Rechnerei und bleiben unverändert, wenn Meilenstein 4 die
       Ablage gegen die Savegame-Schnittstelle tauscht.
 
 ### Doku
 
-- [ ] `docs/decisions/005-fortschritt-vor-der-nutzerverwaltung.md` (10 Zeilen):
+- [x] `docs/decisions/006-fortschritt-vor-der-nutzerverwaltung.md` (10 Zeilen):
       Kontext (Login erst Meilenstein 4), Optionen (Savegame-Schnittstelle
       vorziehen · lokal im Browser · gar kein Fortschritt), Entscheidung,
       Konsequenzen — inklusive: der Stand hängt an Browser und Gerät, ein
       Wechsel verliert ihn, und in Meilenstein 4 wird genau eine Datei
-      ausgetauscht.
-- [ ] `docs/code-map.md`: `services/progress.service.ts` und
-      `services/progress.rules.ts` in der Service-Zeile ergänzen.
-- [ ] `docs/glossary.md`: **Fortschritt**, **Sterne**, **Etappen-Zustand**
-      aufnehmen.
+      ausgetauscht. (Nummer per FINDINGS Phase 1 auf 006 verschoben.)
+- [x] `docs/code-map.md`: `services/progress.service.ts` und
+      `services/progress.rules.ts` in der Service-Zeile ergänzt.
+- [x] `docs/glossary.md`: **Fortschritt**, **Sterne**, **Etappen-Zustand**
+      aufgenommen.
 
 ## Risiken
 
@@ -115,3 +115,13 @@ aktiven Welt — eine Regel für alle Screens, nicht je nach Ansicht eine andere
   es in ADR-006 und nicht nur hier.
 
 ## Report-Back
+
+Gebaut wie geplant, keine Abweichungen. `ng generate` legt Services in Angular
+22 ohne `.service.`-Suffix an (`progress.ts`/`Progress`) — auf
+`progress.service.ts`/`ProgressService` umbenannt, wie es die
+Projekt-Konvention (`docs/conventions/angular.md`) für Services vorschreibt.
+`resetTheme` filtert über `Object.entries` statt über destrukturierendes
+Auslassen (`{ [key]: _, ...rest }`) — die Auslass-Variante lässt die ungenutzte
+Variable durch den Linter (`@typescript-eslint/no-unused-vars`) durchfallen.
+`npm run build` und `npm run lint` laufen grün. AK 1–5 gegen die Regel-Logik
+durchgerechnet (kein automatischer Test — private-Profil).

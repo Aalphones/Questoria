@@ -32,6 +32,9 @@ sie im Code, in Docs oder Tickets auftauchen.
 | Druckbogen | Die druckbare DIN-A4-Seite mit 3×3 ausgewählten Sammelkarten in Originalgröße, optional mit Schnittmarken. |
 | Vorlesemodus | Der Modus "Bilder & Vorlesen" für Kinder, die noch nicht lesen: kurze Textfassung, Bildantworten im Quiz, automatische Sprachausgabe. Gegenstück: "Selbst lesen". |
 | Design-Token | Ein benannter Gestaltungswert (Farbe, Abstand, Radius, Schatten) aus `docs/design/`. Einzige Quelle für das Aussehen — keine Hardcodes in Komponenten. |
+| Fortschritt | Der gespeicherte Stand, welche Episoden ein Kind abgeschlossen hat — bis Meilenstein 4 im Browser-Speicher (`ProgressService`), danach über die Savegame-Schnittstelle (ADR-006). |
+| Sterne | Bewertung einer geschafften Episode (0–3), Teil von `EpisodeProgress`. Bis die Event Engine (Meilenstein 3) echte Sterne vergibt, liefert der Ort-Platzhalter pauschal 3. |
+| Etappen-Zustand | `geschafft`/`aktuell`/`gesperrt` (`ProgressState`) — Ergebnis der reinen Freischaltregeln in `progress.rules.ts`, gilt gleichermaßen für Orte und Etappen. |
 
 ## Abgelöste Begriffe
 
