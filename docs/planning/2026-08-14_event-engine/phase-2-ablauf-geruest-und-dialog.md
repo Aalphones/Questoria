@@ -1,6 +1,6 @@
 # Phase 2 — Ablauf-Gerüst, Event Loader, `dialog`
 
-**Rating:** heikel
+**Rating:** heikel · **Status:** complete
 
 Die Phase, die den Kontrakt setzt: Ein Screen spielt die Eventliste einer
 Episode der Reihe nach ab, wählt pro Event die Komponente über
@@ -85,36 +85,36 @@ dabei ersetzt.
 
 ### Typen und Kontrakt
 
-- [ ] `models/event-runtime.types.ts` anlegen mit `EventOutcome` und
+- [x] `models/event-runtime.types.ts` anlegen mit `EventOutcome` und
       `EventContext` — Wortlaut aus [README.md](README.md) → Kontrakt.
-- [ ] `models/content.types.ts`: `DialogConfig { lines: DialogueLine[] }`
+- [x] `models/content.types.ts`: `DialogConfig { lines: DialogueLine[] }`
       ergänzen (die Konfiguration, die die Dialog-Komponente als `config`
       bekommt).
 
 ### Ablauf-Gerüst
 
-- [ ] `ng generate component features/episode --skip-tests`.
-- [ ] `features/episode/episode-run.ts`: Dienst mit `@Service()`,
+- [x] `ng generate component features/episode --skip-tests`.
+- [x] `features/episode/episode-run.ts`: Dienst mit `@Service()`,
       **provided in `Episode`** (`providers: [EpisodeRun]`), nicht global.
       Zustand als Signale: `eventIndex`, `scoredCount`, `correctFirstTryCount`.
       Methode `finish(outcome: EventOutcome): void` zählt bei
       `kind: 'scored'` mit und rückt den Index vor. Zusätzlich `restart()` und
       `startAt(index, scoredCount, correctFirstTryCount)` (Phase 6 setzt darauf
       auf, Phase 2 nutzt nur `restart()`).
-- [ ] `features/episode/event-type-map.ts`: `EVENT_COMPONENTS` als
+- [x] `features/episode/event-type-map.ts`: `EVENT_COMPONENTS` als
       `Readonly<Record<EventType, () => Promise<Type<unknown>>>>`, in dieser
       Phase nur der Eintrag `dialog`. Fehlt ein Typ zur Laufzeit → Fehlerpfad
       aus AK 7.
-- [ ] `episode.ts`: Route-Inputs, Episoden-Ladung (Muster aus `location.ts`
+- [x] `episode.ts`: Route-Inputs, Episoden-Ladung (Muster aus `location.ts`
       übernehmen — reaktiv über `toObservable()` + `switchMap`, weil die
       Pflicht-Inputs im Feld-Initialisierer noch leer sind), `currentEvent` als
       `computed()` über `events[eventIndex]`, Komponente über
       `ngComponentOutlet`.
-- [ ] `context` als `computed<EventContext>()` aus `themeId` und
+- [x] `context` als `computed<EventContext>()` aus `themeId` und
       `GameStateService.activeDifficultyLevel()` — ist keine Stufe gesetzt,
       greift bereits der `difficultyChosenGuard`, der Screen rechnet nicht
       selbst nach.
-- [ ] 🟡 **Injektor prüfen:** Die Dialog-Komponente ruft `inject(EpisodeRun)`.
+- [x] 🟡 **Injektor prüfen:** Die Dialog-Komponente ruft `inject(EpisodeRun)`.
       Sieht sie den Dienst nicht (Laufzeitfehler „No provider"), den Injektor
       explizit übergeben: `[ngComponentOutletInjector]="episodeInjector"` mit
       einem in `Episode` erzeugten Injektor, der `EpisodeRun` bereitstellt. Den
@@ -123,12 +123,12 @@ dabei ersetzt.
 
 ### Routing und Aufräumen
 
-- [ ] `app.routes.ts`: Pfad `theme/:themeId/location/:episodeId` →
+- [x] `app.routes.ts`: Pfad `theme/:themeId/location/:episodeId` →
       `theme/:themeId/episode/:episodeId`, lädt `features/episode/episode`.
       Resolver und Guard unverändert übernehmen.
-- [ ] `features/map/map.ts` (und `map.html`, falls der Link dort steht): Ziel
+- [x] `features/map/map.ts` (und `map.html`, falls der Link dort steht): Ziel
       auf `['/theme', themeId, 'episode', episodeId]` umstellen.
-- [ ] **Chesterton-Check vor dem Löschen:** `features/location/` zeigte
+- [x] **Chesterton-Check vor dem Löschen:** `features/location/` zeigte
       Ortsname, Hintergrund, Anzahl bereitliegender Events und einen
       „Ort geschafft"-Knopf mit pauschal 3 Sternen — sein Zweck war der
       Nachweis, dass die Episoden-Schnittstelle trägt. Der neue Screen
@@ -138,20 +138,20 @@ dabei ersetzt.
 
 ### `dialog`
 
-- [ ] `ng generate component features/events/dialog --skip-tests`.
-- [ ] Außenfläche exakt nach Kontrakt: `config = input.required<DialogConfig>()`,
+- [x] `ng generate component features/events/dialog --skip-tests`.
+- [x] Außenfläche exakt nach Kontrakt: `config = input.required<DialogConfig>()`,
       `context = input.required<EventContext>()`, `inject(EpisodeRun)`.
       **Kein** eigener Content-Aufruf, **keine** Router-Nutzung, **kein**
       Schreiben von Fortschritt.
-- [ ] Zeilenindex als Signal, `currentLine` als `computed()`. Ein `effect()`
+- [x] Zeilenindex als Signal, `currentLine` als `computed()`. Ein `effect()`
       auf `currentLine` spricht im Modus `listen` automatisch
       (`speak(textFor(...), audioUrl)`), sonst nicht.
-- [ ] Sprite-Plätze, Sättigung/Wippen, Textbox, Namensschild, Fußzeile nach
+- [x] Sprite-Plätze, Sättigung/Wippen, Textbox, Namensschild, Fußzeile nach
       Design (AK 9–12). Alle Werte aus Zweck-Tokens; neue Maße, die zweimal
       vorkommen, werden ein Token in `_tokens.scss`.
-- [ ] `prefers-reduced-motion`-Zweig für das Wippen (`_motion.scss` liefert die
+- [x] `prefers-reduced-motion`-Zweig für das Wippen (`_motion.scss` liefert die
       Bildfolge, die Dauer-Tokens sind dort bereits abgeschaltet).
-- [ ] **Bewusste Abweichung von der Design-Copy:** Der Knopf heißt auf der
+- [x] **Bewusste Abweichung von der Design-Copy:** Der Knopf heißt auf der
       letzten Zeile „Weiter", nicht „Minispiel starten". Das Gerüst kennt den
       nächsten Eventtyp nicht und soll ihn nicht kennen — eine typabhängige
       Beschriftung wäre die Verzweigung, die Critical Rule 9 verbietet, nur in
@@ -159,15 +159,53 @@ dabei ersetzt.
 
 ### Doku
 
-- [ ] `docs/code-map.md`: `features/episode/` und `features/events/dialog/` auf
+- [x] `docs/code-map.md`: `features/episode/` und `features/events/dialog/` auf
       Ist ziehen, `features/location/` entfernen, Routen-Tabelle auf
       `theme/:themeId/episode/:episodeId` korrigieren, Ist-Stand-Absatz
       nachziehen.
-- [ ] `docs/glossary.md`: Eintrag **Ort** so schärfen, dass er den Kartenpunkt
+- [x] `docs/glossary.md`: Eintrag **Ort** so schärfen, dass er den Kartenpunkt
       meint und nicht mehr den Platzhalter-Screen.
-- [ ] `AGENTS.md`: nichts ändern, aber gegenprüfen — Critical Rule 9 muss zum
+- [x] `AGENTS.md`: nichts ändern, aber gegenprüfen — Critical Rule 9 muss zum
       Gebauten passen.
 
 ## Report-Back
 
-*(beim Umsetzen füllen)*
+**Injektor-Frage entschieden: der einfache Weg trägt.** Die Dialog-Komponente
+ruft `inject(EpisodeRun)` ohne Zutun des Gerüsts. Belegt am Quelltext von
+`NgComponentOutlet` (`@angular/common`, v22.1.0): die Direktive erzeugt die
+Komponente mit `this.ngComponentOutletInjector || this._viewContainerRef.parentInjector`
+— ohne eigenen Injektor also mit dem Element-Injektor an der Stelle im Template
+des Episoden-Screens, und dort liegt `providers: [EpisodeRun]`.
+`[ngComponentOutletInjector]` wird **nicht** gebraucht; Phase 3–5 können sich
+auf `inject(EpisodeRun)` verlassen. Der Lauf im Browser steht noch aus (Smoke).
+
+**Abweichungen vom Plan:**
+
+1. **Klasse heißt `EpisodeScreen`, nicht `Episode`.** Der Content-Typ `Episode`
+   wird in derselben Datei gebraucht, der Name hätte ihn verdeckt — gleiche
+   Begründung und gleiches Muster wie bei `MapScreen`. Datei- und Ordnername
+   bleiben `features/episode/episode.ts`.
+2. **`EVENT_COMPONENTS` ist `Readonly<Partial<Record<…>>>`, nicht
+   `Readonly<Record<…>>`.** Ein vollständiges `Record` würde verlangen, dass
+   alle fünf Eventtypen eine Komponente haben — genau das ist bis Phase 5 nicht
+   der Fall, und ein erzwungener Platzhalter-Eintrag wäre eine Lüge im Typ. Der
+   Fehlerpfad aus AK 7 hängt an dieser Lücke: `loadEventComponent()` lehnt einen
+   Typ ohne Eintrag ab, das Gerüst zeigt die Meldung.
+3. **Knopf-Beschriftung „Weiter" auch auf der letzten Zeile** — wie im Plan
+   vorgesehen (statt „Minispiel starten" aus der Design-Copy). Das Gerüst kennt
+   den nächsten Eventtyp nicht und soll ihn nicht kennen.
+4. **Wippen ohne eigenen `prefers-reduced-motion`-Zweig.** Die Animation holt
+   ihre Dauer aus `--duration-ambient`; genau dieses Token wird in `_tokens.scss`
+   unter `prefers-reduced-motion` auf `0s` gesetzt. Gleiches Muster wie
+   Etappenkarte und Weltknoten — ein zweiter Zweig in der Komponente wäre eine
+   zweite Wahrheit.
+
+**Neue Tokens** in `_tokens.scss`: `--color-stage-bg`, `--color-speaker-left`,
+`--color-speaker-right`, `--filter-stage-idle`, `--font-size-label`,
+`--size-stage-min-block`, `--size-dialog-figure-inline`,
+`--size-dialog-figure-block`, `--measure-dialog-text`.
+
+**Was die Testwelt jetzt zeigt:** Die Episoden von `dev_fixture` beginnen mit
+einem `dialog` und enden auf `multiple_choice` — der zweite Eventtyp hat noch
+keine Komponente und läuft damit sichtbar in den Fehlerpfad aus AK 7. Das ist
+der gewollte Zwischenstand bis Phase 3, kein Defekt.

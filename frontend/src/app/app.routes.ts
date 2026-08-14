@@ -29,10 +29,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/map/map').then((module) => module.MapScreen),
   },
   {
-    path: 'theme/:themeId/location/:episodeId',
+    path: 'theme/:themeId/episode/:episodeId',
     resolve: { world: worldConfigResolver },
     canActivate: [difficultyChosenGuard],
-    loadComponent: () => import('./features/location/location').then((module) => module.Location),
+    loadComponent: () =>
+      import('./features/episode/episode').then((module) => module.EpisodeScreen),
   },
   {
     path: '**',

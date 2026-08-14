@@ -1,0 +1,42 @@
+:host {
+  display: block;
+}
+
+.episode__note {
+  padding: var(--space-6) var(--space-4);
+  color: var(--color-text-muted);
+}
+
+.episode {
+  display: grid;
+  position: relative;
+  grid-template-rows: auto 1fr;
+  min-block-size: var(--size-stage-min-block);
+  padding: var(--space-4);
+  background: var(--color-stage-bg);
+  isolation: isolate;
+
+  // Bühnenbild: liegt hinter dem laufenden Event, nicht daneben.
+  &__backdrop {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    opacity: 0.85;
+  }
+
+  &__title {
+    justify-self: start;
+    margin: 0;
+    padding: var(--space-1) var(--space-4);
+    border-radius: var(--radius-pill);
+    background: var(--color-map-label-bg);
+    color: var(--color-text-accent);
+    font-size: var(--font-size-card-title);
+  }
+
+  &__stage {
+    display: grid;
+    align-content: end;
+    min-inline-size: 0;
+  }
+}

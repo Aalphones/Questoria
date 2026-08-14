@@ -16,7 +16,7 @@
             @if (isReachable(node.id)) {
               <a
                 class="map__node-wrapper"
-                [routerLink]="['/theme', themeId(), 'location', node.episode_ref]"
+                [routerLink]="['/theme', themeId(), 'episode', node.episode_ref]"
               >
                 <span
                   class="map__node"

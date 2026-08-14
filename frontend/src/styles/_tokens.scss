@@ -69,6 +69,14 @@
   --color-progress-locked: var(--palette-neutral-300);
   --color-progress-locked-strong: var(--palette-neutral-400);
 
+  // ── Bühne (Episode + Event-Komponenten) ──────────────────────────────────
+  --color-stage-bg: var(--palette-moss-200);
+  // Namensschild in der Farbe der Sprecherseite (Design: Dialog, Abschnitt 6).
+  --color-speaker-left: var(--palette-accent-500);
+  --color-speaker-right: var(--palette-moss-600);
+  // Ruhender Bühnenplatz — entsättigt, leicht aufgehellt, zurückgenommen.
+  --filter-stage-idle: saturate(0.5) brightness(1.06) opacity(0.75);
+
   // ── Karten ───────────────────────────────────────────────────────────────
   --color-map-route: var(--palette-accent-500);
   --color-map-route-locked: var(--palette-neutral-400);
@@ -89,6 +97,8 @@
   --font-size-title: 2rem;
   --font-size-section: 1.5625rem;
   --font-size-card-title: 1.0625rem;
+  // Namensschilder und ähnliche kurze Auszeichnungen in der Schmuckschrift.
+  --font-size-label: 1.375rem;
   --font-size-body: 0.9375rem;
   --font-size-control: 0.875rem;
   --font-size-detail: 0.8125rem;
@@ -130,6 +140,15 @@
   --stroke-map-route: 7px;
   --dash-map-route: 16 22;
   --border-width-placeholder: 2px;
+
+  // ── Bühnenmaße ───────────────────────────────────────────────────────────
+  // Die Bühne füllt den Rest des Fensters unter der Kopfleiste; die Sprites
+  // wachsen mit dem Fenster, bis sie ihre Maximalgröße aus dem Design erreichen.
+  --size-stage-min-block: 70vh;
+  --size-dialog-figure-inline: min(28vw, 17.875rem);
+  --size-dialog-figure-block: min(46vh, 24.5rem);
+  // Zeilenlänge des Dialogtexts — gute Lesbarkeit, nicht quer über den Schirm.
+  --measure-dialog-text: 52ch;
 
   // ── Interaktion ──────────────────────────────────────────────────────────
   // Mindestgröße für antippbare Ziele (Kinder-Zielgruppe) — Kopfleiste,

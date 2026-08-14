@@ -7,10 +7,18 @@ Meilenstein betreffen. Format:
 
 ---
 
-- [ ] → Phase 2: Ob eine per `ngComponentOutlet` eingesetzte Komponente den
+- [x] → Phase 2: Ob eine per `ngComponentOutlet` eingesetzte Komponente den
   `EpisodeRun`-Dienst des Episoden-Screens sieht, ist erst im Browser
   entschieden. Rückfallweg steht in der Phase (`ngComponentOutletInjector`).
   Der gewählte Weg gehört ins Report-Back — Phase 3–5 bauen darauf.
+  **Erledigt:** `inject(EpisodeRun)` genügt, kein eigener Injektor — Beleg im
+  Report-Back von Phase 2.
+- [ ] → Phase 3: Eine Event-Komponente bekommt ihre Konfiguration als
+  `input.required<TConfig>()` und wird vom Gerüst mit `config: event.config`
+  (Typ `unknown`) bespielt — die Prüfung, ob die Konfiguration zum Typ passt,
+  findet also nirgends statt. Beim Auflösen von `config.ref` in Phase 3 ist das
+  die Stelle, an der eine kaputte Datei sonst als leeres Quiz durchrutscht
+  statt in den Fehlerpfad zu laufen.
 - [ ] → Phase 5: `EpisodeRun.pendingCardId` ist der Haken, an den Meilenstein 5
   die echte Kartenvergabe hängt. In Meilenstein 3 wird die ID nur gemerkt,
   nicht verwendet.

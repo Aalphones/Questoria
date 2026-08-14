@@ -132,7 +132,6 @@ frontend/src/app/
 │   ├── main-hub/
 │   ├── timeline/
 │   ├── map/
-│   ├── location/              ← Ort-Platzhalter, bis Meilenstein 3 die Event Engine bringt
 │   ├── episode/               ← Event Engine: Ablauf + Event Loader
 │   ├── events/<type>/        ← eine Komponente je Eventtyp (dialog, multiple-choice, ...)
 │   ├── auth/

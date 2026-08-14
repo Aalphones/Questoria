@@ -26,8 +26,7 @@ im Frontend-Ordnernamen, PascalCase in PHP-Klassen):
 | Main-Hub | `features/main-hub/` | Zwei Screens: Planetenkarte (Welten als Knoten auf der Kartenfläche, `theme-card/` als Weltknoten, Info-Panel mit „Weiterspielen") und `level-select/` mit der Lernstufen-Auswahl (`difficulty-picker/`) |
 | Timeline | `features/timeline/` | Etappenkarte pro Welt, Fortschrittsmarkierung mit Sternen |
 | Map | `features/map/` | Interaktive Ortskarte pro Arc — Orte als Punkte, Routen, Kompassrose |
-| Ort | `features/location/` | Ehrlicher Platzhalter für den Ort: Name, Hintergrund, Anzahl bereitliegender Events, „Ort geschafft". Die Event Engine (Meilenstein 3) übernimmt diesen Screen und spielt die Eventliste der Episode ab |
-| Event Engine | `features/episode/` | Spielt die Eventliste einer Episode ab: Ablauf-Gerüst, Event Loader (`event-type-map.ts`), Ergebnis-Einsammlung. Kein `@switch` über Eventtypen |
+| Event Engine | `features/episode/` | Spielt die Eventliste einer Episode ab: Ablauf-Gerüst (`episode.ts`), Laufzustand (`episode-run.ts`), Event Loader (`event-type-map.ts`), Ergebnis-Einsammlung. Kein `@switch` über Eventtypen |
 | Event-Komponenten | `features/events/<type>/` | Eine Komponente pro Eventtyp (`features/events/dialog/`, `features/events/multiple-choice/`, ...), dynamisch geladen über `ngComponentOutlet` |
 | Ergebnis | `features/result/` | Sterne, Statistiken, Erfolge, Banner für die neu gewonnene Sammelkarte |
 | Sammelkarten | `features/cards/`, `features/cards/print/` | Trophäenhalle (Gruppen, Filter, Detail, Druckauswahl) und A4-Druckbogen |
@@ -44,8 +43,10 @@ im Frontend-Ordnernamen, PascalCase in PHP-Klassen):
 Weltknoten aus `theme-card/`, Routen, Info-Panel; dazu der eigene Screen
 `level-select/` mit `difficulty-picker/`), `features/timeline/`
 (echte Etappenkarte: Inseln, Panel, Legende, Fortschritt-zurücksetzen-Dialog),
-`features/map/` (echte Ortskarte: Punkte, Routen, Kompassrose), `features/location/`
-(Ort-Platzhalter: Name, Hintergrund, Event-Anzahl, „Ort geschafft"), `ui/map-canvas/`,
+`features/map/` (echte Ortskarte: Punkte, Routen, Kompassrose), `features/episode/`
+(Ablauf-Gerüst mit Event Loader; Sterne noch pauschal, bis der Ergebnis-Screen
+steht), `features/events/dialog/` (Visual-Novel-Bühne mit zwei Plätzen),
+`ui/map-canvas/`,
 `ui/image-slot/`, `ui/hud/` (inkl. Modus-Umschalter + Ton-Knopf),
 `ui/content-error/`, `ui/read-aloud-button/`, `services/narration.service.ts`,
 `routing/`, `services/`, `models/` und `styles/`. Alle übrigen Zeilen sind
@@ -59,7 +60,7 @@ Soll-Zustand für spätere Meilensteine.
 | `theme/:themeId/level` | Lernstufen-Auswahl (`features/main-hub/level-select/`) |
 | `theme/:themeId/timeline` | Etappenkarte (`features/timeline/`) |
 | `theme/:themeId/map/:mapId` | Ortskarte (`features/map/`) |
-| `theme/:themeId/location/:episodeId` | Ort, Platzhalter (`features/location/`) |
+| `theme/:themeId/episode/:episodeId` | Episode, spielt die Eventliste ab (`features/episode/`) |
 
 Alle vier `theme/…`-Routen laden die Welt-Konfiguration über
 `worldConfigResolver`; alle außer der Lernstufen-Route verlangen zusätzlich

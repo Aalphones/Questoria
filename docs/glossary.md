@@ -16,7 +16,7 @@ sie im Code, in Docs oder Tickets auftauchen.
 | Eventtyp (`type`) | Der Schlüssel, unter dem ein Event seine Komponente findet (`dialog`, `multiple_choice`, ...). Geschlossene Wertemenge, gepflegt in `JSON_SCHEMA_REFERENCE.md` Abschnitt 5.0 — ein Typ steht dort erst, wenn seine Komponente existiert. |
 | Event-Konfiguration | Die Daten, mit denen ein Event bespielt wird (`config`). Leichte Events tragen sie inline in der Episode, Events mit Lernstufen-Varianten in einer eigenen Datei unter `events/`, referenziert über `config.ref`. |
 | Node | Ein klickbarer Punkt auf einer Map, der eine Episode startet. |
-| Ort | Anzeigename für einen Node auf der Ortskarte — der Punkt, an dem die Episode spielt. |
+| Ort | Anzeigename für einen Node auf der Ortskarte — der Punkt, an dem die Episode spielt. Kein eigener Bildschirm: Wer den Punkt antippt, landet direkt in der Episode. |
 | Bühnenplatz (`left`/`right`) | Die zwei einzigen festen Positionen für Dialog-Sprites. Keine freien x/y-Koordinaten. |
 | Content-Repository | Die statischen, versionierten JSON-Dateien unter `data/themes/` — Content lebt im Git-Repo, nicht in der Datenbank. |
 | Testwelt | Die schema-vollständige Entwicklerwelt `dev_fixture` unter `data/themes/dev_fixture/` — dient dem Testen von Karten, Routing und Fortschritt, ohne auf echten (Fandom-)Content zu warten. |
@@ -34,7 +34,7 @@ sie im Code, in Docs oder Tickets auftauchen.
 | Vorlesemodus | Der Modus "Bilder & Vorlesen" (`mode: 'listen'` im `NarrationService`) für Kinder, die noch nicht lesen: kurze Textfassung, Bildantworten im Quiz, automatische Sprachausgabe. Gegenstück: "Selbst lesen" (`mode: 'read'`). |
 | Design-Token | Ein benannter Gestaltungswert (Farbe, Abstand, Radius, Schatten) aus `docs/design/`. Einzige Quelle für das Aussehen — keine Hardcodes in Komponenten. |
 | Fortschritt | Der gespeicherte Stand, welche Episoden ein Kind abgeschlossen hat — bis Meilenstein 4 im Browser-Speicher (`ProgressService`), danach über die Savegame-Schnittstelle (ADR-006). |
-| Sterne | Bewertung einer geschafften Episode (0–3), Teil von `EpisodeProgress`. Bis die Event Engine (Meilenstein 3) echte Sterne vergibt, liefert der Ort-Platzhalter pauschal 3. |
+| Sterne | Bewertung einer geschafften Episode (0–3), Teil von `EpisodeProgress`. Bis der Ergebnis-Screen steht, vergibt das Ablauf-Gerüst am Ende einer Episode pauschal 3. |
 | Etappen-Zustand | `geschafft`/`aktuell`/`gesperrt` (`ProgressState`) — Ergebnis der reinen Freischaltregeln in `progress.rules.ts`, gilt gleichermaßen für Orte und Etappen. |
 
 ## Abgelöste Begriffe

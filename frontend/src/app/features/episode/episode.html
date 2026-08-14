@@ -1,0 +1,31 @@
+<qst-hud [backLink]="mapBackLink()" [worldTitle]="world()?.title ?? null" />
+
+@let episode = episodeState();
+
+@switch (episode.status) {
+  @case ('loading') {
+    <p class="episode__note">Der Ort wird geladen …</p>
+  }
+  @case ('error') {
+    <qst-content-error message="Dieser Ort konnte nicht geladen werden." />
+  }
+  @case ('loaded') {
+    <div class="episode">
+      <div class="episode__backdrop" aria-hidden="true">
+        <qst-image-slot [src]="backgroundUrl()" [label]="backgroundLabel()" />
+      </div>
+
+      <h1 class="episode__title">{{ locationName() ?? episode.data.episode_id }}</h1>
+
+      <div class="episode__stage">
+        @if (eventComponent.error()) {
+          <qst-content-error
+            message="Dieses Ereignis kennt die App noch nicht — geh über „Zurück“ auf die Karte."
+          />
+        } @else if (eventComponent.value(); as eventComponentType) {
+          <ng-container *ngComponentOutlet="eventComponentType; inputs: eventInputs()" />
+        }
+      </div>
+    </div>
+  }
+}

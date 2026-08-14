@@ -1,0 +1,27 @@
+<div class="dialog__stage">
+  @if (leftFigure(); as figure) {
+    <div class="dialog__figure dialog__figure--left" [class.dialog__figure--speaking]="isSpeakingLeft()">
+      <qst-image-slot [src]="figure.spriteUrl" [label]="figure.sprite" />
+    </div>
+  }
+
+  @if (rightFigure(); as figure) {
+    <div class="dialog__figure dialog__figure--right" [class.dialog__figure--speaking]="isSpeakingRight()">
+      <qst-image-slot [src]="figure.spriteUrl" [label]="figure.sprite" />
+    </div>
+  }
+</div>
+
+<button type="button" class="dialog__box" (click)="next()">
+  <span
+    class="dialog__nameplate"
+    [class.dialog__nameplate--right]="isSpeakingRight()"
+  >{{ speakerName() }}</span>
+  <span class="dialog__text">{{ lineText() }}</span>
+</button>
+
+<footer class="dialog__footer">
+  <qst-read-aloud-button [text]="lineText()" [audioUrl]="audioUrl()" />
+  <span class="dialog__counter">{{ lineNumber() }} / {{ lineCount() }}</span>
+  <button type="button" class="dialog__next" (click)="next()">Weiter</button>
+</footer>

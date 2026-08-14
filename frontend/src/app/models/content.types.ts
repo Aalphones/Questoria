@@ -106,6 +106,11 @@ export interface DialogueLine {
   audio_path?: string;
 }
 
+/** Die aufgelöste Konfiguration eines `dialog`-Events (Abschnitt 5.1, inline). */
+export interface DialogConfig {
+  lines: DialogueLine[];
+}
+
 /**
  * `config` ist typabhängig (Abschnitt 5) — `unknown` statt eines einzelnen
  * Union-Typs, weil die Engine sie ungeprüft an die per `ngComponentOutlet`
