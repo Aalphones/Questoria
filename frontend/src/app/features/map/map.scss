@@ -2,7 +2,109 @@
   display: block;
 }
 
-.map__placeholder {
+.map {
+  max-inline-size: 90rem;
   padding: var(--space-6) var(--space-4);
-  color: var(--color-text-muted);
+  margin-inline: auto;
+
+  &__canvas {
+    position: relative;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+  }
+
+  &__node-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+    text-decoration: none;
+
+    &:focus-visible {
+      outline: 2px solid var(--color-focus-ring);
+      outline-offset: 2px;
+    }
+  }
+
+  &__node {
+    display: block;
+    inline-size: var(--size-map-point);
+    aspect-ratio: 1;
+    border-radius: var(--radius-pill);
+    box-shadow:
+      0 0 0 var(--ring-map-point) var(--color-map-ring),
+      var(--shadow-md);
+    background: var(--color-progress-locked-strong);
+
+    &--done {
+      background: var(--color-progress-done-strong);
+    }
+
+    &--current {
+      // Wächst über den Standard-Durchmesser, siehe AK: aktuell größer als geschafft/gesperrt.
+      inline-size: var(--size-map-point-current);
+      background: var(--color-progress-current-strong);
+      animation: eqPulse var(--duration-pulse) var(--easing-standard) infinite;
+    }
+
+    &--locked {
+      opacity: 0.72;
+    }
+  }
+
+  &__label {
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-pill);
+    background: var(--color-map-label-bg);
+    box-shadow: var(--shadow-sm);
+    font-family: var(--font-heading);
+    font-weight: var(--font-heading-weight);
+    font-size: var(--font-size-control);
+    color: var(--color-text);
+    white-space: nowrap;
+  }
+
+  // Reine Deko (AK 5) — trägt keine Information, daher aria-hidden im Template.
+  &__compass {
+    position: absolute;
+    inset-block-end: var(--space-4);
+    inset-inline-start: var(--space-4);
+    display: grid;
+    place-items: center;
+    inline-size: var(--size-map-compass);
+    block-size: var(--size-map-compass);
+    border-radius: 50%;
+    background: var(--color-map-label-bg);
+    box-shadow: var(--shadow-md);
+  }
+
+  &__compass-label {
+    position: absolute;
+    font-family: var(--font-heading);
+    font-weight: var(--font-heading-weight);
+    font-size: var(--font-size-detail);
+    color: var(--color-text-muted);
+
+    &--n {
+      inset-block-start: var(--space-1);
+    }
+
+    &--o {
+      inset-inline-end: var(--space-1);
+    }
+
+    &--s {
+      inset-block-end: var(--space-1);
+    }
+
+    &--w {
+      inset-inline-start: var(--space-1);
+    }
+  }
+
+  &__compass-needle {
+    inline-size: var(--size-map-compass-needle-inline);
+    block-size: var(--size-map-compass-needle-block);
+    background: linear-gradient(180deg, var(--color-accent-hover) 50%, var(--color-progress-locked) 50%);
+  }
 }

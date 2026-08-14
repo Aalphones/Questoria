@@ -3,25 +3,25 @@
 **Aktiver Plan:**
 [Timeline & Karten (Meilenstein 2)](docs/planning/2026-08-03_timeline-und-karten/README.md)
 
-**Phase:** 7/8 — Ortskarte + Ort-Platzhalter (pending)
+**Phase:** 8/8 — Planetenkarte: Main-Hub auf das Design ziehen (pending)
 
-**Nächster Schritt:** `/implement` starten. Phase 7 baut die Ortskarte in
-`frontend/src/app/features/map/` (existiert als schlanker Platzhalter aus
-Phase 5, **nicht neu `ng generate`n**, direkt hineinbauen) plus den
-Ort-Platzhalter in `features/location/`, und entfernt `features/map-demo/`
-samt Route (siehe FINDINGS.md). Rating standard, `sonnet` reicht. Vorher
+**Nächster Schritt:** `/implement` starten. Phase 8 ist die letzte des Plans —
+baut die Planetenkarte aus dem Design in `features/main-hub/` (Kachelliste aus
+Meilenstein 1 wird zur Kartenfläche, `theme-card/` wird zum Weltknoten).
+Rating standard, `sonnet` reicht. Vorher
 [README](docs/planning/2026-08-03_timeline-und-karten/README.md) und
-[phase-7-ortskarte.md](docs/planning/2026-08-03_timeline-und-karten/phase-7-ortskarte.md)
-lesen.
+[phase-8-planetenkarte.md](docs/planning/2026-08-03_timeline-und-karten/phase-8-planetenkarte.md)
+lesen. Nach Phase 8: Plan-Ende — Smoke-Checkliste aus der README an Sascha,
+danach archivieren.
 
-**Phase 6 ist fertig** (echte Etappenkarte). `timeline.ts`/`.html`/`.scss`
-ersetzen den Phase-5-Platzhalter: Inseln aus `arc_overview.stages[]` mit
-Zustandsfarben (`done`/`current`/`locked` aus `progress.rules.ts`), Panel,
-Legende, „Fortschritt zurücksetzen"-Dialog. Klick/Enter auf eine erreichbare
-Etappe navigiert zur Ortskarte. Build und Lint grün, kein Browser-Durchlauf
-(private-Profil, User prüft am Plan-Ende). 🟡 `timeline.scss` reißt das
-4-kB-Style-Budget um ~0,7 kB (Warnung, keine 8-kB-Fehlergrenze). Details:
-[phase-6-etappenkarte.md](docs/planning/2026-08-03_timeline-und-karten/phase-6-etappenkarte.md)
+**Phase 7 ist fertig** (echte Ortskarte + Ort-Platzhalter). `features/map/`
+zeigt Orte als Punkte mit Routen/Kompassrose (Komponente heißt `MapScreen`,
+nicht `Map` — Namenskollision mit dem globalen `Map`-Typ). `features/location/`
+zeigt den Ort-Platzhalter mit Event-Anzahl und „Ort geschafft". Das temporäre
+`features/map-demo/` ist entfernt. Build und Lint grün, kein Browser-Durchlauf
+(private-Profil, User prüft am Plan-Ende). 🟡 Zwei kleine Abweichungen vom
+Checklisten-Wortlaut, Details in
+[phase-7-ortskarte.md](docs/planning/2026-08-03_timeline-und-karten/phase-7-ortskarte.md)
 → Report-Back.
 
 **Merkposten:** PHP/Composer liegen unter `C:\Users\sasch\develop\.tools\`

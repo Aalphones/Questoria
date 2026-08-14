@@ -25,7 +25,7 @@ statt `dialogue_sequence` + `minigame_event`.
 | 4 | [Fortschritts-Speicher + Freischaltregeln](phase-4-fortschritt.md) | standard | complete |
 | 5 | [Router-Struktur + Kopfleiste](phase-5-routing-und-kopfleiste.md) | standard | complete |
 | 6 | [Etappenkarte](phase-6-etappenkarte.md) | standard | complete |
-| 7 | [Ortskarte + Ort-Platzhalter](phase-7-ortskarte.md) | standard | pending |
+| 7 | [Ortskarte + Ort-Platzhalter](phase-7-ortskarte.md) | standard | complete |
 | 8 | [Planetenkarte: Main-Hub auf das Design ziehen](phase-8-planetenkarte.md) | standard | pending |
 
 Reihenfolge ist bindend: 3 liefert das Bauteil für 6, 7 und 8; 4 liefert die

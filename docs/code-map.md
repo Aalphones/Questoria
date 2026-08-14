@@ -25,7 +25,8 @@ im Frontend-Ordnernamen, PascalCase in PHP-Klassen):
 |---|---|---|
 | Main-Hub | `features/main-hub/` | Einstieg, Planetenkarte mit installierten Themenwelten, Lernstufen-Auswahl |
 | Timeline | `features/timeline/` | Etappenkarte pro Welt, Fortschrittsmarkierung mit Sternen |
-| Map | `features/map/` | Interaktive Ortskarte pro Arc |
+| Map | `features/map/` | Interaktive Ortskarte pro Arc — Orte als Punkte, Routen, Kompassrose |
+| Ort | `features/location/` | Ehrlicher Platzhalter für den Ort: Name, Hintergrund, Anzahl bereitliegender Events, „Ort geschafft". Die Event Engine (Meilenstein 3) übernimmt diesen Screen und spielt die Eventliste der Episode ab |
 | Event Engine | `features/episode/` | Spielt die Eventliste einer Episode ab: Ablauf-Gerüst, Event Loader (`event-type-map.ts`), Ergebnis-Einsammlung. Kein `@switch` über Eventtypen |
 | Event-Komponenten | `features/events/<type>/` | Eine Komponente pro Eventtyp (`features/events/dialog/`, `features/events/multiple-choice/`, ...), dynamisch geladen über `ngComponentOutlet` |
 | Ergebnis | `features/result/` | Sterne, Statistiken, Erfolge, Banner für die neu gewonnene Sammelkarte |
@@ -42,13 +43,10 @@ im Frontend-Ordnernamen, PascalCase in PHP-Klassen):
 **Ist-Stand:** gebaut sind bisher `features/main-hub/` (mit `theme-card/`,
 `difficulty-picker/` und dem eigenen Screen `level-select/`), `features/timeline/`
 (echte Etappenkarte: Inseln, Panel, Legende, Fortschritt-zurücksetzen-Dialog),
-`ui/map-canvas/`, `ui/image-slot/`, `ui/hud/`, `ui/content-error/`, `routing/`,
-`services/`, `models/` und `styles/`. `features/map/` und `features/location/`
-existieren noch als schlanke Platzhalter (Kopfleiste + Hinweistext) — die echte
-Ortskarte + Ort-Platzhalter kommen in Phase 7; die Ordner bleiben, nur der
-Inhalt wird ersetzt. Dazu `features/map-demo/` als temporäres Prüfbild der
-Kartenfläche unter `/map-demo` — fällt mit der Ortskarte weg. Alle übrigen
-Zeilen sind Soll-Zustand für spätere Meilensteine.
+`features/map/` (echte Ortskarte: Punkte, Routen, Kompassrose), `features/location/`
+(Ort-Platzhalter: Name, Hintergrund, Event-Anzahl, „Ort geschafft"), `ui/map-canvas/`,
+`ui/image-slot/`, `ui/hud/`, `ui/content-error/`, `routing/`, `services/`, `models/`
+und `styles/`. Alle übrigen Zeilen sind Soll-Zustand für spätere Meilensteine.
 
 ### Routen (Frontend)
 

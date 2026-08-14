@@ -26,18 +26,13 @@ export const routes: Routes = [
     path: 'theme/:themeId/map/:mapId',
     resolve: { world: worldConfigResolver },
     canActivate: [difficultyChosenGuard],
-    loadComponent: () => import('./features/map/map').then((module) => module.Map),
+    loadComponent: () => import('./features/map/map').then((module) => module.MapScreen),
   },
   {
     path: 'theme/:themeId/location/:episodeId',
     resolve: { world: worldConfigResolver },
     canActivate: [difficultyChosenGuard],
     loadComponent: () => import('./features/location/location').then((module) => module.Location),
-  },
-  {
-    // TEMPORÄR (Phase 3): Prüfbild für die Kartenfläche. Entfällt mit der Ortskarte (Phase 7).
-    path: 'map-demo',
-    loadComponent: () => import('./features/map-demo/map-demo').then((module) => module.MapDemo),
   },
   {
     path: '**',

@@ -1,7 +1,51 @@
-<qst-hud [backLink]="['/theme', themeId(), 'timeline']" [worldTitle]="world()?.title ?? null" />
+<qst-hud [backLink]="['/theme', themeId(), 'timeline']" [worldTitle]="world()?.title ?? null" [levelLabel]="levelLabel()" />
 
 @if (world(); as loadedWorld) {
-  <p class="map__placeholder">Ortskarte „{{ mapId() }}" von „{{ loadedWorld.title }}" — wird noch gebaut.</p>
+  @if (mapEntry(); as loadedMap) {
+    <div class="map">
+      <qst-map-canvas
+        class="map__canvas"
+        [background]="backgroundUrl()"
+        [backgroundLabel]="backgroundLabel()"
+        [points]="points()"
+        [routes]="loadedMap.routes"
+        [dimmedPointIds]="lockedNodeIds()"
+      >
+        @for (node of loadedMap.nodes; track node.id) {
+          <qst-map-point [x]="node.x" [y]="node.y">
+            @if (isReachable(node.id)) {
+              <a
+                class="map__node-wrapper"
+                [routerLink]="['/theme', themeId(), 'location', node.episode_ref]"
+              >
+                <span
+                  class="map__node"
+                  [class.map__node--done]="stateOf(node.id) === 'done'"
+                  [class.map__node--current]="stateOf(node.id) === 'current'"
+                ></span>
+                <span class="map__label">{{ node.name }}</span>
+              </a>
+            } @else {
+              <div class="map__node-wrapper">
+                <span class="map__node map__node--locked"></span>
+                <span class="map__label">{{ node.name }}</span>
+              </div>
+            }
+          </qst-map-point>
+        }
+
+        <div class="map__compass" aria-hidden="true">
+          <span class="map__compass-label map__compass-label--n">N</span>
+          <span class="map__compass-label map__compass-label--o">O</span>
+          <span class="map__compass-label map__compass-label--s">S</span>
+          <span class="map__compass-label map__compass-label--w">W</span>
+          <span class="map__compass-needle"></span>
+        </div>
+      </qst-map-canvas>
+    </div>
+  } @else {
+    <qst-content-error message="Diese Karte konnte nicht gefunden werden." />
+  }
 } @else {
   <qst-content-error message="Diese Welt konnte nicht geladen werden." />
 }

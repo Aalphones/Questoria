@@ -51,42 +51,50 @@ ehrlicher Platzhalter, an dem Meilenstein 3 die Event Engine übernimmt.
 
 ### Ortskarte
 
-- [ ] `ng generate component features/map --skip-tests`
-- [ ] Eingaben aus der Route: `themeId`, `mapId`, `world`. Die Karte wird aus
+- [x] ~~`ng generate component features/map --skip-tests`~~ — Ordner existierte
+      bereits aus Phase 5 (schlanker Platzhalter), direkt hineingebaut statt
+      neu generiert (siehe FINDINGS.md).
+- [x] Eingaben aus der Route: `themeId`, `mapId`, `world`. Die Karte wird aus
       `world.maps` per `mapId` gesucht; nicht gefunden → `qst-content-error`.
-- [ ] Zustände als `computed()` über `nodeStates()` — die Etappe selbst kommt
+- [x] Zustände als `computed()` über `nodeStates()` — die Etappe selbst kommt
       aus `stageStates()`, damit ein Tieflink in eine verschlossene Etappe
       nicht plötzlich alle Orte öffnet.
-- [ ] Punktgrößen: Untergrenze aus `--size-map-point` /
-      `--size-map-point-current`, darüber mitwachsend
-      (`max(var(--size-map-point), 4cqw)`). Kommentar dazu, **warum** die
-      Untergrenze existiert: Finger, nicht Optik.
-- [ ] Aktueller Punkt pulsiert (`eqPulse`, `--duration-pulse`).
-- [ ] Kompassrose als eigenes kleines Element im Stylesheet dieser Komponente;
+- [x] Punktgrößen: Untergrenze aus `--size-map-point` /
+      `--size-map-point-current`. 🟡 **Abweichung:** ohne `max(…, 4cqw)` —
+      `MapNode` trägt (anders als `ArcStage`) kein `size`-Feld im Schema, die
+      Größe kommt rein aus den Tokens. Wächst also nicht mit der Kartenbreite
+      mit, nur die Untergrenze selbst ist gesetzt. Kommentar im Stylesheet, warum
+      die Größe existiert: Finger, nicht Optik.
+- [x] Aktueller Punkt pulsiert (`eqPulse`, `--duration-pulse`).
+- [x] Kompassrose als eigenes kleines Element im Stylesheet dieser Komponente;
       Größe als neues Token `--size-map-compass` in `_tokens.scss`.
-- [ ] `aria-hidden` auf der Kompassrose — sie trägt keine Information.
+- [x] `aria-hidden` auf der Kompassrose — sie trägt keine Information.
 
 ### Ort-Platzhalter
 
-- [ ] `ng generate component features/location --skip-tests`
-- [ ] Eingaben aus der Route: `themeId`, `episodeId`, `world`. Episode über
+- [x] ~~`ng generate component features/location --skip-tests`~~ — Ordner
+      existierte bereits aus Phase 5, direkt hineingebaut (siehe FINDINGS.md).
+- [x] Eingaben aus der Route: `themeId`, `episodeId`, `world`. Episode über
       `ContentService.getEpisode()` laden, Ladezustände wie im Main-Hub
-      (`LoadState`-Muster aus `models/game-state.types.ts`).
-- [ ] Hintergrund der Episode über `assetUrl(themeId, 'backgrounds', background)`
+      (`LoadState`-Muster aus `models/game-state.types.ts`). 🟡 Pflicht-Inputs
+      sind zur Feld-Initialisierung noch nicht gesetzt — der Aufruf läuft daher
+      reaktiv über `toObservable()` + `switchMap`, nicht direkt im Initialisierer.
+- [x] Hintergrund der Episode über `assetUrl(themeId, 'backgrounds', background)`
       in einem `qst-image-slot`.
-- [ ] „Ort geschafft" ruft `completeEpisode(themeId, episodeId, 3)` und
+- [x] „Ort geschafft" ruft `completeEpisode(themeId, episodeId, 3)` und
       navigiert auf `theme/:themeId/map/:activeMapId` (die Karte steht in der
       Episode).
-- [ ] Sichtbarer Hinweis, dass dies ein Zwischenstand ist — in Kindersprache,
+- [x] Sichtbarer Hinweis, dass dies ein Zwischenstand ist — in Kindersprache,
       kein Meilenstein-Jargon, keine Ticket-Nummer.
-- [ ] Kopfleiste: Zurück führt auf die Ortskarte.
+- [x] Kopfleiste: Zurück führt auf die Ortskarte.
 
 ### Doku
 
-- [ ] `docs/code-map.md`: `features/map/` auf Ist ziehen, `features/location/`
+- [x] `docs/code-map.md`: `features/map/` auf Ist ziehen, `features/location/`
       neu aufnehmen — mit dem Hinweis, dass die Event Engine (Meilenstein 3)
       diesen Screen übernimmt und die Eventliste der Episode abspielt.
-- [ ] `docs/glossary.md`: **Ortskarte**, **Ort** prüfen/ergänzen.
+- [x] `docs/glossary.md`: **Ortskarte**, **Ort** geprüft — beide Einträge waren
+      bereits korrekt, keine Änderung nötig.
 
 ## Bewusste Abweichung vom Design
 
@@ -96,3 +104,17 @@ die Optik trägt das Kartenbild. Vermerkt in [FINDINGS.md](FINDINGS.md), falls
 sich später zeigt, dass die Karten ohne Deko zu leer wirken.
 
 ## Report-Back
+
+Ortskarte (`features/map/`) und Ort-Platzhalter (`features/location/`) sind
+gebaut, `features/map-demo/` samt Route entfernt. Build und Lint grün, kein
+Browser-Durchlauf (private-Profil, User prüft am Plan-Ende).
+
+Die Komponentenklasse der Ortskarte heißt `MapScreen`, nicht `Map` — der Name
+`Map` hätte im ganzen File das globale `Map` (den Container-Typ, den die
+Komponente selbst für die Zustands-Map braucht) verdeckt. `app.routes.ts`
+importiert entsprechend `module.MapScreen`.
+
+🟡 Zwei Abweichungen vom Checklisten-Wortlaut, beide oben an ihrer Stelle
+vermerkt: kein mitwachsendes `4cqw` bei den Ortspunkten (Content-Schema kennt
+keine `size` pro Node), und der Episode-Ladeaufruf in `location.ts` läuft
+reaktiv statt im Feld-Initialisierer (Pflicht-Inputs sind dort noch leer).

@@ -33,7 +33,7 @@ Meilenstein betreffen. Format:
   fordert CRLF bereits; die Datei war nur nie neu ausgecheckt worden. Behoben mit
   `git checkout` beider `.cmd`-Dateien. Kommt eine `.cmd` künftig über ein
   Werkzeug ins Repo, das LF schreibt, tritt es wieder auf.
-- [ ] → Phase 7: Das temporäre Prüfbild `features/map-demo/` samt Route
+- [x] Phase 7: Das temporäre Prüfbild `features/map-demo/` samt Route
   `map-demo` in `app.routes.ts` wird mit der Ortskarte gelöscht — sie zeigt
   dasselbe an echten Daten. Auch die Zeile in `docs/code-map.md` entfernen.
 - [ ] → Phase 6/7/8: Die Größe eines Knotens kommt bei `qst-map-point` als
@@ -45,6 +45,13 @@ Meilenstein betreffen. Format:
 - [ ] → Meilenstein 4: `ProgressService` liest und schreibt den Browser-Speicher.
   Beim Umstieg auf die Savegame-Schnittstelle wird genau diese Datei getauscht;
   `progress.rules.ts` und alle Screens bleiben unberührt (ADR-006).
+- [ ] → Phase 8: `MapNode` (Ortskarten-Punkte) trägt anders als `ArcStage`
+  (Etappen-Inseln) kein `size`-Feld im Content-Schema — die Punktgröße auf der
+  Ortskarte kommt komplett aus den Tokens `--size-map-point` /
+  `--size-map-point-current`, ohne den mitwachsenden `max(…, 4cqw)`-Anteil.
+  Betrifft die Planetenkarte (Phase 8) nur, falls `InstalledTheme.size` dort
+  genauso verwendet wird wie `ArcStage.size` — dann verhält sich die
+  Planetenkarte anders als die Ortskarte, und zwar bewusst.
 - [ ] → Phase 6/7: **Abweichung vom Checklisten-Wortlaut.** Die Checklisten von
   Phase 6/7 sagen `ng generate component features/timeline` bzw.
   `features/map`/`features/location` — diese Ordner **existieren bereits** aus
