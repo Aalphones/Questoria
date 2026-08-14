@@ -11,6 +11,7 @@ im Frontend-Ordnernamen, PascalCase in PHP-Klassen):
 | Layer | Muster | Beispiel |
 |---|---|---|
 | Angular Feature | `frontend/src/app/features/<feature>/` | `features/main-hub/`, `features/timeline/` |
+| Event-Komponente | `frontend/src/app/features/events/<type>/` | `features/events/multiple-choice/` für `type: "multiple_choice"` |
 | Angular Service | `frontend/src/app/services/<name>.service.ts` | `services/game-state.service.ts` |
 | Angular Shared UI | `frontend/src/app/ui/<name>/` | `ui/speech-bubble/` |
 | PHP Controller | `backend/src/Controllers/<Name>Controller.php` | `Controllers/SavegameController.php` |
@@ -25,13 +26,13 @@ im Frontend-Ordnernamen, PascalCase in PHP-Klassen):
 | Main-Hub | `features/main-hub/` | Einstieg, Planetenkarte mit installierten Themenwelten, Lernstufen-Auswahl |
 | Timeline | `features/timeline/` | Etappenkarte pro Welt, Fortschrittsmarkierung mit Sternen |
 | Map | `features/map/` | Interaktive Ortskarte pro Arc |
-| Dialog | `features/dialog/` | Speech-Bubble-Engine, zwei Bühnenplätze `left`/`right` |
-| Minispiele | `features/minigames/<game_type>/` | Eine Komponente pro `game_type` (`MultipleChoiceComponent` etc.), dynamisch geladen über `ngComponentOutlet` |
+| Event Engine | `features/episode/` | Spielt die Eventliste einer Episode ab: Ablauf-Gerüst, Event Loader (`event-type-map.ts`), Ergebnis-Einsammlung. Kein `@switch` über Eventtypen |
+| Event-Komponenten | `features/events/<type>/` | Eine Komponente pro Eventtyp (`features/events/dialog/`, `features/events/multiple-choice/`, ...), dynamisch geladen über `ngComponentOutlet` |
 | Ergebnis | `features/result/` | Sterne, Statistiken, Erfolge, Banner für die neu gewonnene Sammelkarte |
 | Sammelkarten | `features/cards/`, `features/cards/print/` | Trophäenhalle (Gruppen, Filter, Detail, Druckauswahl) und A4-Druckbogen |
 | Nutzerverwaltung | `features/auth/`, `features/profile/` | Login, Profile anlegen/wechseln |
 | Gemeinsame UI | `ui/hud/`, `ui/speech-bubble/` | Kopfleiste auf allen Spiel-Screens, Sprechblasen |
-| Zentrale Services | `services/game-state.service.ts`, `services/content.service.ts`, `services/savegame.service.ts`, `services/narration.service.ts` | Aktive Welt/Profil/Lernstufe, JSON-Content lesen, Speichern/Laden, Vorlesemodus + Sprachausgabe |
+| Zentrale Services | `services/game-state.service.ts`, `services/content.service.ts`, `services/savegame.service.ts`, `services/narration.service.ts` | Aktive Welt/Profil/Lernstufe, JSON-Content lesen, Speichern/Laden, Vorlesemodus + Sprachausgabe. **`ContentService` ist die einzige Ladestelle für Content** — dort hängt später der Offline-Cache (Meilenstein 6) |
 | Content-Typen | `models/` | TypeScript-Abbild des JSON-Schemas (`content.types.ts`) und der Ladezustände (`game-state.types.ts`) |
 | Design-Tokens | `frontend/src/styles/` | `_tokens.scss` (Farben, Schrift, Abstände, Radien) und `_fonts.scss`; global über `src/styles.scss` eingebunden |
 | Statischer Content | `frontend/public/assets/`, `frontend/public/data/themes/` | `main_hub.json` und die Entwickler-Testwelt — bis die Content-API existiert (ADR-001) |
@@ -59,7 +60,7 @@ Struktur übernommen aus promptigofant (gleiches Muster, eigenes Repo):
 
 **Ist-Stand:** gebaut sind `Http/`, `Exceptions/`, `Database/`, `Middleware/`,
 `Controllers/HealthController.php`, `Controllers/MigrateController.php`,
-`Migrations/` (7 Tabellen-DDLs unter `sql/`, `MigrationRunner.php`, plus
+`Migrations/` (7 Tabellen in 8 Schritten unter `sql/`, `MigrationRunner.php`, plus
 `backend/bin/migrate.php` als CLI-Hülle für den Fall eines späteren lokalen/
 Fernzugriff-Tests) und der Einstiegspunkt. Fehlende Migrationen werden bei
 jedem echten API-Aufruf automatisch nachgezogen (`AutoMigrator`, verdrahtet in
@@ -84,8 +85,8 @@ und existieren noch nicht als Ordner.
 | `data/_authoring/` | LLM-Prompt-Toolkit + Schema-Referenz — kein Runtime-Code |
 | `data/themes/<theme_id>/world_config.json` | Lernstufen, Etappenkarte, Ortskarten mit Node-Koordinaten |
 | `data/themes/<theme_id>/cards.json` | Kartenformat + alle Sammelkarten der Welt |
-| `data/themes/<theme_id>/episodes/` | Level-Nodes (Hintergrund, Dialog, Minispiel-Referenz, Belohnungskarte) |
-| `data/themes/<theme_id>/minigames/` | Minispiel-Payloads, eine Variante pro Lernstufe |
+| `data/themes/<theme_id>/episodes/` | Eine Episode je Datei: Hintergrund + Eventliste (Dialoge inline) |
+| `data/themes/<theme_id>/events/` | Ausgelagerte Event-Konfigurationen, eine Variante pro Lernstufe |
 | `data/themes/<theme_id>/{maps,backgrounds,sprites,audio,cards,answers}/` | Assets, siehe `data/_authoring/ASSET_REQUIREMENTS.md` |
 
 Vollständiges Content-Schema (verbindlich): `data/_authoring/JSON_SCHEMA_REFERENCE.md`.

@@ -11,10 +11,14 @@ Prompt einfügen, sonst rät das Modell und erfindet Felder.
 ## Prompt-Vorlage
 
 ```
-Du erstellst Content für eine Lernspiel-Engine. Halte dich EXAKT an das
-folgende JSON-Schema. Erfinde keine zusätzlichen Felder, lasse keine
-Pflichtfelder weg, ändere keine Feldnamen. Verwende NUR die in der Tabelle
-gelisteten game_type-Werte — keine neuen Spieltypen erfinden.
+Du erstellst Content für eine story-basierte Spiel-Engine. Halte dich EXAKT
+an das folgende JSON-Schema. Erfinde keine zusätzlichen Felder, lasse keine
+Pflichtfelder weg, ändere keine Feldnamen. Verwende NUR die Eventtypen aus
+der Tabelle in Abschnitt 5.0 — keine vorgemerkten und keine erfundenen Typen.
+
+Grundprinzip: Eine Episode ist eine Eventliste. Dialog ist ein Event wie
+jedes andere. Die Erzählung folgt dem Muster Dialog → Handlung → Konsequenz
+→ Dialog, nicht Dialog → Quiz → Ende.
 
 === SCHEMA ===
 [Hier den kompletten Inhalt von JSON_SCHEMA_REFERENCE.md einfügen]
@@ -40,16 +44,21 @@ Erzeuge folgende Dateien vollständig:
    pro Episode und zusätzlich 1-2 seltene Karten pro Arc. Jede Karte:
    id, name, set (= "Etappe N · <Arc-Name>"), rarity, asset, flavor, hint.
    Der hint sagt in EINEM kindgerechten Satz, wie man die Karte bekommt.
-3. Pro Episode: episodes/<arc_id>_<episode_nr>.json — vollständige
-   dialogue_sequence (mind. 4 Zeilen, abwechselnd position left/right,
-   pro Zeile sprite + name + text + text_simple), background, korrektes
-   active_map_id, passendes node_id, ein minigame_event und eine
-   reward_card_id aus cards.json
-4. Pro Episode genau ein minigames/<minigame_id>.json mit EINER Variante
-   pro übergebener Lernstufe — Inhalt muss sich nach Schwierigkeit
-   unterscheiden, nicht nur im Wortlaut. Bei MultipleChoiceGame hat jede
+3. Pro Episode: episodes/<arc_id>_<episode_nr>.json — background, korrektes
+   active_map_id, passendes node_id und eine events[]-Liste in genau dieser
+   Reihenfolge:
+     a) ein dialog-Event, das die Szene aufbaut (mind. 3 Zeilen, abwechselnd
+        position left/right, pro Zeile sprite + name + text + text_simple)
+     b) ein Aufgaben-Event, referenziert über config.ref
+     c) ein dialog-Event, das die Konsequenz erzählt (mind. 1 Zeile) —
+        die Figuren reagieren auf das, was gerade passiert ist
+     d) ein reward-Event mit einer card_id aus cards.json
+4. Pro Episode genau ein events/<event_id>.json mit EINER Variante pro
+   übergebener Lernstufe — Inhalt muss sich nach Schwierigkeit
+   unterscheiden, nicht nur im Wortlaut. Bei multiple_choice hat jede
    Option ein image (antwort_<slug>.png), und die leichteste Lernstufe
-   bekommt zusätzlich question_simple.
+   bekommt zusätzlich question_simple. Die Datei trägt event_id, type und
+   variants — sonst nichts.
 
 Regeln für text_simple und question_simple:
 - kurze Hauptsätze, keine Nebensatz-Ketten, keine Fremdwörter
@@ -79,6 +88,10 @@ Keine Erklärungen zwischen den Dateien. Keine zusammenfassende Antwort danach.
   manuell durchgehen.** Referenzintegrität über viele Dateien hält kein Modell
   zuverlässig durch.
 - **`correct_index` und `accepted_answers` immer selbst gegenlesen.**
+- **Die Konsequenz-Zeile gegenlesen.** Der Dialog nach dem Aufgaben-Event ist
+  der eigentliche Grund, warum das Kind weiterspielt — er muss die Handlung
+  aufgreifen („Der Kompass zeigt nach Norden, also segeln wir dorthin"), nicht
+  bloß loben („Super gemacht!"). Modelle schreiben hier reflexhaft Lob.
 - **`position`-Werte prüfen:** zwei Figuren im selben Dialog dürfen sich
   abwechseln, aber zwei direkt aufeinanderfolgende Zeilen auf `left` *und*
   `right` gleichzeitig sind kein Fehler — das ist der Normalfall eines
@@ -108,6 +121,7 @@ Hier eine bestehende Episode als Stilreferenz:
 
 Hier das Schema zur Kontrolle:
 [JSON_SCHEMA_REFERENCE.md, Abschnitt 4 + 5]
+Eine Episode ist eine Eventliste. Dialog ist ein Event wie jedes andere.
 
 Erstelle einen neuen Arc "{NEUER_ARC_NAME}" als zusätzlichen Eintrag in
 maps[], plus {ANZAHL} neue Episoden mit Lerninhalt {NEUER_INHALT}. Cast und

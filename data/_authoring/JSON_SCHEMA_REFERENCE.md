@@ -5,7 +5,12 @@ keine Variante. Ein LLM, das Content generiert, MUSS diese Schemas exakt
 einhalten — keine zusätzlichen Felder, keine fehlenden Pflichtfelder, keine
 umbenannten Keys.
 
-🟡 = Vorschlag, noch nicht gegen die laufende Engine verifiziert (Meilenstein 4 steht aus).
+🟡 = Vorschlag, noch nicht gegen die laufende Engine verifiziert (Meilenstein 3 steht aus).
+
+**Das Grundprinzip:** Eine Episode ist eine **Eventliste**, sonst nichts. Dialog,
+Rätsel, Erkundung, Kampf und Belohnung sind gleichrangige Events derselben
+Erzählung — es gibt genau einen Ablaufmechanismus
+([ADR-004](../../docs/decisions/004-event-engine.md)).
 
 Das visuelle Zielbild zu diesen Daten steht in [docs/design/](../../docs/design/) —
 der Prototyp dort nutzt eine flachere Beispielstruktur, verbindlich ist diese Datei.
@@ -19,8 +24,8 @@ der Prototyp dort nutzt eine flachere Beispielstruktur, verbindlich ist diese Da
 | `assets/main_hub.json` | Alle installierten Welten + Planetenkarte |
 | `/data/themes/<theme_id>/world_config.json` | Lernstufen, Etappenkarte, Ortskarten mit Nodes |
 | `/data/themes/<theme_id>/cards.json` | Kartenformat + alle Sammelkarten der Welt |
-| `/data/themes/<theme_id>/episodes/<episode_id>.json` | Level-Node: Hintergrund, Dialog, Minispiel-Referenz, Belohnungskarte |
-| `/data/themes/<theme_id>/minigames/<minigame_id>.json` | Minispiel-Payload, eine Variante pro Lernstufe |
+| `/data/themes/<theme_id>/episodes/<episode_id>.json` | Eine Episode als Eventliste |
+| `/data/themes/<theme_id>/events/<event_id>.json` | Ausgelagerte Event-Konfiguration mit einer Variante pro Lernstufe |
 
 ---
 
@@ -159,8 +164,8 @@ kein Designziel — neuer Arc heißt: neuer `maps[]`-Eintrag, neuer
 
 **Regeln:**
 - `difficulty_levels` braucht mindestens einen Eintrag.
-- Jede `id` in `difficulty_levels` muss in jedem Minispiel der Welt als
-  Variante existieren (siehe Abschnitt 5).
+- Jede `id` in `difficulty_levels` muss in jeder ausgelagerten
+  Event-Konfiguration der Welt als Variante existieren (siehe Abschnitt 5).
 - Jede `stages[].map_id` muss eine `maps[].id` sein.
 - Jede `nodes[].episode_ref` muss eine existierende Episodendatei treffen.
 - `routes` verbindet nur Punkte derselben Ebene — Etappen mit Etappen, Nodes
@@ -174,8 +179,8 @@ Liegt unter `/data/themes/<theme_id>/cards.json`. Eine Datei pro Welt.
 
 Sammelkarten sind **fertige Bilddateien**, die außerhalb des Spiels erzeugt und
 mit dem Content ausgeliefert werden. Die Engine erzeugt keine Karten — sie
-schaltet frei, zeigt an, lässt auswählen und druckt. Kinder gewinnen Karten
-durch abgeschlossene Minispiele und können sie auf DIN A4 ausdrucken.
+schaltet frei, zeigt an, lässt auswählen und druckt. Kinder gewinnen Karten über
+`reward`-Events am Ende einer Episode und können sie auf DIN A4 ausdrucken.
 
 ```json
 {
@@ -214,19 +219,21 @@ durch abgeschlossene Minispiele und können sie auf DIN A4 ausdrucken.
 - `hint` ist Pflicht für jede Karte, die nicht sofort verfügbar ist. Fehlt er,
   zeigt die verschlossene Karte nur einen Standardsatz und das Kind weiß nicht,
   wo es suchen soll.
-- Jede Karte, die eine Episode als `reward_card_id` nennt, muss hier existieren.
+- Jede Karte, die ein `reward`-Event als `card_id` nennt, muss hier existieren.
 
 **Nicht in dieser Datei:** ob ein Kind eine Karte besitzt und wann es sie
 bekommen hat. Das ist Fortschritt, kein Content — siehe Abschnitt 7.
 
 ---
 
-## 4. Episoden-Datei (Level-Node)
+## 4. Episoden-Datei — die Eventliste
 
-Liegt unter `/data/themes/<theme_id>/episodes/<episode_id>.json`. Eine
-Episode ist ein vollständiger Level-Node: Hintergrund, Dialog, Minispiel —
-alles in einer Datei. **Kein separater Dialogordner, keine separate
-Dialog-Referenzierung.** Dialoge sind Teil der Episode, sonst nichts.
+Liegt unter `/data/themes/<theme_id>/episodes/<episode_id>.json`.
+
+Eine Episode ist **ein Abenteuer an einem Ort**: Hintergrund plus eine Liste von
+Events, die die Engine strikt der Reihe nach abspielt. Es gibt keine
+Sonderbehandlung für einzelne Eventarten, keinen separaten Dialogordner und
+keine feste Abfolge „erst reden, dann rätseln".
 
 ```json
 {
@@ -234,107 +241,167 @@ Dialog-Referenzierung.** Dialoge sind Teil der Episode, sonst nichts.
   "active_map_id": "string — muss eine maps[].id aus world_config.json sein",
   "node_id": "string — muss eine nodes[].id dieser Map sein",
   "background": "string — Dateiname unter backgrounds/, z. B. hafendamm.webp",
-  "reward_card_id": "string (optional) — cards[].id, die beim Abschluss freigeschaltet wird",
 
-  "dialogue_sequence": [
+  "events": [
     {
-      "position": "enum: left | right",
-      "sprite": "string — Dateiname unter sprites/<character>/",
-      "name": "string — Anzeigename über der Sprechblase",
-      "text": "string — Dialogzeile für Kinder, die selbst lesen",
-      "text_simple": "string (optional) — kurze Fassung für den Vorlesemodus, siehe Abschnitt 6",
-      "audio_path": "string (optional) — relativer Pfad unter audio/voices/"
+      "type": "string — einer der Eventtypen aus Abschnitt 5",
+      "config": { "...": "typabhängig — siehe Abschnitt 5" }
     }
-  ],
+  ]
+}
+```
 
-  "minigame_event": {
-    "minigame_ref": "string — Dateiname (ohne .json) unter minigames/"
+`events` braucht mindestens einen Eintrag. Die Reihenfolge im Array ist die
+Reihenfolge im Spiel.
+
+### Inline oder ausgelagert — die eine Regel
+
+| Event braucht … | Wo die Konfiguration steht |
+|---|---|
+| **keine** Lernstufen-Varianten (`dialog`, `cutscene`, `choice`, `reward`) | vollständig **inline** in `config` |
+| **eine Variante pro Lernstufe** (alle Lern- und Gameplay-Events) | in einer eigenen Datei unter `events/`, referenziert über `config.ref` |
+
+So bleibt die Episode als Drehbuch lesbar, und die Aufgaben-Varianten bleiben
+wiederverwendbar — dieselbe Aufgabe kann in mehreren Episoden auftauchen.
+
+Ein ausgelagertes Event darf neben `ref` weitere Felder in `config` tragen, die
+**den Auftritt** betreffen und pro Episode unterschiedlich sein dürfen:
+
+```json
+{
+  "type": "multiple_choice",
+  "config": {
+    "ref": "kompass_001",
+    "music": "battle.mp3",
+    "background": "sturmsee.webp"
   }
 }
 ```
 
-### Feste Positionen statt Koordinaten
-
-Die Bühne kennt genau zwei Plätze: `left` und `right`. Jede Sprechblase
-hängt fest an ihrem Platz — links unten für `left`, rechts unten für
-`right`. Es gibt **keine** x/y-Koordinaten, **keine** `bubble_position`-Wahl
-und **keine** separate Charakterliste mehr zu pflegen.
-
-Pro Dialogzeile wird nur konfiguriert: **Sprite, Name, Text** (plus optional
-Kurzfassung und Audio). Das war's. Will dieselbe Figur zweimal hintereinander
-sprechen, wiederholt man Sprite und Name einfach — das ist gewollte Redundanz,
-kein Bug, weil sie das Schema simpel hält.
-
-Zwei Figuren auf der Bühne: eine auf `left`, eine auf `right`. Eine dritte
-Figur „betritt" die Szene, indem eine folgende Dialogzeile denselben Platz
-mit anderem Sprite/Name belegt — die vorherige Figur „verlässt" die Bühne
-damit implizit.
-
-🟡 Mehr als zwei gleichzeitige Sprecher (z. B. Gruppenszenen) sind im MVP
-nicht vorgesehen. Falls nötig: hier nachtragen, sobald ein echter Bedarf
-auftaucht — nicht vorab spekulativ bauen.
+Diese Felder ergänzen die Variante, sie überschreiben nichts aus ihr. Alles, was
+die **Aufgabe selbst** ausmacht (Frage, Antworten, Ziele), gehört in die
+ausgelagerte Datei — nie in die Episode.
 
 **Regeln:**
-- `dialogue_sequence` wird strikt der Reihe nach abgespielt, keine Branches.
-- Jede referenzierte `sprite`-Datei muss tatsächlich existieren.
+- Events werden strikt der Reihe nach abgespielt, keine Verzweigungen. (Ein
+  `choice`-Event darf innerhalb seiner eigenen Konfiguration Folgen abbilden —
+  die Eventliste selbst verzweigt nicht.)
+- Jede referenzierte Datei (`sprite`, `audio_path`, `background`) muss
+  existieren.
 - `node_id` muss auf der Map liegen, die `active_map_id` nennt — sonst zeigt
   die Karte einen Punkt, der ins Leere führt.
-- `reward_card_id` darf mehrfach im Content vorkommen, aber die Vergabe ist
-  idempotent: eine bereits besessene Karte wird nicht doppelt vergeben.
+- Jedes `config.ref` muss eine Datei `events/<ref>.json` treffen, deren `type`
+  mit dem `type` in der Episode übereinstimmt.
+- Ein `reward`-Event vergibt idempotent: eine bereits besessene Karte wird
+  nicht doppelt vergeben. Dieselbe `card_id` darf mehrfach im Content stehen.
 
 ---
 
-## 5. Minispiel-Datei
+## 5. Eventtypen
 
-Liegt unter `/data/themes/<theme_id>/minigames/<minigame_id>.json`. Ein
-Minispiel ist **kein Synonym für Rätsel** — es ist jeder spielbare Baustein,
-den die Engine als eigene Angular-Komponente kennt. Das Repertoire wächst:
-heute Multiple-Choice, morgen Memory, übermorgen ein Schieberätsel. Neue
-Spieltypen brauchen nur einen neuen `game_type`-Wert plus passende
-Komponente in der Engine — das Content-JSON-Format drumherum bleibt gleich.
+Die Engine kennt Eventtypen — das Content-JSON liefert nur deren Konfiguration.
+Zu jedem Typ gehört genau eine Angular-Komponente, geladen über
+`ngComponentOutlet`. **Neue Gameplay-Arten entstehen durch einen neuen Eventtyp
+plus Komponente, nie durch Backend-Code.**
 
-Ein Minispiel hat genau eine Variante pro Lernstufe der Welt — die Engine
-lädt zur Laufzeit nur die Variante der aktiven `difficulty_level`.
+### 5.0 Verbindliche Typ-Tabelle
+
+Diese Tabelle ist der einzige Ort, an dem Eventtyp ↔ Komponente zugeordnet wird.
+**Ein Typ wird hier erst eingetragen, wenn die Komponente existiert** — sonst
+referenzieren generierte Welten Events, die es nicht gibt.
+
+| `type` | Komponente | Konfiguration | Varianten pro Lernstufe |
+|---|---|---|---|
+| `dialog` | `Dialog` | inline, Abschnitt 5.1 | nein |
+| `reward` | `Reward` | inline, Abschnitt 5.2 | nein |
+| `multiple_choice` | `MultipleChoice` | ausgelagert, Abschnitt 5.3 | ja |
+| `text_input` | `TextInput` | ausgelagert, Abschnitt 5.4 | ja |
+| `image_search` | `ImageSearch` | ausgelagert, Abschnitt 5.5 | ja |
+
+**Vorgemerkt, noch nicht gebaut** — nicht im Content verwenden, bis sie oben
+stehen: `cutscene`, `choice`, `exploration`, `investigation`, `search`,
+`stealth`, `chase`, `cooking`, `crafting`, `card_battle`, `ship_battle`,
+`memory`, `boss`. Die Liste ist ein Ausblick, kein Versprechen — sie zeigt, dass
+das Repertoire offen ist.
+
+### 5.1 `dialog` (inline)
+
+Zwei Figuren reden. Die Bühne kennt genau zwei Plätze: `left` und `right`. Jede
+Sprechblase hängt fest an ihrem Platz — es gibt **keine** x/y-Koordinaten,
+**keine** `bubble_position`-Wahl und **keine** separate Charakterliste.
 
 ```json
 {
-  "minigame_id": "string — identisch zum Dateinamen ohne .json",
-  "game_type": "enum, siehe Liste unten — erweiterbar",
-  "variants": {
-    "<difficulty_level_id>": { "...": "siehe Payload-Schema je nach game_type" }
+  "type": "dialog",
+  "config": {
+    "lines": [
+      {
+        "position": "enum: left | right",
+        "sprite": "string — Dateiname unter sprites/<character>/",
+        "name": "string — Anzeigename über der Sprechblase",
+        "text": "string — Dialogzeile für Kinder, die selbst lesen",
+        "text_simple": "string (optional) — kurze Fassung für den Vorlesemodus, siehe Abschnitt 6",
+        "audio_path": "string (optional) — relativer Pfad unter audio/voices/"
+      }
+    ]
   }
 }
 ```
 
-`variants` braucht für JEDE `id` aus `world_config.json → difficulty_levels`
-einen Eintrag.
+Pro Zeile wird nur konfiguriert: **Sprite, Name, Text** (plus optional
+Kurzfassung und Audio). Will dieselbe Figur zweimal hintereinander sprechen,
+wiederholt man Sprite und Name — das ist gewollte Redundanz, kein Bug, weil sie
+das Schema simpel hält.
 
-### MVP-Starttypen (`game_type`)
+Zwei Figuren auf der Bühne: eine auf `left`, eine auf `right`. Eine dritte Figur
+„betritt" die Szene, indem eine folgende Zeile denselben Platz mit anderem
+Sprite/Name belegt — die vorherige Figur „verlässt" die Bühne damit implizit.
 
-| Wert | Komponente | Payload-Schema |
-|---|---|---|
-| `MultipleChoiceGame` | `MultipleChoiceComponent` | 5.1 |
-| `TextInputGame` | `TextInputComponent` | 5.2 |
-| `ImageSearchGame` | `ImageSearchComponent` | 5.3 |
+🟡 Mehr als zwei gleichzeitige Sprecher (z. B. Gruppenszenen) sind im MVP nicht
+vorgesehen. Falls nötig: hier nachtragen, sobald ein echter Bedarf auftaucht —
+nicht vorab spekulativ bauen.
 
-Diese Tabelle ist der einzige Ort, an dem `game_type` ↔ Komponente verbindlich
-zugeordnet wird. **Neue Spieltypen werden hier ergänzt, sobald die
-zugehörige Engine-Komponente existiert** — nicht früher, sonst referenzieren
-LLM-generierte Welten Spiele, die es nicht gibt.
+### 5.2 `reward` (inline)
 
-### 5.1 Payload: `MultipleChoiceGame`
+Schaltet eine Sammelkarte frei und zeigt sie als Belohnung. Steht typischerweise
+als letztes Event einer Episode.
 
 ```json
 {
-  "question": "string",
-  "question_simple": "string (optional) — kurze Fassung für den Vorlesemodus",
-  "options": [
-    {
-      "label": "string — Antworttext",
-      "image": "string (optional) — Dateiname unter answers/, z. B. antwort_norden.png"
+  "type": "reward",
+  "config": {
+    "card_id": "string — cards[].id aus cards.json"
+  }
+}
+```
+
+### 5.3 `multiple_choice` (ausgelagert)
+
+Episode:
+
+```json
+{ "type": "multiple_choice", "config": { "ref": "kompass_001" } }
+```
+
+Datei `events/kompass_001.json`:
+
+```json
+{
+  "event_id": "string — identisch zum Dateinamen ohne .json",
+  "type": "multiple_choice",
+  "variants": {
+    "<difficulty_level_id>": {
+      "question": "string",
+      "question_simple": "string (optional) — kurze Fassung für den Vorlesemodus",
+      "options": [
+        {
+          "label": "string — Antworttext",
+          "image": "string (optional) — Dateiname unter answers/, z. B. antwort_norden.png"
+        }
+      ],
+      "correct_index": "integer — 0-basiert, Index in options"
     }
-  ],
-  "correct_index": "integer — 0-basiert, Index in options"
+  }
 }
 ```
 
@@ -345,42 +412,61 @@ markiert; im Lesemodus entfällt das Bild und es sind Buchstaben A–D.
 **`image` ist ein echter Dateiname, kein abgeleiteter.** Wer den Bildnamen aus
 dem Antworttext berechnet, verliert das Bild bei jeder Textkorrektur.
 
-### 5.2 Payload: `TextInputGame`
+### 5.4 `text_input` (ausgelagert)
 
 ```json
 {
-  "question": "string",
-  "question_simple": "string (optional) — kurze Fassung für den Vorlesemodus",
-  "input_type": "enum: text | number",
-  "accepted_answers": ["string", "string"],
-  "case_sensitive": "boolean — default false"
+  "event_id": "string",
+  "type": "text_input",
+  "variants": {
+    "<difficulty_level_id>": {
+      "question": "string",
+      "question_simple": "string (optional)",
+      "input_type": "enum: text | number",
+      "accepted_answers": ["string", "string"],
+      "case_sensitive": "boolean — default false"
+    }
+  }
 }
 ```
 
 🟡 Freitexteingabe passt schlecht zu Kindern, die noch nicht schreiben. Für den
-Vorlesemodus eine der anderen beiden Spielarten wählen, oder `input_type:
-number` verwenden.
+Vorlesemodus einen der anderen beiden Typen wählen, oder `input_type: number`
+verwenden.
 
-### 5.3 Payload: `ImageSearchGame`
+### 5.5 `image_search` (ausgelagert)
 
 ```json
 {
-  "image": "string — Dateiname unter backgrounds/ oder eigenem images/-Ordner",
-  "question": "string",
-  "question_simple": "string (optional) — kurze Fassung für den Vorlesemodus",
-  "targets": [
-    { "label": "string", "x": "number 0–100 (%)", "y": "number 0–100 (%)", "radius": "number 0–100 (% Toleranzradius)" }
-  ],
-  "find_all": "boolean — true = alle targets müssen gefunden werden, false = einer reicht"
+  "event_id": "string",
+  "type": "image_search",
+  "variants": {
+    "<difficulty_level_id>": {
+      "image": "string — Dateiname unter backgrounds/ oder eigenem images/-Ordner",
+      "question": "string",
+      "question_simple": "string (optional)",
+      "targets": [
+        { "label": "string", "x": "number 0–100 (%)", "y": "number 0–100 (%)", "radius": "number 0–100 (% Toleranzradius)" }
+      ],
+      "find_all": "boolean — true = alle targets müssen gefunden werden, false = einer reicht"
+    }
+  }
 }
 ```
 
-**Beispiel — vollständige Minispiel-Datei:**
+### Varianten-Regel (gilt für jede ausgelagerte Datei)
+
+`variants` braucht für **JEDE** `id` aus `world_config.json → difficulty_levels`
+einen Eintrag. Die Engine lädt zur Laufzeit nur die Variante der aktiven
+Lernstufe. Story und Figuren bleiben über alle Stufen gleich — nur die Aufgabe
+skaliert.
+
+**Beispiel — vollständige ausgelagerte Event-Datei:**
 
 ```json
 {
-  "minigame_id": "minigame_001",
-  "game_type": "MultipleChoiceGame",
+  "event_id": "kompass_001",
+  "type": "multiple_choice",
   "variants": {
     "matrose": {
       "question": "In welche Richtung zeigt die Nadel vom Kompass immer?",
@@ -457,7 +543,7 @@ Datenbank — nie in eine JSON-Datei:
 | Sterne pro Etappe | Ergebnis, kein Inhalt |
 | welche Karten ein Kind besitzt und wann es sie bekam | Besitz, kein Inhalt |
 | gewählte Lernstufe, Vorlese-/Lesemodus, Ton an/aus | Einstellung, kein Inhalt |
-| Statistiken und Erfolge | Ergebnis, kein Inhalt |
+| Story-Merker, Inventar, Statistiken und Erfolge | Ergebnis, kein Inhalt |
 
 Der Beispiel-Content des Design-Prototyps führt `status`, `stars` und `earned`
 mit — das ist Prototyp-Pragmatik, damit die Screens ohne Datenbank etwas
@@ -473,44 +559,79 @@ anzeigen. Ins echte Content-Repo gehören diese Felder nicht.
   "active_map_id": "east_blue",
   "node_id": "dorf",
   "background": "hafendamm.webp",
-  "reward_card_id": "kompassrose",
-  "dialogue_sequence": [
+  "events": [
     {
-      "position": "left",
-      "sprite": "shanks_neutral.png",
-      "name": "Shanks",
-      "text": "Hey Luffy, du bist noch viel zu jung, um allein auf die See hinauszufahren!",
-      "text_simple": "Luffy, du bist noch zu klein für das Meer!",
-      "audio_path": "audio/voices/shanks_arc_01_foosha_001.mp3"
+      "type": "dialog",
+      "config": {
+        "lines": [
+          {
+            "position": "left",
+            "sprite": "shanks_neutral.png",
+            "name": "Shanks",
+            "text": "Hey Luffy, du bist noch viel zu jung, um allein auf die See hinauszufahren!",
+            "text_simple": "Luffy, du bist noch zu klein für das Meer!",
+            "audio_path": "audio/voices/shanks_arc_01_foosha_001.mp3"
+          },
+          {
+            "position": "right",
+            "sprite": "luffy_wuetend.png",
+            "name": "Luffy",
+            "text": "Bin ich nicht! Ich werde der König der Piraten!",
+            "text_simple": "Bin ich nicht! Ich werde König der Piraten!"
+          }
+        ]
+      }
     },
     {
-      "position": "right",
-      "sprite": "luffy_wuetend.png",
-      "name": "Luffy",
-      "text": "Bin ich nicht! Ich werde der König der Piraten!",
-      "text_simple": "Bin ich nicht! Ich werde König der Piraten!"
+      "type": "multiple_choice",
+      "config": { "ref": "kompass_001" }
+    },
+    {
+      "type": "dialog",
+      "config": {
+        "lines": [
+          {
+            "position": "left",
+            "sprite": "shanks_lacht.png",
+            "name": "Shanks",
+            "text": "Na gut, den Kompass hast du verstanden. Nimm das hier mit.",
+            "text_simple": "Gut gemacht! Das hier ist für dich."
+          }
+        ]
+      }
+    },
+    {
+      "type": "reward",
+      "config": { "card_id": "kompassrose" }
     }
-  ],
-  "minigame_event": {
-    "minigame_ref": "minigame_001"
-  }
+  ]
 }
 ```
+
+Das ist der Punkt der Umstellung: **Dialog → Handlung → Konsequenz → Dialog**,
+nicht Dialog → Quiz → Ende.
 
 ---
 
 ## 9. Checkliste vor dem Commit
 
-- [ ] Jede `id` aus `difficulty_levels` hat eine Variante in jedem referenzierten Minispiel
-- [ ] Jede referenzierte Datei (`background`, `sprite`, `audio_path`, `image`, `asset`, `illustration`) liegt tatsächlich im Ordner
-- [ ] `episode_id`, `minigame_id`, `cards[].id` sind jeweils eindeutig innerhalb der Welt
+- [ ] Jede Episode hat mindestens ein Event, und jedes `type` steht in der
+      Tabelle aus Abschnitt 5.0 — keine erfundenen oder nur vorgemerkten Typen
+- [ ] Jedes `config.ref` trifft eine Datei unter `events/`, deren `type`
+      identisch ist
+- [ ] Jede ausgelagerte Event-Datei hat eine Variante für JEDE `id` aus
+      `difficulty_levels`
+- [ ] Keine Aufgabeninhalte (Frage, Antworten, Ziele) inline in der Episode —
+      die gehören in die ausgelagerte Datei
+- [ ] Jede referenzierte Datei (`background`, `sprite`, `audio_path`, `image`,
+      `asset`, `illustration`) liegt tatsächlich im Ordner
+- [ ] `episode_id`, `event_id`, `cards[].id` sind jeweils eindeutig innerhalb der Welt
 - [ ] `active_map_id` existiert in `world_config.json → maps`, und `node_id` existiert auf genau dieser Map
 - [ ] Jede `nodes[].episode_ref` und jede `stages[].map_id` trifft ein existierendes Ziel
-- [ ] Jede `reward_card_id` existiert in `cards.json`
+- [ ] Jede `card_id` eines `reward`-Events existiert in `cards.json`
 - [ ] `rarity` ist einer der drei erlaubten Werte — keine erfundenen Stufen
 - [ ] `set`-Schreibweise innerhalb der Welt konsistent (sonst zerfällt die Trophäenhalle in Extra-Gruppen)
 - [ ] Multiple-Choice-Antworten haben `image`, wenn die Welt den Vorlesemodus unterstützt
 - [ ] Kein `status`, `stars` oder `earned` im Content — das ist Spielstand (Abschnitt 7)
-- [ ] `game_type` steht in der Tabelle aus Abschnitt 5 — keine erfundenen Spieltypen
 - [ ] Alle Koordinaten sind Prozentwerte zwischen 0 und 100, keine Pixel
 - [ ] JSON ist valide (kein Trailing Comma, korrekte Anführungszeichen) — im Zweifel durch `jq .` jagen

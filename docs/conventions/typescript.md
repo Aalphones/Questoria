@@ -39,18 +39,18 @@ type UserState =
   | { kind: 'archived'; archivedAt: Date };
 ```
 
-This applies directly to `game_type` (the discriminator for minigame
-components) and `difficulty_level` (the discriminator for content variants)
-— never compare these as bare strings scattered across the codebase, funnel
-them through one const-asserted union each.
+This applies directly to an event's `type` (the discriminator that picks the
+event component) and `difficulty_level` (the discriminator for content
+variants) — never compare these as bare strings scattered across the codebase,
+funnel them through one const-asserted union each.
 
 ## Enums
 
 Prefer const-asserted unions over `enum` — smaller output, no runtime cost:
 
 ```ts
-export const GAME_TYPES = ['MultipleChoiceGame', 'TextInputGame', 'ImageSearchGame'] as const;
-export type GameType = typeof GAME_TYPES[number];
+export const EVENT_TYPES = ['dialog', 'reward', 'multiple_choice', 'text_input', 'image_search'] as const;
+export type EventType = typeof EVENT_TYPES[number];
 ```
 
 ## Nullability
@@ -81,5 +81,5 @@ export type GameType = typeof GAME_TYPES[number];
 
 ## Critical Rules
 
-1. **`game_type` and `difficulty_level` are discriminated unions, never bare strings** — a typo in a comparison must fail at compile time, not silently skip a variant at runtime.
-2. **No `!` non-null assertions** — content lookups (map/episode/minigame by ID) can legitimately miss; handle the `undefined` case instead of asserting it away.
+1. **An event's `type` and `difficulty_level` are discriminated unions, never bare strings** — a typo in a comparison must fail at compile time, not silently skip a variant at runtime.
+2. **No `!` non-null assertions** — content lookups (map/episode/event by ID) can legitimately miss; handle the `undefined` case instead of asserting it away.

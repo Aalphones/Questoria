@@ -6,8 +6,14 @@ Fortschrittsanzeige, Content-Schnittstelle im Backend, die das JSON-Repository
 liest.
 
 Am Ende ist die Welt begehbar: Planetenkarte → Lernstufe → Etappenkarte →
-Ortskarte → Ort. Der Ort selbst ist ein Platzhalter — Dialog und Minispiel
-kommen mit Meilenstein 3 und 4.
+Ortskarte → Ort. Der Ort selbst ist ein Platzhalter — die Event Engine, die
+dort die Eventliste der Episode abspielt, kommt mit Meilenstein 3.
+
+🟡 **Nachgezogen am 14.08.2026** ([ADR-004](../../decisions/004-event-engine.md)):
+Karten, Routing und Fortschritt sind vom Architekturschnitt nicht betroffen und
+bleiben unverändert. Angepasst wurden nur die Stellen, an denen dieser Plan das
+Content-Format anfasst — die Testwelt in Phase 2 schreibt jetzt Eventlisten
+statt `dialogue_sequence` + `minigame_event`.
 
 ## Overview
 

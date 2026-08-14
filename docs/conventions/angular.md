@@ -132,8 +132,8 @@ frontend/src/app/
 │   ├── main-hub/
 │   ├── timeline/
 │   ├── map/
-│   ├── dialog/
-│   ├── minigames/<game_type>/
+│   ├── episode/              ← Event Engine: Ablauf + Event Loader
+│   ├── events/<type>/        ← eine Komponente je Eventtyp (dialog, multiple-choice, ...)
 │   ├── auth/
 │   └── profile/
 ├── services/
@@ -145,5 +145,5 @@ frontend/src/app/
 
 1. **`ChangeDetectionStrategy.OnPush` on every component** — perf regressions in a game-player UI are invisible until they're a stutter mid-dialog.
 2. **No inline template/style, always three files via `ng generate`** — keeps the CLI as the enforcement mechanism, not convention alone.
-3. **`ngComponentOutlet` is the only way minigames get loaded** — never special-case a `game_type` with an `@switch` in the player shell; new types must only need a new component + a `game-type-map.ts` entry.
+3. **`ngComponentOutlet` is the only way events get loaded** — never special-case an event `type` with an `@switch` in the episode shell, and that includes `dialog`: it is an event type like any other, with no privileged path through the runner. A new type must only need a new component + an `event-type-map.ts` entry.
 4. **No `.subscribe()` in components** — game state must stay signal-driven so save/load and progress UI stay consistent.

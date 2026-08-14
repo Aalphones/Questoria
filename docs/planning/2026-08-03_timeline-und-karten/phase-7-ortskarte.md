@@ -3,7 +3,7 @@
 **Rating:** standard
 
 Die Karte einer Etappe mit ihren begehbaren Orten — und der Ort selbst als
-ehrlicher Platzhalter, an dem Meilenstein 3 den Dialog übernimmt.
+ehrlicher Platzhalter, an dem Meilenstein 3 die Event Engine übernimmt.
 
 ## Kontext — vorher lesen
 
@@ -39,8 +39,8 @@ ehrlicher Platzhalter, an dem Meilenstein 3 den Dialog übernimmt.
 8. Der Screen zeigt den Ortsnamen, den Hintergrund-Platzhalter der Episode und
    einen ehrlichen Satz, was hier später passiert („Hier erzählt dir die
    Geschichte gleich, was los ist — die Dialoge kommen im nächsten Schritt.").
-9. Er belegt, dass die Episoden-Schnittstelle trägt: Anzahl der bereitliegenden
-   Dialogzeilen wird angezeigt (aus `dialogue_sequence.length`).
+9. Er belegt, dass die Episoden-Schnittstelle trägt: die Anzahl der
+   bereitliegenden Events wird angezeigt (aus `events.length`).
 10. Ein Knopf „Ort geschafft" schreibt den Fortschritt (3 Sterne) und führt
     zurück auf die Ortskarte, wo der Ort sofort geschafft aussieht und der
     nächste offen ist.
@@ -84,8 +84,8 @@ ehrlicher Platzhalter, an dem Meilenstein 3 den Dialog übernimmt.
 ### Doku
 
 - [ ] `docs/code-map.md`: `features/map/` auf Ist ziehen, `features/location/`
-      neu aufnehmen — mit dem Hinweis, dass die Dialog-Engine (Meilenstein 3)
-      diesen Screen übernimmt.
+      neu aufnehmen — mit dem Hinweis, dass die Event Engine (Meilenstein 3)
+      diesen Screen übernimmt und die Eventliste der Episode abspielt.
 - [ ] `docs/glossary.md`: **Ortskarte**, **Ort** prüfen/ergänzen.
 
 ## Bewusste Abweichung vom Design

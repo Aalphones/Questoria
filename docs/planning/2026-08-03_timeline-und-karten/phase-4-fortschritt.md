@@ -39,8 +39,8 @@ Browser.
 Eine Etappe ohne Orte gilt als geschafft — sie hat nichts, was man tun könnte.
 
 **Sterne einer Etappe:** abgerundeter Durchschnitt der Sterne ihrer geschafften
-Orte, 0 wenn noch keiner geschafft ist. Echte Sterne liefert erst das Minispiel
-(Meilenstein 4); der Platzhalter aus Phase 7 vergibt 3.
+Orte, 0 wenn noch keiner geschafft ist. Echte Sterne liefert erst die Event
+Engine (Meilenstein 3); der Platzhalter aus Phase 7 vergibt 3.
 
 **Fortschrittsleiste in der Kopfleiste:** geschaffte Orte / Orte gesamt der
 aktiven Welt — eine Regel für alle Screens, nicht je nach Ansicht eine andere.

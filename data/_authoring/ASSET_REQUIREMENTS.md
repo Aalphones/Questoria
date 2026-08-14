@@ -31,12 +31,12 @@ Komposition auseinander.
 ├── audio/
 │   └── voices/
 │       └── <character_id>_<episode_id>_<line_nr>.mp3
-├── episodes/                       ← Dialoge sind Teil dieser Dateien
-└── minigames/
+├── episodes/                       ← Eventlisten; Dialoge stecken hier drin
+└── events/                         ← Aufgaben-Events mit Lernstufen-Varianten
 ```
 
-Kein eigener `dialogues/`-Ordner — Dialoge stecken in der Episodendatei,
-sonst nirgends. Kein eigener `characters/`-Stammdatenordner — Sprite,
+Kein eigener `dialogues/`-Ordner — Dialoge sind Events innerhalb der
+Episodendatei, sonst nirgends. Kein eigener `characters/`-Stammdatenordner — Sprite,
 Anzeigename und Text werden direkt pro Dialogzeile angegeben, eine
 zentrale Charakterdatei wäre eine zweite Wahrheitsquelle ohne Mehrwert.
 
@@ -94,8 +94,11 @@ Dialogzeile stumm oder bricht — nicht optional.
 | Pflicht? | optional pro Dialogzeile — fehlt `audio_path`, liest die Engine die Zeile über die Sprachausgabe des Geräts vor |
 
 Die `character_id` steckt nicht in der Dialogzeile, sondern im Sprite-Namen:
-aus `shanks_neutral.png` wird `shanks`. Die laufende Nummer ist die Position in
-`dialogue_sequence`, bei 001 beginnend.
+aus `shanks_neutral.png` wird `shanks`. Die laufende Nummer zählt alle
+Dialogzeilen der Episode durch, bei 001 beginnend — über **alle**
+`dialog`-Events hinweg, nicht pro Event neu. Hat eine Episode zwei Dialoge mit
+je zwei Zeilen, sind das die Nummern 001 bis 004. Sonst kollidieren die
+Dateinamen innerhalb einer Episode.
 
 **44.1 kHz ergibt hier nichts.** Beide eingesetzten Sprachmodelle liefern
 24 kHz; Hochrechnen fügt keine Information hinzu, nur Dateigröße. Aufwendig
@@ -163,7 +166,7 @@ Ein passender Prompt für Kartenrahmen und Kartenmotiv liegt in
 
 ## 6. Bildantworten (Vorlesemodus)
 
-Für Kinder, die noch nicht lesen, zeigt jedes Multiple-Choice-Minispiel ein Bild
+Für Kinder, die noch nicht lesen, zeigt jedes `multiple_choice`-Event ein Bild
 über jeder Antwort. Ohne diese Bilder rät das Kind.
 
 | Eigenschaft | Vorgabe |
@@ -173,7 +176,7 @@ Für Kinder, die noch nicht lesen, zeigt jedes Multiple-Choice-Minispiel ein Bil
 | Dateiname | `antwort_<slug>.png`, Slug in `snake_case` ohne Umlaute |
 | Inhalt | ein einzelnes, eindeutig erkennbares Motiv, kein Text im Bild |
 
-Der Dateiname steht als `image` im Minispiel-JSON und wird **nicht** aus dem
+Der Dateiname steht als `image` in der Event-Datei und wird **nicht** aus dem
 Antworttext berechnet — sonst bricht jede Textkorrektur das Bild.
 
 **512 × 512 ist die Ausgabegröße, nicht die Generierungsgröße.** Sie liegt
@@ -186,6 +189,6 @@ und anschließend verkleinert, siehe
 ## Naming-Konventionen — Zusammenfassung
 
 - Alles `snake_case`, keine Leerzeichen, keine Umlaute, keine Großbuchstaben
-- IDs (`theme_id`, `episode_id`, `character_id`, `minigame_id`) sind
+- IDs (`theme_id`, `episode_id`, `character_id`, `event_id`) sind
   dateinamenkompatibel und werden 1:1 als Dateiname oder Ordnername verwendet
 - Keine Versionsnummern im Dateinamen — Versionierung übernimmt Git

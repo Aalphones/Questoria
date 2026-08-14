@@ -17,15 +17,21 @@ verstehen, plus fertige Prompts für Text- und Bildgenerierung.
 
 ## Designentscheidungen, die hier verbindlich gelten
 
-- **Dialoge gehören in die Episode, nicht in einen eigenen Ordner.** Eine
-  Episodendatei ist der vollständige Level-Node: Hintergrund, Dialog,
-  Minispiel-Referenz. Eine separate Dialog-Datenebene wäre nur eine zweite
-  Quelle, die aus dem Tritt geraten kann.
+- **Eine Episode ist eine Eventliste, sonst nichts.** Dialog, Rätsel,
+  Erkundung, Kampf und Belohnung sind gleichrangige Events derselben
+  Erzählung — es gibt genau einen Ablaufmechanismus
+  ([ADR-004](../../docs/decisions/004-event-engine.md)). Kein separater
+  Dialogordner, keine feste Abfolge „erst reden, dann rätseln".
+- **Leichte Events inline, Aufgaben ausgelagert.** `dialog`, `cutscene`,
+  `choice` und `reward` tragen ihre Konfiguration direkt in der Episode; alles
+  mit Lernstufen-Varianten liegt unter `events/` und wird über `config.ref`
+  referenziert. Die Episode bleibt als Drehbuch lesbar, die Aufgaben bleiben
+  wiederverwendbar.
 - **Zwei feste Bühnenplätze (`left`/`right`), keine freien Koordinaten.**
   Pro Dialogzeile wird nur Sprite, Name und Text konfiguriert — Position und
   Sprechblasen-Ausrichtung ergeben sich automatisch aus dem gewählten Platz.
-- **„Minispiel", nie „Puzzle" oder „Rätsel".** Das Repertoire an spielbaren
-  Bausteinen ist offen für alles, was sich per `ngComponentOutlet` laden
+- **„Gameplay-Event", nie „Minispiel", „Puzzle" oder „Rätsel".** Das
+  Repertoire ist offen für alles, was sich per `ngComponentOutlet` laden
   lässt — Multiple Choice ist der Anfang, nicht das Konzept.
 - **Mehrere Karten pro Welt sind Standard, kein Sonderfall.** Eine Welt
   bildet typischerweise mehrere Story-Arcs ab, jede mit eigener Map.
@@ -42,8 +48,9 @@ verstehen, plus fertige Prompts für Text- und Bildgenerierung.
 ## Pflegepflicht — nicht verhandelbar
 
 Jede Engine-Änderung, die das Content-Format betrifft, ist erst fertig, wenn
-das ganze Toolkit mitgezogen wurde — vor allem ein neuer `game_type` in
-der Tabelle aus `JSON_SCHEMA_REFERENCE.md` Abschnitt 5.
+das ganze Toolkit mitgezogen wurde — vor allem ein neuer Eventtyp in der
+Tabelle aus `JSON_SCHEMA_REFERENCE.md` Abschnitt 5.0. Ein Typ wird dort erst
+eingetragen, wenn die zugehörige Angular-Komponente existiert.
 
 **Definition of Done bei Schema-Änderungen:**
 
@@ -59,10 +66,11 @@ der Tabelle aus `JSON_SCHEMA_REFERENCE.md` Abschnitt 5.
 7. Gleicher Pull Request wie die Engine-Änderung. Kein „mach ich später".
 
 Wird das nicht eingehalten, generieren LLMs gegen ein Schema von letzter
-Woche — und du debuggst Montagmorgen ein Minispiel, das nie geladen hätte
+Woche — und du debuggst Montagmorgen ein Event, das nie geladen hätte
 werden können. Selbst verschuldet, vermeidbar, unnötig.
 
 ## Status-Markierung
 
 Inhalte in diesem Toolkit, die noch nicht gegen die echte Engine verifiziert
-wurden (weil Phase 4 noch nicht fertig ist), sind mit 🟡 markiert.
+wurden (weil die Event Engine aus Meilenstein 3 noch nicht steht), sind mit
+🟡 markiert.

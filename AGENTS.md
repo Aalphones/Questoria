@@ -1,9 +1,23 @@
 # Questoria — Agenten-Hub
 
-Story-basierte Lernplattform: Fandom-Welten (One Piece, Miraculous, ...)
-werden zu Lernspielen. Voller Kontext: [docs/PROJECT.md](docs/PROJECT.md).
+Datengetriebene Story-Engine: Fandom-Welten (One Piece, Miraculous, ...) werden
+zu spielbaren Lernabenteuern. Voller Kontext: [docs/PROJECT.md](docs/PROJECT.md).
 
 🚧 Aktive Arbeit → [STATE.md](STATE.md)
+
+## Der Architekturschnitt in vier Zeilen
+
+Eine generische Spiel-Engine im Browser plus austauschbare Content-Pakete
+([ADR-004](docs/decisions/004-event-engine.md)):
+
+- **Das Frontend ist das Spiel.** Story-Ablauf, Event Engine, Dialogfluss,
+  Quests, Inventar, Auslöser, Story-Merker, Erfolge, Ton, Animation, alle Regeln.
+- **Das Backend interpretiert kein Gameplay.** Es liefert Event-Konfigurationen,
+  Episoden, Welten, Assets, Lokalisierungen und speichert Nutzer und Spielstände.
+- **Eine Episode ist eine Eventliste.** Dialog ist ein Eventtyp wie jeder
+  andere — es gibt genau einen Ablaufmechanismus.
+- **Neue Mechaniken entstehen aus Eventtyp + Komponente + Content**, nie aus
+  Backend-Code (Critical Rule 8).
 
 ## Stack
 
@@ -32,7 +46,7 @@ werden zu Lernspielen. Voller Kontext: [docs/PROJECT.md](docs/PROJECT.md).
 | Datei | Inhalt |
 |---|---|
 | [docs/PROJECT.md](docs/PROJECT.md) | Ziel, Scope, Nicht-Ziele, Constraints, Meilensteine |
-| [docs/glossary.md](docs/glossary.md) | Gemeinsames Vokabular (Themenwelt, Lernstufe, Minispiel, ...) |
+| [docs/glossary.md](docs/glossary.md) | Gemeinsames Vokabular (Themenwelt, Lernstufe, Event, Event Engine, ...) |
 | [docs/code-map.md](docs/code-map.md) | Feature → Ordner, Namensschema über alle Layer |
 | [docs/design/](docs/design/) | Visuelles Zielbild: Design-Tokens, alle Screens, lauffähiger Prototyp |
 | [docs/decisions/](docs/decisions/) | Architektur-Entscheidungen (ADRs) |
@@ -43,7 +57,8 @@ werden zu Lernspielen. Voller Kontext: [docs/PROJECT.md](docs/PROJECT.md).
 
 ## Content-Repository
 
-Content (Welten, Episoden, Dialoge, Minispiele, Sammelkarten) lebt als statische
+Content (Welten, Episoden mit ihren Eventlisten, ausgelagerte Event-Konfigurationen,
+Sammelkarten) lebt als statische
 JSON unter `data/themes/<theme_id>/` — versioniert wie Code, kein Editor im MVP.
 Das verbindliche Schema + LLM-Copy-Paste-Prompt liegt unter `data/_authoring/`.
 **Jede Engine-Änderung, die das Content-Format betrifft, zieht das
@@ -53,9 +68,11 @@ Authoring-Toolkit im selben Commit mit** — siehe
 ## Critical Rules
 
 1. **Content ist read-only über die API** — Schreibzugriff auf `data/themes/` gibt es nur per Git-Commit, nie über einen Endpoint.
-2. **`game_type`, `difficulty_level` und `rarity` sind geschlossene, dokumentierte Wertemengen** — neue Werte zuerst in `data/_authoring/JSON_SCHEMA_REFERENCE.md`, dann erst im Code.
+2. **Eventtyp, `difficulty_level` und `rarity` sind geschlossene, dokumentierte Wertemengen** — ein Eventtyp kommt erst in die Tabelle in `data/_authoring/JSON_SCHEMA_REFERENCE.md` Abschnitt 5.0, **wenn seine Angular-Komponente existiert**. Sonst referenziert generierter Content Events, die es nicht gibt.
 3. **Zwei Bühnenplätze (`left`/`right`), keine Koordinaten** — das ist eine bewusste Vereinfachung, kein Provisorium, das später "richtig" gebaut wird.
 4. **Fortschritt gehört nie ins Content** — was ein Kind geschafft, gesammelt oder eingestellt hat, liegt im Spielstand in der Datenbank. Kein `status`, `stars`, `earned` in einer JSON-Datei.
 5. **Die Engine erzeugt keine Sammelkarten** — sie zeigt fertige Kartenbilder, schaltet sie frei und druckt sie. Ein Kartengenerator ist ausdrücklich kein Teil dieses Projekts.
 6. **Kein öffentlich erreichbarer Zugang ohne Login** — der Betrieb ist auf einen privaten Nutzerkreis beschränkt, siehe `docs/PROJECT.md` → Constraints. Das ist eine Deploy-Bedingung, kein Feature-Wunsch.
 7. **Kartenkoordinaten sind Prozentwerte** — Positionen und Größen auf allen Karten beziehen sich auf das Kartenbild, nie auf Pixel des Bildschirms.
+8. **Neue Gameplay-Features brauchen keine neuen REST-Endpunkte** — eine neue Mechanik ist ein neuer Eventtyp plus Angular-Komponente plus Content. Wer für ein Spielfeature Backend-Code schreiben will, hat den Schnitt falsch gelegt ([ADR-004](docs/decisions/004-event-engine.md)).
+9. **Kein `@switch` über Eventtypen im Ablauf-Gerüst** — der Event Loader wählt die Komponente über `ngComponentOutlet` und eine Typ-Tabelle. Ein Sonderfall im Gerüst nimmt der Engine genau die Eigenschaft, für die sie gebaut ist.

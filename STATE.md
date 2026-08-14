@@ -12,5 +12,12 @@ Server — die Serverauskunft `api-bridge/diag.php` braucht das Token aus
 Meilenstein 1 (Core Architecture) ist fertig und archiviert:
 `docs/archive/2026-08/2026-07-31_core-architecture/`.
 
+**Architekturschnitt am 14.08.2026:** Questoria ist eine Story-Engine, deren
+Gameplay komplett über Events läuft — eine Episode ist eine Eventliste, Dialog
+ist ein Eventtyp wie jeder andere. Die Doku ist durchgehend darauf umgestellt
+(Begründung: `docs/decisions/004-event-engine.md`, abgelöste Begriffe:
+`docs/glossary.md`). Für den laufenden Plan ändert sich nur das Content-Format
+der Testwelt in Phase 2; Karten, Routing und Fortschritt bleiben unverändert.
+
 **Merkposten:** PHP/Composer liegen unter `C:\Users\sasch\develop\.tools\`
 (`php.cmd`/`composer.cmd`), nicht im Suchpfad des Benutzers.

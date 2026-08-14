@@ -23,7 +23,7 @@ Frontend holt sie ab jetzt über die Schnittstelle aus Phase 1.
 ## Akzeptanzkriterien
 
 1. `data/main_hub.json` und `data/themes/dev_fixture/` (Welt-Konfiguration, fünf
-   Episoden, ein Minispiel) erfüllen die Prüfliste aus Abschnitt 9 der
+   Episoden, ein ausgelagertes Event) erfüllen die Prüfliste aus Abschnitt 9 der
    Schema-Referenz — jede Verweis-ID trifft ein existierendes Ziel.
 2. Unter `frontend/public/` liegt **kein** Content mehr (weder
    `assets/main_hub.json` noch `data/`).
@@ -55,13 +55,15 @@ Frontend holt sie ab jetzt über die Schnittstelle aus Phase 1.
   - jede `episode_ref` heißt wie die Episodendatei: `test_dorf`, `test_hafen`,
     `test_leuchtturm`, `test_bucht`, `test_riff`
 - [ ] Fünf Episodendateien unter `data/themes/dev_fixture/episodes/`, je mit
-      `active_map_id`, `node_id`, `background`, zwei Dialogzeilen (`left` und
-      `right`, mit `text` und `text_simple`) und
-      `minigame_event.minigame_ref: "probe_quiz"`. **Kein `reward_card_id`** —
-      Sammelkarten kommen mit Meilenstein 5.
-- [ ] `data/themes/dev_fixture/minigames/probe_quiz.json`: `MultipleChoiceGame`
-      mit einer Variante je Lernstufe, vier Optionen. Wird in diesem Meilenstein
-      nicht gespielt, hält die Welt aber schema-vollständig.
+      `active_map_id`, `node_id`, `background` und einer `events`-Liste aus
+      zwei Einträgen: ein `dialog`-Event mit zwei Zeilen (`left` und `right`,
+      mit `text` und `text_simple`) und ein
+      `{ "type": "multiple_choice", "config": { "ref": "probe_quiz" } }`.
+      **Kein `reward`-Event** — Sammelkarten kommen mit Meilenstein 5.
+- [ ] `data/themes/dev_fixture/events/probe_quiz.json`: `event_id`,
+      `type: "multiple_choice"`, eine Variante je Lernstufe, vier Optionen.
+      Wird in diesem Meilenstein nicht gespielt, hält die Welt aber
+      schema-vollständig.
 - [ ] Keine Bilddateien anlegen. Die Testwelt läuft mit Bildplatzhaltern
       (Phase 3); echte Kartenbilder kommen mit echtem Content.
 - [ ] `frontend/public/assets/main_hub.json` und `frontend/public/data/`
@@ -72,9 +74,11 @@ Frontend holt sie ab jetzt über die Schnittstelle aus Phase 1.
 - [ ] `models/content.types.ts`:
   - `config_path` aus `InstalledTheme` entfernen, Kommentar bei `cover` auf
     „Dateiname unter dem Welt-Ordner" korrigieren
-  - Episoden-Typen ergänzen: `DialogueLine` (`position: 'left' | 'right'`,
-    `sprite`, `name`, `text`, `text_simple?`, `audio_path?`), `MinigameEvent`,
-    `Episode`. `position` als String-Union, nicht als loser String.
+  - Episoden-Typen ergänzen: `EVENT_TYPES`/`EventType` als const-asserted Union,
+    `EpisodeEvent` (`type: EventType`, `config`), `DialogueLine`
+    (`position: 'left' | 'right'`, `sprite`, `name`, `text`, `text_simple?`,
+    `audio_path?`) und `Episode` mit `events: EpisodeEvent[]`. `position` und
+    `type` als String-Unions, nicht als lose Strings.
 - [ ] `services/content.service.ts` umstellen:
   - `getInstalledThemes(): Observable<MainHub>` → `/api/content/themes`
   - `getWorldConfig(themeId: string): Observable<WorldConfig>` →

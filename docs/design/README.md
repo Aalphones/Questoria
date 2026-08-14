@@ -27,8 +27,8 @@ werden daraus Routen/Features (siehe [code-map.md](../code-map.md)):
 | `level` | `features/main-hub/` | Lernstufen-Auswahl (Matrose/Navigator/Kapitän) |
 | `timeline` | `features/timeline/` | Etappenkarte der Story-Arcs, Sterne pro Etappe |
 | `map` | `features/map/` | Ortskarte eines Arcs, Nodes + Routen + Kompassrose |
-| `dialog` | `features/dialog/` | Visual-Novel-Layout, zwei Bühnenplätze `left`/`right` |
-| `minigame` | `features/minigames/<game_type>/` | Multiple Choice im Prototyp, weitere Typen folgen |
+| `dialog` | `features/events/dialog/` | Visual-Novel-Layout, zwei Bühnenplätze `left`/`right` — ein Eventtyp wie jeder andere |
+| `minigame` | `features/events/multiple-choice/` | Multiple Choice im Prototyp, weitere Eventtypen folgen |
 | `result` | `features/result/` | Sterne, Statistiken, Erfolg, Banner für die neue Sammelkarte |
 | `cards` | `features/cards/` | Trophäenhalle: Gruppen, Filter, Kartendetail, Druckauswahl |
 | `print` | `features/cards/print/` | A4-Druckbogen, 3×3-Raster, Schnittmarken |
@@ -38,13 +38,20 @@ Die globale Kopfleiste (HUD) ist auf allen Screens außer `login` sichtbar →
 
 ## Bewusste Abweichungen vom Prototyp
 
-Der Prototyp ist Design-Vorlage, keine Architekturvorlage. Vier Stellen weichen
+Der Prototyp ist Design-Vorlage, keine Architekturvorlage. Fünf Stellen weichen
 in der Umsetzung ab — jeweils mit Grund:
 
+0. **Der Prototyp kennt noch keine Eventliste.** Er hat feste Screens `dialog`
+   und `minigame` und eine fest verdrahtete Abfolge dazwischen. Produktiv ist
+   eine Episode eine Eventliste, die die Event Engine abspielt
+   ([ADR-004](../decisions/004-event-engine.md)) — das Aussehen der beiden
+   Screens bleibt gültig, ihre Rolle als Sonderweg nicht. Auch die Vokabeln im
+   Prototyp-Code (`minigame`, `game_type`) sind alter Stand und werden nicht
+   nachgezogen; verbindlich ist [glossary.md](../glossary.md).
 1. **Content bleibt gesplittet.** Der Prototyp packt Welt, Etappen, Orte und
    Karten in eine Datei. Das Projekt bleibt bei `main_hub.json` /
-   `world_config.json` / Episoden / Minispiele. Das Kartenformat und die
-   Kartenliste hängen an `world_config.json`, die Node-Geometrie an der
+   `world_config.json` / Episoden / Event-Konfigurationen. Das Kartenformat und
+   die Kartenliste hängen an `world_config.json`, die Node-Geometrie an der
    jeweiligen Map.
 2. **Node-Positionen liegen bei der Map, nicht bei der Episode.** Die Karte
    kennt ihre Punkte (Prozent-Koordinaten relativ zum Kartenbild), die Episode
@@ -52,8 +59,9 @@ in der Umsetzung ab — jeweils mit Grund:
 3. **Antwortbilder werden benannt, nicht geraten.** Der Prototyp leitet den
    Dateinamen eines Bildantwort-Slots aus dem Antworttext ab. Produktiv steht
    der Dateiname im Content — sonst bricht jede Textkorrektur ein Bild.
-4. **Kartenvergabe kommt aus der Episode.** Im Prototyp ist die gewonnene Karte
-   fest verdrahtet; produktiv liefert `reward_card_id` der Episode die ID.
+4. **Kartenvergabe ist ein eigenes Event.** Im Prototyp ist die gewonnene Karte
+   fest verdrahtet; produktiv steht am Ende der Eventliste ein `reward`-Event
+   mit der Karten-ID in seiner Konfiguration.
 
 ## Offene Punkte
 

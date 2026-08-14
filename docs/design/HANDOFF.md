@@ -4,6 +4,14 @@
 > Projektname und Dateipfade sind auf den Repo-Stand angepasst. Wie dieses Dokument
 > zum Projekt steht (was verbindlich ist, was Prototyp-Artefakt bleibt, welche
 > Abweichungen zum Content-Schema gelten): [README.md](README.md).
+>
+> 🟡 **Verbindlich ist hier nur das Aussehen, nicht die Architektur.** Der Text
+> stammt von vor dem Architekturschnitt vom 14.08.2026 und beschreibt `dialog`
+> und `minigame` als getrennte Screens einer festen Abfolge. Produktiv ist eine
+> Episode eine Eventliste, und Dialog ist ein Eventtyp wie jeder andere
+> ([ADR-004](../decisions/004-event-engine.md)). Das gilt genauso für die
+> Vokabeln „Minispiel" und `game_type` — abgelöst, siehe
+> [glossary.md](../glossary.md). Farben, Maße, Zustände und Texte bleiben gültig.
 
 ## Überblick
 Questoria ist ein Story-basiertes Lernspiel für Grundschulkinder (ca. 6–10 Jahre), inkl. nicht-lesender Kinder ("Vorlesen-Modus"). Der Prototyp zeigt den kompletten Spielfluss einer Themenwelt (Piratenwelt / Sachkunde) von der Profilauswahl bis zum Ergebnis-Screen, plus das **neue Sammelkarten-Feature** mit **Trophäenhalle**, **Kartendetail**, **Druckauswahl** und **A4-Druckbogen**.

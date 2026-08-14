@@ -2,23 +2,39 @@
 
 ## Ziel & Vision
 
-Story-basierte Lernplattform für Kinder (ca. 6–10 Jahre, ausdrücklich auch für
-Kinder, die noch nicht lesen): bekannte Fandom-Welten (One Piece, Miraculous,
-...) werden zu Lernspielen umgebaut. Kinder erkunden eine Themenwelt über eine
-Timeline aus Episoden, sehen Dialoge zwischen den Charakteren und lösen
-dazwischen Minispiele, die Schulstoff abfragen. Eine Lernstufe pro Welt sorgt
-dafür, dass Story und Charaktere für alle gleich bleiben, aber die Aufgaben mit
-dem Alter/Wissensstand skalieren. Für gelöste Minispiele gibt es Sammelkarten,
-die sich zu Hause ausdrucken lassen — der Anreiz reicht damit über den
-Bildschirm hinaus.
+Questoria ist keine Lernplattform mit Minispielen. Questoria ist eine
+**datengetriebene Story-Engine** für Kinder (ca. 6–10 Jahre, ausdrücklich auch
+für Kinder, die noch nicht lesen): bekannte Fandom-Welten (One Piece,
+Miraculous, ...) werden zu spielbaren Abenteuern.
+
+Ein Kind startet Questoria nicht, um Aufgaben zu lösen. Es startet Questoria,
+weil es wissen will, **wie die Geschichte weitergeht**. Lernen trägt das
+Gameplay, Gameplay transportiert die Story.
+
+Kinder erkunden eine Themenwelt über eine Timeline aus Episoden. Jede Episode
+ist ein Abenteuer an einem Ort und besteht aus einer **Eventliste** — Dialog,
+Erkundung, Rätsel, Kampf, Belohnung, in der Reihenfolge, die die Geschichte
+verlangt. Nicht Dialog → Quiz → Ende, sondern Dialog → Handlung → Konsequenz →
+Dialog. Eine Lernstufe pro Welt sorgt dafür, dass Story und Charaktere für alle
+gleich bleiben, aber die Aufgaben mit dem Alter/Wissensstand skalieren. Als
+Belohnung gibt es Sammelkarten, die sich zu Hause ausdrucken lassen — der Anreiz
+reicht damit über den Bildschirm hinaus.
+
+**Der Leitsatz:** Questoria besteht aus einer generischen Spiel-Engine im
+Browser und austauschbaren Content-Paketen. Die Engine implementiert sämtliche
+Spielmechaniken, das Backend liefert ausschließlich Daten und speichert den
+Spielstand. Neue Abenteuer entstehen durch Content, nicht durch Backend-Logik
+([ADR-004](decisions/004-event-engine.md)).
 
 ## Scope (MVP)
 
-- Game-Player: Main-Hub → Timeline → Map → Location → Dialog/Minispiel
-- Dynamisches Minispiel-System über `ngComponentOutlet` (Multiple Choice,
-  Freitext, Bild-Suche als Starttypen — Repertoire ist offen, kein Deckel)
-- Dialog- und Audiosystem (zwei feste Bühnenplätze `left`/`right`, kein
-  Koordinatensystem)
+- Game-Player: Planetenkarte → Etappenkarte → Ortskarte → Episode als Eventablauf
+- **Event Engine:** ein Ablaufmechanismus für alles Spielbare. Der Event Loader
+  wählt pro Event über `ngComponentOutlet` die passende Komponente — Starttypen
+  sind `dialog`, `multiple_choice`, `text_input`, `image_search` und `reward`.
+  Das Repertoire ist offen, kein Deckel.
+- Dialog als Eventtyp inklusive Audio (zwei feste Bühnenplätze `left`/`right`,
+  kein Koordinatensystem)
 - **Vorlesemodus für nicht-lesende Kinder:** umschaltbar zwischen „Bilder &
   Vorlesen" und „Selbst lesen" — kurze Textfassung, Bildantworten im Quiz,
   automatische Sprachausgabe, vorproduzierte Sprachaufnahmen wo vorhanden
@@ -45,17 +61,20 @@ Bildschirm hinaus.
   eigenes Projekt und berührt dieses Repo nicht.
 - Keine Gruppenszenen mit 3+ gleichzeitigen Sprechern (zwei feste Plätze reichen)
 - Kein Mehrspieler, kein Marketplace für Lernwelten
+- Kein Offline-Betrieb im MVP — die Architektur bereitet ihn vor (aller Content
+  läuft über den `ContentService` als einzige Ladestelle), gebaut wird er als
+  Meilenstein 6
 
 Alle diese Punkte bleiben architektonisch möglich (REST-API-Trennung macht
 das offen), werden aber bewusst erst gebaut, wenn sich das Content-Format in
-der Praxis bewährt hat (Phase 5+).
+der Praxis bewährt hat (Meilenstein 6+).
 
 ## Stack
 
 | Layer | Wahl | Begründung |
 |---|---|---|
-| Frontend | Angular v20+, Standalone Components, Signals | Aktueller Standard, kein NgModule-Ballast |
-| Backend | PHP 8.5, kein Framework | Shared-Hosting-kompatibel, kein Overhead |
+| Frontend | Angular v20+, Standalone Components, Signals | Aktueller Standard, kein NgModule-Ballast. **Trägt die vollständige Spiel-Engine**: Story-Ablauf, Event Engine, Dialogfluss, Quests, Inventar, Auslöser, Story-Merker, Erfolge, Ton, Animation, alle Spielregeln |
+| Backend | PHP 8.5, kein Framework | Shared-Hosting-kompatibel, kein Overhead. **Interpretiert kein Gameplay** — liefert Event-Konfigurationen, Episoden, Welten, Assets, Lokalisierungen und speichert Nutzer, Profile, Spielstände |
 | Backend-Libs | FastRoute (Routing), firebase/php-jwt (Auth), vlucas/phpdotenv, monolog, respect/validation | Übernommen aus dem Schwesterprojekt promptigofant — bewährter Mini-Stack, gleiche Konventionen über beide Projekte |
 | Datenbank | MySQL/MariaDB | Nutzerdaten, Profile, Spielstände, Statistiken — referenziert nur Content-IDs, nie Content selbst |
 | Content | Statische, versionierte JSON-Dateien im Repo | Zweite Wahrheitsquelle vermeiden; Editor kommt erst, wenn das Format sich bewährt hat |
@@ -64,6 +83,13 @@ der Praxis bewährt hat (Phase 5+).
 
 ## Constraints
 
+- **Neue Gameplay-Features dürfen keine neuen REST-Endpunkte brauchen.** Eine
+  neue Mechanik entsteht aus einem neuen Eventtyp, einer neuen Angular-Komponente
+  und neuen Event-Konfigurationen im Content. Braucht ein Feature Backend-Code,
+  ist der Schnitt falsch — nicht das Backend zu klein
+  ([ADR-004](decisions/004-event-engine.md)). Die REST-API bleibt bewusst klein:
+  Login, Profile, Welten, Episoden, Assets, Spielstände. Nicht darin: Storylogik,
+  Kampfregeln, Kartenspiele, Questlogik, NPC-Verhalten, Entscheidungen, Auslöser.
 - Ein-Personen-Projekt (privat/solo) — wenig Prozess-Overhead, kein
   Plan-Zwang für Kleinkram, direkt auf dem Default-Branch
 - Shared Hosting: keine Container-Infrastruktur, keine Cloud-Abhängigkeit
@@ -92,30 +118,39 @@ der Praxis bewährt hat (Phase 5+).
 2. **Timeline & Map** — Router-Struktur Timeline/Map/Location, Etappen- und
    Ortskarte mit Prozent-Koordinaten, Fortschrittsanzeige aus Savegame,
    Content-API (liest JSON-Repository)
-3. **Dialog- & Audio-Engine & Vorlesemodus** — Speech-Bubbles auf den zwei
-   Bühnenplätzen, Audio-Service, synchronisierte Wiedergabe; der globale
-   Umschalter „Bilder & Vorlesen" / „Selbst lesen" inklusive Sprachausgabe und
-   Textfassungs-Auswahl
-4. **Minispiel-System & Nutzerverwaltung** — `ngComponentOutlet`-Loader,
-   die drei Starttypen (mit Bildantworten für den Vorlesemodus),
-   Login/Profile/Savegame-API/Achievements/Statistiken. Das verbindliche
-   DB-Schema (7 Tabellen: `users`, `player_profiles`, `savegames`,
-   `achievements`, `player_achievements`, `statistics`, `schema_migrations`)
-   liegt bereits als rohes SQL unter `backend/src/Migrations/sql/` (Meilenstein 1,
-   Phase 3) — Repository-Klassen darauf entstehen erst hier.
-5. **Sammelkarten & Druckbogen** — Kartenvergabe beim Abschluss einer Episode,
-   Trophäenhalle mit Gruppen/Filter/Detail, Druckauswahl und maßstabsgetreuer
-   A4-Bogen
-6. *(außerhalb MVP-Scope)* Admin-Dashboard, Asset-Uploader,
+3. **Event Engine** — der eine Ablaufmechanismus: Event Loader über
+   `ngComponentOutlet`, der eine Episode als Eventliste abspielt, plus die
+   Starttypen `dialog` (Speech-Bubbles auf den zwei Bühnenplätzen, Audio-Service,
+   synchronisierte Wiedergabe), `multiple_choice`, `text_input`, `image_search`
+   und `reward`. Dazu der Vorlesemodus vollständig: der globale Umschalter
+   „Bilder & Vorlesen" / „Selbst lesen", Sprachausgabe, Textfassungs-Auswahl und
+   Bildantworten. Am Ende dieses Meilensteins ist eine Episode durchspielbar.
+4. **Nutzerverwaltung & Spielstand** — Login, Profile, Savegame-API,
+   Achievements, Statistiken. Das verbindliche DB-Schema (7 Tabellen: `users`,
+   `player_profiles`, `savegames`, `achievements`, `player_achievements`,
+   `statistics`, `schema_migrations`) liegt bereits als rohes SQL unter
+   `backend/src/Migrations/sql/` (Meilenstein 1, Phase 3) — Repository-Klassen
+   darauf entstehen erst hier. Der lokale Fortschritts-Dienst aus Meilenstein 2
+   tauscht nur seine Datenquelle, nicht seine Schnittstelle.
+5. **Sammelkarten & Druckbogen** — das `reward`-Event schaltet echte Karten
+   frei (in Meilenstein 3 vergibt es nur Sterne), Trophäenhalle mit
+   Gruppen/Filter/Detail, Druckauswahl und maßstabsgetreuer A4-Bogen
+6. **Offline-Fähigkeit** — Welt-JSON und Assets beim Betreten einer Welt lokal
+   ablegen (IndexedDB/Browser-Cache), danach läuft das Gameplay ohne Netz. Das
+   Netz wird nur noch für Login, Spielstände, Synchronisation und
+   Content-Aktualisierungen gebraucht. Möglich ist das, weil das Spiel ohnehin
+   vollständig im Client läuft — eingehängt wird der Cache im `ContentService`,
+   der einzigen Ladestelle für Content.
+7. *(außerhalb MVP-Scope)* Admin-Dashboard, Asset-Uploader,
    Validierungs-Engine, KI-Grafik-Pipeline, Marketplace, Mehrspieler
 
 Nach Meilenstein 5 ist der MVP spielbar — mit Content, der von Hand ins Repo
-geschrieben wurde.
+geschrieben wurde. Meilenstein 6 macht ihn netzunabhängig.
 
-Der Vorlesemodus verteilt sich bewusst über zwei Meilensteine: der Umschalter
-und die Sprachausgabe entstehen mit der Dialog-Engine (3), die Bildantworten
-im Quiz mit dem Minispiel-System (4). Der Modus ist erst nach Meilenstein 4
-vollständig.
+**Warum 3 und 4 nicht mehr getrennt sind:** Dialog-Engine und Minispiel-System
+waren derselbe Mechanismus, zweimal geplant. Seit Dialog ein Eventtyp unter
+vielen ist, entsteht der Ablauf genau einmal — und der Vorlesemodus wird in
+einem Meilenstein fertig statt über zwei verteilt.
 
 ## Offene Fragen
 
@@ -124,8 +159,8 @@ vollständig.
   Abschnitt 2. Die konkreten Werte pro Welt bleiben Handarbeit am fertigen
   Kartenbild.
 - 🟡 Der komplette Content-Schema-Stand in `data/_authoring/` ist noch nicht
-  gegen eine laufende Engine verifiziert (Meilenstein 4 steht aus) — als 🟡
-  markiert, bis das passiert ist
+  gegen eine laufende Engine verifiziert (die Event Engine aus Meilenstein 3
+  steht aus) — als 🟡 markiert, bis das passiert ist
 - 🟡 Ob Sprachausgabe über die Browser-Stimme reicht oder pro Dialogzeile
   vorproduzierte Aufnahmen nötig sind, entscheidet sich erst am echten Gerät.
   Das Schema trägt beides (`audio_path` optional), die Antwort kommt mit
@@ -136,4 +171,8 @@ vollständig.
 ## Quelle
 
 Destilliert aus `docs/archive/2026-07/EduQuest_Engine_MVP_Konzept.md`
-(vollständiges Ursprungskonzept, wortgetreu archiviert).
+(vollständiges Ursprungskonzept, wortgetreu archiviert). Der Architekturschnitt
+— Event Engine statt getrenntem Dialog- und Minispiel-System — ist am
+14.08.2026 nachgezogen worden und in
+[ADR-004](decisions/004-event-engine.md) begründet; das Archiv beschreibt
+bewusst weiterhin den alten Stand.

@@ -1,10 +1,20 @@
 # Questoria
 
-Story-basierte Lernplattform: bekannte Fandom-Welten (One Piece, Miraculous,
-...) werden zu Lernspielen. Kinder erkunden eine Themenwelt über eine
-Timeline aus Episoden, erleben Dialoge zwischen den Charakteren und lösen
-dazwischen Minispiele, die Schulstoff abfragen — pro Welt datengetrieben
-skaliert über mehrere Lernstufen.
+Datengetriebene Story-Engine: bekannte Fandom-Welten (One Piece, Miraculous,
+...) werden zu spielbaren Lernabenteuern. Kinder erkunden eine Themenwelt über
+eine Timeline aus Episoden. Jede Episode ist eine **Eventliste** — Dialog,
+Erkundung, Rätsel, Belohnung, in der Reihenfolge, die die Geschichte verlangt.
+Die Aufgaben skalieren datengetrieben über mehrere Lernstufen, Story und
+Charaktere bleiben gleich.
+
+Ein Kind startet Questoria nicht, um Aufgaben zu lösen, sondern weil es wissen
+will, wie die Geschichte weitergeht.
+
+**Die Architektur in einem Satz:** eine generische Spiel-Engine im Browser plus
+austauschbare Content-Pakete. Das Angular-Frontend implementiert sämtliche
+Spielmechaniken; die PHP-API liefert nur Daten und speichert den Spielstand.
+Neue Abenteuer entstehen durch Content — JSON, Bilder, Ton — nicht durch
+Backend-Code.
 
 Technologische Basis: Angular (SPA) · PHP REST API · MySQL + JSON-Content-Repository.
 

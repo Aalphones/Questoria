@@ -4,13 +4,13 @@ Ziel: `.png` mit Alphakanal, quadratisch, **mindestens 512×512 px**, Dateiname
 `antwort_<slug>.png` in `snake_case` ohne Umlaute.
 
 Für Kinder, die noch nicht lesen, steht über jeder Antwortmöglichkeit im
-Multiple-Choice-Minispiel ein Bild. Es ist keine Dekoration, sondern **die
+`multiple_choice`-Event ein Bild. Es ist keine Dekoration, sondern **die
 einzige Information, die das Kind vergleichen kann** — der Antworttext wird
 vorgelesen, aber nebeneinanderlegen lassen sich nur die Bilder. Ein
 mehrdeutiges Bild macht die Aufgabe zum Ratespiel, und das Kind lernt, dass
 Raten funktioniert.
 
-Der Dateiname steht als `image` im Minispiel-JSON und wird **nicht** aus dem
+Der Dateiname steht als `image` in der Event-Datei und wird **nicht** aus dem
 Antworttext berechnet. Wer ihn berechnet, verliert das Bild bei jeder
 Textkorrektur.
 
@@ -40,7 +40,7 @@ Antwort nicht gehört, gehört nicht ins Bild.
 
 Der Test, der über die Datei entscheidet: Ein Kind, das den Text nicht lesen
 kann, muss die Antwort **allein am Bild** erkennen. Im Zweifel das simplere
-Bild nehmen — ein schönes, mehrdeutiges Bild ist in diesem Minispiel schlicht
+Bild nehmen — ein schönes, mehrdeutiges Bild ist in diesem Event schlicht
 eine falsche Antwort.
 
 ---
@@ -136,4 +136,4 @@ Antwort schon durch den Stil richtiger als die anderen:
 - Die Bilder einer Frage sind nebeneinander eindeutig unterscheidbar.
 - Keine Schrift, keine Zahlen, kein Wasserzeichen — auch nicht klein im Motiv.
 - Echter Alphakanal, keine weiße Restfläche an den Rändern.
-- Dateiname identisch zum `image`-Feld im Minispiel-JSON.
+- Dateiname identisch zum `image`-Feld in der Event-Datei.
