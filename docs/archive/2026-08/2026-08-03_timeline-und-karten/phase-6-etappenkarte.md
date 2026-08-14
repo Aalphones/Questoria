@@ -7,14 +7,14 @@ welche noch verschlossen.
 
 ## Kontext — vorher lesen
 
-- [docs/design/HANDOFF.md](../../design/HANDOFF.md) Abschnitt „4. Etappenkarte"
+- [docs/design/HANDOFF.md](../../../design/HANDOFF.md) Abschnitt „4. Etappenkarte"
   — verbindlich, inklusive Legende und Panel
 - Phase 3 → `qst-map-canvas`, `qst-map-point`, `qst-image-slot`, die neuen Tokens
 - Phase 4 → `stageStates()`, `stageStars()`, `worldProgress()`, `ProgressService`
 - Phase 5 → Routen, `qst-hud`, `qst-content-error`
-- [data/_authoring/JSON_SCHEMA_REFERENCE.md](../../../data/_authoring/JSON_SCHEMA_REFERENCE.md)
+- [data/_authoring/JSON_SCHEMA_REFERENCE.md](../../../../data/_authoring/JSON_SCHEMA_REFERENCE.md)
   Abschnitt 2 → `arc_overview`
-- [docs/conventions/css.md](../../conventions/css.md) → Critical Rule 3
+- [docs/conventions/css.md](../../../conventions/css.md) → Critical Rule 3
   (Laufzeitwerte aus dem Content nur über gebundene Custom Properties)
 
 ## Akzeptanzkriterien

@@ -9,16 +9,16 @@ Frontend holt sie ab jetzt über die Schnittstelle aus Phase 1.
 
 - [README.md](README.md) → Kontrakt-Sektion, besonders die zwei
   Schema-Änderungen an `main_hub.json`
-- [data/_authoring/JSON_SCHEMA_REFERENCE.md](../../../data/_authoring/JSON_SCHEMA_REFERENCE.md)
+- [data/_authoring/JSON_SCHEMA_REFERENCE.md](../../../../data/_authoring/JSON_SCHEMA_REFERENCE.md)
   Abschnitt 1, 2, 4, 5 — verbindliches Format der Dateien, die hier entstehen
-- [data/_authoring/README.md](../../../data/_authoring/README.md) → „Pflegepflicht"
-- [frontend/src/app/services/content.service.ts](../../../frontend/src/app/services/content.service.ts)
+- [data/_authoring/README.md](../../../../data/_authoring/README.md) → „Pflegepflicht"
+- [frontend/src/app/services/content.service.ts](../../../../frontend/src/app/services/content.service.ts)
   — die zwei Aufrufe, die umgestellt werden
-- [frontend/src/app/models/content.types.ts](../../../frontend/src/app/models/content.types.ts)
-- [frontend/src/app/features/main-hub/main-hub.ts](../../../frontend/src/app/features/main-hub/main-hub.ts)
+- [frontend/src/app/models/content.types.ts](../../../../frontend/src/app/models/content.types.ts)
+- [frontend/src/app/features/main-hub/main-hub.ts](../../../../frontend/src/app/features/main-hub/main-hub.ts)
   — einziger heutiger Aufrufer
-- [docs/conventions/angular.md](../../conventions/angular.md),
-  [docs/conventions/typescript.md](../../conventions/typescript.md)
+- [docs/conventions/angular.md](../../../conventions/angular.md),
+  [docs/conventions/typescript.md](../../../conventions/typescript.md)
 
 ## Akzeptanzkriterien
 

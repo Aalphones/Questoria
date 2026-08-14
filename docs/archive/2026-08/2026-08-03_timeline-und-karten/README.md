@@ -1,6 +1,6 @@
 # Plan: Timeline & Karten (Meilenstein 2)
 
-Deckt Meilenstein 2 aus [docs/PROJECT.md](../../PROJECT.md) ab: Router-Struktur
+Deckt Meilenstein 2 aus [docs/PROJECT.md](../../../PROJECT.md) ab: Router-Struktur
 Timeline/Map/Location, Etappen- und Ortskarte mit Prozent-Koordinaten,
 Fortschrittsanzeige, Content-Schnittstelle im Backend, die das JSON-Repository
 liest.
@@ -9,7 +9,7 @@ Am Ende ist die Welt begehbar: Planetenkarte → Lernstufe → Etappenkarte →
 Ortskarte → Ort. Der Ort selbst ist ein Platzhalter — die Event Engine, die
 dort die Eventliste der Episode abspielt, kommt mit Meilenstein 3.
 
-🟡 **Nachgezogen am 14.08.2026** ([ADR-004](../../decisions/004-event-engine.md)):
+🟡 **Nachgezogen am 14.08.2026** ([ADR-004](../../../decisions/004-event-engine.md)):
 Karten, Routing und Fortschritt sind vom Architekturschnitt nicht betroffen und
 bleiben unverändert. Angepasst wurden nur die Stellen, an denen dieser Plan das
 Content-Format anfasst — die Testwelt in Phase 2 schreibt jetzt Eventlisten
@@ -57,7 +57,7 @@ Drei Weichen wurden am 03.08.2026 gestellt (Sascha):
 
 - Erfolg: `200` mit dem JSON-Inhalt **unverändert** — die Schnittstelle formt
   nichts um, sie liefert aus. Verbindlich bleibt
-  [JSON_SCHEMA_REFERENCE.md](../../../data/_authoring/JSON_SCHEMA_REFERENCE.md).
+  [JSON_SCHEMA_REFERENCE.md](../../../../data/_authoring/JSON_SCHEMA_REFERENCE.md).
 - Unbekannte Welt/Episode oder eine ID, die nicht auf `^[a-z0-9_]{1,64}$`
   passt: `404` mit `{"error":"Not Found"}` (bestehendes `JsonResponse::error`).
 - Kein Schreibzugriff. Content ist über die Schnittstelle read-only
@@ -201,20 +201,74 @@ Steht hier, damit es nicht als Lücke gelesen wird:
 
 ## Summary
 
-*(beim Archivieren füllen)*
+Abgeschlossen am 14.08.2026, alle acht Phasen. Die Welt ist begehbar:
+Planetenkarte → Lernstufe → Etappenkarte → Ortskarte → Ort. Das Backend liefert
+den Content aus dem JSON-Repository unverändert aus, das Frontend lädt
+ausschließlich darüber, und der Fortschritt liegt im Browser-Speicher hinter
+einer Schnittstelle, die Meilenstein 4 gegen die Savegame-API tauscht, ohne
+einen Screen anzufassen.
+
+Die drei Karten teilen sich ein Bauteil (`ui/map-canvas/`) mit festem
+Seitenverhältnis 16:9 — dadurch liegen Bild, Knoten und Routen auf jeder
+Fensterbreite auf denselben Punkten. Die Freischaltregeln sind reine Funktionen
+(`services/progress.rules.ts`); kein Screen rechnet selbst.
+
+Sichtprüfung durch Sascha am 14.08.2026 bestanden: Ort abschließen und Neuladen
+hält den Stand, Fokusrahmen sitzt, Karten auf schmalen Fenstern nach der
+Nachbesserung in Ordnung.
 
 ## Files touched
 
-*(beim Archivieren füllen)*
+- **Backend:** `Controllers/ContentController.php`, `Services/ContentService.php`,
+  `public/index.php`, `dev-router.php` + `serve.cmd`
+- **Frontend Screens:** `features/main-hub/` (Planetenkarte + `theme-card/` +
+  `level-select/`), `features/timeline/`, `features/map/`, `features/location/`
+- **Frontend Bauteile:** `ui/map-canvas/` (+ `map-point/`), `ui/hud/`,
+  `ui/image-slot/`, `ui/content-error/`
+- **Frontend Logik:** `routing/` (Resolver + Guard), `services/content.service.ts`,
+  `services/progress.service.ts`, `services/progress.rules.ts`,
+  `models/content.types.ts`, `models/game-state.types.ts`
+- **Styles:** `styles/_tokens.scss`, `styles/_motion.scss`, `styles/_breakpoints.scss`
+- **Content:** `data/main_hub.json`, `data/themes/dev_fixture/` (Testwelt),
+  `data/_authoring/JSON_SCHEMA_REFERENCE.md`
+- **Docs:** `code-map.md`, `glossary.md`, `design/README.md`, ADR-001 (abgelöst),
+  ADR-005, ADR-006
 
 ## Commits
 
-*(beim Archivieren füllen)*
+`f233900` Content-Schnittstelle (Phase 1) · `b47d64a` Testwelt + Anbindung
+(Phase 2) · `a131b39` + `c1b1abd` + `9ff0d95` Kartenfläche (Phase 3) ·
+`e0d7a31` Fortschritt (Phase 4) · `128ce8b` Routing + Kopfleiste (Phase 5) ·
+`9d39556` Etappenkarte (Phase 6) · `b35803d` Ortskarte (Phase 7) · `e93bad2` +
+`77f39ff` Planetenkarte (Phase 8) · `2148229` Breakpoints nach der Sichtprüfung
 
 ## Deviations from plan
 
-*(beim Archivieren füllen)*
+1. **ADR-Nummern verschoben.** Der Plan reservierte ADR-004/005; ADR-004 war
+   durch den Architekturschnitt vom 14.08. belegt. Content-Auslieferung wurde
+   ADR-005, Fortschritt ADR-006.
+2. **Phase 5 baute die Screens der Phasen 6–8 als Platzhalter vor**, weil ihr
+   eigenes Kriterium verlangte, dass alle fünf Routen sofort ladbar sind. Die
+   späteren Phasen bauten in diese Ordner hinein, statt neu zu generieren.
+3. **Die Ortskarte hat keine Deko-Inseln.** Der Prototyp streut sie, das
+   Content-Schema kennt sie nicht — bewusst ausgelassen statt ein Feld zu
+   erfinden (siehe FINDINGS).
+4. **Planetenkarte kennt einen dritten Status** („Alle Etappen geschafft"), den
+   die Kriterien nicht vorsahen; ohne ihn bliebe die Pille einer
+   durchgespielten Welt leer.
+5. **Breakpoints kamen nach der Abnahme dazu.** Der Plan hatte kleine Fenster
+   nur als Prüfpunkt, nicht als Bauauftrag — die Sichtprüfung zeigte das
+   Info-Panel quer über den Knoten. Nachgezogen mit zwei Schwellen in
+   `styles/_breakpoints.scss`, ohne bestehende Regeln zu ersetzen.
 
 ## Follow-ups
 
-*(beim Archivieren füllen)*
+- **Abstands- und Schriftgrößen-Tokens stehen in krummen Pixelwerten** (4.4px,
+  15px …) und ignorieren die Schriftgrößen-Einstellung des Browsers. Für eine
+  Lern-App eine echte Einschränkung; die Umstellung auf `rem` berührt nur
+  `_tokens.scss` (FINDINGS → Meilenstein 3).
+- **`timeline.scss` liegt über Angulars Warngrenze** von 4 kB (aktuell ~6 kB,
+  Fehlergrenze 8 kB). Bewusst stehen gelassen (Sascha, 14.08.2026); der
+  Rücksetz-Dialog wäre der erste Kandidat für eine eigene Komponente.
+- **Sterne sind pauschal 3**, bis die Event Engine (Meilenstein 3) echte
+  Bewertungen liefert.

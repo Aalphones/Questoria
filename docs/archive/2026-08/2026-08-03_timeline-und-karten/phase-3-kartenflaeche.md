@@ -8,16 +8,16 @@ Diese Phase baut das gemeinsame Bauteil — einmal richtig, statt dreimal ähnli
 
 ## Kontext — vorher lesen
 
-- [docs/design/HANDOFF.md](../../design/HANDOFF.md) Abschnitte 2, 4, 5 (die drei
+- [docs/design/HANDOFF.md](../../../design/HANDOFF.md) Abschnitte 2, 4, 5 (die drei
   Kartenscreens) und „Interaktionen & Verhalten" → Animationstabelle
-- [docs/design/README.md](../../design/README.md) → „Offene Punkte": genau die
+- [docs/design/README.md](../../../design/README.md) → „Offene Punkte": genau die
   zwei Fehler, die hier behoben werden
-- [docs/conventions/css.md](../../conventions/css.md) — Zwei-Ebenen-Tokens,
+- [docs/conventions/css.md](../../../conventions/css.md) — Zwei-Ebenen-Tokens,
   Critical Rule 3 (Laufzeitwerte über gebundene Custom Properties)
-- [docs/conventions/angular.md](../../conventions/angular.md) — `ui/`-Ordner für
+- [docs/conventions/angular.md](../../../conventions/angular.md) — `ui/`-Ordner für
   wiederverwendete Bausteine, `input()`/`output()`, OnPush, `ng generate`
-- [frontend/src/styles/_tokens.scss](../../../frontend/src/styles/_tokens.scss)
-- [frontend/src/app/models/content.types.ts](../../../frontend/src/app/models/content.types.ts)
+- [frontend/src/styles/_tokens.scss](../../../../frontend/src/styles/_tokens.scss)
+- [frontend/src/app/models/content.types.ts](../../../../frontend/src/app/models/content.types.ts)
   → `RoutePair`
 
 ## Was hier gebaut wird

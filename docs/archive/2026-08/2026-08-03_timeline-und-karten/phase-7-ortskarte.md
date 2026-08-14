@@ -7,13 +7,13 @@ ehrlicher Platzhalter, an dem Meilenstein 3 die Event Engine übernimmt.
 
 ## Kontext — vorher lesen
 
-- [docs/design/HANDOFF.md](../../design/HANDOFF.md) Abschnitt „5. Ortskarte"
+- [docs/design/HANDOFF.md](../../../design/HANDOFF.md) Abschnitt „5. Ortskarte"
 - Phase 3 → `qst-map-canvas`, `qst-map-point`, `qst-image-slot`
 - Phase 4 → `nodeStates()`, `ProgressService.completeEpisode()`
 - Phase 5 → Routen (`theme/:themeId/map/:mapId`,
   `theme/:themeId/location/:episodeId`), `qst-hud`, `qst-content-error`
 - Phase 2 → `ContentService.getEpisode()`, `assetUrl()`, Episoden-Typen
-- [data/_authoring/JSON_SCHEMA_REFERENCE.md](../../../data/_authoring/JSON_SCHEMA_REFERENCE.md)
+- [data/_authoring/JSON_SCHEMA_REFERENCE.md](../../../../data/_authoring/JSON_SCHEMA_REFERENCE.md)
   Abschnitt 2 (`maps`) und 4 (Episode)
 
 ## Akzeptanzkriterien — Ortskarte

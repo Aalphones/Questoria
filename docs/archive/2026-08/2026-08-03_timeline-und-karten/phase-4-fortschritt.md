@@ -9,12 +9,12 @@ Browser.
 ## Kontext — vorher lesen
 
 - [README.md](README.md) → Kontrakt-Sektion „Fortschritts-Schnittstelle"
-- [data/_authoring/JSON_SCHEMA_REFERENCE.md](../../../data/_authoring/JSON_SCHEMA_REFERENCE.md)
+- [data/_authoring/JSON_SCHEMA_REFERENCE.md](../../../../data/_authoring/JSON_SCHEMA_REFERENCE.md)
   Abschnitt 7 — was ausdrücklich **nicht** ins Content gehört
-- [frontend/src/app/services/game-state.service.ts](../../../frontend/src/app/services/game-state.service.ts)
+- [frontend/src/app/services/game-state.service.ts](../../../../frontend/src/app/services/game-state.service.ts)
   — Muster für einen signalbasierten Dienst
-- [frontend/src/app/models/game-state.types.ts](../../../frontend/src/app/models/game-state.types.ts)
-- [docs/conventions/angular.md](../../conventions/angular.md) → „Services & DI"
+- [frontend/src/app/models/game-state.types.ts](../../../../frontend/src/app/models/game-state.types.ts)
+- [docs/conventions/angular.md](../../../conventions/angular.md) → „Services & DI"
   (Zugriff auf den Browser-Speicher gehört in einen Dienst, `DOCUMENT` statt
   globaler Objekte)
 

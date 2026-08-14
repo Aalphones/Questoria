@@ -8,15 +8,15 @@ zentral geladen, und oben steht auf jedem Spiel-Screen dieselbe Kopfleiste.
 ## Kontext — vorher lesen
 
 - [README.md](README.md) → Kontrakt-Sektion „Routen"
-- [docs/design/HANDOFF.md](../../design/HANDOFF.md) Abschnitt „0. HUD" und die
+- [docs/design/HANDOFF.md](../../../design/HANDOFF.md) Abschnitt „0. HUD" und die
   Rückwärts-Navigation direkt darüber (`hub→login, level→hub, timeline→level,
   map→timeline, dialog→map`)
-- [docs/conventions/angular.md](../../conventions/angular.md) → „Routing"
+- [docs/conventions/angular.md](../../../conventions/angular.md) → „Routing"
   (nur funktionale Guards/Resolver, `loadComponent`)
-- [frontend/src/app/app.routes.ts](../../../frontend/src/app/app.routes.ts),
-  [app.config.ts](../../../frontend/src/app/app.config.ts),
-  [app.html](../../../frontend/src/app/app.html)
-- [frontend/src/app/services/game-state.service.ts](../../../frontend/src/app/services/game-state.service.ts)
+- [frontend/src/app/app.routes.ts](../../../../frontend/src/app/app.routes.ts),
+  [app.config.ts](../../../../frontend/src/app/app.config.ts),
+  [app.html](../../../../frontend/src/app/app.html)
+- [frontend/src/app/services/game-state.service.ts](../../../../frontend/src/app/services/game-state.service.ts)
 - Phase 4 → `ProgressService`, `progress.rules.ts`
 
 ## Akzeptanzkriterien

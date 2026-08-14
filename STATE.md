@@ -1,29 +1,20 @@
 # STATE
 
-**Aktiver Plan:**
-[Timeline & Karten (Meilenstein 2)](docs/planning/2026-08-03_timeline-und-karten/README.md)
+**Aktiver Plan:** (kein aktiver Plan)
 
-**Phase:** 8/8 — Planetenkarte: Main-Hub auf das Design ziehen (complete)
+**Phase:** —
 
-**Nächster Schritt:** Plan-Ende. Sascha geht die Smoke-Checkliste aus der
-[README](docs/planning/2026-08-03_timeline-und-karten/README.md) durch (Punkte 1
-und 2 sind bereits erledigt, siehe Konfidenz-Ausweis). Danach den Plan-Ordner
-nach `docs/archive/2026-08/` verschieben, die Bottom-Sektionen der README füllen
-und diese Datei auf den nächsten Plan zeigen lassen.
+**Nächster Schritt:** Meilenstein 3 planen (Event Engine — spielt die Eventliste
+einer Episode ab und löst den Ort-Platzhalter ab): `/plan`. Grundlage sind
+[PROJECT.md](docs/PROJECT.md) und [ADR-004](docs/decisions/004-event-engine.md).
 
-**Smoke-Runde (14.08.2026, Sascha):** Ort abschließen + Speichern ✅,
-Fokusrahmen ✅. Offen aus Punkt 3: auf schmalen Fenstern lag das Info-Panel
-über den Knoten — nachgebessert mit zwei Breakpoints (`frontend/src/styles/_breakpoints.scss`),
-Panel klappt unterhalb der Kartenschwelle zu. Noch nicht nachgeprüft: wie das
-Ergebnis auf ~360 px wirklich aussieht.
-
-**Phase 8 ist fertig.** Der Einstieg ist keine Kachelliste mehr, sondern die
-Planetenkarte: Welten als runde Knoten auf der gemeinsamen Kartenfläche, Pille
-mit Name und Status („Offen · Etappe N" / „Noch nicht gestartet" / „Alle
-Etappen geschafft"), Info-Panel oben links mit „Weiterspielen" in die zuletzt
-gespielte Welt. Build und Lint grün, kein Browser-Durchlauf (private-Profil).
-Abweichungen und Zusätze stehen im Report-Back von
-[phase-8-planetenkarte.md](docs/planning/2026-08-03_timeline-und-karten/phase-8-planetenkarte.md).
+**Zuletzt abgeschlossen:** Meilenstein 2 „Timeline & Karten", archiviert am
+14.08.2026 →
+[docs/archive/2026-08/2026-08-03_timeline-und-karten/](docs/archive/2026-08/2026-08-03_timeline-und-karten/README.md).
+Die Welt ist begehbar: Planetenkarte → Lernstufe → Etappenkarte → Ortskarte →
+Ort, Fortschritt hält im Browser-Speicher. Offene Punkte stehen dort unter
+„Follow-ups" (Pixel-Tokens auf `rem` umstellen, `timeline.scss` über der
+Warngrenze, pauschale Sterne bis zur Event Engine).
 
 **Merkposten:** PHP/Composer liegen unter `C:\Users\sasch\develop\.tools\`
 (`php.cmd`/`composer.cmd`), nicht im Suchpfad des Benutzers. Ad-hoc-Testserver

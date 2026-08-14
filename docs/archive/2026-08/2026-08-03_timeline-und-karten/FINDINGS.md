@@ -20,7 +20,7 @@ Meilenstein betreffen. Format:
   Content-Auslieferung und ADR-005 für Phase 4 (Fortschritt lokal im
   Browser) — inzwischen ist ADR-004 durch den Architekturschnitt vom
   14.08.2026 belegt (`004-event-engine.md`). Die neue Content-ADR heißt jetzt
-  [ADR-005](../../decisions/005-content-auslieferung-ab-meilenstein-2.md),
+  [ADR-005](../../../decisions/005-content-auslieferung-ab-meilenstein-2.md),
   Phase 4 rutscht auf ADR-006 — README, FINDINGS (unten) und
   `phase-4-fortschritt.md` sind angepasst.
 - [x] Phase 1: `frontend/proxy.conf.json` zeigte auf `https://questoria.info`,

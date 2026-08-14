@@ -8,13 +8,13 @@ die Lernstufen-Auswahl an ihren eigenen Screen ab.
 
 ## Kontext — vorher lesen
 
-- [docs/design/HANDOFF.md](../../design/HANDOFF.md) Abschnitt „2. Planetenkarte
+- [docs/design/HANDOFF.md](../../../design/HANDOFF.md) Abschnitt „2. Planetenkarte
   / Hub"
 - Phase 3 → Kartenfläche, Phase 4 → Fortschritt, Phase 5 → Routen und
   Lernstufen-Screen
-- [frontend/src/app/features/main-hub/main-hub.ts](../../../frontend/src/app/features/main-hub/main-hub.ts)
+- [frontend/src/app/features/main-hub/main-hub.ts](../../../../frontend/src/app/features/main-hub/main-hub.ts)
   und `main-hub.html` — was hier umgebaut wird
-- [frontend/src/app/features/main-hub/theme-card/](../../../frontend/src/app/features/main-hub/theme-card/)
+- [frontend/src/app/features/main-hub/theme-card/](../../../../frontend/src/app/features/main-hub/theme-card/)
   — wird zum Weltknoten auf der Karte
 
 ## Akzeptanzkriterien

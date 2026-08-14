@@ -8,18 +8,18 @@ gehen weiter direkt über den Webserver, ohne PHP dazwischen.
 ## Kontext — vorher lesen
 
 - [README.md](README.md) → Kontrakt-Sektion (Adressen, Fehlerfälle)
-- [docs/conventions/php.md](../../conventions/php.md) — Stil, Namensschema
-- [backend/public/index.php](../../../backend/public/index.php) — Routen-Tabelle,
+- [docs/conventions/php.md](../../../conventions/php.md) — Stil, Namensschema
+- [backend/public/index.php](../../../../backend/public/index.php) — Routen-Tabelle,
   Fehlerbehandlung, Auto-Migration
-- [backend/src/Controllers/HealthController.php](../../../backend/src/Controllers/HealthController.php)
+- [backend/src/Controllers/HealthController.php](../../../../backend/src/Controllers/HealthController.php)
   — Controller-Muster: Methode gibt ein Array zurück, `index.php` verpackt es
-- [backend/src/Exceptions/ApiException.php](../../../backend/src/Exceptions/ApiException.php),
-  [backend/src/Http/JsonResponse.php](../../../backend/src/Http/JsonResponse.php)
-- [api-bridge/diag.php](../../../api-bridge/diag.php) — Serverauskunft, liefert
+- [backend/src/Exceptions/ApiException.php](../../../../backend/src/Exceptions/ApiException.php),
+  [backend/src/Http/JsonResponse.php](../../../../backend/src/Http/JsonResponse.php)
+- [api-bridge/diag.php](../../../../api-bridge/diag.php) — Serverauskunft, liefert
   `document_root`
-- [deploy.cmd](../../../deploy.cmd) — Zielwahl (Zeile ~17), Ordner-Vorlauf
+- [deploy.cmd](../../../../deploy.cmd) — Zielwahl (Zeile ~17), Ordner-Vorlauf
   (~150), Abgleich-Befehle (~166)
-- [ADR-001](../../decisions/001-content-delivery-mvp-phase1.md) — was diese
+- [ADR-001](../../../decisions/001-content-delivery-mvp-phase1.md) — was diese
   Phase ablöst
 
 ## Akzeptanzkriterien
@@ -108,7 +108,7 @@ gehen weiter direkt über den Webserver, ohne PHP dazwischen.
 - [x] Ordner-Vorlauf (`mkdir`) für den Content-Ordner ergänzen — WinSCP legt
       Zielordner beim Abgleich nicht selbst an.
 - [x] **Ausnahmeliste des Frontend-Abgleichs um `content/` erweitern**
-      ([deploy.cmd:173](../../../deploy.cmd)). Ohne das löscht der nächste
+      ([deploy.cmd:173](../../../../deploy.cmd)). Ohne das löscht der nächste
       Frontend-Deploy den gesamten Content. Kommentar daneben, warum.
 - [x] `deploy.env.example` um die Content-Ablage ergänzt (Kommentarzeile,
       abgeleitet aus `REMOTE_WEB_PATH` — kein eigener Wert nötig).
