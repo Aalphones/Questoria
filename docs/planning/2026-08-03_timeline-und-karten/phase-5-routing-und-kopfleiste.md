@@ -38,18 +38,18 @@ zentral geladen, und oben steht auf jedem Spiel-Screen dieselbe Kopfleiste.
 
 ### Routen
 
-- [ ] `app.routes.ts` neu aufbauen — Pfade und Reihenfolge exakt:
+- [x] `app.routes.ts` neu aufbauen — Pfade und Reihenfolge exakt:
       `''` (Planetenkarte) · `'theme/:themeId/level'` ·
       `'theme/:themeId/timeline'` · `'theme/:themeId/map/:mapId'` ·
       `'theme/:themeId/location/:episodeId'` · `'**'` → Umleitung auf `''`.
-- [ ] Alle vier `theme/…`-Routen bekommen `resolve: { world: worldConfigResolver }`
+- [x] Alle vier `theme/…`-Routen bekommen `resolve: { world: worldConfigResolver }`
       und `canActivate: [difficultyChosenGuard]` — **außer** der
       Lernstufen-Route, sonst leitet der Guard auf sich selbst um
       (Endlosschleife).
-- [ ] `app.config.ts`: `provideRouter(routes, withComponentInputBinding())` —
+- [x] `app.config.ts`: `provideRouter(routes, withComponentInputBinding())` —
       damit landen Routen-Parameter und aufgelöste Daten direkt als
       Komponenten-Eingaben, ohne `ActivatedRoute`-Verdrahtung in jedem Screen.
-- [ ] Neuer Ordner `frontend/src/app/routing/`:
+- [x] Neuer Ordner `frontend/src/app/routing/`:
   - `world-config.resolver.ts` — `ResolveFn<WorldConfig | null>`: liest
     `themeId` aus den Routen-Parametern, holt die Konfiguration über den
     zwischengespeicherten `ContentService`, setzt `GameStateService.activeThemeId`
@@ -57,21 +57,29 @@ zentral geladen, und oben steht auf jedem Spiel-Screen dieselbe Kopfleiste.
     der Screen zeigt dann die Meldung aus Punkt 4).
   - `difficulty-chosen.guard.ts` — `CanActivateFn`: ist keine Lernstufe
     gewählt, `router.createUrlTree(['theme', themeId, 'level'])`.
-- [ ] `GameStateService.setActiveTheme` korrigieren: die Lernstufe **nur**
+- [x] `GameStateService.setActiveTheme` korrigieren: die Lernstufe **nur**
       zurücksetzen, wenn sich die Welt tatsächlich ändert. Heute setzt jeder
       Aufruf sie auf `null` — der Resolver läuft bei jeder Navigation, damit
       würde die Stufenwahl bei jedem Screenwechsel verloren gehen und der Guard
       sofort zurück zur Stufenwahl schicken. Kommentar an die Stelle.
+- [x] **Nachgezogen (nicht im ursprünglichen Wortlaut):** AK 1 verlangt, dass
+      alle fünf Adressen sofort eine Komponente laden — `features/timeline/`,
+      `features/map/`, `features/location/` existierten aber noch nicht (die
+      kommen laut Overview erst in Phase 6/7). Angelegt als schlanke
+      Platzhalter (Kopfleiste + „wird noch gebaut"-Text, korrekt verdrahtete
+      Inputs `themeId`/`mapId`/`episodeId`/`world`). Phase 6/7 bauen **in**
+      diesen Dateien weiter, nicht per erneutem `ng generate` — Details in
+      [FINDINGS.md](FINDINGS.md).
 
 ### Kopfleiste (`ui/hud/`)
 
-- [ ] `ng generate component ui/hud --skip-tests`
-- [ ] Eingaben: `backLink = input<readonly string[] | null>(null)`,
+- [x] `ng generate component ui/hud --skip-tests`
+- [x] Eingaben: `backLink = input<readonly string[] | null>(null)`,
       `worldTitle = input<string | null>(null)`,
       `levelLabel = input<string | null>(null)`,
       `levelLink = input<readonly string[] | null>(null)`,
       `progress = input<{ done: number; total: number } | null>(null)`.
-- [ ] Aufbau nach Design-Abschnitt 0, mit richtigem HTML:
+- [x] Aufbau nach Design-Abschnitt 0, mit richtigem HTML:
   - Zurück: `<a [routerLink]>` als Pille mit Chevron — das ist Navigation, kein
     Knopf
   - Profil-Chip: runder Platzhalter-Punkt + „Gast". Kommentar: echte Profile
@@ -80,39 +88,48 @@ zentral geladen, und oben steht auf jedem Spiel-Screen dieselbe Kopfleiste.
     Wahl der Text „Stufe wählen"
   - Fortschritt: `<progress [value] [max]>` plus sichtbare Beschriftung
     „x von y Orten" — die Zahl steht da, niemand muss einen Balken deuten
-- [ ] Dezente Erklärungen (Pflicht, nicht Beiwerk): `title` auf Stufen-Schild
+- [x] Dezente Erklärungen (Pflicht, nicht Beiwerk): `title` auf Stufen-Schild
       („Die Lernstufe bestimmt, wie schwer die Aufgaben sind") und auf der
       Fortschrittsanzeige („Geschaffte Orte in dieser Welt"). Sichtbarer Text
       bleibt die Hauptinformation — Kinder lesen keine Tooltips.
-- [ ] Kommentar im Template an der Stelle, wo Modus-Umschalter und Ton-Knopf
+- [x] Kommentar im Template an der Stelle, wo Modus-Umschalter und Ton-Knopf
       (Meilenstein 3) sowie der Karten-Knopf (Meilenstein 5) eingehängt werden.
       **Keine leeren Attrappen bauen** — ein Knopf, der nichts tut, ist für ein
       Kind schlimmer als keiner.
-- [ ] Touch-Ziele ≥ 46 px, `:focus-visible` mit Akzent-Rahmen (Design,
-      „Interaktionen & Verhalten").
+- [x] Touch-Ziele ≥ 46 px (neuer Token `--size-touch-target`), `:focus-visible`
+      mit Akzent-Rahmen (Design, „Interaktionen & Verhalten"). `levelLabel`
+      wird noch von keinem Screen befüllt (Stufenname steht erst mit der
+      echten Etappenkarte fest) — HUD zeigt bei fehlendem Label „Stufe
+      wählen", das Verhalten ist also schon jetzt korrekt.
 
 ### Meldung für fehlenden Content (`ui/content-error/`)
 
-- [ ] `ng generate component ui/content-error --skip-tests` — Eingabe
+- [x] `ng generate component ui/content-error --skip-tests` — Eingabe
       `message = input.required<string>()`, dazu ein Link zurück zur Übersicht.
       Wird von Etappenkarte, Ortskarte und Ort benutzt, wenn die Welt oder der
       Ort nicht geladen werden konnte.
 
 ### Lernstufen-Screen
 
-- [ ] `ng generate component features/main-hub/level-select --skip-tests` —
+- [x] `ng generate component features/main-hub/level-select --skip-tests` —
       eigener Screen unter `theme/:themeId/level`, benutzt den bestehenden
       `difficulty-picker` unverändert, dazu Kopfleiste und Weiter-Weg auf die
-      Etappenkarte. Design-Abschnitt 3 (drei Karten, Punkte-Anzeige,
-      Beschreibungstext) ist die Vorlage.
-- [ ] Nach der Wahl der Stufe: Navigation auf `theme/:themeId/timeline`.
+      Etappenkarte. **Abweichung:** Design-Abschnitt 3 (drei Karten, Pips,
+      Beschreibungstext) wurde **nicht** nachgebaut — der Checklistensatz
+      davor verlangt ausdrücklich „benutzt den bestehenden `difficulty-picker`
+      **unverändert**", und der ist die schlichte Fieldset/Radio-Variante aus
+      Phase 1. Wirkt das zu karg, ist das ein Phase-8-Thema (Main-Hub aufs
+      Design ziehen), kein Phase-5-Nacharbeiten.
+- [x] Nach der Wahl der Stufe: Navigation auf `theme/:themeId/timeline`.
 
 ### Doku
 
-- [ ] `docs/code-map.md`: `routing/`, `ui/hud/`, `ui/content-error/`,
+- [x] `docs/code-map.md`: `routing/`, `ui/hud/`, `ui/content-error/`,
       `features/main-hub/level-select/` eintragen; Routen-Tabelle als eigene
       kleine Sektion aufnehmen (welche Adresse zeigt welchen Screen).
-- [ ] `docs/conventions/angular.md` → „Project Layout": `routing/` ergänzen.
+- [x] `docs/conventions/angular.md` → „Project Layout": `routing/` ergänzt
+      (dazu `features/location/` neben dem bereits verzeichneten
+      `features/episode/` — Platzhalter jetzt, Event Engine ab Meilenstein 3).
 
 ## Chesterton's Fence
 
@@ -126,3 +143,28 @@ zentral geladen, und oben steht auf jedem Spiel-Screen dieselbe Kopfleiste.
   die Art Magie, die später falsch abbiegt.
 
 ## Report-Back
+
+**Status: complete.** `npm run build` und `npm run lint` grün.
+
+Gebaut: `routing/world-config.resolver.ts` + `difficulty-chosen.guard.ts`,
+`app.routes.ts` mit allen fünf Adressen (+ Wildcard), `app.config.ts` mit
+`withComponentInputBinding()`, `GameStateService.setActiveTheme` korrigiert
+(Lernstufe bleibt bei gleicher Welt erhalten), `ui/hud/`, `ui/content-error/`,
+`features/main-hub/level-select/` (Main-Hub dafür getrimmt — zeigt nur noch
+die Welt-Wahl, navigiert weiter statt lokal die Lernstufe zu verwalten).
+
+**Abweichung vom Plan (dokumentiert, nicht stillschweigend):**
+`features/timeline/`, `features/map/`, `features/location/` existierten noch
+nicht (laut Overview Phase 6/7), AK 1 verlangt aber alle fünf Adressen sofort
+ladbar. Angelegt als schlanke Platzhalter mit Kopfleiste, korrekt
+gebundenen Inputs und „wird noch gebaut"-Text. Findings-Eintrag warnt Phase
+6/7 davor, `ng generate` an denselben Pfaden erneut auszuführen.
+
+**Unsicherste Stelle:** Die Routing-/Guard-Logik (Resolver setzt
+`activeThemeId`, Guard leitet ohne Lernstufe um, `setActiveTheme` behält die
+Stufe bei gleicher Welt) ist nur gegen `npm run build`/`lint` geprüft — kein
+echter Browser-Durchlauf. Am ehesten bricht hier etwas: ein Tieflink auf
+`theme/dev_fixture/map/test_insel` ohne gewählte Stufe (muss auf `level`
+umleiten), und ein Wechsel zwischen zwei Welten (muss die Stufe zurücksetzen,
+ein Wechsel innerhalb derselben Welt nicht). Beides steht in der
+Smoke-Checkliste des Plans (Punkt 5) — dort zuerst prüfen.

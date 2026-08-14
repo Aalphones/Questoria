@@ -132,10 +132,12 @@ frontend/src/app/
 │   ├── main-hub/
 │   ├── timeline/
 │   ├── map/
-│   ├── episode/              ← Event Engine: Ablauf + Event Loader
+│   ├── location/              ← Ort-Platzhalter, bis Meilenstein 3 die Event Engine bringt
+│   ├── episode/               ← Event Engine: Ablauf + Event Loader
 │   ├── events/<type>/        ← eine Komponente je Eventtyp (dialog, multiple-choice, ...)
 │   ├── auth/
 │   └── profile/
+├── routing/                   ← Resolver + Guards (funktional)
 ├── services/
 ├── ui/
 └── models/

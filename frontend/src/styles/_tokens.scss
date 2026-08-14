@@ -122,6 +122,11 @@
   --dash-map-route: 16 22;
   --border-width-placeholder: 2px;
 
+  // ── Interaktion ──────────────────────────────────────────────────────────
+  // Mindestgröße für antippbare Ziele (Kinder-Zielgruppe) — Kopfleiste,
+  // zukünftig jeder Icon-Knopf.
+  --size-touch-target: 46px;
+
   // ── Elevation ────────────────────────────────────────────────────────────
   --shadow-sm: 0 1px 2px color-mix(in srgb, var(--palette-neutral-900) 14%, transparent);
   --shadow-md: 0 3px 10px color-mix(in srgb, var(--palette-neutral-900) 16%, transparent);

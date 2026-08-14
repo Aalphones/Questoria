@@ -1,0 +1,34 @@
+:host {
+  display: block;
+}
+
+.content-error {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  max-inline-size: 40rem;
+  padding: var(--space-6) var(--space-4);
+  margin-inline: auto;
+
+  &__message {
+    color: var(--color-status-error);
+    font-size: var(--font-size-body);
+  }
+
+  &__link {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--size-touch-target);
+    padding-inline: var(--space-4);
+    border-radius: var(--radius-pill);
+    background: var(--color-accent-soft);
+    color: var(--color-accent-soft-text);
+    text-decoration: none;
+
+    &:focus-visible {
+      outline: 2px solid var(--color-focus-ring);
+      outline-offset: 2px;
+    }
+  }
+}

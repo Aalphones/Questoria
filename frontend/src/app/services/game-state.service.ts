@@ -11,9 +11,16 @@ export class GameStateService {
   readonly activeDifficultyLevel = signal<string | null>(null);
 
   setActiveTheme(themeId: string): void {
+    const isNewTheme = this.activeThemeId() !== themeId;
+
     this.activeThemeId.set(themeId);
-    // Eine neue Welt bringt eigene Lernstufen mit — die alte Auswahl wäre dort ungültig.
-    this.activeDifficultyLevel.set(null);
+
+    if (isNewTheme) {
+      // Eine neue Welt bringt eigene Lernstufen mit — die alte Auswahl wäre dort ungültig.
+      // Der Resolver ruft diese Methode bei jeder Navigation innerhalb derselben Welt
+      // erneut auf — ohne die Prüfung würde die Stufenwahl bei jedem Screenwechsel verloren gehen.
+      this.activeDifficultyLevel.set(null);
+    }
   }
 
   setActiveDifficultyLevel(levelId: string): void {

@@ -1,0 +1,14 @@
+<qst-hud [backLink]="['/']" [worldTitle]="world()?.title ?? null" />
+
+@if (world(); as loadedWorld) {
+  <section class="level-select">
+    <h1 class="level-select__title">{{ loadedWorld.title }}</h1>
+    <qst-difficulty-picker
+      [levels]="loadedWorld.difficulty_levels"
+      [selectedLevelId]="activeDifficultyLevel()"
+      (chosen)="chooseDifficultyLevel($event)"
+    />
+  </section>
+} @else {
+  <qst-content-error message="Diese Welt konnte nicht geladen werden." />
+}

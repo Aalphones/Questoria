@@ -1,0 +1,41 @@
+<header class="hud">
+  @if (backLink(); as link) {
+    <a class="hud__back" [routerLink]="link">
+      <span class="hud__back-chevron" aria-hidden="true">‹</span>
+      Zurück
+    </a>
+  }
+
+  @if (worldTitle(); as title) {
+    <span class="hud__world-title">{{ title }}</span>
+  }
+
+  <span class="hud__profile">
+    <!-- Runder Platzhalter-Punkt: echte Profile kommen mit Meilenstein 4. -->
+    <span class="hud__profile-avatar" aria-hidden="true"></span>
+    Gast
+  </span>
+
+  @if (levelLink(); as link) {
+    <a
+      class="hud__level"
+      [routerLink]="link"
+      [title]="levelExplanation"
+      [attr.aria-label]="levelExplanation"
+    >
+      <span class="hud__level-marker" aria-hidden="true"></span>
+      {{ levelLabel() ?? 'Stufe wählen' }}
+    </a>
+  }
+
+  @if (progress(); as state) {
+    <span class="hud__progress" [title]="progressExplanation" [attr.aria-label]="progressExplanation">
+      <progress class="hud__progress-bar" [value]="state.done" [max]="state.total"></progress>
+      <span class="hud__progress-label">{{ state.done }} von {{ state.total }} Orten</span>
+    </span>
+  }
+
+  <!-- Hier hängen Modus-Umschalter und Ton-Knopf (Meilenstein 3) sowie der
+       Karten-Knopf (Meilenstein 5) ein. Keine leeren Attrappen bauen — ein
+       Knopf, der nichts tut, ist für ein Kind schlimmer als keiner. -->
+</header>

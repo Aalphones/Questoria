@@ -1,0 +1,14 @@
+:host {
+  display: block;
+}
+
+.level-select {
+  max-inline-size: 40rem;
+  padding: var(--space-6) var(--space-4);
+  margin-inline: auto;
+
+  &__title {
+    margin-block-end: var(--space-4);
+    color: var(--color-accent);
+  }
+}

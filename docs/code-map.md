@@ -33,16 +33,36 @@ im Frontend-Ordnernamen, PascalCase in PHP-Klassen):
 | Nutzerverwaltung | `features/auth/`, `features/profile/` | Login, Profile anlegen/wechseln |
 | Kartenfläche | `ui/map-canvas/` | Gemeinsames Bauteil von Planeten-, Etappen- und Ortskarte: Fläche im Seitenverhältnis 16:9, Hintergrund, Routenlinien; `map-point/` setzt ein beliebiges Kind auf eine Prozent-Position |
 | Bildfläche | `ui/image-slot/` | Bild mit beschriftetem Platzhalter, wenn die Datei fehlt |
-| Gemeinsame UI | `ui/hud/`, `ui/speech-bubble/` | Kopfleiste auf allen Spiel-Screens, Sprechblasen |
+| Gemeinsame UI | `ui/hud/`, `ui/content-error/`, `ui/speech-bubble/` | Kopfleiste auf allen Spiel-Screens (jeder Screen bindet sie selbst ein); Meldung bei fehlgeschlagener Welt/Ort-Ladung mit Weg zurück; Sprechblasen |
+| Routing | `routing/` | `world-config.resolver.ts` lädt die Welt-Konfiguration zentral für jede `theme/:themeId/…`-Route und setzt die aktive Welt; `difficulty-chosen.guard.ts` schickt ohne gewählte Lernstufe auf die Lernstufen-Auswahl zurück |
 | Zentrale Services | `services/game-state.service.ts`, `services/content.service.ts`, `services/progress.service.ts`, `services/progress.rules.ts`, `services/savegame.service.ts`, `services/narration.service.ts` | Aktive Welt/Profil/Lernstufe, JSON-Content lesen, Fortschritt im Browser-Speicher + Freischaltregeln als reine Funktionen (ADR-006), Speichern/Laden, Vorlesemodus + Sprachausgabe. **`ContentService` ist die einzige Ladestelle für Content** — dort hängt später der Offline-Cache (Meilenstein 6) |
 | Content-Typen | `models/` | TypeScript-Abbild des JSON-Schemas (`content.types.ts`) und der Ladezustände (`game-state.types.ts`) |
 | Design-Tokens | `frontend/src/styles/` | `_tokens.scss` (Farben, Schrift, Abstände, Radien, Kartenmaße), `_fonts.scss` und `_motion.scss` (Bildfolgen, die mehrere Komponenten teilen); global über `src/styles.scss` eingebunden |
 
-**Ist-Stand:** gebaut sind bisher `features/main-hub/` (mit `theme-card/` und
-`difficulty-picker/`), `ui/map-canvas/`, `ui/image-slot/`, `services/`, `models/`
-und `styles/`. Dazu `features/map-demo/` als temporäres Prüfbild der
-Kartenfläche unter `/map-demo` — fällt mit der Ortskarte weg. Alle übrigen
-Zeilen sind Soll-Zustand für spätere Meilensteine.
+**Ist-Stand:** gebaut sind bisher `features/main-hub/` (mit `theme-card/`,
+`difficulty-picker/` und dem eigenen Screen `level-select/`), `ui/map-canvas/`,
+`ui/image-slot/`, `ui/hud/`, `ui/content-error/`, `routing/`, `services/`,
+`models/` und `styles/`. `features/timeline/`, `features/map/` und
+`features/location/` existieren als schlanke Platzhalter (Kopfleiste +
+Hinweistext) — die echte Etappenkarte kommt in Phase 6, Ortskarte + Ort-
+Platzhalter in Phase 7; die Ordner bleiben, nur der Inhalt wird ersetzt. Dazu
+`features/map-demo/` als temporäres Prüfbild der Kartenfläche unter
+`/map-demo` — fällt mit der Ortskarte weg. Alle übrigen Zeilen sind Soll-
+Zustand für spätere Meilensteine.
+
+### Routen (Frontend)
+
+| Adresse | Screen |
+|---|---|
+| `` (leer) | Planetenkarte (`features/main-hub/`) |
+| `theme/:themeId/level` | Lernstufen-Auswahl (`features/main-hub/level-select/`) |
+| `theme/:themeId/timeline` | Etappenkarte (`features/timeline/`) |
+| `theme/:themeId/map/:mapId` | Ortskarte (`features/map/`) |
+| `theme/:themeId/location/:episodeId` | Ort, Platzhalter (`features/location/`) |
+
+Alle vier `theme/…`-Routen laden die Welt-Konfiguration über
+`worldConfigResolver`; alle außer der Lernstufen-Route verlangen zusätzlich
+`difficultyChosenGuard`.
 
 ## Backend (`backend/src/`)
 

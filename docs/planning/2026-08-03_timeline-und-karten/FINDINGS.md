@@ -45,3 +45,14 @@ Meilenstein betreffen. Format:
 - [ ] → Meilenstein 4: `ProgressService` liest und schreibt den Browser-Speicher.
   Beim Umstieg auf die Savegame-Schnittstelle wird genau diese Datei getauscht;
   `progress.rules.ts` und alle Screens bleiben unberührt (ADR-006).
+- [ ] → Phase 6/7: **Abweichung vom Checklisten-Wortlaut.** Die Checklisten von
+  Phase 6/7 sagen `ng generate component features/timeline` bzw.
+  `features/map`/`features/location` — diese Ordner **existieren bereits** aus
+  Phase 5 als schlanke Platzhalter (Kopfleiste + Hinweistext), weil Phase 5s
+  eigene AK 1 verlangte, dass alle fünf Routen sofort ladbar sind. `ng
+  generate` an diesen Pfaden würde jetzt mit „Datei existiert bereits"
+  abbrechen — **nicht neu generieren**, stattdessen direkt in
+  `timeline.ts`/`.html`/`.scss` (bzw. `map.*`, `location.*`) hineinbauen. Die
+  Platzhalter-Inputs (`themeId`, `mapId`/`episodeId`, `world`) sind bereits
+  korrekt über `withComponentInputBinding()` verdrahtet und können
+  übernommen werden.

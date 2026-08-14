@@ -1,0 +1,9 @@
+<qst-hud [backLink]="['/theme', themeId(), 'level']" [worldTitle]="world()?.title ?? null" />
+
+@if (world(); as loadedWorld) {
+  <p class="timeline__placeholder">
+    Etappenkarte von „{{ loadedWorld.title }}" — wird noch gebaut.
+  </p>
+} @else {
+  <qst-content-error message="Diese Welt konnte nicht geladen werden." />
+}
