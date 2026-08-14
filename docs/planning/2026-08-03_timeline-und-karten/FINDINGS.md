@@ -27,6 +27,12 @@ Meilenstein betreffen. Format:
   zeigt jetzt auf `http://localhost:8000` (`backend\serve.cmd`). Rückweg gegen
   den echten Server: beide Ziele in der Datei wieder auf
   `https://questoria.info` setzen, `secure: true`.
+- [x] Phase 3: **`deploy.cmd` brach mit „Pfad nicht gefunden" ab, weil die Datei
+  im Arbeitsordner LF-Zeilenenden hatte** — cmd stolpert dann über seine eigenen
+  Sprungmarken und zerlegt die Anführungszeichen im WinSCP-Aufruf. `.gitattributes`
+  fordert CRLF bereits; die Datei war nur nie neu ausgecheckt worden. Behoben mit
+  `git checkout` beider `.cmd`-Dateien. Kommt eine `.cmd` künftig über ein
+  Werkzeug ins Repo, das LF schreibt, tritt es wieder auf.
 - [ ] → Phase 7: Das temporäre Prüfbild `features/map-demo/` samt Route
   `map-demo` in `app.routes.ts` wird mit der Ortskarte gelöscht — sie zeigt
   dasselbe an echten Daten. Auch die Zeile in `docs/code-map.md` entfernen.

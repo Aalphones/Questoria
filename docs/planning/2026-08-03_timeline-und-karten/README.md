@@ -169,10 +169,13 @@ Oben steht, wo ich am unsichersten bin — dort zuerst schauen.
   Der abgeleitete Pfad `DOCUMENT_ROOT/content` stimmt also, `open_basedir` ist
   leer (keine Lesesperre). `CONTENT_PATH` bleibt als Not-Ausgang im Code, wird
   aber im Betrieb nicht gebraucht. Server läuft auf PHP 8.5.7.
-- 🟡 **Der Frontend-Abgleich löscht im Webbereich alles Fremde.** Die
-  Ausnahmeliste in [deploy.cmd:173](../../../deploy.cmd) kennt bisher nur den
-  Brücken-Ordner. **Check:** nach der Erweiterung zweimal `deploy.cmd frontend`
-  fahren und nachsehen, ob `content/` noch steht.
+- ✅ **Der Frontend-Abgleich löscht im Webbereich alles Fremde — Ausnahmeliste
+  greift, geprüft am 14.08.2026.** Nach `deploy.cmd backend`/`content` zweimal
+  `deploy.cmd frontend` gefahren: `/api/content/themes` antwortet danach
+  weiterhin mit der Welt-Liste, die Brücke unter `/api/health` ebenfalls.
+  Damit sind auch die Smoke-Punkte 1 und 2 erledigt. 🟡 Der Lauf hat zwei
+  Altlasten aus Meilenstein 1 mitgenommen (`/public/data`, `/public/assets`) —
+  gewollt, sie kommen im Build nicht mehr vor.
 - 🟡 **Kartengrößen in Container-Einheiten sind ungetestet.** Der Prototyp
   rechnet Knotengrößen in Pixeln, dieser Plan in `cqw` (Anteil der
   Kartenbreite) — das ist die Korrektur eines bekannten Prototyp-Fehlers, aber
