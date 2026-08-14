@@ -24,7 +24,7 @@ werden daraus Routen/Features (siehe [code-map.md](../code-map.md)):
 |---|---|---|
 | `login` | `features/profile/` | Profilauswahl, 3 Demo-Profile + „Neues Profil" |
 | `hub` | `features/main-hub/` | Planetenkarte mit den installierten Themenwelten |
-| `level` | `features/main-hub/` | Lernstufen-Auswahl (Matrose/Navigator/Kapitän) |
+| `level` | `features/main-hub/level-select/` | Lernstufen-Auswahl (Matrose/Navigator/Kapitän) — eigener Screen unter derselben Feature-Wurzel |
 | `timeline` | `features/timeline/` | Etappenkarte der Story-Arcs, Sterne pro Etappe |
 | `map` | `features/map/` | Ortskarte eines Arcs, Nodes + Routen + Kompassrose |
 | `dialog` | `features/events/dialog/` | Visual-Novel-Layout, zwei Bühnenplätze `left`/`right` — ein Eventtyp wie jeder andere |

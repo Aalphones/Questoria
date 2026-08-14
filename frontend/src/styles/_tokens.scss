@@ -46,6 +46,8 @@
   --color-text: var(--palette-ink);
   --color-text-muted: color-mix(in srgb, var(--palette-ink) 55%, transparent);
   --color-text-on-accent: var(--palette-parchment);
+  // Text in Akzentfarbe auf hellem Grund (Statuszeilen, Zähler).
+  --color-text-accent: var(--palette-accent-700);
   --color-accent: var(--palette-accent);
   --color-accent-hover: var(--palette-accent-600);
   --color-accent-active: var(--palette-accent-700);
@@ -71,6 +73,8 @@
   --color-map-route: var(--palette-accent-500);
   --color-map-route-locked: var(--palette-neutral-400);
   --color-map-ring: color-mix(in srgb, var(--palette-accent-200) 70%, transparent);
+  // Ring des aktuellen Knotens (Design: Akzentfarbe statt neutralem Umriss).
+  --color-map-ring-current: color-mix(in srgb, var(--palette-accent-400) 75%, transparent);
   --color-map-chart-bg: var(--palette-moss-300);
   --color-map-chart-line: color-mix(in srgb, var(--palette-neutral-100) 42%, transparent);
   --color-map-label-bg: var(--palette-neutral-100);

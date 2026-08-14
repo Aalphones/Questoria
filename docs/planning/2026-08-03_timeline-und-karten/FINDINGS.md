@@ -36,7 +36,7 @@ Meilenstein betreffen. Format:
 - [x] Phase 7: Das temporäre Prüfbild `features/map-demo/` samt Route
   `map-demo` in `app.routes.ts` wird mit der Ortskarte gelöscht — sie zeigt
   dasselbe an echten Daten. Auch die Zeile in `docs/code-map.md` entfernen.
-- [ ] → Phase 6/7/8: Die Größe eines Knotens kommt bei `qst-map-point` als
+- [x] → Phase 6/7/8: Die Größe eines Knotens kommt bei `qst-map-point` als
   Custom Property `--map-point-size` an den projizierten Inhalt (Einheit `cqw`).
   Ein Knoten setzt seine Breite also auf `var(--map-point-size)`, nicht auf
   einen eigenen Wert. Ohne `size`-Eingabe ist die Property nicht gesetzt — dann
@@ -45,13 +45,16 @@ Meilenstein betreffen. Format:
 - [ ] → Meilenstein 4: `ProgressService` liest und schreibt den Browser-Speicher.
   Beim Umstieg auf die Savegame-Schnittstelle wird genau diese Datei getauscht;
   `progress.rules.ts` und alle Screens bleiben unberührt (ADR-006).
-- [ ] → Phase 8: `MapNode` (Ortskarten-Punkte) trägt anders als `ArcStage`
+- [x] → Phase 8: `MapNode` (Ortskarten-Punkte) trägt anders als `ArcStage`
   (Etappen-Inseln) kein `size`-Feld im Content-Schema — die Punktgröße auf der
   Ortskarte kommt komplett aus den Tokens `--size-map-point` /
   `--size-map-point-current`, ohne den mitwachsenden `max(…, 4cqw)`-Anteil.
   Betrifft die Planetenkarte (Phase 8) nur, falls `InstalledTheme.size` dort
   genauso verwendet wird wie `ArcStage.size` — dann verhält sich die
-  Planetenkarte anders als die Ortskarte, und zwar bewusst.
+  Planetenkarte anders als die Ortskarte, und zwar bewusst. **Phase 8: genau
+  so umgesetzt** — die Weltknoten wachsen mit der Kartenbreite
+  (`--map-point-size` aus `InstalledTheme.size`), die Ortspunkte bleiben bei
+  ihrem festen Token-Maß.
 - [ ] → Phase 6/7: **Abweichung vom Checklisten-Wortlaut.** Die Checklisten von
   Phase 6/7 sagen `ng generate component features/timeline` bzw.
   `features/map`/`features/location` — diese Ordner **existieren bereits** aus

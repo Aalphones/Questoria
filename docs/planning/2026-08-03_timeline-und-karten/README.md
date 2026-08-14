@@ -26,7 +26,7 @@ statt `dialogue_sequence` + `minigame_event`.
 | 5 | [Router-Struktur + Kopfleiste](phase-5-routing-und-kopfleiste.md) | standard | complete |
 | 6 | [Etappenkarte](phase-6-etappenkarte.md) | standard | complete |
 | 7 | [Ortskarte + Ort-Platzhalter](phase-7-ortskarte.md) | standard | complete |
-| 8 | [Planetenkarte: Main-Hub auf das Design ziehen](phase-8-planetenkarte.md) | standard | pending |
+| 8 | [Planetenkarte: Main-Hub auf das Design ziehen](phase-8-planetenkarte.md) | standard | complete |
 
 Reihenfolge ist bindend: 3 liefert das Bauteil für 6, 7 und 8; 4 liefert die
 Zustände, die 6, 7 und 8 anzeigen; 5 liefert die Routen, in die 6–8 hängen.

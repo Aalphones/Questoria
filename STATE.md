@@ -3,26 +3,21 @@
 **Aktiver Plan:**
 [Timeline & Karten (Meilenstein 2)](docs/planning/2026-08-03_timeline-und-karten/README.md)
 
-**Phase:** 8/8 — Planetenkarte: Main-Hub auf das Design ziehen (pending)
+**Phase:** 8/8 — Planetenkarte: Main-Hub auf das Design ziehen (complete)
 
-**Nächster Schritt:** `/implement` starten. Phase 8 ist die letzte des Plans —
-baut die Planetenkarte aus dem Design in `features/main-hub/` (Kachelliste aus
-Meilenstein 1 wird zur Kartenfläche, `theme-card/` wird zum Weltknoten).
-Rating standard, `sonnet` reicht. Vorher
-[README](docs/planning/2026-08-03_timeline-und-karten/README.md) und
-[phase-8-planetenkarte.md](docs/planning/2026-08-03_timeline-und-karten/phase-8-planetenkarte.md)
-lesen. Nach Phase 8: Plan-Ende — Smoke-Checkliste aus der README an Sascha,
-danach archivieren.
+**Nächster Schritt:** Plan-Ende. Sascha geht die Smoke-Checkliste aus der
+[README](docs/planning/2026-08-03_timeline-und-karten/README.md) durch (Punkte 1
+und 2 sind bereits erledigt, siehe Konfidenz-Ausweis). Danach den Plan-Ordner
+nach `docs/archive/2026-08/` verschieben, die Bottom-Sektionen der README füllen
+und diese Datei auf den nächsten Plan zeigen lassen.
 
-**Phase 7 ist fertig** (echte Ortskarte + Ort-Platzhalter). `features/map/`
-zeigt Orte als Punkte mit Routen/Kompassrose (Komponente heißt `MapScreen`,
-nicht `Map` — Namenskollision mit dem globalen `Map`-Typ). `features/location/`
-zeigt den Ort-Platzhalter mit Event-Anzahl und „Ort geschafft". Das temporäre
-`features/map-demo/` ist entfernt. Build und Lint grün, kein Browser-Durchlauf
-(private-Profil, User prüft am Plan-Ende). 🟡 Zwei kleine Abweichungen vom
-Checklisten-Wortlaut, Details in
-[phase-7-ortskarte.md](docs/planning/2026-08-03_timeline-und-karten/phase-7-ortskarte.md)
-→ Report-Back.
+**Phase 8 ist fertig.** Der Einstieg ist keine Kachelliste mehr, sondern die
+Planetenkarte: Welten als runde Knoten auf der gemeinsamen Kartenfläche, Pille
+mit Name und Status („Offen · Etappe N" / „Noch nicht gestartet" / „Alle
+Etappen geschafft"), Info-Panel oben links mit „Weiterspielen" in die zuletzt
+gespielte Welt. Build und Lint grün, kein Browser-Durchlauf (private-Profil).
+Abweichungen und Zusätze stehen im Report-Back von
+[phase-8-planetenkarte.md](docs/planning/2026-08-03_timeline-und-karten/phase-8-planetenkarte.md).
 
 **Merkposten:** PHP/Composer liegen unter `C:\Users\sasch\develop\.tools\`
 (`php.cmd`/`composer.cmd`), nicht im Suchpfad des Benutzers. Ad-hoc-Testserver

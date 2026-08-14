@@ -23,7 +23,7 @@ im Frontend-Ordnernamen, PascalCase in PHP-Klassen):
 
 | Feature | Ordner | Zweck |
 |---|---|---|
-| Main-Hub | `features/main-hub/` | Einstieg, Planetenkarte mit installierten Themenwelten, Lernstufen-Auswahl |
+| Main-Hub | `features/main-hub/` | Zwei Screens: Planetenkarte (Welten als Knoten auf der Kartenfläche, `theme-card/` als Weltknoten, Info-Panel mit „Weiterspielen") und `level-select/` mit der Lernstufen-Auswahl (`difficulty-picker/`) |
 | Timeline | `features/timeline/` | Etappenkarte pro Welt, Fortschrittsmarkierung mit Sternen |
 | Map | `features/map/` | Interaktive Ortskarte pro Arc — Orte als Punkte, Routen, Kompassrose |
 | Ort | `features/location/` | Ehrlicher Platzhalter für den Ort: Name, Hintergrund, Anzahl bereitliegender Events, „Ort geschafft". Die Event Engine (Meilenstein 3) übernimmt diesen Screen und spielt die Eventliste der Episode ab |
@@ -40,8 +40,9 @@ im Frontend-Ordnernamen, PascalCase in PHP-Klassen):
 | Content-Typen | `models/` | TypeScript-Abbild des JSON-Schemas (`content.types.ts`) und der Ladezustände (`game-state.types.ts`) |
 | Design-Tokens | `frontend/src/styles/` | `_tokens.scss` (Farben, Schrift, Abstände, Radien, Kartenmaße), `_fonts.scss` und `_motion.scss` (Bildfolgen, die mehrere Komponenten teilen); global über `src/styles.scss` eingebunden |
 
-**Ist-Stand:** gebaut sind bisher `features/main-hub/` (mit `theme-card/`,
-`difficulty-picker/` und dem eigenen Screen `level-select/`), `features/timeline/`
+**Ist-Stand:** gebaut sind bisher `features/main-hub/` (echte Planetenkarte:
+Weltknoten aus `theme-card/`, Routen, Info-Panel; dazu der eigene Screen
+`level-select/` mit `difficulty-picker/`), `features/timeline/`
 (echte Etappenkarte: Inseln, Panel, Legende, Fortschritt-zurücksetzen-Dialog),
 `features/map/` (echte Ortskarte: Punkte, Routen, Kompassrose), `features/location/`
 (Ort-Platzhalter: Name, Hintergrund, Event-Anzahl, „Ort geschafft"), `ui/map-canvas/`,

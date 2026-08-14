@@ -39,28 +39,28 @@ die Lernstufen-Auswahl an ihren eigenen Screen ab.
 
 ## Checkliste
 
-- [ ] `main-hub.html` / `.ts` umbauen: Kartenfläche statt Liste, Navigation
+- [x] `main-hub.html` / `.ts` umbauen: Kartenfläche statt Liste, Navigation
       statt In-Place-Auswahl. `worldState`, `confirmation` und
       `chooseDifficultyLevel` entfallen hier — sie sind in Phase 5 in den
       Lernstufen-Screen gewandert.
-- [ ] `theme-card` wird zum Weltknoten: rundes Bild über `qst-image-slot`
+- [x] `theme-card` wird zum Weltknoten: rundes Bild über `qst-image-slot`
       (Cover), Größe aus `--map-point-size`, Ring und Schatten nach Design,
       darunter die Status-Pille. Die Komponente bleibt am selben Ort
       (`features/main-hub/theme-card/`) — sie wird nur woanders eingebettet.
-- [ ] Aktuelle Etappe pro Welt: Welt-Konfiguration wird dafür gebraucht. Um
+- [x] Aktuelle Etappe pro Welt: Welt-Konfiguration wird dafür gebraucht. Um
       nicht für jede Kachel eine Datei zu laden, den Status **nur für die
       Welten** auflösen, für die schon Fortschritt existiert; alle anderen
       zeigen „Noch nicht gestartet". Kommentar dazu an der Stelle.
-- [ ] „Weiterspielen": zuletzt geschaffter Ort über den jüngsten Zeitstempel im
+- [x] „Weiterspielen": zuletzt geschaffter Ort über den jüngsten Zeitstempel im
       Fortschritt; führt auf die Etappenkarte dieser Welt.
-- [ ] Aktuelle Welt bewegt sich sanft (`eqBob`), Ring in Akzentfarbe.
-- [ ] Keine Kopfleiste auf diesem Screen (Design: die Kopfleiste beginnt eine
+- [x] Aktuelle Welt bewegt sich sanft (`eqBob`), Ring in Akzentfarbe.
+- [x] Keine Kopfleiste auf diesem Screen (Design: die Kopfleiste beginnt eine
       Ebene tiefer — hier gibt es kein Zurück).
 
 ### Doku
 
-- [ ] `docs/code-map.md`: Main-Hub-Zeile auf den neuen Aufbau bringen.
-- [ ] `docs/design/README.md`: Screen-Tabelle prüfen — `hub` und `level` zeigen
+- [x] `docs/code-map.md`: Main-Hub-Zeile auf den neuen Aufbau bringen.
+- [x] `docs/design/README.md`: Screen-Tabelle prüfen — `hub` und `level` zeigen
       jetzt auf zwei getrennte Screens innerhalb von `features/main-hub/`.
 
 ## Chesterton's Fence
@@ -72,3 +72,23 @@ Kartenfläche und Fortschritt gab. Alle drei existieren jetzt. Was bleibt:
 Anordnung, nicht die Logik.
 
 ## Report-Back
+
+**Status: complete** (14.08.2026). Build und Lint grün, kein Browser-Durchlauf
+(private-Profil — Sichtprüfung läuft über die Smoke-Checkliste).
+
+Drei Ergänzungen über den Wortlaut der AK hinaus, jeweils weil die AK den Fall
+nicht nennt:
+
+1. **„Alle Etappen geschafft"** als dritter Status. AK 3 kennt nur „Offen ·
+   Etappe N" und „Noch nicht gestartet"; ist eine Welt komplett durch, gibt es
+   keine aktuelle Etappe mehr — die Pille bliebe sonst leer.
+2. **„Weiterspielen" prüft, ob die Welt noch installiert ist.** Fortschritt
+   einer entfernten Welt liegt weiter im Browser-Speicher; ohne die Prüfung
+   führte der Knopf auf eine Welt, die es nicht mehr gibt.
+3. **Zwei neue Zweck-Tokens** in `_tokens.scss`: `--color-map-ring-current`
+   (Akzent-Ring des aktuellen Knotens, Design: Accent-400 @75 %) und
+   `--color-text-accent` (Statustext, Design: Accent-700). Die
+   Komponenten-Regel verbietet rohe Palettenwerte im Stylesheet.
+
+Ein `aria-pressed` am Weltknopf ist entfallen: der Knopf schaltet nichts mehr
+um, er navigiert — die Angabe wäre eine Falschauskunft an die Vorlesehilfe.

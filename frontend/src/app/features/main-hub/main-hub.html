@@ -1,8 +1,3 @@
-<header class="main-hub__header">
-  <h1 class="main-hub__title">Questoria</h1>
-  <p class="main-hub__subtitle">Such dir eine Welt aus.</p>
-</header>
-
 @let hub = hubState();
 
 @switch (hub.status) {
@@ -15,12 +10,36 @@
     </p>
   }
   @case ('loaded') {
-    <ul class="main-hub__themes">
-      @for (theme of hub.data.installed_themes; track theme.id) {
-        <li class="main-hub__theme">
-          <qst-theme-card [theme]="theme" (chosen)="chooseTheme($event)" />
-        </li>
-      }
-    </ul>
+    <div class="main-hub">
+      <qst-map-canvas
+        class="main-hub__canvas"
+        [background]="backgroundUrl()"
+        [backgroundLabel]="backgroundFile()"
+        [points]="points()"
+        [routes]="hub.data.hub_map.routes"
+      >
+        @for (theme of hub.data.installed_themes; track theme.id) {
+          <qst-map-point [x]="theme.x" [y]="theme.y" [size]="theme.size">
+            <qst-theme-card
+              [theme]="theme"
+              [status]="statusLabel(theme.id)"
+              [active]="theme.id === continueThemeId()"
+              (chosen)="chooseTheme($event)"
+            />
+          </qst-map-point>
+        }
+
+        <div class="main-hub__panel">
+          <span class="main-hub__panel-tag">Planetenkarte</span>
+          <h1 class="main-hub__panel-title">Deine Themenwelten</h1>
+          <p class="main-hub__panel-hint">Tippe auf eine Welt, um dorthin zu reisen.</p>
+          @if (continueThemeId(); as themeId) {
+            <a class="main-hub__continue" [routerLink]="['/theme', themeId, 'timeline']"
+              >Weiterspielen</a
+            >
+          }
+        </div>
+      </qst-map-canvas>
+    </div>
   }
 }
