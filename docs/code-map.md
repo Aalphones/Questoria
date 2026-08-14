@@ -34,7 +34,7 @@ im Frontend-Ordnernamen, PascalCase in PHP-Klassen):
 | Nutzerverwaltung | `features/auth/`, `features/profile/` | Login, Profile anlegen/wechseln |
 | Kartenfläche | `ui/map-canvas/` | Gemeinsames Bauteil von Planeten-, Etappen- und Ortskarte: Fläche im Seitenverhältnis 16:9, Hintergrund, Routenlinien; `map-point/` setzt ein beliebiges Kind auf eine Prozent-Position |
 | Bildfläche | `ui/image-slot/` | Bild mit beschriftetem Platzhalter, wenn die Datei fehlt |
-| Gemeinsame UI | `ui/hud/`, `ui/content-error/`, `ui/speech-bubble/` | Kopfleiste auf allen Spiel-Screens (jeder Screen bindet sie selbst ein); Meldung bei fehlgeschlagener Welt/Ort-Ladung mit Weg zurück; Sprechblasen |
+| Gemeinsame UI | `ui/hud/`, `ui/content-error/`, `ui/speech-bubble/`, `ui/read-aloud-button/` | Kopfleiste auf allen Spiel-Screens (jeder Screen bindet sie selbst ein, trägt jetzt auch Modus-Umschalter + Ton-Knopf); Meldung bei fehlgeschlagener Welt/Ort-Ladung mit Weg zurück; Sprechblasen; runder Knopf „Nochmal vorlesen" |
 | Routing | `routing/` | `world-config.resolver.ts` lädt die Welt-Konfiguration zentral für jede `theme/:themeId/…`-Route und setzt die aktive Welt; `difficulty-chosen.guard.ts` schickt ohne gewählte Lernstufe auf die Lernstufen-Auswahl zurück |
 | Zentrale Services | `services/game-state.service.ts`, `services/content.service.ts`, `services/progress.service.ts`, `services/progress.rules.ts`, `services/savegame.service.ts`, `services/narration.service.ts` | Aktive Welt/Profil/Lernstufe, JSON-Content lesen, Fortschritt im Browser-Speicher + Freischaltregeln als reine Funktionen (ADR-006), Speichern/Laden, Vorlesemodus + Sprachausgabe. **`ContentService` ist die einzige Ladestelle für Content** — dort hängt später der Offline-Cache (Meilenstein 6) |
 | Content-Typen | `models/` | TypeScript-Abbild des JSON-Schemas (`content.types.ts`) und der Ladezustände (`game-state.types.ts`) |
@@ -46,8 +46,10 @@ Weltknoten aus `theme-card/`, Routen, Info-Panel; dazu der eigene Screen
 (echte Etappenkarte: Inseln, Panel, Legende, Fortschritt-zurücksetzen-Dialog),
 `features/map/` (echte Ortskarte: Punkte, Routen, Kompassrose), `features/location/`
 (Ort-Platzhalter: Name, Hintergrund, Event-Anzahl, „Ort geschafft"), `ui/map-canvas/`,
-`ui/image-slot/`, `ui/hud/`, `ui/content-error/`, `routing/`, `services/`, `models/`
-und `styles/`. Alle übrigen Zeilen sind Soll-Zustand für spätere Meilensteine.
+`ui/image-slot/`, `ui/hud/` (inkl. Modus-Umschalter + Ton-Knopf),
+`ui/content-error/`, `ui/read-aloud-button/`, `services/narration.service.ts`,
+`routing/`, `services/`, `models/` und `styles/`. Alle übrigen Zeilen sind
+Soll-Zustand für spätere Meilensteine.
 
 ### Routen (Frontend)
 

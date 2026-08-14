@@ -84,15 +84,15 @@
   --font-heading-weight: 400;
   --font-body: 'Figtree', system-ui, sans-serif;
 
-  --font-size-root: 15px;
-  --font-size-display: 42px;
-  --font-size-title: 32px;
-  --font-size-section: 25px;
-  --font-size-card-title: 17px;
-  --font-size-body: 15px;
-  --font-size-control: 14px;
-  --font-size-detail: 13px;
-  --font-size-kicker: 11px;
+  --font-size-root: 0.9375rem;
+  --font-size-display: 2.625rem;
+  --font-size-title: 2rem;
+  --font-size-section: 1.5625rem;
+  --font-size-card-title: 1.0625rem;
+  --font-size-body: 0.9375rem;
+  --font-size-control: 0.875rem;
+  --font-size-detail: 0.8125rem;
+  --font-size-kicker: 0.6875rem;
 
   --line-height-body: 1.55;
   --line-height-heading: 1.12;
@@ -100,23 +100,25 @@
   --letter-spacing-kicker: 0.1em;
 
   // ── Abstände ─────────────────────────────────────────────────────────────
-  --space-1: 4.4px;
-  --space-2: 8.8px;
-  --space-3: 13.2px;
-  --space-4: 17.6px;
-  --space-6: 26.4px;
-  --space-8: 35.2px;
+  --space-1: 0.275rem;
+  --space-2: 0.55rem;
+  --space-3: 0.825rem;
+  --space-4: 1.1rem;
+  --space-6: 1.65rem;
+  --space-8: 2.2rem;
 
   // ── Radien ───────────────────────────────────────────────────────────────
-  --radius-sm: 8px;
-  --radius-md: 16px;
-  --radius-lg: 28px;
+  --radius-sm: 0.5rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.75rem;
   --radius-card: calc(var(--radius-lg) * 1.15);
   --radius-pill: 999px;
 
   // ── Kartenmaße ───────────────────────────────────────────────────────────
-  // Feste Pixelmaße aus dem Design. Die Knotengrößen selbst kommen aus dem
-  // Content in Prozent der Kartenbreite (siehe qst-map-point).
+  // Bleiben bewusst in px: sie hängen am Kartenbild und an Haarlinien, nicht
+  // am Lesetext — die rem-Umstellung betrifft nur Abstände, Schrift, Radien
+  // und das Touch-Ziel. Die Knotengrößen selbst kommen aus dem Content in
+  // Prozent der Kartenbreite (siehe qst-map-point).
   --size-map-chip: 52px;
   --size-map-point: 32px;
   --size-map-point-current: 46px;
@@ -132,7 +134,7 @@
   // ── Interaktion ──────────────────────────────────────────────────────────
   // Mindestgröße für antippbare Ziele (Kinder-Zielgruppe) — Kopfleiste,
   // zukünftig jeder Icon-Knopf.
-  --size-touch-target: 46px;
+  --size-touch-target: 2.875rem;
 
   // ── Elevation ────────────────────────────────────────────────────────────
   --shadow-sm: 0 1px 2px color-mix(in srgb, var(--palette-neutral-900) 14%, transparent);

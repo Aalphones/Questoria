@@ -31,7 +31,7 @@ sie im Code, in Docs oder Tickets auftauchen.
 | Set | Gruppierungsschlüssel der Sammelkarten innerhalb einer Welt (z.B. "Etappe 2 · East Blue"). Bestimmt, wie die Trophäenhalle sortiert. |
 | Seltenheit / Rarity | Wertstufe einer Sammelkarte: `haeufig`, `selten`, `legendaer`. Geschlossene Wertemenge, steuert nur die Farbgebung. |
 | Druckbogen | Die druckbare DIN-A4-Seite mit 3×3 ausgewählten Sammelkarten in Originalgröße, optional mit Schnittmarken. |
-| Vorlesemodus | Der Modus "Bilder & Vorlesen" für Kinder, die noch nicht lesen: kurze Textfassung, Bildantworten im Quiz, automatische Sprachausgabe. Gegenstück: "Selbst lesen". |
+| Vorlesemodus | Der Modus "Bilder & Vorlesen" (`mode: 'listen'` im `NarrationService`) für Kinder, die noch nicht lesen: kurze Textfassung, Bildantworten im Quiz, automatische Sprachausgabe. Gegenstück: "Selbst lesen" (`mode: 'read'`). |
 | Design-Token | Ein benannter Gestaltungswert (Farbe, Abstand, Radius, Schatten) aus `docs/design/`. Einzige Quelle für das Aussehen — keine Hardcodes in Komponenten. |
 | Fortschritt | Der gespeicherte Stand, welche Episoden ein Kind abgeschlossen hat — bis Meilenstein 4 im Browser-Speicher (`ProgressService`), danach über die Savegame-Schnittstelle (ADR-006). |
 | Sterne | Bewertung einer geschafften Episode (0–3), Teil von `EpisodeProgress`. Bis die Event Engine (Meilenstein 3) echte Sterne vergibt, liefert der Ort-Platzhalter pauschal 3. |

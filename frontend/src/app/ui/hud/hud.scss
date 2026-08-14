@@ -128,6 +128,71 @@
     color: var(--color-text-muted);
     font-size: var(--font-size-detail);
   }
+
+  &__mode {
+    display: inline-flex;
+    gap: var(--space-1);
+    padding: var(--space-1);
+    border-radius: var(--radius-pill);
+    background: var(--color-bg);
+  }
+
+  &__mode-option {
+    min-block-size: var(--size-touch-target);
+    padding-inline: var(--space-3);
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-control);
+    cursor: pointer;
+
+    &:hover {
+      background: var(--color-hover-wash);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-focus-ring);
+      outline-offset: 2px;
+    }
+
+    &--active {
+      background: var(--color-accent-soft);
+      color: var(--color-accent-soft-text);
+      font-weight: 600;
+    }
+  }
+
+  &__sound {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: var(--size-touch-target);
+    block-size: var(--size-touch-target);
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: var(--color-bg);
+    color: var(--color-text);
+    cursor: pointer;
+
+    &:hover {
+      background: var(--color-hover-wash);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-focus-ring);
+      outline-offset: 2px;
+    }
+
+    &--off {
+      color: var(--color-text-muted);
+    }
+  }
+
+  &__sound-icon {
+    inline-size: var(--space-6);
+    block-size: var(--space-6);
+  }
 }
 
 // Schmales Fenster: die Kopfleiste bricht ohnehin um (flex-wrap) — hier rücken

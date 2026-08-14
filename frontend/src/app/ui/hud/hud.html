@@ -35,7 +35,63 @@
     </span>
   }
 
-  <!-- Hier hängen Modus-Umschalter und Ton-Knopf (Meilenstein 3) sowie der
-       Karten-Knopf (Meilenstein 5) ein. Keine leeren Attrappen bauen — ein
-       Knopf, der nichts tut, ist für ein Kind schlimmer als keiner. -->
+  <div class="hud__mode" role="radiogroup" aria-label="Vorlesemodus">
+    <button
+      type="button"
+      role="radio"
+      class="hud__mode-option"
+      [class.hud__mode-option--active]="mode() === 'listen'"
+      [attr.aria-checked]="mode() === 'listen'"
+      title="Bilder & Vorlesen liest dir alles vor"
+      aria-label="Bilder & Vorlesen liest dir alles vor"
+      (click)="setMode('listen')"
+    >
+      Bilder & Vorlesen
+    </button>
+    <button
+      type="button"
+      role="radio"
+      class="hud__mode-option"
+      [class.hud__mode-option--active]="mode() === 'read'"
+      [attr.aria-checked]="mode() === 'read'"
+      title="Selbst lesen"
+      aria-label="Selbst lesen"
+      (click)="setMode('read')"
+    >
+      Selbst lesen
+    </button>
+  </div>
+
+  <button
+    type="button"
+    class="hud__sound"
+    [class.hud__sound--off]="!soundOn()"
+    [attr.aria-label]="soundOn() ? 'Ton ausschalten' : 'Ton einschalten'"
+    [attr.title]="soundOn() ? 'Ton ausschalten' : 'Ton einschalten'"
+    (click)="toggleSound()"
+  >
+    <svg
+      class="hud__sound-icon"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2.75"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+      @if (soundOn()) {
+        <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+        <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+      } @else {
+        <line x1="16" y1="9" x2="22" y2="15" />
+        <line x1="22" y1="9" x2="16" y2="15" />
+      }
+    </svg>
+  </button>
+
+  <!-- Hier hängt der Karten-Knopf (Meilenstein 5) ein. Keine leeren
+       Attrappen bauen — ein Knopf, der nichts tut, ist für ein Kind
+       schlimmer als keiner. -->
 </header>

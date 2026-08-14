@@ -62,68 +62,87 @@ spricht Text aus — per Aufnahme, sonst per Computerstimme.
 
 ### `rem`-Umstellung
 
-- [ ] `styles/_tokens.scss`: Abstände auf `rem` bei 16-px-Basis —
+- [x] `styles/_tokens.scss`: Abstände auf `rem` bei 16-px-Basis —
       `--space-1: 0.275rem` · `--space-2: 0.55rem` · `--space-3: 0.825rem` ·
       `--space-4: 1.1rem` · `--space-6: 1.65rem` · `--space-8: 2.2rem`.
-- [ ] Schriftgrößen: `--font-size-root: 0.9375rem` ·
+- [x] Schriftgrößen: `--font-size-root: 0.9375rem` ·
       `--font-size-display: 2.625rem` · `--font-size-title: 2rem` ·
       `--font-size-section: 1.5625rem` · `--font-size-card-title: 1.0625rem` ·
       `--font-size-body: 0.9375rem` · `--font-size-control: 0.875rem` ·
       `--font-size-detail: 0.8125rem` · `--font-size-kicker: 0.6875rem`.
-- [ ] Radien und Touch-Ziel: `--radius-sm: 0.5rem` · `--radius-md: 1rem` ·
+- [x] Radien und Touch-Ziel: `--radius-sm: 0.5rem` · `--radius-md: 1rem` ·
       `--radius-lg: 1.75rem` · `--size-touch-target: 2.875rem`.
       `--radius-card` und `--radius-pill` bleiben unverändert (abgeleitet bzw.
       Pille).
-- [ ] Karten-Geometrie **nicht** anfassen: `--size-map-*`, `--ring-*`,
+- [x] Karten-Geometrie **nicht** anfassen: `--size-map-*`, `--ring-*`,
       `--stroke-*`, `--dash-*`, `--border-width-placeholder`. Kommentar
       darüber, warum sie in Pixeln bleiben: sie hängen am Kartenbild und an
       Haarlinien, nicht am Lesetext.
-- [ ] Kein Komponenten-Stylesheet anfassen. Diese Umstellung ist eine
+- [x] Kein Komponenten-Stylesheet anfassen. Diese Umstellung ist eine
       Wertänderung in genau einer Datei — der Rückweg ist ein `git revert`
       dieser Datei.
 
 ### Vorlesedienst
 
-- [ ] `services/narration.service.ts` mit `@Service()` anlegen (Muster:
+- [x] `services/narration.service.ts` mit `@Service()` anlegen (Muster:
       `progress.service.ts`), Außenfläche exakt wie in [README.md](README.md)
       → Kontrakt → „Vorlesedienst".
-- [ ] `textFor(full, simple)`: im Modus `listen` `simple ?? full`, im Modus
+- [x] `textFor(full, simple)`: im Modus `listen` `simple ?? full`, im Modus
       `read` immer `full`. Diese eine Funktion ist die einzige Stelle, an der
       über die Textfassung entschieden wird.
-- [ ] `speak(text, audioUrl?)`: vorhandene Ausgabe abbrechen
+- [x] `speak(text, audioUrl?)`: vorhandene Ausgabe abbrechen
       (`speechSynthesis.cancel()` bzw. laufendes `HTMLAudioElement` pausieren),
       dann Aufnahme abspielen oder `SpeechSynthesisUtterance` mit `lang: 'de-DE'`,
       `pitch: 1.05`, `rate` nach Modus. Bei ausgeschaltetem Ton: nichts tun.
-- [ ] Erst-Entsperrer: schlägt die Ausgabe fehl oder meldet
+- [x] Erst-Entsperrer: schlägt die Ausgabe fehl oder meldet
       `speechSynthesis.speaking` nach dem Start nichts, den Text in einem Feld
       merken, `autoplayBlocked` setzen und einen einmaligen
       `pointerdown`/`keydown`-Lauscher am Dokument registrieren, der `unlock()`
       ruft und den gemerkten Text nachspricht. Lauscher danach entfernen.
-- [ ] Ablage im Browser-Speicher wie in `ProgressService`: lesen im
+- [x] Ablage im Browser-Speicher wie in `ProgressService`: lesen im
       Feld-Initialisierer, schreiben nach jeder Änderung, kaputter Eintrag →
       Standards + `console.warn`.
-- [ ] `DOCUMENT` injizieren statt `window` global anzufassen (Muster:
+- [x] `DOCUMENT` injizieren statt `window` global anzufassen (Muster:
       `progress.service.ts`) — sonst bricht das Rendern außerhalb des Browsers.
 
 ### Kopfleiste + Vorlese-Knopf
 
-- [ ] `ui/hud/`: Modus-Umschalter und Ton-Knopf an der im Template markierten
+- [x] `ui/hud/`: Modus-Umschalter und Ton-Knopf an der im Template markierten
       Stelle einbauen, `NarrationService` direkt injizieren (die Kopfleiste ist
       der Eigentümer dieser beiden Bedienelemente, sie werden nicht als Input
       durchgereicht).
-- [ ] `ng generate component ui/read-aloud-button --skip-tests` — Eingaben
+- [x] `ng generate component ui/read-aloud-button --skip-tests` — Eingaben
       `text: string` und `audioUrl?: string`, Klick ruft `speak()`. Deaktiviert,
       wenn `soundOn()` falsch ist.
-- [ ] Beide Knöpfe erfüllen `--size-touch-target`, haben `:focus-visible`-Ring
+- [x] Beide Knöpfe erfüllen `--size-touch-target`, haben `:focus-visible`-Ring
       und eine `aria-label`, die den Zweck nennt, nicht das Symbol.
 
 ### Doku
 
-- [ ] `docs/code-map.md`: `services/narration.service.ts` und
+- [x] `docs/code-map.md`: `services/narration.service.ts` und
       `ui/read-aloud-button/` in die Tabellen, Ist-Stand-Absatz nachziehen.
-- [ ] `docs/glossary.md`: Eintrag **Vorlesemodus** um die beiden Modus-Schlüssel
+- [x] `docs/glossary.md`: Eintrag **Vorlesemodus** um die beiden Modus-Schlüssel
       (`listen` / `read`) ergänzen, damit Code und Doku dasselbe Wort benutzen.
 
 ## Report-Back
 
-*(beim Umsetzen füllen)*
+**Status:** complete.
+
+- `NarrationService` (`services/narration.service.ts`) hält Modus + Ton als
+  Signals, spricht per `SpeechSynthesisUtterance` (`de-DE`, Tonhöhe 1.05,
+  Sprechrate 0.86/0.95) oder Aufnahme, mit Erst-Entsperrer über
+  `pointerdown`/`keydown`. Ablage unter `questoria.narration.v1`.
+- Kopfleiste (`ui/hud/`) trägt jetzt den Modus-Umschalter (zwei Radio-Knöpfe,
+  `role="radiogroup"`) und den Ton-Knopf (Lautsprecher-Symbol, durchgestrichen
+  bei stummgeschaltet — Zustand also am Symbol erkennbar, nicht nur an Farbe).
+- `ui/read-aloud-button/` ist der wiederverwendbare Vorlese-Knopf, deaktiviert
+  bei `soundOn() === false`.
+- `_tokens.scss` komplett auf `rem` umgestellt (Abstände, Schrift, Radien,
+  Touch-Ziel) — Karten-Geometrie bewusst in `px` belassen, mit Kommentar
+  begründet. Kein Komponenten-Stylesheet angefasst.
+- `npm run build` und `npm run lint` laufen grün (der vorbestehende
+  `timeline.scss`-Budget-Hinweis ist unverändert, nicht Teil dieser Phase).
+
+**Unsicherste Stelle:** die automatische Sprachausgabe ohne vorherige
+Nutzergeste (Erst-Entsperrer-Pfad) — kann nur am echten Gerät geprüft werden,
+steht als 🔴 Punkt 1/2 in der Smoke-Checkliste des Plans.
