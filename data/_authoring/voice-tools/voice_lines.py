@@ -11,6 +11,7 @@ import argparse
 import json
 import shutil
 import subprocess
+from collections.abc import Iterator
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -83,6 +84,28 @@ def derive_character_id(sprite_filename: str) -> str:
     return stem
 
 
+def iter_dialogue_lines(episode: dict[str, Any]) -> Iterator[tuple[int, dict[str, Any]]]:
+    """Alle Dialogzeilen einer Episode, fortlaufend durchnummeriert ab 1.
+
+    Eine Episode ist eine Eventliste (JSON_SCHEMA_REFERENCE Abschnitt 4). Dialoge
+    stecken in den Events vom Typ `dialog`; eine Episode kann mehrere davon haben.
+    Die Nummerierung laeuft ueber die ganze Episode durch, nicht pro Event — sonst
+    kollidieren die Audio-Dateinamen zwischen zwei Dialogen derselben Episode.
+
+    Die gelieferten Dicts sind die Originale aus `episode`, nicht Kopien: wer
+    `audio_path` setzt, aendert damit die Episode selbst.
+    """
+    line_index = 0
+    events: list[dict[str, Any]] = episode.get("events") or []
+    for event in events:
+        if event.get("type") != "dialog":
+            continue
+        lines: list[dict[str, Any]] = (event.get("config") or {}).get("lines") or []
+        for dialogue_line in lines:
+            line_index += 1
+            yield line_index, dialogue_line
+
+
 def choose_text(dialogue_line: dict[str, Any], prefer_simple: bool) -> str:
     """Welche Textfassung vertont wird.
 
@@ -122,8 +145,7 @@ def collect_voice_lines(
             if episode_id is not None and current_episode_id != episode_id:
                 continue
 
-            dialogue_sequence: list[dict[str, Any]] = episode.get("dialogue_sequence") or []
-            for position, dialogue_line in enumerate(dialogue_sequence, start=1):
+            for position, dialogue_line in iter_dialogue_lines(episode):
                 text = choose_text(dialogue_line, prefer_simple_text)
                 if not text:
                     continue
@@ -257,11 +279,11 @@ def write_audio_paths(produced: dict[Path, dict[int, str]]) -> int:
     changed_files = 0
     for episode_file, paths_per_line in produced.items():
         episode = json.loads(episode_file.read_text(encoding="utf-8"))
-        dialogue_sequence: list[dict[str, Any]] = episode.get("dialogue_sequence") or []
+        lines_by_index = dict(iter_dialogue_lines(episode))
         file_changed = False
 
         for line_index, audio_path in paths_per_line.items():
-            dialogue_line = dialogue_sequence[line_index - 1]
+            dialogue_line = lines_by_index[line_index]
             if dialogue_line.get("audio_path") != audio_path:
                 dialogue_line["audio_path"] = audio_path
                 file_changed = True
