@@ -59,15 +59,20 @@ Eine generische Spiel-Engine im Browser plus austauschbare Content-Pakete
 
 Content (Welten, Episoden mit ihren Eventlisten, ausgelagerte Event-Konfigurationen,
 Sammelkarten) lebt als statische
-JSON unter `data/themes/<theme_id>/` — versioniert wie Code, kein Editor im MVP.
-Das verbindliche Schema + LLM-Copy-Paste-Prompt liegt unter `data/_authoring/`.
+JSON unter `data/themes/<theme_id>/`, kein Editor im MVP. **`data/themes/` ist
+lokal eine NTFS-Junction auf Google Drive (`H:\Meine Ablage\U105_Questoria`)** —
+der Ordner liegt bewusst außerhalb von Git (`.gitignore`), Backup und
+Versionsstand übernimmt Drive. Deploy liest davon unbeeinflusst: `deploy.cmd`
+synct den lokalen Ordnerinhalt, egal ob Datei oder Junction dahintersteht.
+Das verbindliche Schema + LLM-Copy-Paste-Prompt liegt unter `data/_authoring/`
+(bleibt regulär in Git, ist Werkzeug/Doku, kein generierter Content).
 **Jede Engine-Änderung, die das Content-Format betrifft, zieht das
 Authoring-Toolkit im selben Commit mit** — siehe
 `data/_authoring/README.md` → „Pflegepflicht".
 
 ## Critical Rules
 
-1. **Content ist read-only über die API** — Schreibzugriff auf `data/themes/` gibt es nur per Git-Commit, nie über einen Endpoint.
+1. **Content ist read-only über die API** — Schreibzugriff auf `data/themes/` gibt es nur direkt im Dateisystem (Drive-Ordner), nie über einen Endpoint.
 2. **Eventtyp, `difficulty_level` und `rarity` sind geschlossene, dokumentierte Wertemengen** — ein Eventtyp kommt erst in die Tabelle in `data/_authoring/JSON_SCHEMA_REFERENCE.md` Abschnitt 5.0, **wenn seine Angular-Komponente existiert**. Sonst referenziert generierter Content Events, die es nicht gibt.
 3. **Zwei Bühnenplätze (`left`/`right`), keine Koordinaten** — das ist eine bewusste Vereinfachung, kein Provisorium, das später "richtig" gebaut wird.
 4. **Fortschritt gehört nie ins Content** — was ein Kind geschafft, gesammelt oder eingestellt hat, liegt im Spielstand in der Datenbank. Kein `status`, `stars`, `earned` in einer JSON-Datei.
