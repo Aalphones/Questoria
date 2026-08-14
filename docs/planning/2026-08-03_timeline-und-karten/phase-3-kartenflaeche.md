@@ -51,28 +51,28 @@ pro Screen anders aus. Gemeinsam ist nur die Geometrie.
 
 ### Tokens (`frontend/src/styles/_tokens.scss`)
 
-- [ ] Zweck-Tokens für Fortschrittszustände ergänzen — die Screens sollen
+- [x] Zweck-Tokens für Fortschrittszustände ergänzen — die Screens sollen
       `done/current/locked` einfärben, ohne die Palette anzufassen:
       `--color-progress-done` (Moos 500), `--color-progress-done-strong`
       (Moos 600), `--color-progress-current` (Akzent 300),
       `--color-progress-current-strong` (Akzent 500), `--color-progress-locked`
       (Neutral 300), `--color-progress-locked-strong` (Neutral 400).
-- [ ] Karten-Tokens: `--color-map-route` (Akzent 500),
+- [x] Karten-Tokens: `--color-map-route` (Akzent 500),
       `--color-map-route-locked` (Neutral 400), `--color-map-ring`
       (Akzent 200 @70 %), `--color-map-chart-bg` (Moos 300),
       `--color-map-chart-line` (Neutral 100 @42 %), `--color-map-label-bg`
       (Neutral 100).
-- [ ] Größen aus dem Design als Tokens statt als Zahlen im Stylesheet:
+- [x] Größen aus dem Design als Tokens statt als Zahlen im Stylesheet:
       `--size-map-chip: 52px`, `--size-map-point: 32px`,
       `--size-map-point-current: 46px`, `--ring-map-node: 10px`,
       `--ring-map-point: 6px`, `--stroke-map-route: 7px`.
-- [ ] Bewegungs-Tokens `--duration-ambient: 5s` und `--duration-pulse: 2s`,
+- [x] Bewegungs-Tokens `--duration-ambient: 5s` und `--duration-pulse: 2s`,
       beide im `prefers-reduced-motion`-Block auf `0s` — damit steht die
       Bewegung über denselben Schalter still wie `--duration-fast`.
 
 ### Gemeinsame Bewegungen
 
-- [ ] `frontend/src/styles/_motion.scss` neu: die zwei Bildfolgen aus dem
+- [x] `frontend/src/styles/_motion.scss` neu: die zwei Bildfolgen aus dem
       Design-Handoff, die mehrere Komponenten brauchen — `eqBob`
       (`translateY(0 → -7px → 0)`) und `eqPulse` (`scale(1 → 1.14 → 1)`) —,
       global über `styles.scss` eingebunden.
@@ -83,22 +83,22 @@ pro Screen anders aus. Gemeinsam ist nur die Geometrie.
 
 ### `qst-image-slot` (`ui/image-slot/`)
 
-- [ ] `ng generate component ui/image-slot --skip-tests`
-- [ ] Eingaben: `src = input<string | null>(null)`, `label = input.required<string>()`
+- [x] `ng generate component ui/image-slot --skip-tests`
+- [x] Eingaben: `src = input<string | null>(null)`, `label = input.required<string>()`
       (Text im Platzhalter, üblicherweise der erwartete Dateiname).
-- [ ] Bild über `NgOptimizedImage` (`[ngSrc]`, `fill`, `sizes="100vw"`) —
+- [x] Bild über `NgOptimizedImage` (`[ngSrc]`, `fill`, `sizes="100vw"`) —
       Konvention für statische Bilder.
-- [ ] Internes Signal `failed`; `(error)` auf dem Bild setzt es. Ist `src` leer
+- [x] Internes Signal `failed`; `(error)` auf dem Bild setzt es. Ist `src` leer
       oder `failed` gesetzt → gestrichelte Fläche mit `label` anzeigen.
       **Das Fehler-Ereignis ist die einzige verlässliche Quelle** — der Server
       antwortet auf fehlende Dateien mit `200` und HTML.
-- [ ] Wechselt `src`, wird `failed` zurückgesetzt (`effect` oder `computed`
+- [x] Wechselt `src`, wird `failed` zurückgesetzt (`effect` oder `computed`
       über die Eingabe — kein hängender Fehlerzustand beim Kartenwechsel).
 
 ### `qst-map-canvas` (`ui/map-canvas/`)
 
-- [ ] `ng generate component ui/map-canvas --skip-tests`
-- [ ] Eingaben:
+- [x] `ng generate component ui/map-canvas --skip-tests`
+- [x] Eingaben:
   - `background = input<string | null>(null)` — Bildadresse; `null` = keine
     Bildfläche (die Etappenkarte zeichnet stattdessen ihr Gitternetz)
   - `backgroundLabel = input<string>('')` — Text für den Platzhalter
@@ -107,15 +107,15 @@ pro Screen anders aus. Gemeinsam ist nur die Geometrie.
   - `routes = input<readonly RoutePair[]>([])`
   - `dimmedPointIds = input<readonly string[]>([])` — Routen, deren Ende hier
     steht, werden neutral gezeichnet
-- [ ] `map-canvas.types.ts` für `MapCanvasPoint`.
-- [ ] Fläche: `aspect-ratio: 16 / 9`, `container-type: inline-size`,
+- [x] `map-canvas.types.ts` für `MapCanvasPoint`.
+- [x] Fläche: `aspect-ratio: 16 / 9`, `container-type: inline-size`,
       `position: relative`, volle Breite. **Das feste Seitenverhältnis ist der
       ganze Trick** — dadurch stimmen Bild, Knoten und Routen zusammen, ohne
       dass etwas verzerrt gestreckt werden muss.
-- [ ] Routenebene: ein `<svg>` über die volle Fläche, `viewBox="0 0 1600 900"`,
+- [x] Routenebene: ein `<svg>` über die volle Fläche, `viewBox="0 0 1600 900"`,
       **ohne** `preserveAspectRatio="none"` (der Fehler des Prototyps),
       `pointer-events: none`.
-- [ ] Pfadberechnung als `computed()`, nicht im Template:
+- [x] Pfadberechnung als `computed()`, nicht im Template:
   - Prozent → viewBox: `px = x / 100 * 1600`, `py = y / 100 * 900`
   - `dx`, `dy`, `len = Math.hypot(dx, dy)`; `bow = Math.min(110, len * 0.18)`
   - Kontrollpunkt = Mittelpunkt + Normale (`-dy/len`, `dx/len`) × `bow`
@@ -123,37 +123,37 @@ pro Screen anders aus. Gemeinsam ist nur die Geometrie.
   - Route mit unbekannter Knoten-ID wird **übersprungen**, nicht gezeichnet —
     ein Tippfehler im Content darf keinen Screen abschießen. Bei `len === 0`
     ebenfalls überspringen (Division durch null).
-- [ ] Linienstil: `--stroke-map-route`, `stroke-dasharray: 16 22`,
+- [x] Linienstil: `--stroke-map-route`, `stroke-dasharray: 16 22`,
       `stroke-linecap: round`, `fill: none`, **`vector-effect: non-scaling-stroke`**
       — ohne das wird die Linie beim Skalieren dick.
-- [ ] `<ng-content>` für die Knoten, über der Routenebene.
+- [x] `<ng-content>` für die Knoten, über der Routenebene.
 
 ### `qst-map-point` (`ui/map-canvas/map-point/`)
 
-- [ ] `ng generate component ui/map-canvas/map-point --skip-tests`
-- [ ] Eingaben: `x = input.required<number>()`, `y = input.required<number>()`
+- [x] `ng generate component ui/map-canvas/map-point --skip-tests`
+- [x] Eingaben: `x = input.required<number>()`, `y = input.required<number>()`
       (Prozent), `size = input<number | null>(null)` (Prozent der Kartenbreite).
-- [ ] Positionierung über `host`-Bindungen: `[style.left.%]="x()"`,
+- [x] Positionierung über `host`-Bindungen: `[style.left.%]="x()"`,
       `[style.top.%]="y()"`, dazu `position: absolute; translate: -50% -50%` im
       Stylesheet.
-- [ ] Größe als Custom Property für die projizierten Kinder:
+- [x] Größe als Custom Property für die projizierten Kinder:
       `[style.--map-point-size]` auf `${size()}cqw` — Container-Einheiten machen
       die Größe zum Anteil der Kartenbreite. **Das behebt den zweiten
       Prototyp-Fehler** (dort Pixel, dadurch überlappende Knoten auf kleinen
       Bildschirmen). Nimmt Angular die Bindung auf eine Custom Property nicht
       an, stattdessen `setProperty` in einem `effect()` — Verhalten identisch,
       kein Umbau.
-- [ ] `:host` bekommt ein `display` (Konvention) und `z-index` über der
+- [x] `:host` bekommt ein `display` (Konvention) und `z-index` über der
       Routenebene.
 
 ### Doku
 
-- [ ] `docs/code-map.md`: `ui/map-canvas/`, `ui/image-slot/` und
+- [x] `docs/code-map.md`: `ui/map-canvas/`, `ui/image-slot/` und
       `src/styles/_motion.scss` eintragen.
-- [ ] `docs/design/README.md` → „Offene Punkte": beide 🟡 als erledigt
+- [x] `docs/design/README.md` → „Offene Punkte": beide 🟡 als erledigt
       markieren, mit einem Halbsatz **wie** sie gelöst wurden (Container-
       Einheiten, festes Seitenverhältnis) — nicht kommentarlos löschen.
-- [ ] `docs/conventions/css.md`: eine Zeile zu den gemeinsamen Bewegungen in
+- [x] `docs/conventions/css.md`: eine Zeile zu den gemeinsamen Bewegungen in
       `_motion.scss`.
 
 ## Risiken
@@ -164,3 +164,36 @@ pro Screen anders aus. Gemeinsam ist nur die Geometrie.
   Kommentar an der Stelle im Stylesheet.
 
 ## Report-Back
+
+**Status: complete** (14.08.2026). `npm run build` und `npm run lint` grün.
+
+Gebaut wie geplant: `qst-map-canvas` (16:9-Fläche, `container-type: inline-size`,
+SVG-Routenebene mit `viewBox="0 0 1600 900"` ohne Verzerrung),
+`qst-map-point` (Prozent-Position, Größe als `cqw`) und `qst-image-slot`
+(Platzhalter über das Fehler-Ereignis des Bildes). Tokens für
+Fortschrittszustände, Kartenfarben, Kartenmaße und die zwei Dauerbewegungen
+liegen in `_tokens.scss`, die geteilten Keyframes in `_motion.scss`.
+
+**Zwei Abweichungen — beide vom Plan als Ausweichweg vorgesehen bzw. klein:**
+
+1. **Größe wird direkt gesetzt statt gebunden.** `[style.--map-point-size]` ist
+   in Angular nicht zugesichert; `map-point.ts` setzt die Custom Property in
+   einem `effect()` über `style.setProperty`. Der Plan nennt genau diesen
+   Ausweichweg, Verhalten identisch.
+2. **Temporäres Prüfbild `features/map-demo/` unter `/map-demo`.** Die
+   Akzeptanzkriterien 1–4 lassen sich nur am Bildschirm prüfen, und die echten
+   Kartenscreens kommen erst in Phase 6–8. Das Prüfbild zeigt die drei Knoten
+   der Testwelt, zwei Routen, eine absichtlich ins Leere zeigende Route und den
+   Bildplatzhalter. Fällt mit Phase 7 weg (Eintrag in FINDINGS.md).
+
+**Neue Tokens, die die Screens ab Phase 6 benutzen sollen:**
+`--color-progress-*` (done/current/locked, je normal + `-strong`),
+`--color-map-route`, `--color-map-route-locked`, `--color-map-ring`,
+`--color-map-chart-bg`, `--color-map-chart-line`, `--color-map-label-bg`,
+`--size-map-chip`, `--size-map-point`, `--size-map-point-current`,
+`--ring-map-node`, `--ring-map-point`, `--stroke-map-route`,
+`--dash-map-route`, `--border-width-placeholder`.
+
+**Nicht geprüft:** alles Sichtbare. Ob Knoten und Routen auf schmalen Fenstern
+wirklich sitzen (AK 1–3) und ob die Bewegung bei `prefers-reduced-motion`
+stillsteht (AK 4), sieht erst der Blick auf `/map-demo`.

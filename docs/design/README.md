@@ -65,14 +65,15 @@ in der Umsetzung ab — jeweils mit Grund:
 
 ## Offene Punkte
 
-- 🟡 **Node-Größen sind im Prototyp px-Werte** (`size: 200`, `width: 132`),
+- ✅ **Node-Größen sind im Prototyp px-Werte** (`size: 200`, `width: 132`),
   während die Positionen in Prozent stehen. Auf kleinen Viewports rücken die
-  Knoten dadurch zusammen und überlappen. In der Umsetzung Größen ebenfalls
-  relativ zur Kartenbreite rechnen (Container-Query-Einheiten), sonst sieht die
-  Karte auf dem Handy anders aus als im Design.
-- 🟡 **Der Prototyp verzerrt die Routen-Kurven** (`preserveAspectRatio="none"`).
-  Mit einem Container mit festem Seitenverhältnis (16:9, wie die Kartenbilder)
-  entfällt das Problem — dann stimmen Kurven und Knotenpositionen zusammen.
+  Knoten dadurch zusammen und überlappen. **Gelöst:** `qst-map-point` gibt die
+  Größe als Container-Einheit (`cqw`, Anteil der Kartenbreite) an seine Kinder
+  weiter — die Knoten schrumpfen mit der Karte statt zu überlappen.
+- ✅ **Der Prototyp verzerrt die Routen-Kurven** (`preserveAspectRatio="none"`).
+  **Gelöst:** `qst-map-canvas` hat ein festes Seitenverhältnis 16:9, deshalb
+  braucht die Routenebene keine Verzerrung mehr (Standard-`preserveAspectRatio`)
+  und Kurven treffen die Knoten auf jeder Fensterbreite.
 
 ## Prototyp starten
 

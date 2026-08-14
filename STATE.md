@@ -3,25 +3,22 @@
 **Aktiver Plan:**
 [Timeline & Karten (Meilenstein 2)](docs/planning/2026-08-03_timeline-und-karten/README.md)
 
-**Phase:** 3/8 — Kartenfläche: Knoten, Routen, Bildplatzhalter (pending)
+**Phase:** 4/8 — Fortschritts-Speicher + Freischaltregeln (pending)
 
-**Nächster Schritt:** `/implement` starten. Phase 3 baut das gemeinsame
-Kartenbauteil (`qst-map-canvas`, `qst-map-point`, `qst-image-slot`), das
-Planeten-, Etappen- und Ortskarte teilen. Rating **heikel** — vorher
+**Nächster Schritt:** `/implement` starten. Phase 4 baut den Fortschritts-Dienst
+(Ablage im Browser-Speicher) und die Freischaltregeln als reine Funktionen —
+Rating **standard**, `sonnet` reicht. Vorher
 [README](docs/planning/2026-08-03_timeline-und-karten/README.md) und
-[phase-3-kartenflaeche.md](docs/planning/2026-08-03_timeline-und-karten/phase-3-kartenflaeche.md)
+[phase-4-fortschritt.md](docs/planning/2026-08-03_timeline-und-karten/phase-4-fortschritt.md)
 lesen.
 
-**Phase 2 ist fertig** (Testwelt im Repo + Frontend liest über die
-Schnittstelle) — lokal verifiziert (Build + Lint grün, alle drei
-Content-Aufrufe gegen die echte `dev_fixture`-Welt getestet), committet.
-Dabei einen Bug in `ContentService::themePath()` gefunden und behoben (die
-Google-Drive-Junction ließ jede echte Welt an der Pfad-Absicherung
-scheitern). Details: [phase-2-testwelt-und-anbindung.md](docs/planning/2026-08-03_timeline-und-karten/phase-2-testwelt-und-anbindung.md)
+**Phase 3 ist fertig** (Kartenfläche, Kartenpunkt, Bildplatzhalter) — Build und
+Lint grün. **Am Bildschirm noch ungeprüft:** `npm start` → `/map-demo` zeigt das
+temporäre Prüfbild (drei Knoten der Testwelt, zwei Routen, Bildplatzhalter).
+Dort gehören die Akzeptanzkriterien 1–4 kontrolliert: Fenster von 360 px bis
+Vollbild ziehen, und einmal mit eingeschalteter Bewegungsreduzierung schauen.
+Details: [phase-3-kartenflaeche.md](docs/planning/2026-08-03_timeline-und-karten/phase-3-kartenflaeche.md)
 → Report-Back.
-
-**Modell-Empfehlung für Phase 3:** `opusplan` (Opus plant, Sonnet setzt um) —
-Rating heikel.
 
 **Merkposten:** PHP/Composer liegen unter `C:\Users\sasch\develop\.tools\`
 (`php.cmd`/`composer.cmd`), nicht im Suchpfad des Benutzers. Ad-hoc-Testserver

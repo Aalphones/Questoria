@@ -27,6 +27,15 @@ Meilenstein betreffen. Format:
   zeigt jetzt auf `http://localhost:8000` (`backend\serve.cmd`). Rückweg gegen
   den echten Server: beide Ziele in der Datei wieder auf
   `https://questoria.info` setzen, `secure: true`.
+- [ ] → Phase 7: Das temporäre Prüfbild `features/map-demo/` samt Route
+  `map-demo` in `app.routes.ts` wird mit der Ortskarte gelöscht — sie zeigt
+  dasselbe an echten Daten. Auch die Zeile in `docs/code-map.md` entfernen.
+- [ ] → Phase 6/7/8: Die Größe eines Knotens kommt bei `qst-map-point` als
+  Custom Property `--map-point-size` an den projizierten Inhalt (Einheit `cqw`).
+  Ein Knoten setzt seine Breite also auf `var(--map-point-size)`, nicht auf
+  einen eigenen Wert. Ohne `size`-Eingabe ist die Property nicht gesetzt — dann
+  braucht der Knoten eine eigene Größe aus einem Token
+  (`--size-map-point`, `--size-map-point-current`, `--size-map-chip`).
 - [ ] → Meilenstein 4: `ProgressService` liest und schreibt den Browser-Speicher.
   Beim Umstieg auf die Savegame-Schnittstelle wird genau diese Datei getauscht;
   `progress.rules.ts` und alle Screens bleiben unberührt (ADR-006).

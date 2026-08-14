@@ -1,0 +1,27 @@
+:host {
+  display: block;
+  position: relative;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+.image-slot {
+  &__image {
+    object-fit: cover;
+  }
+
+  &__placeholder {
+    display: flex;
+    position: absolute;
+    inset: 0;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-3);
+    border: var(--border-width-placeholder) dashed var(--color-divider);
+    border-radius: var(--radius-md);
+    background: var(--color-hover-wash);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-detail);
+    text-align: center;
+  }
+}

@@ -58,6 +58,23 @@
   --color-focus-ring: var(--palette-accent);
   --color-status-error: var(--palette-accent-700);
 
+  // ── Fortschrittszustände (done / current / locked) ───────────────────────
+  // Die Kartenscreens färben ihre Knoten damit ein, ohne die Palette zu sehen.
+  --color-progress-done: var(--palette-moss-500);
+  --color-progress-done-strong: var(--palette-moss-600);
+  --color-progress-current: var(--palette-accent-300);
+  --color-progress-current-strong: var(--palette-accent-500);
+  --color-progress-locked: var(--palette-neutral-300);
+  --color-progress-locked-strong: var(--palette-neutral-400);
+
+  // ── Karten ───────────────────────────────────────────────────────────────
+  --color-map-route: var(--palette-accent-500);
+  --color-map-route-locked: var(--palette-neutral-400);
+  --color-map-ring: color-mix(in srgb, var(--palette-accent-200) 70%, transparent);
+  --color-map-chart-bg: var(--palette-moss-300);
+  --color-map-chart-line: color-mix(in srgb, var(--palette-neutral-100) 42%, transparent);
+  --color-map-label-bg: var(--palette-neutral-100);
+
   // ── Schrift ──────────────────────────────────────────────────────────────
   --font-heading: 'Caprasimo', system-ui, sans-serif;
   --font-heading-weight: 400;
@@ -93,6 +110,18 @@
   --radius-card: calc(var(--radius-lg) * 1.15);
   --radius-pill: 999px;
 
+  // ── Kartenmaße ───────────────────────────────────────────────────────────
+  // Feste Pixelmaße aus dem Design. Die Knotengrößen selbst kommen aus dem
+  // Content in Prozent der Kartenbreite (siehe qst-map-point).
+  --size-map-chip: 52px;
+  --size-map-point: 32px;
+  --size-map-point-current: 46px;
+  --ring-map-node: 10px;
+  --ring-map-point: 6px;
+  --stroke-map-route: 7px;
+  --dash-map-route: 16 22;
+  --border-width-placeholder: 2px;
+
   // ── Elevation ────────────────────────────────────────────────────────────
   --shadow-sm: 0 1px 2px color-mix(in srgb, var(--palette-neutral-900) 14%, transparent);
   --shadow-md: 0 3px 10px color-mix(in srgb, var(--palette-neutral-900) 16%, transparent);
@@ -100,11 +129,16 @@
 
   // ── Bewegung ─────────────────────────────────────────────────────────────
   --duration-fast: 120ms;
+  // Dauerbewegungen der Karten (siehe _motion.scss).
+  --duration-ambient: 5s;
+  --duration-pulse: 2s;
   --easing-standard: cubic-bezier(0.2, 0, 0.2, 1);
 }
 
 @media (prefers-reduced-motion: reduce) {
   :root {
     --duration-fast: 0ms;
+    --duration-ambient: 0s;
+    --duration-pulse: 0s;
   }
 }

@@ -1,0 +1,12 @@
+@if (imageUrl(); as url) {
+  <img
+    class="image-slot__image"
+    [ngSrc]="url"
+    fill
+    sizes="100vw"
+    alt=""
+    (error)="markFailed()"
+  />
+} @else {
+  <span class="image-slot__placeholder">{{ label() }}</span>
+}

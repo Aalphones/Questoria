@@ -1,0 +1,31 @@
+:host {
+  display: block;
+  max-inline-size: 72rem;
+  padding: var(--space-6) var(--space-4);
+  margin-inline: auto;
+}
+
+.map-demo {
+  &__note {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-body);
+  }
+
+  &__node {
+    display: block;
+    // Größe kommt von qst-map-point als Anteil der Kartenbreite.
+    inline-size: var(--map-point-size);
+    aspect-ratio: 1;
+    border-radius: var(--radius-pill);
+    background: var(--color-progress-current-strong);
+    box-shadow:
+      0 0 0 var(--ring-map-point) var(--color-map-ring),
+      var(--shadow-md);
+    animation: eqPulse var(--duration-pulse) var(--easing-standard) infinite;
+
+    &--dimmed {
+      background: var(--color-progress-locked-strong);
+      animation: none;
+    }
+  }
+}

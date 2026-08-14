@@ -1,0 +1,19 @@
+@if (background(); as backgroundUrl) {
+  <qst-image-slot
+    class="map-canvas__background"
+    [src]="backgroundUrl"
+    [label]="backgroundLabel()"
+  />
+}
+
+<svg class="map-canvas__routes" [attr.viewBox]="viewBox" aria-hidden="true">
+  @for (route of routePaths(); track route.id) {
+    <path
+      class="map-canvas__route"
+      [class.map-canvas__route--dimmed]="route.dimmed"
+      [attr.d]="route.path"
+    />
+  }
+</svg>
+
+<ng-content />

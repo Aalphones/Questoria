@@ -1,0 +1,19 @@
+<h1 class="map-demo__title">Kartenfläche — Prüfbild</h1>
+<p class="map-demo__note">
+  Fenster schmaler ziehen: Knoten bleiben auf ihren Punkten, die Routen treffen
+  sie mittig, die Strichstärke bleibt gleich.
+</p>
+
+<qst-map-canvas
+  [background]="backgroundUrl"
+  [backgroundLabel]="backgroundLabel"
+  [points]="points()"
+  [routes]="routes()"
+  [dimmedPointIds]="dimmedPointIds()"
+>
+  @for (point of points(); track point.id) {
+    <qst-map-point [x]="point.x" [y]="point.y" [size]="5">
+      <span class="map-demo__node" [class.map-demo__node--dimmed]="isDimmed(point.id)"></span>
+    </qst-map-point>
+  }
+</qst-map-canvas>

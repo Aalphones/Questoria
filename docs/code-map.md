@@ -31,14 +31,18 @@ im Frontend-Ordnernamen, PascalCase in PHP-Klassen):
 | Ergebnis | `features/result/` | Sterne, Statistiken, Erfolge, Banner für die neu gewonnene Sammelkarte |
 | Sammelkarten | `features/cards/`, `features/cards/print/` | Trophäenhalle (Gruppen, Filter, Detail, Druckauswahl) und A4-Druckbogen |
 | Nutzerverwaltung | `features/auth/`, `features/profile/` | Login, Profile anlegen/wechseln |
+| Kartenfläche | `ui/map-canvas/` | Gemeinsames Bauteil von Planeten-, Etappen- und Ortskarte: Fläche im Seitenverhältnis 16:9, Hintergrund, Routenlinien; `map-point/` setzt ein beliebiges Kind auf eine Prozent-Position |
+| Bildfläche | `ui/image-slot/` | Bild mit beschriftetem Platzhalter, wenn die Datei fehlt |
 | Gemeinsame UI | `ui/hud/`, `ui/speech-bubble/` | Kopfleiste auf allen Spiel-Screens, Sprechblasen |
 | Zentrale Services | `services/game-state.service.ts`, `services/content.service.ts`, `services/savegame.service.ts`, `services/narration.service.ts` | Aktive Welt/Profil/Lernstufe, JSON-Content lesen, Speichern/Laden, Vorlesemodus + Sprachausgabe. **`ContentService` ist die einzige Ladestelle für Content** — dort hängt später der Offline-Cache (Meilenstein 6) |
 | Content-Typen | `models/` | TypeScript-Abbild des JSON-Schemas (`content.types.ts`) und der Ladezustände (`game-state.types.ts`) |
-| Design-Tokens | `frontend/src/styles/` | `_tokens.scss` (Farben, Schrift, Abstände, Radien) und `_fonts.scss`; global über `src/styles.scss` eingebunden |
+| Design-Tokens | `frontend/src/styles/` | `_tokens.scss` (Farben, Schrift, Abstände, Radien, Kartenmaße), `_fonts.scss` und `_motion.scss` (Bildfolgen, die mehrere Komponenten teilen); global über `src/styles.scss` eingebunden |
 
 **Ist-Stand:** gebaut sind bisher `features/main-hub/` (mit `theme-card/` und
-`difficulty-picker/`), `services/`, `models/` und `styles/`. Alle übrigen Zeilen
-sind Soll-Zustand für spätere Meilensteine.
+`difficulty-picker/`), `ui/map-canvas/`, `ui/image-slot/`, `services/`, `models/`
+und `styles/`. Dazu `features/map-demo/` als temporäres Prüfbild der
+Kartenfläche unter `/map-demo` — fällt mit der Ortskarte weg. Alle übrigen
+Zeilen sind Soll-Zustand für spätere Meilensteine.
 
 ## Backend (`backend/src/`)
 

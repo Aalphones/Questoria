@@ -1,0 +1,8 @@
+:host {
+  display: block;
+  position: absolute;
+  // left/top zeigen auf die Mitte des Knotens, nicht auf seine linke obere Ecke.
+  translate: -50% -50%;
+  // Über der Routenebene, damit Knoten anklickbar bleiben.
+  z-index: 1;
+}

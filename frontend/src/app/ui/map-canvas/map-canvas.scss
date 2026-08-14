@@ -1,0 +1,41 @@
+:host {
+  display: block;
+  position: relative;
+  inline-size: 100%;
+  // Festes Seitenverhältnis: hält Bild, Knoten und Routen deckungsgleich.
+  aspect-ratio: 16 / 9;
+  // Bezugsgröße für die cqw-Angaben der Knoten (siehe qst-map-point).
+  // ACHTUNG: Wer weiter oben im Baum ein container-type setzt, verschiebt
+  // diesen Bezug still — die Knoten schrumpfen oder wachsen dann falsch.
+  container-type: inline-size;
+}
+
+.map-canvas {
+  &__background {
+    position: absolute;
+    inset: 0;
+  }
+
+  &__routes {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    pointer-events: none;
+  }
+
+  &__route {
+    fill: none;
+    stroke: var(--color-map-route);
+    stroke-width: var(--stroke-map-route);
+    stroke-dasharray: var(--dash-map-route);
+    stroke-linecap: round;
+    // Ohne das skaliert die Linie mit dem viewBox mit und wird auf breiten
+    // Fenstern klobig.
+    vector-effect: non-scaling-stroke;
+
+    &--dimmed {
+      stroke: var(--color-map-route-locked);
+    }
+  }
+}

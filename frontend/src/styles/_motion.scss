@@ -1,0 +1,28 @@
+// Gemeinsame Bildfolgen aus dem Design-Handoff ("Interaktionen & Verhalten").
+// Bewusst global statt je Komponente: Angular kapselt Komponenten-Styles, die
+// Keyframes stünden sonst in Planeten-, Etappen- und Ortskarte dreimal
+// identisch. Komponenten setzen nur `animation-name` und holen die Dauer aus
+// einem Token — dadurch greift der prefers-reduced-motion-Schalter aus
+// _tokens.scss auch hier.
+
+@keyframes eqBob {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+
+  50% {
+    translate: 0 -7px;
+  }
+}
+
+@keyframes eqPulse {
+  0%,
+  100% {
+    scale: 1;
+  }
+
+  50% {
+    scale: 1.14;
+  }
+}

@@ -70,6 +70,13 @@ am Ende von `_tokens.scss` setzt `--duration-fast` auf `0ms`. Wer eine eigene
 Dauer hart in eine Komponente schreibt, umgeht diesen Schalter — genau deshalb
 kommen Dauern aus Tokens.
 
+**Keyframes stehen im Komponenten-Stylesheet — außer sie werden geteilt.** Die
+zwei Dauerbewegungen der Karten (`eqBob`, `eqPulse`) brauchen Planeten-,
+Etappen- und Ortskarte gleichermaßen; gekapselt wären sie dreimal dasselbe.
+Sie stehen deshalb global in `frontend/src/styles/_motion.scss`, Komponenten
+setzen nur `animation-name` und die Dauer aus `--duration-ambient` bzw.
+`--duration-pulse` (beide im `prefers-reduced-motion`-Block auf `0s`).
+
 ## Spezifität flach halten
 
 Keine ID-Selektoren, kein `!important`, keine Selektorketten über zwei Glieder.
