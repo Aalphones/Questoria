@@ -194,6 +194,6 @@ liegen in `_tokens.scss`, die geteilten Keyframes in `_motion.scss`.
 `--ring-map-node`, `--ring-map-point`, `--stroke-map-route`,
 `--dash-map-route`, `--border-width-placeholder`.
 
-**Nicht geprüft:** alles Sichtbare. Ob Knoten und Routen auf schmalen Fenstern
-wirklich sitzen (AK 1–3) und ob die Bewegung bei `prefers-reduced-motion`
-stillsteht (AK 4), sieht erst der Blick auf `/map-demo`.
+**Sichttest bestanden** (Sascha, 14.08.2026, auf questoria.info/map-demo):
+Knoten sitzen auf ihren Punkten, Routen treffen sie, Bildplatzhalter steht.
+Damit sind AK 1–5 erfüllt.

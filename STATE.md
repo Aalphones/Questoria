@@ -13,10 +13,10 @@ Rating **standard**, `sonnet` reicht. Vorher
 lesen.
 
 **Phase 3 ist fertig** (Kartenfläche, Kartenpunkt, Bildplatzhalter) — Build und
-Lint grün. **Am Bildschirm noch ungeprüft:** `npm start` → `/map-demo` zeigt das
-temporäre Prüfbild (drei Knoten der Testwelt, zwei Routen, Bildplatzhalter).
-Dort gehören die Akzeptanzkriterien 1–4 kontrolliert: Fenster von 360 px bis
-Vollbild ziehen, und einmal mit eingeschalteter Bewegungsreduzierung schauen.
+Lint grün, Sichttest auf questoria.info am 14.08.2026 durch Sascha bestanden
+(Knoten sitzen, Routen treffen, Platzhalter steht). Das temporäre Prüfbild liegt
+unter `/map-demo` und fällt mit Phase 7 weg. Der Server trägt Backend, Frontend
+und Content im aktuellen Stand; die Content-Aufrufe antworten dort richtig.
 Details: [phase-3-kartenflaeche.md](docs/planning/2026-08-03_timeline-und-karten/phase-3-kartenflaeche.md)
 → Report-Back.
 
