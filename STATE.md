@@ -1,12 +1,14 @@
 # STATE
 
-**Aktiver Plan:** (kein aktiver Plan)
+**Aktiver Plan:** (kein aktiver Plan — geparkt im Backlog:
+[Event Engine, Meilenstein 3](docs/planning/2026-08-14_event-engine/README.md),
+7 Phasen, freigegeben am 14.08.2026)
 
 **Phase:** —
 
-**Nächster Schritt:** Meilenstein 3 planen (Event Engine — spielt die Eventliste
-einer Episode ab und löst den Ort-Platzhalter ab): `/plan`. Grundlage sind
-[PROJECT.md](docs/PROJECT.md) und [ADR-004](docs/decisions/004-event-engine.md).
+**Nächster Schritt:** Umsetzung starten mit `/implement` (Phase 1: `rem`-Tokens,
+Vorlesemodus, Sprachausgabe). Offen vor Phase 4: für `text_input` und
+`image_search` existiert kein Mockup — freihändig bauen oder erst einen Entwurf.
 
 **Zuletzt abgeschlossen:** Meilenstein 2 „Timeline & Karten", archiviert am
 14.08.2026 →
