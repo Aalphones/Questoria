@@ -23,6 +23,7 @@ sie im Code, in Docs oder Tickets auftauchen.
 | Authoring-Toolkit | Die Schema-Referenz + LLM-Prompts + Asset-Vorgaben unter `data/_authoring/`, mit denen Content von Hand/per LLM erzeugt wird. |
 | Savegame | Datenbank-Eintrag, der nur Content-IDs referenziert (aktive Episode, aktiver Node, abgeschlossene Events, besessene Sammelkarten) — nie Content selbst. |
 | Spielerprofil | Ein Profil innerhalb eines Accounts (ein Account kann mehrere Kinder/Profile haben). |
+| Planetenkarte | Der Einstieg: alle installierten Themenwelten als Knoten auf einer Karte (`main_hub.json` → `hub_map`). Eine pro Installation, ohne Kopfleiste — von hier führt kein Weg zurück. |
 | Etappenkarte | Die Übersichtskarte einer Welt: alle Story-Arcs als Inseln, mit Sternen pro Etappe. Eine pro Welt. |
 | Ortskarte | Die begehbare Karte eines einzelnen Arcs mit den Nodes, die Episoden starten. Eine pro Arc. |
 | Sammelkarte | Ein fertiges Kartenbild (63 × 88 mm, 630 × 880 px), das ein `reward`-Event freischaltet. Die Engine erzeugt keine Karten, sie liefert sie aus. |
