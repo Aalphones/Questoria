@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { Observable, catchError, forkJoin, map, of, startWith, switchMap } from 'rxjs';
@@ -119,8 +119,19 @@ export class MainHub {
     return latestThemeId;
   });
 
+  /**
+   * Nur auf schmalen Karten wirksam: dort startet das Info-Panel zugeklappt,
+   * damit es die Welten nicht verdeckt. Ab der Schwelle in `_breakpoints.scss`
+   * zeigt das Stylesheet den Inhalt unabhängig von diesem Zustand.
+   */
+  protected readonly panelOpen = signal<boolean>(false);
+
   chooseTheme(themeId: string): void {
     void this.router.navigate(['theme', themeId, 'level']);
+  }
+
+  protected togglePanel(): void {
+    this.panelOpen.update((isOpen: boolean) => !isOpen);
   }
 
   protected statusLabel(themeId: string): string {

@@ -44,11 +44,25 @@
       </qst-map-point>
     }
 
-    <div class="timeline__panel">
-      <span class="timeline__panel-tag">{{ loadedWorld.title }} · {{ loadedWorld.subject }}</span>
-      <h1 class="timeline__panel-title">{{ loadedWorld.arc_overview.title }}</h1>
-      <p class="timeline__panel-hint">Wähle eine geschaffte oder aktuelle Etappe, um weiterzuspielen.</p>
-      <button type="button" class="timeline__reset" (click)="resetDialog.showModal()">Fortschritt zurücksetzen</button>
+    <div class="timeline__panel" [class.timeline__panel--open]="panelOpen()">
+      <!-- Nur auf schmalen Karten sichtbar; dort verdeckt das offene Panel
+           sonst die Etappen (siehe _breakpoints.scss). -->
+      <button
+        type="button"
+        class="timeline__panel-toggle"
+        [attr.aria-expanded]="panelOpen()"
+        (click)="togglePanel()"
+      >
+        <span class="timeline__burger" aria-hidden="true"></span>
+        {{ loadedWorld.arc_overview.title }}
+      </button>
+
+      <div class="timeline__panel-body">
+        <span class="timeline__panel-tag">{{ loadedWorld.title }} · {{ loadedWorld.subject }}</span>
+        <h1 class="timeline__panel-title">{{ loadedWorld.arc_overview.title }}</h1>
+        <p class="timeline__panel-hint">Wähle eine geschaffte oder aktuelle Etappe, um weiterzuspielen.</p>
+        <button type="button" class="timeline__reset" (click)="resetDialog.showModal()">Fortschritt zurücksetzen</button>
+      </div>
     </div>
 
     <ul class="timeline__legend">

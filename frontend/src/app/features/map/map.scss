@@ -1,3 +1,5 @@
+@use '../../../styles/breakpoints' as bp;
+
 :host {
   display: block;
 }
@@ -106,5 +108,25 @@
     inline-size: var(--size-map-compass-needle-inline);
     block-size: var(--size-map-compass-needle-block);
     background: linear-gradient(180deg, var(--color-accent-hover) 50%, var(--color-progress-locked) 50%);
+  }
+}
+
+@container (max-width: #{bp.$map-narrow}) {
+  // Die Kompassrose ist reine Deko und frisst auf einer schmalen Karte ein
+  // Viertel der Fläche — dort weicht sie den Orten.
+  .map__compass {
+    display: none;
+  }
+
+  .map__label {
+    padding-inline: var(--space-2);
+    font-size: var(--font-size-kicker);
+  }
+}
+
+// Schmales Fenster: Außenabstand runter, damit die Karte die Breite bekommt.
+@media (max-width: #{bp.$screen-narrow}) {
+  .map {
+    padding: var(--space-3) var(--space-2);
   }
 }

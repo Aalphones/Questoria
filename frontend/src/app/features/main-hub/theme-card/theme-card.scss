@@ -1,3 +1,5 @@
+@use '../../../../styles/breakpoints' as bp;
+
 :host {
   display: block;
 }
@@ -67,5 +69,21 @@
   &__status {
     font-size: var(--font-size-detail);
     color: var(--color-text-accent);
+  }
+}
+
+// Schmale Kartenfläche: die Namenspille schrumpft mit, sonst stößt sie beim
+// Nachbarknoten an. Bezug ist die Kartenbreite (Container in map-canvas).
+@container (max-width: #{bp.$map-narrow}) {
+  .theme-card__label {
+    padding-inline: var(--space-2);
+  }
+
+  .theme-card__title {
+    font-size: var(--font-size-control);
+  }
+
+  .theme-card__status {
+    font-size: var(--font-size-kicker);
   }
 }

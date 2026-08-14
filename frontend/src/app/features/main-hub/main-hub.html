@@ -29,15 +29,29 @@
           </qst-map-point>
         }
 
-        <div class="main-hub__panel">
-          <span class="main-hub__panel-tag">Planetenkarte</span>
-          <h1 class="main-hub__panel-title">Deine Themenwelten</h1>
-          <p class="main-hub__panel-hint">Tippe auf eine Welt, um dorthin zu reisen.</p>
-          @if (continueThemeId(); as themeId) {
-            <a class="main-hub__continue" [routerLink]="['/theme', themeId, 'timeline']"
-              >Weiterspielen</a
-            >
-          }
+        <div class="main-hub__panel" [class.main-hub__panel--open]="panelOpen()">
+          <!-- Nur auf schmalen Karten sichtbar; dort verdeckt das offene Panel
+               sonst die Welten (siehe _breakpoints.scss). -->
+          <button
+            type="button"
+            class="main-hub__panel-toggle"
+            [attr.aria-expanded]="panelOpen()"
+            (click)="togglePanel()"
+          >
+            <span class="main-hub__burger" aria-hidden="true"></span>
+            Deine Themenwelten
+          </button>
+
+          <div class="main-hub__panel-body">
+            <span class="main-hub__panel-tag">Planetenkarte</span>
+            <h1 class="main-hub__panel-title">Deine Themenwelten</h1>
+            <p class="main-hub__panel-hint">Tippe auf eine Welt, um dorthin zu reisen.</p>
+            @if (continueThemeId(); as themeId) {
+              <a class="main-hub__continue" [routerLink]="['/theme', themeId, 'timeline']"
+                >Weiterspielen</a
+              >
+            }
+          </div>
         </div>
       </qst-map-canvas>
     </div>

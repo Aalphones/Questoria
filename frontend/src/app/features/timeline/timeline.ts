@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { MapEntry, WorldConfig } from '../../models/content.types';
@@ -32,6 +32,13 @@ export class Timeline {
   readonly world = input<WorldConfig | null>(null);
 
   protected readonly starIndexes = [0, 1, 2] as const;
+
+  /**
+   * Nur auf schmalen Karten wirksam: dort startet das Info-Panel zugeklappt,
+   * damit es die Etappen nicht verdeckt. Ab der Schwelle in `_breakpoints.scss`
+   * zeigt das Stylesheet den Inhalt unabhängig von diesem Zustand.
+   */
+  protected readonly panelOpen = signal<boolean>(false);
 
   private readonly isEpisodeCompleted = (episodeId: string): boolean =>
     this.progressService.isEpisodeCompleted(this.themeId(), episodeId);
@@ -90,6 +97,10 @@ export class Timeline {
 
   protected starsLabel(mapId: string): string {
     return `${this.starsOf(mapId)} von 3 Sternen`;
+  }
+
+  protected togglePanel(): void {
+    this.panelOpen.update((isOpen: boolean) => !isOpen);
   }
 
   protected confirmReset(dialog: HTMLDialogElement): void {

@@ -1,0 +1,15 @@
+// Die zwei Schwellen, an denen die Oberfläche umbricht — eine Quelle für alle
+// Komponenten. Bewusst SCSS-Variablen statt Custom Properties: Media- und
+// Container-Bedingungen können keine Custom Properties lesen.
+//
+// Einheit rem, damit die Schwelle der Grundschrift des Browsers folgt. In
+// Bedingungen zählt die Standard-Grundschrift (16px), nicht --font-size-root.
+
+// Bezug: BREITE DER KARTENFLÄCHE (Container Query in map-canvas).
+// Darunter passen Info-Panel und Kartenknoten nicht mehr nebeneinander — das
+// Panel wird zum Ausklapper, Deko weicht. ≈ 672px Kartenbreite.
+$map-narrow: 42rem;
+
+// Bezug: FENSTERBREITE (Media Query). Darunter rücken Außenabstände und
+// Kopfleiste zusammen, damit die Karte die Breite bekommt. ≈ 640px Fenster.
+$screen-narrow: 40rem;

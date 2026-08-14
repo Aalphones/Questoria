@@ -1,3 +1,5 @@
+@use '../../../styles/breakpoints' as bp;
+
 :host {
   display: block;
   position: sticky;
@@ -125,5 +127,24 @@
   &__progress-label {
     color: var(--color-text-muted);
     font-size: var(--font-size-detail);
+  }
+}
+
+// Schmales Fenster: die Kopfleiste bricht ohnehin um (flex-wrap) — hier rücken
+// nur die Abstände zusammen und die Fortschrittsleiste nimmt die Restbreite,
+// damit die Zeile nicht dreireihig wird.
+@media (max-width: #{bp.$screen-narrow}) {
+  .hud {
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .hud__progress {
+    flex: 1 1 100%;
+  }
+
+  .hud__progress-bar {
+    flex: 1 1 auto;
+    inline-size: auto;
   }
 }
