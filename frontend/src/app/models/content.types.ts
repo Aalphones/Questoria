@@ -111,6 +111,35 @@ export interface DialogConfig {
   lines: DialogueLine[];
 }
 
+/** Eine Antwortmöglichkeit eines Quiz-Events (Abschnitt 5.3). */
+export interface AnswerOption {
+  label: string;
+  /** Dateiname unter answers/ — im Vorlesemodus die einzige Information für ein nicht lesendes Kind. */
+  image?: string;
+}
+
+/** Die aufgelöste Konfiguration eines `multiple_choice`-Events (Abschnitt 5.3, ausgelagert). */
+export interface MultipleChoiceConfig {
+  question: string;
+  /** kurze Fassung für den Vorlesemodus, siehe Abschnitt 6 */
+  question_simple?: string;
+  options: AnswerOption[];
+  /** 0-basiert, Index in options */
+  correct_index: number;
+}
+
+/**
+ * Eine ausgelagerte Event-Datei unter `events/<event_id>.json` mit einer
+ * Variante je Lernstufe (Abschnitt 4 „Inline oder ausgelagert" + Varianten-Regel).
+ * Welche Variante gespielt wird, entscheidet das Gerüst — nicht die Komponente.
+ */
+export interface EventFile<TVariant = unknown> {
+  event_id: string;
+  type: EventType;
+  /** Schlüssel ist eine `difficulty_levels[].id` aus `world_config.json`. */
+  variants: Record<string, TVariant>;
+}
+
 /**
  * `config` ist typabhängig (Abschnitt 5) — `unknown` statt eines einzelnen
  * Union-Typs, weil die Engine sie ungeprüft an die per `ngComponentOutlet`

@@ -15,7 +15,7 @@ import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { Observable, catchError, map, of, startWith, switchMap } from 'rxjs';
 
-import { Episode, EpisodeEvent, EventType, WorldConfig } from '../../models/content.types';
+import { Episode, EpisodeEvent, EventFile, EventType, WorldConfig } from '../../models/content.types';
 import { EventContext } from '../../models/event-runtime.types';
 import { LoadState } from '../../models/game-state.types';
 import { ContentService } from '../../services/content.service';
@@ -25,7 +25,8 @@ import { ContentError } from '../../ui/content-error/content-error';
 import { Hud } from '../../ui/hud/hud';
 import { ImageSlot } from '../../ui/image-slot/image-slot';
 import { EpisodeRun } from './episode-run';
-import { loadEventComponent } from './event-type-map';
+import { SCORED_EVENT_TYPES, assertPlayableConfig, loadEventComponent } from './event-type-map';
+import { eventRefOf, resolveEventConfig } from './resolve-event-config';
 
 /** Sterne, bis Phase 5 den Ergebnis-Screen und die echte Bewertung bringt. */
 const PLACEHOLDER_STARS = 3;
@@ -128,16 +129,67 @@ export class EpisodeScreen {
       loadEventComponent(params),
   });
 
-  protected readonly eventInputs = computed<Record<string, unknown>>(() => ({
-    config: this.currentEvent()?.config,
-    context: this.eventContext(),
+  private readonly eventConfigRequest = computed<EventConfigRequest>(() => ({
+    event: this.currentEvent(),
+    themeId: this.themeId(),
+    difficultyLevelId: this.gameState.activeDifficultyLevel() ?? '',
   }));
+
+  /**
+   * Die fertige Konfiguration des laufenden Events: inline direkt aus der
+   * Episode, ausgelagert über `config.ref` nachgeladen und auf die aktive
+   * Lernstufe aufgelöst. Solange geladen wird, zeigt die Bühne denselben
+   * Zwischenzustand wie beim Episodenladen.
+   */
+  protected readonly eventConfigState = toSignal(
+    toObservable(this.eventConfigRequest).pipe(
+      switchMap((request: EventConfigRequest) => this.loadEventConfig(request)),
+    ),
+    { initialValue: { status: 'loading' } as LoadState<unknown> },
+  );
+
+  /** Ein Wechsel des Events erzeugt eine neue Bühne — sonst spielt die alte Komponente mit neuen Daten weiter. */
+  protected readonly eventSlot = computed<readonly number[]>(() => [this.run.eventIndex()]);
+
+  protected readonly eventErrorMessage = computed<string | null>(() => {
+    if (this.eventComponent.error() !== undefined) {
+      return 'Dieses Ereignis kennt die App noch nicht — geh über „Zurück“ auf die Karte.';
+    }
+
+    if (this.eventConfigState().status === 'error') {
+      return 'Dieses Ereignis konnte nicht geladen werden — geh über „Zurück“ auf die Karte.';
+    }
+
+    return null;
+  });
+
+  protected readonly eventInputs = computed<Record<string, unknown>>(() => {
+    const state = this.eventConfigState();
+
+    return {
+      config: state.status === 'loaded' ? state.data : null,
+      context: this.eventContext(),
+    };
+  });
 
   /** Ohne gewählte Lernstufe kommt der Screen gar nicht erst zustande — dafür sorgt der Guard. */
   private readonly eventContext = computed<EventContext>(() => ({
     themeId: this.themeId(),
     difficultyLevelId: this.gameState.activeDifficultyLevel() ?? '',
   }));
+
+  /**
+   * Wie viele Aufgaben diese Episode hat — die Aufgaben-Karte zeigt daraus ihre
+   * Fortschrittspunkte. Welche Typen bewertet werden, weiß allein die Typ-Tabelle.
+   */
+  private readonly trackScoredTotal = effect(() => {
+    const episode = this.loadedEpisode();
+    const scoredEvents = (episode?.events ?? []).filter((event: EpisodeEvent) =>
+      SCORED_EVENT_TYPES.has(event.type),
+    );
+
+    untracked(() => this.run.scoredTotal.set(scoredEvents.length));
+  });
 
   /** Eine andere Episode heißt ein neuer Lauf — die Route lässt den Screen sonst stehen. */
   private readonly resetOnEpisodeChange = effect(() => {
@@ -163,6 +215,50 @@ export class EpisodeScreen {
     });
   });
 
+  /**
+   * Inline-Events sind sofort da, ausgelagerte kommen über die
+   * Content-Schnittstelle. Beide Wege enden in derselben Prüfung: passt die
+   * Konfiguration nicht zum Eventtyp, landet das Event im Fehlerpfad statt als
+   * leere Aufgabe auf der Bühne.
+   */
+  private loadEventConfig(request: EventConfigRequest): Observable<LoadState<unknown>> {
+    const event = request.event;
+
+    if (event === null) {
+      return of({ status: 'loaded', data: null });
+    }
+
+    const ref = eventRefOf(event.config);
+
+    if (ref === null) {
+      return asLoadState(
+        of(event.config).pipe(
+          map((config: unknown): unknown => {
+            assertPlayableConfig(event.type, config);
+
+            return config;
+          }),
+        ),
+      );
+    }
+
+    return asLoadState(
+      this.content.getEvent(request.themeId, ref).pipe(
+        map((eventFile: EventFile): unknown => {
+          const config = resolveEventConfig(
+            event.config,
+            eventFile,
+            event.type,
+            request.difficultyLevelId,
+          );
+          assertPlayableConfig(event.type, config);
+
+          return config;
+        }),
+      ),
+    );
+  }
+
   private loadedEpisode(): Episode | null {
     const state = this.episodeState();
 
@@ -177,6 +273,13 @@ export class EpisodeScreen {
 
     return mapId ?? null;
   }
+}
+
+/** Woraus die Konfiguration des laufenden Events entsteht. */
+interface EventConfigRequest {
+  readonly event: EpisodeEvent | null;
+  readonly themeId: string;
+  readonly difficultyLevelId: string;
 }
 
 /** Verpackt einen HTTP-Aufruf in den Ladezustand, den die Templates lesen. */

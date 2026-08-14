@@ -1,6 +1,8 @@
 import { Type } from '@angular/core';
 
 import { EventType } from '../../models/content.types';
+import { isDialogConfig } from '../events/dialog/dialog.types';
+import { isMultipleChoiceConfig } from '../events/multiple-choice/multiple-choice.types';
 
 /**
  * Die einzige Stelle, an der ein Eventtyp seiner Komponente zugeordnet wird —
@@ -14,6 +16,39 @@ import { EventType } from '../../models/content.types';
  */
 export const EVENT_COMPONENTS: Readonly<Partial<Record<EventType, () => Promise<Type<unknown>>>>> = {
   dialog: () => import('../events/dialog/dialog').then((module) => module.Dialog),
+  multiple_choice: () =>
+    import('../events/multiple-choice/multiple-choice').then((module) => module.MultipleChoice),
+};
+
+/**
+ * Welche Eventtypen bewertet werden — nur sie gehen in die Sternenformel ein
+ * und nur sie bekommen einen Fortschrittspunkt. Steht hier, weil das Gerüst
+ * sonst anfangen müsste, einzelne Typen zu kennen.
+ */
+export const SCORED_EVENT_TYPES: ReadonlySet<EventType> = new Set<EventType>([
+  'multiple_choice',
+  'text_input',
+  'image_search',
+]);
+
+/**
+ * Prüft die fertig aufgelöste Konfiguration gegen ihren Eventtyp. Ohne diese
+ * Prüfung spielte eine kaputte Content-Datei als leere Aufgabe weiter, statt in
+ * den Fehlerpfad zu laufen — die Komponente bekommt ihre Konfiguration ungeprüft
+ * über `ngComponentOutlet`.
+ */
+export function assertPlayableConfig(type: EventType, config: unknown): void {
+  const isPlayable = EVENT_CONFIG_GUARDS[type];
+
+  if (isPlayable !== undefined && !isPlayable(config)) {
+    throw new Error(`Konfiguration passt nicht zum Eventtyp ${type}.`);
+  }
+}
+
+/** Je Typ eine Prüfung — Typen ohne Eintrag werden nicht geprüft. */
+const EVENT_CONFIG_GUARDS: Readonly<Partial<Record<EventType, (config: unknown) => boolean>>> = {
+  dialog: isDialogConfig,
+  multiple_choice: isMultipleChoiceConfig,
 };
 
 /** Lädt die Komponente zu einem Eventtyp — unbekannter Typ wirft, das Gerüst zeigt die Meldung. */

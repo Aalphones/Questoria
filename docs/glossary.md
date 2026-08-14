@@ -14,7 +14,7 @@ sie im Code, in Docs oder Tickets auftauchen.
 | Event Engine | Der eine Ablaufmechanismus im Frontend: spielt eine Eventliste ab, wählt pro Event die Komponente, sammelt das Ergebnis ein. Es gibt genau einen. |
 | Event Loader | Die Stelle, die einen Eventtyp über `ngComponentOutlet` auf seine Komponente abbildet. Kein `@switch` im Ablauf-Gerüst. |
 | Eventtyp (`type`) | Der Schlüssel, unter dem ein Event seine Komponente findet (`dialog`, `multiple_choice`, ...). Geschlossene Wertemenge, gepflegt in `JSON_SCHEMA_REFERENCE.md` Abschnitt 5.0 — ein Typ steht dort erst, wenn seine Komponente existiert. |
-| Event-Konfiguration | Die Daten, mit denen ein Event bespielt wird (`config`). Leichte Events tragen sie inline in der Episode, Events mit Lernstufen-Varianten in einer eigenen Datei unter `events/`, referenziert über `config.ref`. |
+| Event-Konfiguration | Die Daten, mit denen ein Event bespielt wird (`config`). Leichte Events tragen sie inline in der Episode, Events mit Lernstufen-Varianten in einer eigenen Datei unter `events/`, referenziert über `config.ref`. Die Engine löst `config.ref` und die Variante der aktiven Lernstufe auf, bevor eine Komponente die Konfiguration sieht — eine Event-Komponente lädt nie selbst nach. |
 | Node | Ein klickbarer Punkt auf einer Map, der eine Episode startet. |
 | Ort | Anzeigename für einen Node auf der Ortskarte — der Punkt, an dem die Episode spielt. Kein eigener Bildschirm: Wer den Punkt antippt, landet direkt in der Episode. |
 | Bühnenplatz (`left`/`right`) | Die zwei einzigen festen Positionen für Dialog-Sprites. Keine freien x/y-Koordinaten. |

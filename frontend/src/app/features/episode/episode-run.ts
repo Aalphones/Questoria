@@ -16,6 +16,8 @@ export class EpisodeRun {
   readonly eventIndex = signal(0);
   /** Wie viele bewertete Events (Aufgaben) bisher gespielt wurden. */
   readonly scoredCount = signal(0);
+  /** Wie viele bewertete Events die Episode insgesamt hat — gesetzt vom Episoden-Screen. */
+  readonly scoredTotal = signal(0);
   /** Davon beim ersten Versuch richtig — die Grundlage der Sternenformel (Phase 5). */
   readonly correctFirstTryCount = signal(0);
 

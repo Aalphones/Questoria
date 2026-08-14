@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Service, inject } from '@angular/core';
 import { Observable, shareReplay } from 'rxjs';
 
-import { Episode, MainHub, WorldConfig } from '../models/content.types';
+import { Episode, EventFile, MainHub, WorldConfig } from '../models/content.types';
 
 /**
  * Liest den Content über die Backend-Schnittstelle ([ADR-005](../../../../docs/decisions/005-content-auslieferung-ab-meilenstein-2.md)).
@@ -14,6 +14,8 @@ export class ContentService {
   private readonly http = inject(HttpClient);
 
   private readonly worldConfigCache = new Map<string, Observable<WorldConfig>>();
+
+  private readonly eventFileCache = new Map<string, Observable<EventFile>>();
 
   getInstalledThemes(): Observable<MainHub> {
     return this.http.get<MainHub>('/api/content/themes');
@@ -41,6 +43,27 @@ export class ContentService {
 
   getEpisode(themeId: string, episodeId: string): Observable<Episode> {
     return this.http.get<Episode>(`/api/content/themes/${themeId}/episodes/${episodeId}`);
+  }
+
+  /**
+   * Eine ausgelagerte Event-Datei, zwischengespeichert pro Welt und Event —
+   * dieselbe Aufgabe in zwei Episoden wird einmal geladen.
+   */
+  getEvent(themeId: string, eventId: string): Observable<EventFile> {
+    const cacheKey = `${themeId}/${eventId}`;
+    const cached = this.eventFileCache.get(cacheKey);
+
+    if (cached !== undefined) {
+      return cached;
+    }
+
+    const request$ = this.http
+      .get<EventFile>(`/api/content/themes/${themeId}/events/${eventId}`)
+      .pipe(shareReplay({ bufferSize: 1, refCount: false }));
+
+    this.eventFileCache.set(cacheKey, request$);
+
+    return request$;
   }
 
   /** Datei in einem Asset-Unterordner der Welt, z. B. `sprites/luffy_wuetend.png`. */

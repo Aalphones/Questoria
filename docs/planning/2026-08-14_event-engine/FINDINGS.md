@@ -13,12 +13,23 @@ Meilenstein betreffen. Format:
   Der gewählte Weg gehört ins Report-Back — Phase 3–5 bauen darauf.
   **Erledigt:** `inject(EpisodeRun)` genügt, kein eigener Injektor — Beleg im
   Report-Back von Phase 2.
-- [ ] → Phase 3: Eine Event-Komponente bekommt ihre Konfiguration als
+- [x] → Phase 3: Eine Event-Komponente bekommt ihre Konfiguration als
   `input.required<TConfig>()` und wird vom Gerüst mit `config: event.config`
   (Typ `unknown`) bespielt — die Prüfung, ob die Konfiguration zum Typ passt,
   findet also nirgends statt. Beim Auflösen von `config.ref` in Phase 3 ist das
   die Stelle, an der eine kaputte Datei sonst als leeres Quiz durchrutscht
   statt in den Fehlerpfad zu laufen.
+  **Erledigt:** `assertPlayableConfig()` in `event-type-map.ts` prüft je Typ,
+  inline wie ausgelagert — Details im Report-Back von Phase 3.
+- [ ] → Phase 4: Die Aufgaben-Hülle `ui/task-card/` steht (Tag,
+  Fortschrittspunkte, Frage mit Vorlese-Knopf und automatischem Vorlesen,
+  Aufgabenkörper, Platz `[task-card-feedback]`). `text_input` und
+  `image_search` bringen nur noch ihren Körper und ihre Feedback-Leiste mit;
+  Vorlesen der Frage **nicht** noch einmal selbst bauen. Wer bewertet wird,
+  steht in `SCORED_EVENT_TYPES` — beide Typen stehen schon drin.
+- [ ] → Phase 4: Für einen neuen Aufgaben-Typ gehört neben Komponente und
+  Zeile in `EVENT_COMPONENTS` auch eine Prüfung in `EVENT_CONFIG_GUARDS`
+  dazu — sonst spielt eine kaputte Content-Datei wieder als leere Aufgabe.
 - [ ] → Phase 5: `EpisodeRun.pendingCardId` ist der Haken, an den Meilenstein 5
   die echte Kartenvergabe hängt. In Meilenstein 3 wird die ID nur gemerkt,
   nicht verwendet.

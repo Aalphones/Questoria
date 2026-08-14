@@ -22,4 +22,9 @@ final class ContentController
     {
         return (new ContentService())->episode($themeId, $episodeId);
     }
+
+    public function event(string $themeId, string $eventId): array
+    {
+        return (new ContentService())->event($themeId, $eventId);
+    }
 }

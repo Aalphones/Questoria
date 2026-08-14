@@ -30,6 +30,14 @@ final class ContentService
         return $this->readJson($this->themePath($themeId) . '/episodes/' . $episodeId . '.json');
     }
 
+    public function event(string $themeId, string $eventId): array
+    {
+        $this->assertValidId($themeId);
+        $this->assertValidId($eventId);
+
+        return $this->readJson($this->themePath($themeId) . '/events/' . $eventId . '.json');
+    }
+
     private function rootPath(): string
     {
         return $_ENV['CONTENT_PATH'] ?? ($_SERVER['DOCUMENT_ROOT'] . '/content');

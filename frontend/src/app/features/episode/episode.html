@@ -18,12 +18,14 @@
       <h1 class="episode__title">{{ locationName() ?? episode.data.episode_id }}</h1>
 
       <div class="episode__stage">
-        @if (eventComponent.error()) {
-          <qst-content-error
-            message="Dieses Ereignis kennt die App noch nicht — geh über „Zurück“ auf die Karte."
-          />
+        @if (eventErrorMessage(); as message) {
+          <qst-content-error [message]="message" />
+        } @else if (eventConfigState().status === 'loading') {
+          <p class="episode__note">Das Ereignis wird geladen …</p>
         } @else if (eventComponent.value(); as eventComponentType) {
-          <ng-container *ngComponentOutlet="eventComponentType; inputs: eventInputs()" />
+          @for (slot of eventSlot(); track slot) {
+            <ng-container *ngComponentOutlet="eventComponentType; inputs: eventInputs()" />
+          }
         }
       </div>
     </div>

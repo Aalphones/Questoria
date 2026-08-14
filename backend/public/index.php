@@ -77,6 +77,11 @@ $dispatcher = FastRoute\simpleDispatcher(static function (RouteCollector $routes
         '/api/content/themes/{themeId}/episodes/{episodeId}',
         [ContentController::class, 'episode'],
     );
+    $routes->addRoute(
+        'GET',
+        '/api/content/themes/{themeId}/events/{eventId}',
+        [ContentController::class, 'event'],
+    );
 });
 
 // Der angefragte Pfad wird bewusst nicht um ein Verzeichnis gekuerzt: Die Bruecke

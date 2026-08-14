@@ -1,6 +1,6 @@
 # Phase 3 — Ausgelagerte Events + `multiple_choice`
 
-**Rating:** heikel
+**Rating:** heikel · **Status:** complete
 
 Aufgaben liegen nicht in der Episode, sondern in eigenen Dateien mit einer
 Variante pro Lernstufe. Diese Phase baut den Weg dorthin — Backend-Aufruf,
@@ -89,69 +89,104 @@ Auflösung im Gerüst, gemeinsame Aufgaben-Hülle — und den ersten Aufgaben-Ty
 
 ### Backend
 
-- [ ] `ContentService::event(string $themeId, string $eventId): array` —
+- [x] `ContentService::event(string $themeId, string $eventId): array` —
       analog zu `episode()`, liest `themePath($themeId) . '/events/' . $eventId . '.json'`,
       beide IDs über `assertValidId()`.
-- [ ] `ContentController::event(string $themeId, string $eventId): array`
+- [x] `ContentController::event(string $themeId, string $eventId): array`
       analog zu `episode()`.
-- [ ] `backend/public/index.php`: Route
+- [x] `backend/public/index.php`: Route
       `GET /api/content/themes/{themeId}/events/{eventId}` neben der
       Episoden-Route registrieren.
-- [ ] `cd backend && composer lint` grün.
+- [x] `cd backend && composer lint` grün.
 
 ### Frontend-Ladeweg
 
-- [ ] `models/content.types.ts`: `AnswerOption`, `MultipleChoiceVariant`,
+- [x] `models/content.types.ts`: `AnswerOption`, `MultipleChoiceConfig`
+      (Variante = fertige Konfiguration, deshalb kein zweiter Name),
       `EventFile<TVariant>` (`event_id`, `type`, `variants: Record<string, TVariant>`)
       ergänzen.
-- [ ] `services/content.service.ts`: `getEvent(themeId, eventId)` mit Cache
+- [x] `services/content.service.ts`: `getEvent(themeId, eventId)` mit Cache
       nach dem Muster von `getWorldConfig()` (Schlüssel `themeId/eventId`).
-- [ ] `features/episode/`: Auflösung als eigene, testbare Funktion (z. B.
-      `resolveEventConfig(episodeConfig, eventFile, difficultyLevelId)`) in
-      einer eigenen Datei neben dem Screen — reine Funktion, kein Signal, kein
-      HTTP. Der Screen ruft sie, nachdem die Datei geladen ist.
-- [ ] Ladezustand der Event-Datei in den bestehenden `LoadState`-Fluss des
+- [x] `features/episode/`: Auflösung als eigene, testbare Funktion
+      (`resolveEventConfig(episodeConfig, eventFile, eventType, difficultyLevelId)`,
+      dazu `eventRefOf()`) in `resolve-event-config.ts` — reine Funktionen, kein
+      Signal, kein HTTP.
+- [x] Ladezustand der Event-Datei in den bestehenden `LoadState`-Fluss des
       Screens einhängen, nicht als zweiter, paralleler Zustand daneben.
 
 ### Gemeinsame Aufgaben-Hülle
 
-- [ ] `ng generate component ui/task-card --skip-tests` — die Hülle, die alle
+- [x] `ng generate component ui/task-card --skip-tests` — die Hülle, die alle
       drei Aufgaben-Typen teilen: Eingaben `tag` (z. B. „Aufgabe · Quiz"),
       `question`, `questionAudioUrl?`, `stepDone`/`stepTotal` für die
       Fortschrittspunkte; Inhalts-Projektion für den Aufgabenkörper und einen
-      benannten Platz für die Feedback-Leiste. Vorlese-Knopf und automatisches
-      Vorlesen der Frage leben **hier**, nicht in den drei Typen.
-- [ ] Fortschrittspunkte zeigen die Position innerhalb der Eventliste (nur
+      benannten Platz für die Feedback-Leiste (`[task-card-feedback]`).
+      Vorlese-Knopf und automatisches Vorlesen der Frage leben **hier**.
+- [x] Fortschrittspunkte zeigen die Position innerhalb der Eventliste (nur
       bewertete Events zählen) — Werte kommen als Eingabe vom Aufgaben-Typ, der
-      sie aus `EpisodeRun` liest.
+      sie aus `EpisodeRun` liest (`scoredCount` / neuer `scoredTotal`, gesetzt
+      vom Episoden-Screen über `SCORED_EVENT_TYPES`).
 
 ### `multiple_choice`
 
-- [ ] `ng generate component features/events/multiple-choice --skip-tests`,
+- [x] `ng generate component features/events/multiple-choice --skip-tests`,
       Zeile `multiple_choice` in `EVENT_COMPONENTS` ergänzen.
-- [ ] Zustand: `pickedIndexes` als Signal (Menge der bereits getippten
+- [x] Zustand: `pickedIndexes` als Signal (Menge der bereits getippten
       Antworten), `firstPick` gemerkt für `correctFirstTry`, `solved` als
       `computed()`.
-- [ ] Antwort-Schlüssel: `listen` → `1–4`, `read` → `A–D`. Eine kleine reine
+- [x] Antwort-Schlüssel: `listen` → `1–4`, `read` → `A–D`. Eine kleine reine
       Funktion, keine Ternär-Kette im Template.
-- [ ] Auswertungsfarben und Häkchen/Kreuz nach Design; Zustand nie nur über
+- [x] Auswertungsfarben und Häkchen/Kreuz nach Design; Zustand nie nur über
       Farbe transportieren (Symbol + `aria-live`-Meldung in der
-      Feedback-Leiste).
-- [ ] Weiter-Knopf erst aktiv, wenn die richtige Antwort gefunden ist; er ruft
-      `finish({ kind: 'scored', correctFirstTry })`.
+      Feedback-Leiste, dazu eine ausgeblendete Zustandszeile je Antwort).
+- [x] Weiter-Knopf erscheint erst, wenn die richtige Antwort gefunden ist; er
+      ruft `finish({ kind: 'scored', correctFirstTry })`.
 
 ### Doku
 
-- [ ] `docs/decisions/007-ausgelagerte-events-ueber-die-schnittstelle.md`
+- [x] `docs/decisions/007-ausgelagerte-events-ueber-die-schnittstelle.md`
       schreiben (Kontext / Optionen / Entscheidung / Konsequenzen, ~10 Zeilen).
-- [ ] `AGENTS.md`: Content-Repository-Abschnitt um den neuen Aufruf ergänzen,
-      Doc-Index um ADR-007.
-- [ ] `docs/code-map.md`: `features/events/multiple-choice/`, `ui/task-card/`,
-      `getEvent()` und die Backend-Route aufnehmen.
-- [ ] `docs/glossary.md`: Eintrag **Event-Konfiguration** um den Satz ergänzen,
+- [x] `AGENTS.md`: Content-Repository-Abschnitt um den neuen Aufruf ergänzen.
+      (Der Doc-Index verweist auf den ADR-Ordner, nicht auf einzelne ADRs —
+      dort war nichts nachzutragen.)
+- [x] `docs/code-map.md`: `features/events/multiple-choice/`, `ui/task-card/`,
+      `resolve-event-config.ts` und die erweiterte Content-Schnittstelle
+      aufgenommen.
+- [x] `docs/glossary.md`: Eintrag **Event-Konfiguration** um den Satz ergänzt,
       dass die Engine `ref` und Lernstufen-Variante auflöst, bevor eine
       Komponente sie sieht.
 
 ## Report-Back
 
-*(beim Umsetzen füllen)*
+**Belegt:** Der neue Aufruf beantwortet `dev_fixture`/`probe_quiz` mit dem JSON
+aus `data/` (lokaler PHP-Server, Port 8123 statt 8000, weil 8000 belegt sein
+kann); eine erfundene Event-ID antwortet mit `404`. `composer lint`,
+`npm run build` und `npm run lint` sind grün.
+
+**Zwei Entscheidungen, die der Plan offen ließ:**
+
+1. **Kaputte Konfiguration landet im Fehlerpfad, nicht als leere Aufgabe auf der
+   Bühne** (das offene Finding aus Phase 2). Umgesetzt als Prüfung je Eventtyp
+   in `event-type-map.ts` — dieselbe Datei, die schon Typ ↔ Komponente
+   zuordnet, damit das Gerüst weiterhin keinen einzelnen Typ kennt. Geprüft wird
+   grob: Dialog braucht mindestens eine Zeile, Quiz eine Frage, mindestens zwei
+   Antworten und einen gültigen `correct_index`. Die Prüfung greift auch für
+   **inline** liegende Konfigurationen, nicht nur für ausgelagerte.
+2. **Ein Quiz mit weniger als vier Antworten wird gespielt, nicht abgelehnt.**
+   Das Schema verlangt genau vier; ein Kind soll aber nicht vor einer
+   Fehlermeldung stehen, wenn der Autor drei geschrieben hat. Gleiche Haltung
+   wie bei der fehlenden Lernstufen-Variante (AK 7).
+
+**Gefundener Fehler aus Phase 2, hier mitbehoben:** Zwei gleichartige Events
+hintereinander (Dialog → Dialog, Quiz → Quiz) hätten dieselbe Komponenteninstanz
+weiterbenutzt — `ngComponentOutlet` tauscht nur bei einem Wechsel des
+Komponententyps. Beim Quiz hätte das die Antworten des vorigen Events samt
+Bewertung mitgeschleppt. Die Bühne bekommt jetzt pro Event-Position eine eigene
+Ansicht (`eventSlot`), damit die Komponente wirklich neu entsteht. Vor Phase 3
+war das nicht auslösbar, weil es nur einen Eventtyp gab.
+
+**Bewusst nicht angefasst:** Die Bühne (`.episode__stage`) richtet ihren Inhalt
+weiter unten aus — das ist die Dialog-Bühne aus Phase 2, die ich nicht auf
+Verdacht umbaue. Die Aufgaben-Karte ist waagerecht zentriert und auf ihre
+Maximalbreite begrenzt; ob sie senkrecht zu tief sitzt, entscheidet der Blick
+auf den Bildschirm.

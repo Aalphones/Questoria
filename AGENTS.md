@@ -74,7 +74,10 @@ Ab Meilenstein 2 wird der Content über die Schnittstelle gelesen (`GET
 /api/content/themes`, `.../themes/{themeId}`,
 `.../themes/{themeId}/episodes/{episodeId}` — [ADR-005](docs/decisions/005-content-auslieferung-ab-meilenstein-2.md))
 und mit `deploy.cmd content` auf den Server hochgeladen, statt als
-Frontend-Asset gebaut zu werden.
+Frontend-Asset gebaut zu werden. Ausgelagerte Event-Konfigurationen kommen über
+denselben Weg (`.../themes/{themeId}/events/{eventId}` —
+[ADR-007](docs/decisions/007-ausgelagerte-events-ueber-die-schnittstelle.md));
+dieser eine Aufruf trägt alle Eventtypen, es kommt keiner pro Typ dazu.
 
 ## Critical Rules
 

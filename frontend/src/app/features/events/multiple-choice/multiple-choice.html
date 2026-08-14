@@ -1,0 +1,48 @@
+<qst-task-card
+  tag="Aufgabe · Quiz"
+  [question]="questionText()"
+  [stepDone]="stepDone()"
+  [stepTotal]="stepTotal()"
+>
+  <ul class="multiple-choice__options">
+    @for (answer of answers(); track answer.index) {
+      <li class="multiple-choice__option">
+        <button
+          type="button"
+          class="multiple-choice__answer"
+          [class.multiple-choice__answer--correct]="answer.state === 'correct'"
+          [class.multiple-choice__answer--wrong]="answer.state === 'wrong'"
+          [disabled]="answer.locked"
+          (click)="pick(answer.index)"
+        >
+          @if (showAnswerImages()) {
+            <span class="multiple-choice__image">
+              <qst-image-slot [src]="answer.imageUrl" [label]="answer.label" />
+            </span>
+          }
+
+          <span class="multiple-choice__row">
+            <span class="multiple-choice__key">{{ answer.key }}</span>
+            <span class="multiple-choice__label">{{ answer.label }}</span>
+
+            @if (answer.mark; as mark) {
+              <span class="multiple-choice__mark" aria-hidden="true">{{ mark }}</span>
+              <span class="visually-hidden">{{ answer.stateLabel }}</span>
+            }
+          </span>
+        </button>
+      </li>
+    }
+  </ul>
+
+  <div task-card-feedback class="multiple-choice__feedback" role="status" aria-live="polite">
+    @if (feedbackTitle(); as title) {
+      <p class="multiple-choice__feedback-title">{{ title }}</p>
+      <p class="multiple-choice__feedback-text">{{ feedbackText() }}</p>
+
+      @if (solved()) {
+        <button type="button" class="multiple-choice__next" (click)="finish()">Weiter</button>
+      }
+    }
+  </div>
+</qst-task-card>

@@ -1,0 +1,22 @@
+<header class="task-card__head">
+  <span class="task-card__tag">{{ tag() }}</span>
+
+  <ol class="task-card__steps" [attr.aria-label]="stepsLabel()">
+    @for (step of steps(); track step.position) {
+      <li
+        class="task-card__step"
+        [class.task-card__step--done]="step.state === 'done'"
+        [class.task-card__step--current]="step.state === 'current'"
+      ></li>
+    }
+  </ol>
+</header>
+
+<div class="task-card__question">
+  <qst-read-aloud-button [text]="question()" [audioUrl]="questionAudioUrl()" />
+  <h2 class="task-card__question-text">{{ question() }}</h2>
+</div>
+
+<ng-content />
+
+<ng-content select="[task-card-feedback]" />

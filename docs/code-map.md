@@ -26,13 +26,14 @@ im Frontend-Ordnernamen, PascalCase in PHP-Klassen):
 | Main-Hub | `features/main-hub/` | Zwei Screens: Planetenkarte (Welten als Knoten auf der Kartenfläche, `theme-card/` als Weltknoten, Info-Panel mit „Weiterspielen") und `level-select/` mit der Lernstufen-Auswahl (`difficulty-picker/`) |
 | Timeline | `features/timeline/` | Etappenkarte pro Welt, Fortschrittsmarkierung mit Sternen |
 | Map | `features/map/` | Interaktive Ortskarte pro Arc — Orte als Punkte, Routen, Kompassrose |
-| Event Engine | `features/episode/` | Spielt die Eventliste einer Episode ab: Ablauf-Gerüst (`episode.ts`), Laufzustand (`episode-run.ts`), Event Loader (`event-type-map.ts`), Ergebnis-Einsammlung. Kein `@switch` über Eventtypen |
+| Event Engine | `features/episode/` | Spielt die Eventliste einer Episode ab: Ablauf-Gerüst (`episode.ts`), Laufzustand (`episode-run.ts`), Event Loader + Typ-Prüfungen (`event-type-map.ts`), Auflösung ausgelagerter Konfigurationen (`resolve-event-config.ts`), Ergebnis-Einsammlung. Kein `@switch` über Eventtypen |
 | Event-Komponenten | `features/events/<type>/` | Eine Komponente pro Eventtyp (`features/events/dialog/`, `features/events/multiple-choice/`, ...), dynamisch geladen über `ngComponentOutlet` |
 | Ergebnis | `features/result/` | Sterne, Statistiken, Erfolge, Banner für die neu gewonnene Sammelkarte |
 | Sammelkarten | `features/cards/`, `features/cards/print/` | Trophäenhalle (Gruppen, Filter, Detail, Druckauswahl) und A4-Druckbogen |
 | Nutzerverwaltung | `features/auth/`, `features/profile/` | Login, Profile anlegen/wechseln |
 | Kartenfläche | `ui/map-canvas/` | Gemeinsames Bauteil von Planeten-, Etappen- und Ortskarte: Fläche im Seitenverhältnis 16:9, Hintergrund, Routenlinien; `map-point/` setzt ein beliebiges Kind auf eine Prozent-Position |
 | Bildfläche | `ui/image-slot/` | Bild mit beschriftetem Platzhalter, wenn die Datei fehlt |
+| Aufgaben-Hülle | `ui/task-card/` | Gemeinsame Karte aller Aufgaben-Typen: Aufgaben-Tag, Fortschrittspunkte, Frage mit Vorlese-Knopf (und automatischem Vorlesen), Platz für Aufgabenkörper und Feedback-Leiste |
 | Gemeinsame UI | `ui/hud/`, `ui/content-error/`, `ui/speech-bubble/`, `ui/read-aloud-button/` | Kopfleiste auf allen Spiel-Screens (jeder Screen bindet sie selbst ein, trägt jetzt auch Modus-Umschalter + Ton-Knopf); Meldung bei fehlgeschlagener Welt/Ort-Ladung mit Weg zurück; Sprechblasen; runder Knopf „Nochmal vorlesen" |
 | Routing | `routing/` | `world-config.resolver.ts` lädt die Welt-Konfiguration zentral für jede `theme/:themeId/…`-Route und setzt die aktive Welt; `difficulty-chosen.guard.ts` schickt ohne gewählte Lernstufe auf die Lernstufen-Auswahl zurück |
 | Zentrale Services | `services/game-state.service.ts`, `services/content.service.ts`, `services/progress.service.ts`, `services/progress.rules.ts`, `services/savegame.service.ts`, `services/narration.service.ts` | Aktive Welt/Profil/Lernstufe, JSON-Content lesen, Fortschritt im Browser-Speicher + Freischaltregeln als reine Funktionen (ADR-006), Speichern/Laden, Vorlesemodus + Sprachausgabe. **`ContentService` ist die einzige Ladestelle für Content** — dort hängt später der Offline-Cache (Meilenstein 6) |
@@ -45,9 +46,11 @@ Weltknoten aus `theme-card/`, Routen, Info-Panel; dazu der eigene Screen
 (echte Etappenkarte: Inseln, Panel, Legende, Fortschritt-zurücksetzen-Dialog),
 `features/map/` (echte Ortskarte: Punkte, Routen, Kompassrose), `features/episode/`
 (Ablauf-Gerüst mit Event Loader; Sterne noch pauschal, bis der Ergebnis-Screen
-steht), `features/events/dialog/` (Visual-Novel-Bühne mit zwei Plätzen),
+steht; löst ausgelagerte Konfigurationen über `config.ref` auf),
+`features/events/dialog/` (Visual-Novel-Bühne mit zwei Plätzen),
+`features/events/multiple-choice/` (Quiz mit Weiterraten),
 `ui/map-canvas/`,
-`ui/image-slot/`, `ui/hud/` (inkl. Modus-Umschalter + Ton-Knopf),
+`ui/image-slot/`, `ui/task-card/`, `ui/hud/` (inkl. Modus-Umschalter + Ton-Knopf),
 `ui/content-error/`, `ui/read-aloud-button/`, `services/narration.service.ts`,
 `routing/`, `services/`, `models/` und `styles/`. Alle übrigen Zeilen sind
 Soll-Zustand für spätere Meilensteine.
@@ -73,7 +76,7 @@ Struktur übernommen aus promptigofant (gleiches Muster, eigenes Repo):
 | Ordner | Zweck |
 |---|---|
 | `Controllers/` | HTTP-Endpunkte (Content-API, User-API, Savegame-API) |
-| `Services/` | Geschäftslogik. `ContentService` liest `data/` (Wurzel: `CONTENT_PATH` oder `DOCUMENT_ROOT/content`) — Content lesen, Savegame-Verwaltung, Auth |
+| `Services/` | Geschäftslogik. `ContentService` liest `data/` (Wurzel: `CONTENT_PATH` oder `DOCUMENT_ROOT/content`) — Welt, Episode und ausgelagerte Event-Datei, dazu später Savegame-Verwaltung und Auth |
 | `Repositories/` | MySQL-Zugriff (users, player_profiles, savegames, achievements, statistics) |
 | `Middleware/` | Herkunftssperre (`CorsMiddleware`) und Anmelde-Token (`JwtAuthMiddleware`) |
 | `Validators/` | Request-Validierung (respect/validation) |
