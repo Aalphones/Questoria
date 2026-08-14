@@ -1,0 +1,16 @@
+{
+  "hub_map": {
+    "background": "map_planetenkarte.webp",
+    "routes": []
+  },
+  "installed_themes": [
+    {
+      "id": "dev_fixture",
+      "title": "Entwickler-Testwelt",
+      "cover": "cover.webp",
+      "x": 32,
+      "y": 54,
+      "size": 18
+    }
+  ]
+}

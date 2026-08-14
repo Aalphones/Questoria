@@ -35,7 +35,6 @@ im Frontend-Ordnernamen, PascalCase in PHP-Klassen):
 | Zentrale Services | `services/game-state.service.ts`, `services/content.service.ts`, `services/savegame.service.ts`, `services/narration.service.ts` | Aktive Welt/Profil/Lernstufe, JSON-Content lesen, Speichern/Laden, Vorlesemodus + Sprachausgabe. **`ContentService` ist die einzige Ladestelle für Content** — dort hängt später der Offline-Cache (Meilenstein 6) |
 | Content-Typen | `models/` | TypeScript-Abbild des JSON-Schemas (`content.types.ts`) und der Ladezustände (`game-state.types.ts`) |
 | Design-Tokens | `frontend/src/styles/` | `_tokens.scss` (Farben, Schrift, Abstände, Radien) und `_fonts.scss`; global über `src/styles.scss` eingebunden |
-| Statischer Content | `frontend/public/assets/`, `frontend/public/data/themes/` | `main_hub.json` und die Entwickler-Testwelt aus Meilenstein 1 — abgelöst durch die Content-Schnittstelle (ADR-005), Umzug der Testwelt folgt in Phase 2 |
 
 **Ist-Stand:** gebaut sind bisher `features/main-hub/` (mit `theme-card/` und
 `difficulty-picker/`), `services/`, `models/` und `styles/`. Alle übrigen Zeilen
@@ -86,6 +85,7 @@ nicht als Ordner.
 |---|---|
 | `data/_authoring/` | LLM-Prompt-Toolkit + Schema-Referenz — kein Runtime-Code |
 | `data/main_hub.json` | Installierte Welten für die Planetenkarte — ausgeliefert über `GET /api/content/themes` |
+| `data/hub/` | Bilder der Planetenkarte (Hintergrund), ausgeliefert über `GET /content/hub/<datei>` |
 | `data/themes/<theme_id>/world_config.json` | Lernstufen, Etappenkarte, Ortskarten mit Node-Koordinaten |
 | `data/themes/<theme_id>/cards.json` | Kartenformat + alle Sammelkarten der Welt |
 | `data/themes/<theme_id>/episodes/` | Eine Episode je Datei: Hintergrund + Eventliste (Dialoge inline) |

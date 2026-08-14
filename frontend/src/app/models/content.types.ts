@@ -16,10 +16,8 @@ export interface HubMap {
 export interface InstalledTheme {
   id: string;
   title: string;
-  /** relativer Pfad zum Cover-Bild der Welt */
+  /** Dateiname unter dem Welt-Ordner */
   cover: string;
-  /** relativer Pfad zur world_config.json der Welt */
-  config_path: string;
   /** horizontale Position auf der Planetenkarte, in % der Kartenbreite */
   x: number;
   /** vertikale Position auf der Planetenkarte, in % der Kartenhöhe */
@@ -87,4 +85,44 @@ export interface WorldConfig {
   difficulty_levels: DifficultyLevel[];
   arc_overview: ArcOverview;
   maps: MapEntry[];
+}
+
+/**
+ * Eventtypen, verbindlich in `JSON_SCHEMA_REFERENCE.md` Abschnitt 5.0 — ein
+ * Typ steht hier erst, wenn seine Angular-Komponente existiert.
+ */
+export const EVENT_TYPES = ['dialog', 'reward', 'multiple_choice', 'text_input', 'image_search'] as const;
+export type EventType = (typeof EVENT_TYPES)[number];
+
+export interface DialogueLine {
+  position: 'left' | 'right';
+  /** Dateiname unter sprites/<character>/ */
+  sprite: string;
+  name: string;
+  text: string;
+  /** kurze Fassung für den Vorlesemodus, siehe Abschnitt 6 */
+  text_simple?: string;
+  /** relativer Pfad unter audio/voices/ */
+  audio_path?: string;
+}
+
+/**
+ * `config` ist typabhängig (Abschnitt 5) — `unknown` statt eines einzelnen
+ * Union-Typs, weil die Engine sie ungeprüft an die per `ngComponentOutlet`
+ * geladene Komponente reicht.
+ */
+export interface EpisodeEvent {
+  type: EventType;
+  config: unknown;
+}
+
+export interface Episode {
+  episode_id: string;
+  /** muss eine maps[].id aus world_config.json sein */
+  active_map_id: string;
+  /** muss eine nodes[].id dieser Map sein */
+  node_id: string;
+  /** Dateiname unter backgrounds/ */
+  background: string;
+  events: EpisodeEvent[];
 }

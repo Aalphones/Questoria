@@ -31,21 +31,22 @@ der Prototyp dort nutzt eine flachere Beispielstruktur, verbindlich ist diese Da
 
 ## 1. `main_hub.json`
 
-Liegt unter `assets/main_hub.json`. Genau eine Datei, listet alle installierten
-Welten und beschreibt die Planetenkarte, auf der sie angeordnet sind.
+Liegt unter `data/main_hub.json` (nicht in `data/themes/` — die Welten-Ordner
+sind die Google-Drive-Junction, diese Datei bleibt regulär im Git-Repo). Genau
+eine Datei, listet alle installierten Welten und beschreibt die Planetenkarte,
+auf der sie angeordnet sind.
 
 ```json
 {
   "hub_map": {
-    "background": "string — Dateiname unter assets/hub/, 16:9",
+    "background": "string — Dateiname, ausgeliefert unter /content/hub/<datei>",
     "routes": [["string — theme id", "string — theme id"]]
   },
   "installed_themes": [
     {
       "id": "string — eindeutig, snake_case, identisch zu theme_id in world_config.json",
       "title": "string — Anzeigename",
-      "cover": "string — relativer Pfad zu /data/themes/<id>/cover.webp",
-      "config_path": "string — relativer Pfad zu world_config.json",
+      "cover": "string — Dateiname, liegt direkt im Welt-Ordner (nicht unter cover/)",
       "x": "number 0–100 — horizontale Position auf der Planetenkarte, in % der Kartenbreite",
       "y": "number 0–100 — vertikale Position, in % der Kartenhöhe",
       "size": "number 0–100 — Durchmesser des Weltknotens, in % der Kartenbreite"
@@ -53,6 +54,13 @@ Welten und beschreibt die Planetenkarte, auf der sie angeordnet sind.
   ]
 }
 ```
+
+**Adressierung (Kontrakt ab Meilenstein 2):** Die Content-Schnittstelle liest
+diese Datei über die Welt-ID, nicht über einen Dateipfad — deshalb kein
+`config_path` mehr. Bilder werden getrennt vom Webserver ausgeliefert:
+`cover` über `GET /content/themes/<id>/<cover>`, `hub_map.background` über
+`GET /content/hub/<datei>`. Das Frontend baut diese Adressen ausschließlich
+über `ContentService` (`themeAssetUrl`, `hubAssetUrl`) zusammen.
 
 `routes` zeichnet gestrichelte Verbindungslinien zwischen zwei Welten. Beide
 Enden müssen `installed_themes[].id` sein. Leeres Array = keine Linien.

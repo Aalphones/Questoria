@@ -5,6 +5,6 @@
   [attr.aria-pressed]="active()"
   (click)="chosen.emit(theme().id)"
 >
-  <img class="theme-card__cover" [ngSrc]="theme().cover" width="320" height="180" alt="" />
+  <img class="theme-card__cover" [ngSrc]="coverUrl(theme())" width="320" height="180" alt="" />
   <span class="theme-card__title">{{ theme().title }}</span>
 </button>

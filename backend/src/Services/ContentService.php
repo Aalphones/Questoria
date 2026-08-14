@@ -37,19 +37,26 @@ final class ContentService
 
     private function themePath(string $themeId): string
     {
-        $root = $this->rootPath();
-        $realRoot = realpath($root);
-        $path = $root . '/themes/' . $themeId;
+        // Anker ist "themes/", nicht die Content-Wurzel: lokal ist "data/themes"
+        // eine NTFS-Junction auf Google Drive (siehe AGENTS.md), und realpath()
+        // loest Junctions auf ihr tatsaechliches Ziel (H:\...) auf - ein Anker
+        // auf der Content-Wurzel wuerde jede echte Welt faelschlich als
+        // Traversal werten, weil das aufgeloeste Ziel nicht mehr mit dem Pfad
+        // von "data" beginnt. "themes/" wird bei jedem Aufruf frisch aufgeloest
+        // und traegt die Junction-Aufloesung damit selbst mit.
+        $themesRoot = $this->rootPath() . '/themes';
+        $realThemesRoot = realpath($themesRoot);
+        $path = $themesRoot . '/' . $themeId;
         $realPath = realpath($path);
 
         // Die ID-Pruefung allein reicht formal schon aus, um ../ & Co.
         // auszuschliessen - der zweite Riegel steht, weil eine spaetere
         // Aufweichung des Musters (z.B. Punkte fuer Versionsnummern) sonst
         // still ein Verzeichnis-Traversal-Loch aufreisst.
-        if ($realRoot === false || $realPath === false || !str_starts_with($realPath, $realRoot . DIRECTORY_SEPARATOR)) {
+        if ($realThemesRoot === false || $realPath === false || !str_starts_with($realPath, $realThemesRoot . DIRECTORY_SEPARATOR)) {
             // Trennzeichen bewusst mitgeprueft: ohne das wuerde ein Nachbarordner
-            // wie "data-oeffentlich" faelschlich als "innerhalb von data"
-            // durchgehen, weil er als String mit "data" beginnt.
+            // wie "themes-oeffentlich" faelschlich als "innerhalb von themes"
+            // durchgehen, weil er als String mit "themes" beginnt.
             throw new ApiException(404, 'Not Found');
         }
 

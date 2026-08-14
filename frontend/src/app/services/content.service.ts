@@ -1,24 +1,59 @@
 import { HttpClient } from '@angular/common/http';
 import { Service, inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, shareReplay } from 'rxjs';
 
-import { MainHub, WorldConfig } from '../models/content.types';
+import { Episode, MainHub, WorldConfig } from '../models/content.types';
 
 /**
- * Liest den Content in Meilenstein 1 als statische Dateien aus dem eigenen
- * Build — noch kein Backend-Aufruf (siehe ADR-001). Sobald die Content-API
- * steht, ändern sich nur die URLs hier, nicht die Signaturen.
+ * Liest den Content über die Backend-Schnittstelle ([ADR-005](../../../../docs/decisions/005-content-auslieferung-ab-meilenstein-2.md)).
+ * Einzige Ladestelle für Content im Frontend — dort hängt später der
+ * Offline-Cache (Meilenstein 6).
  */
 @Service()
 export class ContentService {
   private readonly http = inject(HttpClient);
 
-  getMainHub(): Observable<MainHub> {
-    return this.http.get<MainHub>('/assets/main_hub.json');
+  private readonly worldConfigCache = new Map<string, Observable<WorldConfig>>();
+
+  getInstalledThemes(): Observable<MainHub> {
+    return this.http.get<MainHub>('/api/content/themes');
   }
 
-  /** `configPath` kommt aus `InstalledTheme.config_path` und ist build-relativ. */
-  getWorldConfig(configPath: string): Observable<WorldConfig> {
-    return this.http.get<WorldConfig>(`/${configPath}`);
+  /**
+   * Zwischengespeichert pro Welt-ID — der Resolver (Phase 5) fragt sonst bei
+   * jedem Screenwechsel neu an.
+   */
+  getWorldConfig(themeId: string): Observable<WorldConfig> {
+    const cached = this.worldConfigCache.get(themeId);
+
+    if (cached !== undefined) {
+      return cached;
+    }
+
+    const request$ = this.http
+      .get<WorldConfig>(`/api/content/themes/${themeId}`)
+      .pipe(shareReplay({ bufferSize: 1, refCount: false }));
+
+    this.worldConfigCache.set(themeId, request$);
+
+    return request$;
+  }
+
+  getEpisode(themeId: string, episodeId: string): Observable<Episode> {
+    return this.http.get<Episode>(`/api/content/themes/${themeId}/episodes/${episodeId}`);
+  }
+
+  /** Datei in einem Asset-Unterordner der Welt, z. B. `sprites/luffy_wuetend.png`. */
+  assetUrl(themeId: string, folder: string, file: string): string {
+    return `/content/themes/${themeId}/${folder}/${file}`;
+  }
+
+  /** Datei direkt im Welt-Ordner, z. B. das Cover. */
+  themeAssetUrl(themeId: string, file: string): string {
+    return `/content/themes/${themeId}/${file}`;
+  }
+
+  hubAssetUrl(file: string): string {
+    return `/content/hub/${file}`;
   }
 }

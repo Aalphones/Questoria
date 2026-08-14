@@ -23,7 +23,7 @@ export class MainHub {
 
   private readonly selectedTheme = signal<InstalledTheme | null>(null);
 
-  readonly hubState = toSignal(asLoadState(this.content.getMainHub()), {
+  readonly hubState = toSignal(asLoadState(this.content.getInstalledThemes()), {
     initialValue: { status: 'loading' } as LoadState<MainHubContent>,
   });
 
@@ -34,7 +34,7 @@ export class MainHub {
           return of(null);
         }
 
-        return asLoadState(this.content.getWorldConfig(theme.config_path));
+        return asLoadState(this.content.getWorldConfig(theme.id));
       }),
     ),
     { initialValue: null },

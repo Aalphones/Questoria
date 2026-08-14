@@ -38,11 +38,11 @@ Frontend holt sie ab jetzt über die Schnittstelle aus Phase 1.
 
 ### Content anlegen
 
-- [ ] `data/main_hub.json`: eine Welt `dev_fixture` (`title`
+- [x] `data/main_hub.json`: eine Welt `dev_fixture` (`title`
       „Entwickler-Testwelt", `cover` `cover.webp`, `x` 32, `y` 54, `size` 18),
       `hub_map.background` `map_planetenkarte.webp`, `routes` leer.
       **Kein `config_path`** — das Feld entfällt (siehe Kontrakt).
-- [ ] `data/themes/dev_fixture/world_config.json`:
+- [x] `data/themes/dev_fixture/world_config.json`:
   - `difficulty_levels`: `einfach` / `schwer` (wie bisher)
   - `arc_overview`: Titel „Test-Reise", Hintergrund `map_test_uebersicht.webp`,
     zwei Etappen — `test_insel` (x 30, y 50, size 12, aspect 0.72, shape
@@ -54,67 +54,73 @@ Frontend holt sie ab jetzt über die Schnittstelle aus Phase 1.
     `bucht` (30/40), `riff` (66/58) und Route `bucht→riff`
   - jede `episode_ref` heißt wie die Episodendatei: `test_dorf`, `test_hafen`,
     `test_leuchtturm`, `test_bucht`, `test_riff`
-- [ ] Fünf Episodendateien unter `data/themes/dev_fixture/episodes/`, je mit
+- [x] Fünf Episodendateien unter `data/themes/dev_fixture/episodes/`, je mit
       `active_map_id`, `node_id`, `background` und einer `events`-Liste aus
       zwei Einträgen: ein `dialog`-Event mit zwei Zeilen (`left` und `right`,
       mit `text` und `text_simple`) und ein
       `{ "type": "multiple_choice", "config": { "ref": "probe_quiz" } }`.
       **Kein `reward`-Event** — Sammelkarten kommen mit Meilenstein 5.
-- [ ] `data/themes/dev_fixture/events/probe_quiz.json`: `event_id`,
+- [x] `data/themes/dev_fixture/events/probe_quiz.json`: `event_id`,
       `type: "multiple_choice"`, eine Variante je Lernstufe, vier Optionen.
       Wird in diesem Meilenstein nicht gespielt, hält die Welt aber
       schema-vollständig.
-- [ ] Keine Bilddateien anlegen. Die Testwelt läuft mit Bildplatzhaltern
+- [x] Keine Bilddateien angelegt. Die Testwelt läuft mit Bildplatzhaltern
       (Phase 3); echte Kartenbilder kommen mit echtem Content.
-- [ ] `frontend/public/assets/main_hub.json` und `frontend/public/data/`
-      löschen.
+- [x] `frontend/public/assets/main_hub.json` und `frontend/public/data/`
+      gelöscht (inkl. der jetzt leeren `frontend/public/assets/`).
 
 ### Frontend
 
-- [ ] `models/content.types.ts`:
-  - `config_path` aus `InstalledTheme` entfernen, Kommentar bei `cover` auf
-    „Dateiname unter dem Welt-Ordner" korrigieren
-  - Episoden-Typen ergänzen: `EVENT_TYPES`/`EventType` als const-asserted Union,
+- [x] `models/content.types.ts`:
+  - `config_path` aus `InstalledTheme` entfernt, Kommentar bei `cover` auf
+    „Dateiname unter dem Welt-Ordner" korrigiert
+  - Episoden-Typen ergänzt: `EVENT_TYPES`/`EventType` als const-asserted Union,
     `EpisodeEvent` (`type: EventType`, `config`), `DialogueLine`
     (`position: 'left' | 'right'`, `sprite`, `name`, `text`, `text_simple?`,
-    `audio_path?`) und `Episode` mit `events: EpisodeEvent[]`. `position` und
-    `type` als String-Unions, nicht als lose Strings.
-- [ ] `services/content.service.ts` umstellen:
+    `audio_path?`) und `Episode` mit `events: EpisodeEvent[]`.
+- [x] `services/content.service.ts` umgestellt:
   - `getInstalledThemes(): Observable<MainHub>` → `/api/content/themes`
   - `getWorldConfig(themeId: string): Observable<WorldConfig>` →
-    `/api/content/themes/${themeId}`, Ergebnisse **pro Welt-ID
-    zwischenspeichern** (`Map<string, Observable<WorldConfig>>` mit
-    `shareReplay({ bufferSize: 1, refCount: false })`) — der Resolver aus
-    Phase 5 fragt sonst bei jedem Screenwechsel neu
+    `/api/content/themes/${themeId}`, **pro Welt-ID zwischengespeichert**
+    (`Map<string, Observable<WorldConfig>>` mit
+    `shareReplay({ bufferSize: 1, refCount: false })`)
   - `getEpisode(themeId: string, episodeId: string): Observable<Episode>`
-  - `assetUrl(themeId: string, folder: string, file: string): string` →
-    `/content/themes/${themeId}/${folder}/${file}`
-  - `themeAssetUrl(themeId: string, file: string): string` →
-    `/content/themes/${themeId}/${file}` (für Dateien direkt im Welt-Ordner,
-    z. B. das Cover)
-  - `hubAssetUrl(file: string): string` → `/content/hub/${file}`
-  - Klassenkommentar auf den neuen Stand bringen (ADR-004 statt ADR-001)
-- [ ] `features/main-hub/main-hub.ts`: `getMainHub()` → `getInstalledThemes()`,
+  - `assetUrl` · `themeAssetUrl` · `hubAssetUrl` wie im Kontrakt
+  - Klassenkommentar auf den neuen Stand gebracht (ADR-005 statt ADR-001)
+- [x] `features/main-hub/main-hub.ts`: `getMainHub()` → `getInstalledThemes()`,
       `getWorldConfig(theme.config_path)` → `getWorldConfig(theme.id)`.
-      Sonst nichts — der Screen wird in Phase 8 umgebaut.
-- [ ] `features/main-hub/theme-card/theme-card.html` Zeile 8: das Cover-Bild
-      hängt heute direkt an `theme().cover`. Adresse über
-      `themeAssetUrl(theme.id, theme.cover)` auflösen — sonst zeigt die Kachel
-      nach der Schema-Änderung auf einen Dateinamen ohne Pfad.
+- [x] `features/main-hub/theme-card/theme-card.ts` + `.html`: Cover-Adresse
+      über eine neue `coverUrl()`-Methode (`ContentService.themeAssetUrl`)
+      aufgelöst, statt direkt an `theme().cover` zu hängen.
 
 ### Doku
 
-- [ ] `JSON_SCHEMA_REFERENCE.md` Abschnitt 1: Ablageort auf
-      `data/main_hub.json` korrigieren, `config_path` streichen, `cover` als
-      Dateiname beschreiben, den Hub-Hintergrund unter `data/hub/` verorten.
-      Ein Satz dazu, wie die Dateien im Betrieb adressiert werden (Kontrakt).
-- [ ] `data/_authoring/README.md`: prüfen, ob die Pflegepflicht-Sektion die
-      Änderung erwähnen muss — wenn ja, nachziehen.
-- [ ] `docs/code-map.md`: Zeile „Statischer Content" unter Frontend entfernen,
-      Content-Repository-Tabelle um `data/main_hub.json` und `data/hub/`
-      ergänzen.
-- [ ] `docs/glossary.md`: Begriffe **Etappe**, **Ort**, **Testwelt** aufnehmen,
-      falls noch nicht drin.
+- [x] `JSON_SCHEMA_REFERENCE.md` Abschnitt 1: Ablageort auf
+      `data/main_hub.json` korrigiert, `config_path` gestrichen, `cover` als
+      Dateiname beschrieben, Adressierung über die Schnittstelle als
+      Kontrakt-Absatz ergänzt.
+- [x] `data/_authoring/README.md` geprüft — die Pflegepflicht-Sektion ist
+      generisch genug, keine Änderung nötig.
+- [x] `docs/code-map.md`: Zeile „Statischer Content" unter Frontend entfernt,
+      Content-Repository-Tabelle um `data/hub/` ergänzt (`data/main_hub.json`
+      stand bereits aus Phase 1 drin).
+- [x] `docs/glossary.md`: Begriffe **Etappe**, **Ort**, **Testwelt** ergänzt.
+
+### Gefundener Bug (nicht im ursprünglichen Plan)
+
+- [x] `backend/src/Services/ContentService.php::themePath()` fixiert: Der
+      `realpath()`-Riegel verankerte auf der Content-Wurzel (`data/`) — lokal
+      ist `data/themes` aber eine NTFS-Junction auf Google Drive, und
+      `realpath()` löst Junctions auf ihr tatsächliches Ziel auf
+      (`H:\Meine Ablage\U105_Questoria`). Das Ziel beginnt nicht mehr mit dem
+      Pfad von `data/`, also warf **jede echte Welt** einen `404`, obwohl die
+      ID-Prüfung sie zu Recht durchließ. Anker jetzt auf `data/themes` selbst
+      (wird bei jedem Aufruf frisch aufgelöst, trägt die Junction-Auflösung
+      also mit). Getestet gegen `dev_fixture` über `/api/content/themes/…`:
+      `200` mit korrektem Inhalt für Welt und Episode, weiterhin `404` für
+      eine erfundene Welt-ID. War in Phase 1 nicht aufgefallen, weil dort
+      bewusst gegen Scratch-Fixtures getestet wurde, nicht gegen die echte
+      Junction (siehe Report-Back Phase 1).
 
 ## Chesterton's Fence
 
@@ -127,3 +133,24 @@ Frontend holt sie ab jetzt über die Schnittstelle aus Phase 1.
   das Feld hätte danach zwei Wahrheiten. Deshalb raus, nicht mitschleppen.
 
 ## Report-Back
+
+Alle fünf Akzeptanzkriterien lokal verifiziert. Die Testwelt `dev_fixture`
+liegt jetzt vollständig unter `data/` (main_hub.json im Repo, Rest über die
+Google-Drive-Junction) und erfüllt die Prüfliste aus
+`JSON_SCHEMA_REFERENCE.md` Abschnitt 9 — jede Verweis-ID trifft ihr Ziel.
+`frontend/public/` ist content-frei. Gegen den lokalen PHP-Server (Port 8010,
+nicht 8000 — siehe Merkposten) liefern alle drei Content-Aufrufe den echten
+`dev_fixture`-Inhalt mit `200`, eine erfundene Welt-ID weiterhin `404`.
+`npm run build` und `composer lint` beide grün.
+
+**Abweichung vom Plan:** ein Bug in `ContentService::themePath()` gefunden und
+behoben, siehe Checkliste oben („Gefundener Bug") — ohne den Fix hätte jede
+echte Welt hinter der Google-Drive-Junction einen `404` geworfen, nicht nur
+`dev_fixture`.
+
+**Unsicherste Stelle:** der neue `realpath()`-Anker auf `data/themes` ist
+gegen die Junction und gegen eine erfundene Welt-ID getestet, aber nicht gegen
+jede denkbare Windows-Pfad-Normalisierung (dieselbe Einschränkung wie schon in
+Phase 1 vermerkt). Auf dem Produktivserver ist `data/themes` eine normale
+Ordnerstruktur ohne Junction — dort greift der ursprüngliche Angriffsvektor
+ohnehin nicht, das Risiko besteht nur lokal.
