@@ -112,6 +112,6 @@ aktiven Welt — eine Regel für alle Screens, nicht je nach Ansicht eine andere
 - 🟡 Der Fortschritt hängt am Browser des Geräts. Wer die Website auf dem
   Tablet und am Rechner öffnet, hat zwei getrennte Stände. Das ist bis
   Meilenstein 4 so gewollt, sollte aber niemanden überraschen — deshalb steht
-  es in ADR-005 und nicht nur hier.
+  es in ADR-006 und nicht nur hier.
 
 ## Report-Back

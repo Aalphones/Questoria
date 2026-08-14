@@ -1,7 +1,12 @@
 {
   "/api": {
-    "target": "https://questoria.info",
-    "secure": true,
+    "target": "http://localhost:8000",
+    "secure": false,
+    "changeOrigin": true
+  },
+  "/content": {
+    "target": "http://localhost:8000",
+    "secure": false,
     "changeOrigin": true
   }
 }

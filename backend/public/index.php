@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Controllers\ContentController;
 use App\Controllers\HealthController;
 use App\Controllers\MigrateController;
 use App\Database\Connection;
@@ -69,6 +70,13 @@ $corsMiddleware->handle($_SERVER['REQUEST_METHOD'] ?? 'GET', $_SERVER['HTTP_ORIG
 $dispatcher = FastRoute\simpleDispatcher(static function (RouteCollector $routes): void {
     $routes->addRoute('GET', '/api/health', [HealthController::class, 'handle']);
     $routes->addRoute('POST', '/api/migrate', [MigrateController::class, 'handle']);
+    $routes->addRoute('GET', '/api/content/themes', [ContentController::class, 'themes']);
+    $routes->addRoute('GET', '/api/content/themes/{themeId}', [ContentController::class, 'world']);
+    $routes->addRoute(
+        'GET',
+        '/api/content/themes/{themeId}/episodes/{episodeId}',
+        [ContentController::class, 'episode'],
+    );
 });
 
 // Der angefragte Pfad wird bewusst nicht um ein Verzeichnis gekuerzt: Die Bruecke

@@ -19,7 +19,7 @@ statt `dialogue_sequence` + `minigame_event`.
 
 | Phase | Thema | Rating | Status |
 |---|---|---|---|
-| 1 | [Content-Schnittstelle im Backend](phase-1-content-api.md) | heikel | pending |
+| 1 | [Content-Schnittstelle im Backend](phase-1-content-api.md) | heikel | complete |
 | 2 | [Testwelt im Repo + Frontend liest über die Schnittstelle](phase-2-testwelt-und-anbindung.md) | standard | pending |
 | 3 | [Kartenfläche: Knoten, Routen, Bildplatzhalter](phase-3-kartenflaeche.md) | heikel | pending |
 | 4 | [Fortschritts-Speicher + Freischaltregeln](phase-4-fortschritt.md) | standard | pending |
@@ -37,7 +37,7 @@ Drei Weichen wurden am 03.08.2026 gestellt (Sascha):
 
 1. **Fortschritt liegt lokal im Browser.** Login und Savegame-API kommen erst
    mit Meilenstein 4. Der Fortschritts-Dienst wird so geschnitten, dass dort nur
-   die Datenquelle getauscht wird, nicht die Screens (→ ADR-005, Phase 4).
+   die Datenquelle getauscht wird, nicht die Screens (→ ADR-006, Phase 4).
 2. **Der Main-Hub wird mitgezogen** (Phase 8) — er nutzt dieselbe Kartenfläche
    wie Etappen- und Ortskarte, statt als Kachelliste aus Meilenstein 1 stehen
    zu bleiben.

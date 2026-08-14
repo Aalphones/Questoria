@@ -1,6 +1,7 @@
 # ADR-001: Content-Auslieferung im ersten Meilenstein
 
-**Status:** entschieden · 01.08.2026
+**Status:** entschieden · 01.08.2026 — **abgelöst durch
+[ADR-005](005-content-auslieferung-ab-meilenstein-2.md)** (14.08.2026)
 
 ## Kontext
 

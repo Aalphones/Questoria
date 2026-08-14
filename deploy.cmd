@@ -1,9 +1,10 @@
 @echo off
 rem ==========================================================================
 rem  Questoria - hochladen per Doppelklick.
-rem    deploy.cmd            Backend und Frontend
+rem    deploy.cmd            Backend, Frontend und Content
 rem    deploy.cmd backend    nur das Backend (samt Bruecke im Webbereich)
 rem    deploy.cmd frontend   nur das Frontend
+rem    deploy.cmd content    nur der Content aus data/ (ohne _authoring/)
 rem ==========================================================================
 setlocal
 chcp 65001 >nul
@@ -16,8 +17,9 @@ if not defined TARGET set "TARGET=all"
 if /i "%TARGET%"=="all" goto :targetOk
 if /i "%TARGET%"=="backend" goto :targetOk
 if /i "%TARGET%"=="frontend" goto :targetOk
+if /i "%TARGET%"=="content" goto :targetOk
 echo [FEHLER] Unbekanntes Ziel "%TARGET%".
-echo          Erlaubt sind: backend, frontend, oder gar keine Angabe.
+echo          Erlaubt sind: backend, frontend, content, oder gar keine Angabe.
 goto :fail
 
 :targetOk
@@ -78,10 +80,18 @@ goto :fail
 :protocolOk
 set "DO_BACKEND="
 set "DO_FRONTEND="
+set "DO_CONTENT="
 if /i "!TARGET!"=="all" set "DO_BACKEND=1"
 if /i "!TARGET!"=="all" set "DO_FRONTEND=1"
+if /i "!TARGET!"=="all" set "DO_CONTENT=1"
 if /i "!TARGET!"=="backend" set "DO_BACKEND=1"
 if /i "!TARGET!"=="frontend" set "DO_FRONTEND=1"
+if /i "!TARGET!"=="content" set "DO_CONTENT=1"
+
+rem Wohin der Content geht: derselbe Webbereich wie das Frontend, eigener
+rem Unterordner. Kein eigener deploy.env-Wert noetig, solange niemand einen
+rem Sonderfall braucht.
+set "REMOTE_CONTENT_PATH=!REMOTE_WEB_PATH!content/"
 
 if not defined DO_BACKEND goto :composerDone
 if not defined COMPOSER_PATH goto :composerMissing
@@ -125,6 +135,7 @@ goto :fail
 :frontendReady
 if defined DO_BACKEND goto :writeEnv
 if defined DO_FRONTEND goto :writeScript
+if defined DO_CONTENT goto :writeScript
 echo [FEHLER] Es bleibt nichts zu tun.
 goto :fail
 
@@ -154,6 +165,7 @@ call :writeSession "!PREP_SCRIPT!"
 if defined DO_BACKEND >>"!PREP_SCRIPT!" echo mkdir !REMOTE_BACKEND_PATH!
 if defined DO_BACKEND >>"!PREP_SCRIPT!" echo mkdir !BRIDGE_PATH!
 if defined DO_FRONTEND >>"!PREP_SCRIPT!" echo mkdir !REMOTE_WEB_PATH!
+if defined DO_CONTENT >>"!PREP_SCRIPT!" echo mkdir !REMOTE_CONTENT_PATH!
 >>"!PREP_SCRIPT!" echo exit
 "!WINSCP_PATH!" /ini=nul /script="!PREP_SCRIPT!" >nul 2>&1
 del "!PREP_SCRIPT!" >nul 2>&1
@@ -167,10 +179,16 @@ if defined DO_BACKEND (
     >>"!WINSCP_SCRIPT!" echo synchronize remote -delete -filemask="^|.env.example;logs/;.php-cs-fixer.php;.php-cs-fixer.cache" "backend" "!REMOTE_BACKEND_PATH!"
     >>"!WINSCP_SCRIPT!" echo synchronize remote -delete "api-bridge" "!BRIDGE_PATH!"
 )
-rem Der Frontend-Abgleich muss den Bruecken-Ordner aussparen - sonst raeumt
-rem -delete beim naechsten Lauf die API weg, weil sie im Build nicht vorkommt.
+rem Der Frontend-Abgleich muss Bruecken- und Content-Ordner aussparen - sonst
+rem raeumt -delete beim naechsten Lauf beide weg, weil sie im Build nicht
+rem vorkommen.
 if defined DO_FRONTEND (
-    >>"!WINSCP_SCRIPT!" echo synchronize remote -delete -filemask="^|!API_URL_SEGMENT!/" "!FRONTEND_DIST!" "!REMOTE_WEB_PATH!"
+    >>"!WINSCP_SCRIPT!" echo synchronize remote -delete -filemask="^|!API_URL_SEGMENT!/;content/" "!FRONTEND_DIST!" "!REMOTE_WEB_PATH!"
+)
+rem _authoring/ bleibt aussen vor: sonst wandert die Python-Umgebung unter
+rem data/_authoring/voice-tools/ mit auf den Server.
+if defined DO_CONTENT (
+    >>"!WINSCP_SCRIPT!" echo synchronize remote -delete -filemask="^|_authoring/" "data" "!REMOTE_CONTENT_PATH!"
 )
 >>"!WINSCP_SCRIPT!" echo close
 >>"!WINSCP_SCRIPT!" echo exit
@@ -194,6 +212,7 @@ echo [5/5] Fertig, alles ist oben.
 if defined DO_BACKEND echo          Programmcode nach !REMOTE_BACKEND_PATH!
 if defined DO_BACKEND echo          Bruecke      nach !BRIDGE_PATH!
 if defined DO_FRONTEND echo          Oberflaeche  nach !REMOTE_WEB_PATH!
+if defined DO_CONTENT echo          Content      nach !REMOTE_CONTENT_PATH!
 echo.
 echo          Probe: !PUBLIC_BASE_URL!/!API_URL_SEGMENT!/health aufrufen.
 echo          db_connected muss true sein - steht dort false, stimmen die

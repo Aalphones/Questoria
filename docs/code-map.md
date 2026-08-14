@@ -35,7 +35,7 @@ im Frontend-Ordnernamen, PascalCase in PHP-Klassen):
 | Zentrale Services | `services/game-state.service.ts`, `services/content.service.ts`, `services/savegame.service.ts`, `services/narration.service.ts` | Aktive Welt/Profil/Lernstufe, JSON-Content lesen, Speichern/Laden, Vorlesemodus + Sprachausgabe. **`ContentService` ist die einzige Ladestelle für Content** — dort hängt später der Offline-Cache (Meilenstein 6) |
 | Content-Typen | `models/` | TypeScript-Abbild des JSON-Schemas (`content.types.ts`) und der Ladezustände (`game-state.types.ts`) |
 | Design-Tokens | `frontend/src/styles/` | `_tokens.scss` (Farben, Schrift, Abstände, Radien) und `_fonts.scss`; global über `src/styles.scss` eingebunden |
-| Statischer Content | `frontend/public/assets/`, `frontend/public/data/themes/` | `main_hub.json` und die Entwickler-Testwelt — bis die Content-API existiert (ADR-001) |
+| Statischer Content | `frontend/public/assets/`, `frontend/public/data/themes/` | `main_hub.json` und die Entwickler-Testwelt aus Meilenstein 1 — abgelöst durch die Content-Schnittstelle (ADR-005), Umzug der Testwelt folgt in Phase 2 |
 
 **Ist-Stand:** gebaut sind bisher `features/main-hub/` (mit `theme-card/` und
 `difficulty-picker/`), `services/`, `models/` und `styles/`. Alle übrigen Zeilen
@@ -48,7 +48,7 @@ Struktur übernommen aus promptigofant (gleiches Muster, eigenes Repo):
 | Ordner | Zweck |
 |---|---|
 | `Controllers/` | HTTP-Endpunkte (Content-API, User-API, Savegame-API) |
-| `Services/` | Geschäftslogik (Content lesen, Savegame-Verwaltung, Auth) |
+| `Services/` | Geschäftslogik. `ContentService` liest `data/` (Wurzel: `CONTENT_PATH` oder `DOCUMENT_ROOT/content`) — Content lesen, Savegame-Verwaltung, Auth |
 | `Repositories/` | MySQL-Zugriff (users, player_profiles, savegames, achievements, statistics) |
 | `Middleware/` | Herkunftssperre (`CorsMiddleware`) und Anmelde-Token (`JwtAuthMiddleware`) |
 | `Validators/` | Request-Validierung (respect/validation) |
@@ -60,29 +60,32 @@ Struktur übernommen aus promptigofant (gleiches Muster, eigenes Repo):
 
 **Ist-Stand:** gebaut sind `Http/`, `Exceptions/`, `Database/`, `Middleware/`,
 `Controllers/HealthController.php`, `Controllers/MigrateController.php`,
+`Controllers/ContentController.php`, `Services/ContentService.php`,
 `Migrations/` (7 Tabellen in 8 Schritten unter `sql/`, `MigrationRunner.php`, plus
 `backend/bin/migrate.php` als CLI-Hülle für den Fall eines späteren lokalen/
 Fernzugriff-Tests) und der Einstiegspunkt. Fehlende Migrationen werden bei
 jedem echten API-Aufruf automatisch nachgezogen (`AutoMigrator`, verdrahtet in
 `public/index.php`, Not-Aus über `AUTO_MIGRATE` in `.env`) — `MigrateController`
-bleibt zusätzlich als manuell aufrufbares Debug-Werkzeug. `Services/`,
-`Repositories/` und `Validators/` sind Soll-Zustand für spätere Meilensteine
-und existieren noch nicht als Ordner.
+bleibt zusätzlich als manuell aufrufbares Debug-Werkzeug. `Repositories/` und
+`Validators/` sind Soll-Zustand für spätere Meilensteine und existieren noch
+nicht als Ordner.
 
 ## Projektstamm
 
 | Datei / Ordner | Zweck |
 |---|---|
-| `deploy.cmd` | Bringt Backend und Frontend auf den Server (Ziel wählbar: `backend`, `frontend`, ohne Angabe beides) |
+| `deploy.cmd` | Bringt Backend, Frontend und Content auf den Server (Ziel wählbar: `backend`, `frontend`, `content`, ohne Angabe alle drei) |
 | `deploy.env.example` | Vorlage für die Zugangsdaten; die echte `deploy.env` liegt nicht im Git |
 | `api-bridge/` | Die drei Dateien, die im ausgelieferten Bereich stehen und auf das Backend daneben zeigen ([ADR-003](decisions/003-backend-ausserhalb-des-webbereichs.md)). Landen auf dem Server unter `public/api/` |
-| `frontend/proxy.conf.json` | Leitet `/api` beim lokalen Entwickeln an `questoria.info` weiter — so laufen die Aufrufe im Code relativ, lokal wie in Betrieb |
+| `backend/serve.cmd` | Startet den lokalen PHP-Entwicklungsserver auf Port 8000 (`backend/dev-router.php` als Weiche: `/content/` direkt aus `data/`, alles andere durch `public/index.php`) — nur für die Entwicklung, nie deployen |
+| `frontend/proxy.conf.json` | Leitet `/api` und `/content` beim lokalen Entwickeln an `localhost:8000` weiter (`backend\serve.cmd`) — so laufen die Aufrufe im Code relativ, lokal wie in Betrieb |
 
 ## Content-Repository (`data/`)
 
 | Ordner | Zweck |
 |---|---|
 | `data/_authoring/` | LLM-Prompt-Toolkit + Schema-Referenz — kein Runtime-Code |
+| `data/main_hub.json` | Installierte Welten für die Planetenkarte — ausgeliefert über `GET /api/content/themes` |
 | `data/themes/<theme_id>/world_config.json` | Lernstufen, Etappenkarte, Ortskarten mit Node-Koordinaten |
 | `data/themes/<theme_id>/cards.json` | Kartenformat + alle Sammelkarten der Welt |
 | `data/themes/<theme_id>/episodes/` | Eine Episode je Datei: Hintergrund + Eventliste (Dialoge inline) |

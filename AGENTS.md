@@ -70,6 +70,12 @@ Das verbindliche Schema + LLM-Copy-Paste-Prompt liegt unter `data/_authoring/`
 Authoring-Toolkit im selben Commit mit** — siehe
 `data/_authoring/README.md` → „Pflegepflicht".
 
+Ab Meilenstein 2 wird der Content über die Schnittstelle gelesen (`GET
+/api/content/themes`, `.../themes/{themeId}`,
+`.../themes/{themeId}/episodes/{episodeId}` — [ADR-005](docs/decisions/005-content-auslieferung-ab-meilenstein-2.md))
+und mit `deploy.cmd content` auf den Server hochgeladen, statt als
+Frontend-Asset gebaut zu werden.
+
 ## Critical Rules
 
 1. **Content ist read-only über die API** — Schreibzugriff auf `data/themes/` gibt es nur direkt im Dateisystem (Drive-Ordner), nie über einen Endpoint.
