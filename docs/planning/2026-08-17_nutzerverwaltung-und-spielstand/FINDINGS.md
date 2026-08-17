@@ -24,10 +24,14 @@ Abgehakt wird, sobald die Ziel-Phase die Erkenntnis aufgenommen hat.
   muss also an der zentralen Aufrufstelle sitzen, nicht nur an den Auth-Routen —
   sonst läuft ein abgelaufenes Cookie in eine Ladefehler-Anzeige statt auf den
   Anmeldebildschirm.
-- [ ] → Phase 9: Es gibt noch keinen Weg, den **ersten** Account auf dem Server
+- [ ] → Phase 2: Es gibt noch keinen Weg, den **ersten** Account auf dem Server
   anzulegen — `bin/create-user.php` braucht eine Datenbankverbindung von außen,
-  die das Paket nicht hergibt. Offene Entscheidung, siehe ADR-008
-  („Accounts entstehen außerhalb der Anwendung").
+  die das Paket nicht hergibt. **Entschieden am 17.08.2026 (Sascha):** dafür
+  kommt ein geschützter Endpunkt nach dem Muster von `POST /api/migrate` —
+  eigener Token im Kopf, ohne Token `404`. Gehört mit in Phase 2, weil ohne
+  ihn ab dort nichts mehr testbar ist. Der Endpunkt gehört auf die Liste
+  `OPEN_ROUTES` in `backend/public/index.php` (er kann keine Sitzung
+  voraussetzen) und schützt sich über seinen eigenen Token.
 - [ ] → Meilenstein 5: Kartenbesitz braucht eine eigene Ablage. Der
   Spielstand-Zustand (Phase 5) hat dafür bewusst **kein** Feld — beim Bau der
   Sammelkarten entscheiden, ob `state.cards` dazukommt oder eine eigene

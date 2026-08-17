@@ -8,8 +8,9 @@
 
 **Nächster Schritt:** Phase 2 (Türsteher vor Content und App) —
 [phase-2-tuersteher.md](docs/planning/2026-08-17_nutzerverwaltung-und-spielstand/phase-2-tuersteher.md).
-Rating „heikel". Vorher offen: wie der erste Account auf dem Server entsteht
-(`bin/create-user.php` läuft auf dem Paket nicht — siehe FINDINGS → Phase 9).
+Rating „heikel". Phase 2 baut zusätzlich einen geschützten Endpunkt zum Anlegen
+des ersten Accounts (entschieden am 17.08.2026 — `bin/create-user.php` läuft auf
+dem Paket nicht; Details in FINDINGS → Phase 2).
 
 **Zuletzt abgeschlossen:** Event Engine, Meilenstein 3 — alle 7 Phasen,
 Smoke-Test und Archivierung am 17.08.2026, liegt unter

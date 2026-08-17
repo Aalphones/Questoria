@@ -54,10 +54,11 @@ nach der Anmeldung wählt es nur noch sein Profil.
   `backend/bin/create-user.php` legt einen an. 🔴 Das Skript setzt eine
   Datenbankverbindung von außen voraus — das Strato-Paket hat weder eine
   Kommandozeile noch eine von außen erreichbare MySQL-Adresse (geprüft am
-  17.08.2026: Port 3306 der Datenbankadresse antwortet von außen nicht). Wie der
-  **erste** Account auf dem Server entsteht, ist damit offen; das Muster von
-  `POST /api/migrate` (geschützter Endpunkt mit eigenem Token im Kopf, ohne
-  Token `404`) wäre der naheliegende zweite Weg.
+  17.08.2026: Port 3306 der Datenbankadresse antwortet von außen nicht). Der
+  **erste** Account entsteht deshalb über einen geschützten Endpunkt nach dem
+  Muster von `POST /api/migrate` — eigener Token im Kopf, ohne Token `404`
+  (entschieden am 17.08.2026, gebaut in Phase 2). Das Skript bleibt für den
+  Fall eines späteren Fernzugriffs auf die Datenbank bestehen.
 - **Ohne Datenbank keine Anmeldung.** Die Content-Schnittstelle las bisher nur
   Dateien und lief auch ohne Datenbank; ab jetzt hängt jeder Aufruf außer
   `/api/health` und `/api/migrate` an einer erreichbaren Datenbank.
