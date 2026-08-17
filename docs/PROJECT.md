@@ -162,9 +162,13 @@ einem Meilenstein fertig statt über zwei verteilt.
   gegen eine laufende Engine verifiziert~~ — geklärt in Meilenstein 3, Phase 7:
   die Testwelt `dev_fixture` spielt alle fünf Eventtypen durch, die Typ-Tabelle
   in `JSON_SCHEMA_REFERENCE.md` Abschnitt 5.0 stimmt wieder.
-- 🟡 Ob Sprachausgabe über die Browser-Stimme reicht oder pro Dialogzeile
-  vorproduzierte Aufnahmen nötig sind: *(Antwort nach Smoke-Punkt 2 des
-  Event-Engine-Plans eintragen — noch offen, Sascha prüft am echten Gerät.)*
+- ~~Ob Sprachausgabe über die Browser-Stimme reicht oder pro Dialogzeile
+  vorproduzierte Aufnahmen nötig sind~~ — geklärt am 17.08.2026 (Sascha,
+  Smoke-Test): die Browser-Stimme klingt brauchbar, reicht für den MVP.
+  Vorproduzierte Aufnahmen über `audio_path` bleiben trotzdem eingebaut und
+  gehen ihr immer vor — die Sprach-Werkstatt unter `data/_authoring/voice-tools/`
+  steht bereit, wird aber erst gebraucht, sobald echter Fandom-Content vertont
+  werden soll.
 - Kein festgelegtes Datum für "Spiel muss laufen" — falls es eins gibt
   (Schuljahr, Geburtstag eines Kindes o.ä.), bitte nachtragen
 
