@@ -45,17 +45,20 @@ Weltknoten aus `theme-card/`, Routen, Info-Panel; dazu der eigene Screen
 `level-select/` mit `difficulty-picker/`), `features/timeline/`
 (echte Etappenkarte: Inseln, Panel, Legende, Fortschritt-zurücksetzen-Dialog),
 `features/map/` (echte Ortskarte: Punkte, Routen, Kompassrose), `features/episode/`
-(Ablauf-Gerüst mit Event Loader; Sterne noch pauschal, bis der Ergebnis-Screen
-steht; löst ausgelagerte Konfigurationen über `config.ref` auf),
-`features/events/dialog/` (Visual-Novel-Bühne mit zwei Plätzen),
-`features/events/multiple-choice/` (Quiz mit Weiterraten),
+(Ablauf-Gerüst mit Event Loader, echter Sternenformel in `star-rules.ts` und
+Ergebnis-Screen nach dem letzten Event; löst ausgelagerte Konfigurationen über
+`config.ref` auf), `features/events/dialog/` (Visual-Novel-Bühne mit zwei
+Plätzen), `features/events/multiple-choice/` (Quiz mit Weiterraten),
 `features/events/text-input/` (Texteingabe mit Weiterraten),
 `features/events/image-search/` (Bildsuche mit Fehlgriff-Zählung, Ziele auch per Tastatur erreichbar),
-`ui/map-canvas/`,
-`ui/image-slot/`, `ui/task-card/`, `ui/hud/` (inkl. Modus-Umschalter + Ton-Knopf),
-`ui/content-error/`, `ui/read-aloud-button/`, `services/narration.service.ts`,
-`routing/`, `services/`, `models/` und `styles/`. Alle übrigen Zeilen sind
-Soll-Zustand für spätere Meilensteine.
+`features/events/reward/` (Belohnungs-Moment mit Sternen; merkt `card_id` für
+Meilenstein 5, vergibt noch keine Sammelkarte), `features/result/` (Sterne,
+zwei Statistik-Karten aus dem Lauf — noch keine Erfolge, kein Karten-Banner),
+`ui/map-canvas/`, `ui/image-slot/`, `ui/task-card/`,
+`ui/hud/` (inkl. Modus-Umschalter + Ton-Knopf), `ui/content-error/`,
+`ui/read-aloud-button/`, `services/narration.service.ts`, `routing/`,
+`services/`, `models/` und `styles/`. Alle übrigen Zeilen sind Soll-Zustand
+für spätere Meilensteine.
 
 ### Routen (Frontend)
 

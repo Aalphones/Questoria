@@ -1,0 +1,10 @@
+<div class="reward__card">
+  <h2 class="reward__title">Geschafft!</h2>
+
+  <div class="reward__message">
+    <qst-read-aloud-button [text]="message" />
+    <p>{{ message }}</p>
+  </div>
+
+  <button type="button" class="reward__next" (click)="finish()">Weiter</button>
+</div>

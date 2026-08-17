@@ -4,6 +4,7 @@ import { EventType } from '../../models/content.types';
 import { isDialogConfig } from '../events/dialog/dialog.types';
 import { isImageSearchConfig } from '../events/image-search/image-search.types';
 import { isMultipleChoiceConfig } from '../events/multiple-choice/multiple-choice.types';
+import { isRewardConfig } from '../events/reward/reward.types';
 import { isTextInputConfig } from '../events/text-input/text-input.types';
 
 /**
@@ -23,6 +24,7 @@ export const EVENT_COMPONENTS: Readonly<Partial<Record<EventType, () => Promise<
   text_input: () => import('../events/text-input/text-input').then((module) => module.TextInput),
   image_search: () =>
     import('../events/image-search/image-search').then((module) => module.ImageSearch),
+  reward: () => import('../events/reward/reward').then((module) => module.Reward),
 };
 
 /**
@@ -56,6 +58,7 @@ const EVENT_CONFIG_GUARDS: Readonly<Partial<Record<EventType, (config: unknown) 
   multiple_choice: isMultipleChoiceConfig,
   text_input: isTextInputConfig,
   image_search: isImageSearchConfig,
+  reward: isRewardConfig,
 };
 
 /** Lädt die Komponente zu einem Eventtyp — unbekannter Typ wirft, das Gerüst zeigt die Meldung. */

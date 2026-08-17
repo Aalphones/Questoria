@@ -160,6 +160,15 @@ export interface ImageSearchConfig {
   find_all: boolean;
 }
 
+/** Die Konfiguration eines `reward`-Events (Abschnitt 5.2, inline). */
+export interface RewardConfig {
+  /**
+   * cards[].id aus cards.json — in Meilenstein 3 nur gemerkt, nicht vergeben.
+   * Fehlt sie, gibt es eben nur Sterne (Plan Phase 5, AK 3).
+   */
+  card_id?: string;
+}
+
 /**
  * Eine ausgelagerte Event-Datei unter `events/<event_id>.json` mit einer
  * Variante je Lernstufe (Abschnitt 4 „Inline oder ausgelagert" + Varianten-Regel).

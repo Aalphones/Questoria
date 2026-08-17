@@ -18,7 +18,7 @@ Ort-Platzhalter aus Meilenstein 2 verschwindet.
 | 2 | [Ablauf-Gerüst, Event Loader, `dialog`](phase-2-ablauf-geruest-und-dialog.md) | heikel | complete |
 | 3 | [Ausgelagerte Events + `multiple_choice`](phase-3-ausgelagerte-events-und-quiz.md) | heikel | complete |
 | 4 | [`text_input` + `image_search`](phase-4-texteingabe-und-bildsuche.md) | standard | complete |
-| 5 | [`reward` + Ergebnis-Screen + echte Sterne](phase-5-belohnung-und-ergebnis.md) | standard | pending |
+| 5 | [`reward` + Ergebnis-Screen + echte Sterne](phase-5-belohnung-und-ergebnis.md) | standard | complete |
 | 6 | [Weiterspielen nach Abbruch](phase-6-weiterspielen.md) | standard | pending |
 | 7 | [Testwelt, Authoring-Toolkit, Doku](phase-7-testwelt-und-doku.md) | mechanisch | pending |
 

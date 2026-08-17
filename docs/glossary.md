@@ -34,7 +34,7 @@ sie im Code, in Docs oder Tickets auftauchen.
 | Vorlesemodus | Der Modus "Bilder & Vorlesen" (`mode: 'listen'` im `NarrationService`) für Kinder, die noch nicht lesen: kurze Textfassung, Bildantworten im Quiz, automatische Sprachausgabe. Gegenstück: "Selbst lesen" (`mode: 'read'`). |
 | Design-Token | Ein benannter Gestaltungswert (Farbe, Abstand, Radius, Schatten) aus `docs/design/`. Einzige Quelle für das Aussehen — keine Hardcodes in Komponenten. |
 | Fortschritt | Der gespeicherte Stand, welche Episoden ein Kind abgeschlossen hat — bis Meilenstein 4 im Browser-Speicher (`ProgressService`), danach über die Savegame-Schnittstelle (ADR-006). |
-| Sterne | Bewertung einer geschafften Episode (0–3), Teil von `EpisodeProgress`. Bis der Ergebnis-Screen steht, vergibt das Ablauf-Gerüst am Ende einer Episode pauschal 3. |
+| Sterne | Bewertung einer geschafften Episode (0–3), Teil von `EpisodeProgress`. Formel (`star-rules.ts`): Anteil der beim ersten Versuch richtig gelösten bewerteten Events — alle richtig = 3, mindestens die Hälfte = 2, darunter = 1; eine Episode ohne bewertetes Event gibt 3. Ein zweiter, schlechterer Durchlauf verschlechtert das gespeicherte Ergebnis nicht. |
 | Etappen-Zustand | `geschafft`/`aktuell`/`gesperrt` (`ProgressState`) — Ergebnis der reinen Freischaltregeln in `progress.rules.ts`, gilt gleichermaßen für Orte und Etappen. |
 
 ## Abgelöste Begriffe

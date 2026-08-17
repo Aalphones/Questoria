@@ -20,6 +20,11 @@ export class EpisodeRun {
   readonly scoredTotal = signal(0);
   /** Davon beim ersten Versuch richtig — die Grundlage der Sternenformel (Phase 5). */
   readonly correctFirstTryCount = signal(0);
+  /**
+   * `card_id` aus einem gespielten `reward`-Event, `null` ohne eine — gemerkt,
+   * nicht verwendet. Meilenstein 5 hängt hier die echte Kartenvergabe an.
+   */
+  readonly pendingCardId = signal<string | null>(null);
 
   finish(outcome: EventOutcome): void {
     if (outcome.kind === 'scored') {
@@ -37,6 +42,7 @@ export class EpisodeRun {
     this.eventIndex.set(0);
     this.scoredCount.set(0);
     this.correctFirstTryCount.set(0);
+    this.pendingCardId.set(null);
   }
 
   /** Setzt einen gespeicherten Zwischenstand fort — genutzt ab Phase 6 („Weiterspielen"). */

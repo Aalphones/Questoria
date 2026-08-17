@@ -75,32 +75,68 @@ ablöst.
 
 ## Checkliste
 
-- [ ] `models/content.types.ts`: `RewardConfig { card_id: string }`.
-- [ ] `ng generate component features/events/reward --skip-tests`, Zeile
+- [x] `models/content.types.ts`: `RewardConfig { card_id: string }`.
+      **Abweichung:** `card_id` als `card_id?: string` — AK 3 verlangt
+      ausdrücklich, dass eine fehlende ID kein Fehler ist.
+- [x] `ng generate component features/events/reward --skip-tests`, Zeile
       `reward` in `EVENT_COMPONENTS`.
-- [ ] `EpisodeRun`: `pendingCardId` als Signal ergänzen, gesetzt vom
+- [x] `EpisodeRun`: `pendingCardId` als Signal ergänzt, gesetzt vom
       `reward`-Event. Kommentar, dass Meilenstein 5 hier die Kartenvergabe
       anhängt.
-- [ ] `features/episode/star-rules.ts` mit `starsForRun()` — reine Funktion,
+- [x] `features/episode/star-rules.ts` mit `starsForRun()` — reine Funktion,
       kein Signal, kein Zugriff auf Dienste.
-- [ ] `ng generate component features/result --skip-tests`. Eingaben: `stars`,
+- [x] `ng generate component features/result --skip-tests`. Eingaben: `stars`,
       `correctFirstTry`, `scoredTotal`, `dialogLines`, `mapLink`,
       `timelineLink`.
-- [ ] `episode.ts`: Nach dem letzten Event Fortschritt schreiben und den
+- [x] `episode.ts`: Nach dem letzten Event Fortschritt schreiben und den
       Ergebnis-Screen zeigen, statt sofort zu navigieren. Die Kopfleiste bleibt
       sichtbar.
-- [ ] Dialogzeilen-Summe im Episoden-Screen als `computed()` über die
+- [x] Dialogzeilen-Summe im Episoden-Screen als `computed()` über die
       Eventliste (`events` mit `type === 'dialog'`, Länge von `config.lines`).
       Das ist die einzige Stelle, an der das Gerüst einen Eventtyp beim Namen
       nennt — Kommentar dazu: es ist eine Statistik über den Content, keine
       Ablaufsteuerung, und sie fällt weg, sobald Meilenstein 4 echte
       Statistiken führt.
-- [ ] Sterne-Animation und Konfetti mit `prefers-reduced-motion`-Zweig.
-- [ ] `docs/code-map.md`: `features/events/reward/`, `features/result/`,
-      `star-rules.ts` aufnehmen.
-- [ ] `docs/glossary.md`: Eintrag **Sterne** auf die neue Formel ziehen (der
-      Satz „liefert der Ort-Platzhalter pauschal 3" ist dann falsch).
+- [x] Sterne-Animation und Konfetti mit `prefers-reduced-motion`-Zweig — über
+      die globalen Dauer-Tokens (`--duration-enter`, `--duration-ambient`),
+      die `_tokens.scss` unter `prefers-reduced-motion: reduce` auf `0` setzt.
+      Kein eigener Zweig im Ergebnis-Screen nötig.
+- [x] `docs/code-map.md`: `features/events/reward/`, `features/result/`,
+      `star-rules.ts` aufgenommen.
+- [x] `docs/glossary.md`: Eintrag **Sterne** auf die neue Formel gezogen.
 
 ## Report-Back
 
-*(beim Umsetzen füllen)*
+**Reward-Event** (`features/events/reward/`): Karte mit `eqPop`, Überschrift
+„Geschafft!", ein fester Satz, Vorlese-Knopf (Vorlesemodus spricht ihn beim
+Erscheinen automatisch, wie bei Dialog und Aufgaben-Hülle), Knopf „Weiter" →
+`run.finish({ kind: 'story' })`. Meldet ausdrücklich **kein** `scored` — geht
+nicht in die Sternenformel ein. `card_id` wird gelesen (optional) und in
+`EpisodeRun.pendingCardId` abgelegt, sonst nirgends benutzt.
+
+**Bewertung:** `starsForRun(scoredCount, correctFirstTryCount)` als reine
+Funktion in `star-rules.ts`. `episode.ts` berechnet die Sterne über ein
+`computed()` aus den `EpisodeRun`-Signalen und schreibt sie einmalig per
+`effect()`, sobald `eventIndex` die Eventliste erreicht hat — der alte
+Platzhalter-Pfad (pauschal 3 Sterne, sofortige Navigation) ist vollständig
+ersetzt.
+
+**Ergebnis-Screen** (`features/result/`): reine Anzeige-Komponente ohne
+eigene Route, wird von `episode.ts` im `episode__stage`-Slot gezeigt, sobald
+die Episode durch ist. Konfetti (10 Rauten, `eqBob`, per SCSS-Schleife
+positioniert) und drei Sterne (`eqPop`, gestaffelt über `nth-child`) sind
+reine Dekoration über CSS — keine JS-Zufallswerte, deterministisch pro Build.
+Zwei Statistik-Karten („Richtige Antworten", „Dialogzeilen gehört") aus den
+Eingaben, dritte Karte laut Plan bewusst weggelassen. CTAs „Zurück zur Karte"
+(→ `mapBackLink()`, dieselbe Berechnung wie die Kopfleiste) und „Zur Karte der
+Etappen" (→ Etappenkarte) als `routerLink`, keine eigene Navigation im
+Ergebnis-Screen.
+
+**Abweichung vom Plan:** `RewardConfig.card_id` ist optional statt
+verpflichtend (siehe Checkliste oben) — inhaltlich keine Abweichung, nur eine
+Korrektur gegenüber der Typ-Skizze in der Checkliste, AK 3 selbst verlangt es
+so.
+
+**Nicht am echten Gerät geprüft** — das passiert im Smoke-Test am Plan-Ende
+(README, Punkt 4: Sterne absichtlich mit Fehlern spielen, dann fehlerfrei
+wiederholen).

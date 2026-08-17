@@ -34,9 +34,12 @@ Meilenstein betreffen. Format:
   dazu — sonst spielt eine kaputte Content-Datei wieder als leere Aufgabe.
   **Erledigt:** `isTextInputConfig` und `isImageSearchConfig` in
   `EVENT_CONFIG_GUARDS` eingetragen.
-- [ ] → Phase 5: `EpisodeRun.pendingCardId` ist der Haken, an den Meilenstein 5
+- [x] → Phase 5: `EpisodeRun.pendingCardId` ist der Haken, an den Meilenstein 5
   die echte Kartenvergabe hängt. In Meilenstein 3 wird die ID nur gemerkt,
   nicht verwendet.
+  **Erledigt:** Signal `pendingCardId: string | null` in `EpisodeRun`, gesetzt
+  vom `reward`-Event (`card_id` fehlt → `null`, kein Fehler), zurückgesetzt in
+  `restart()`.
 - [ ] → Meilenstein 4: `RunStoreService` (Phase 6) legt den angefangenen Lauf
   im Browser-Speicher ab. Beim Umstieg auf die Savegame-Schnittstelle wird
   genau diese Datei getauscht — derselbe Schnitt wie bei `ProgressService`

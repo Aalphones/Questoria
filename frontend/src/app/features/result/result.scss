@@ -1,0 +1,163 @@
+@use 'sass:math';
+
+:host {
+  display: grid;
+  position: relative;
+  justify-self: center;
+  align-content: center;
+  justify-items: center;
+  gap: var(--space-6);
+  padding: var(--space-6) var(--space-4);
+}
+
+.result {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-4);
+  text-align: center;
+
+  &__confetti {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    pointer-events: none;
+  }
+
+  &__confetti-piece {
+    position: absolute;
+    inline-size: var(--space-4);
+    block-size: var(--space-4);
+    rotate: 45deg;
+    background: var(--color-accent-soft-text);
+    animation: eqBob var(--duration-ambient) var(--easing-standard) infinite;
+
+    // Zehn Rauten an festen, über die Fläche verteilten Positionen — reine
+    // Dekoration, die Werte selbst tragen keine Bedeutung.
+    @for $index from 1 through 10 {
+      &:nth-child(#{$index}) {
+        inset-inline-start: math.percentage(math.div($index * 37 % 100, 100));
+        inset-block-start: math.percentage(math.div($index * 23 % 90, 100));
+        animation-duration: calc(var(--duration-ambient) * (0.6 + math.div($index, 10)));
+        animation-delay: calc(var(--duration-ambient) * math.div($index, 20) * -1);
+
+        @if $index % 2 == 0 {
+          background: var(--color-support);
+        }
+      }
+    }
+  }
+
+  &__stars {
+    display: flex;
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__star {
+    inline-size: var(--space-8);
+    block-size: var(--space-8);
+    rotate: 45deg;
+    background: var(--color-progress-locked);
+    animation: eqPop var(--duration-enter) var(--easing-standard) both;
+
+    &:nth-child(2) {
+      animation-delay: calc(var(--duration-enter) * 0.55);
+    }
+
+    &:nth-child(3) {
+      animation-delay: var(--duration-enter);
+    }
+
+    &--filled {
+      background: var(--color-progress-current-strong);
+    }
+  }
+
+  &__title {
+    margin: 0;
+    color: var(--color-accent);
+    font-size: clamp(2rem, 4.4vw, 3.25rem);
+  }
+
+  &__hint {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+
+    p {
+      margin: 0;
+      color: var(--color-text-muted);
+    }
+  }
+
+  &__stats {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-4);
+  }
+
+  &__stat {
+    display: grid;
+    gap: var(--space-1);
+    min-inline-size: 12rem;
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-md);
+  }
+
+  &__stat-value {
+    color: var(--color-text-accent);
+    font-family: var(--font-heading);
+    font-size: var(--font-size-title);
+  }
+
+  &__stat-label {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-detail);
+  }
+
+  &__ctas {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-3);
+  }
+
+  &__cta {
+    display: flex;
+    align-items: center;
+    min-block-size: var(--size-touch-target);
+    padding-inline: var(--space-6);
+    border: none;
+    border-radius: var(--radius-pill);
+    font-family: var(--font-body);
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 2px solid var(--color-focus-ring);
+      outline-offset: 2px;
+    }
+
+    &--primary {
+      background: var(--color-accent);
+      color: var(--color-text-on-accent);
+
+      &:hover {
+        background: var(--color-accent-hover);
+      }
+    }
+
+    &--secondary {
+      background: var(--color-accent-soft);
+      color: var(--color-accent-soft-text);
+    }
+  }
+}

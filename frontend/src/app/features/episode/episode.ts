@@ -12,10 +12,9 @@ import {
   untracked,
 } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { Router } from '@angular/router';
 import { Observable, catchError, map, of, startWith, switchMap } from 'rxjs';
 
-import { Episode, EpisodeEvent, EventFile, EventType, WorldConfig } from '../../models/content.types';
+import { DialogConfig, Episode, EpisodeEvent, EventFile, EventType, WorldConfig } from '../../models/content.types';
 import { EventContext } from '../../models/event-runtime.types';
 import { LoadState } from '../../models/game-state.types';
 import { ContentService } from '../../services/content.service';
@@ -24,12 +23,11 @@ import { ProgressService } from '../../services/progress.service';
 import { ContentError } from '../../ui/content-error/content-error';
 import { Hud } from '../../ui/hud/hud';
 import { ImageSlot } from '../../ui/image-slot/image-slot';
+import { Result } from '../result/result';
 import { EpisodeRun } from './episode-run';
 import { SCORED_EVENT_TYPES, assertPlayableConfig, loadEventComponent } from './event-type-map';
 import { eventRefOf, resolveEventConfig } from './resolve-event-config';
-
-/** Sterne, bis Phase 5 den Ergebnis-Screen und die echte Bewertung bringt. */
-const PLACEHOLDER_STARS = 3;
+import { starsForRun } from './star-rules';
 
 /**
  * Das Ablauf-Gerüst unter `theme/:themeId/episode/:episodeId`: Es lädt die
@@ -44,7 +42,7 @@ const PLACEHOLDER_STARS = 3;
  */
 @Component({
   selector: 'qst-episode',
-  imports: [NgComponentOutlet, Hud, ContentError, ImageSlot],
+  imports: [NgComponentOutlet, Hud, ContentError, ImageSlot, Result],
   templateUrl: './episode.html',
   styleUrl: './episode.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -54,7 +52,6 @@ export class EpisodeScreen {
   private readonly content = inject(ContentService);
   private readonly gameState = inject(GameStateService);
   private readonly progressService = inject(ProgressService);
-  private readonly router = inject(Router);
   private readonly run = inject(EpisodeRun);
 
   readonly themeId = input.required<string>();
@@ -197,22 +194,47 @@ export class EpisodeScreen {
     untracked(() => this.run.restart());
   });
 
-  /**
-   * Zwischenstand bis Phase 5: Nach dem letzten Event gibt es pauschal drei
-   * Sterne und den Rückweg auf die Ortskarte. Ergebnis-Screen und echte
-   * Bewertung aus `EpisodeRun` kommen dort.
-   */
-  private readonly completeWhenFinished = effect(() => {
+  /** Die Eventliste ist durch — der Episoden-Screen zeigt ab hier den Ergebnis-Screen statt der Bühne. */
+  protected readonly isEpisodeFinished = computed<boolean>(() => {
     const episode = this.loadedEpisode();
 
-    if (episode === null || this.run.eventIndex() < episode.events.length) {
+    return episode !== null && this.run.eventIndex() >= episode.events.length;
+  });
+
+  /**
+   * Summe der Dialogzeilen aller `dialog`-Events der Episode — die einzige
+   * Stelle, an der das Gerüst einen Eventtyp beim Namen nennt. Es ist eine
+   * Statistik über den Content, keine Ablaufsteuerung, und fällt weg, sobald
+   * Meilenstein 4 echte Statistiken führt.
+   */
+  protected readonly dialogLineCount = computed<number>(() =>
+    (this.loadedEpisode()?.events ?? [])
+      .filter((event: EpisodeEvent): boolean => event.type === 'dialog')
+      .reduce((sum: number, event: EpisodeEvent) => sum + (event.config as DialogConfig).lines.length, 0),
+  );
+
+  protected readonly timelineLink = computed<readonly string[]>(() => [
+    '/theme',
+    this.themeId(),
+    'timeline',
+  ]);
+
+  /** Eingaben für den Ergebnis-Screen — der rechnet nicht selbst (Plan AK 13). */
+  protected readonly resultCorrectFirstTry = this.run.correctFirstTryCount;
+  protected readonly resultScoredTotal = this.run.scoredTotal;
+  protected readonly resultStars = computed<number>(() =>
+    starsForRun(this.run.scoredCount(), this.run.correctFirstTryCount()),
+  );
+
+  /** Schreibt den Fortschritt genau einmal, sobald die Eventliste durch ist. */
+  private readonly completeWhenFinished = effect(() => {
+    if (!this.isEpisodeFinished()) {
       return;
     }
 
-    untracked(() => {
-      this.progressService.completeEpisode(this.themeId(), this.episodeId(), PLACEHOLDER_STARS);
-      void this.router.navigate(['/theme', this.themeId(), 'map', episode.active_map_id]);
-    });
+    const stars = this.resultStars();
+
+    untracked(() => this.progressService.completeEpisode(this.themeId(), this.episodeId(), stars));
   });
 
   /**

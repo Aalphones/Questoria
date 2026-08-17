@@ -18,7 +18,16 @@
       <h1 class="episode__title">{{ locationName() ?? episode.data.episode_id }}</h1>
 
       <div class="episode__stage">
-        @if (eventErrorMessage(); as message) {
+        @if (isEpisodeFinished()) {
+          <qst-result
+            [stars]="resultStars()"
+            [correctFirstTry]="resultCorrectFirstTry()"
+            [scoredTotal]="resultScoredTotal()"
+            [dialogLines]="dialogLineCount()"
+            [mapLink]="mapBackLink()"
+            [timelineLink]="timelineLink()"
+          />
+        } @else if (eventErrorMessage(); as message) {
           <qst-content-error [message]="message" />
         } @else if (eventConfigState().status === 'loading') {
           <p class="episode__note">Das Ereignis wird geladen …</p>
