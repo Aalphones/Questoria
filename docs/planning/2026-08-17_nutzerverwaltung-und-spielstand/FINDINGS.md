@@ -19,11 +19,12 @@ Abgehakt wird, sobald die Ziel-Phase die Erkenntnis aufgenommen hat.
   ohnehin nie an. Alles, was eine echte Sitzung braucht, wird auf dem
   hochgeladenen Stand geprüft. Beim lokalen Entwicklungs-Router mitdenken:
   `APP_ENV=local` in `.env` ist Voraussetzung, sobald es lokal je gehen soll.
-- [ ] → Phase 3: `GET /api/content/themes` (und jede andere Content-Route)
+- [x] → Phase 3: `GET /api/content/themes` (und jede andere Content-Route)
   antwortet ohne Sitzung jetzt `401`, nicht mehr `200`. Der Abfang im Frontend
   muss also an der zentralen Aufrufstelle sitzen, nicht nur an den Auth-Routen —
   sonst läuft ein abgelaufenes Cookie in eine Ladefehler-Anzeige statt auf den
-  Anmeldebildschirm.
+  Anmeldebildschirm. **Umgesetzt:** `session-expired.interceptor.ts` sitzt als
+  globaler `HttpInterceptorFn` vor jedem Aufruf.
 - [x] → Phase 2: Es gibt noch keinen Weg, den **ersten** Account auf dem Server
   anzulegen — `bin/create-user.php` braucht eine Datenbankverbindung von außen,
   die das Paket nicht hergibt. **Entschieden am 17.08.2026 (Sascha):** dafür
@@ -32,16 +33,17 @@ Abgehakt wird, sobald die Ziel-Phase die Erkenntnis aufgenommen hat.
   ihn ab dort nichts mehr testbar ist. Der Endpunkt gehört auf die Liste
   `OPEN_ROUTES` in `backend/public/index.php` (er kann keine Sitzung
   voraussetzen) und schützt sich über seinen eigenen Token.
-- [ ] → Phase 3: Bevor der Anmeldebildschirm überhaupt etwas anmelden kann,
+- [x] → Phase 3: Bevor der Anmeldebildschirm überhaupt etwas anmelden kann,
   muss auf dem Server **einmal** ein Account entstehen: `POST /api/setup/user`
   mit dem Kopf `X-Setup-Token` (Wert steht als `SETUP_TOKEN` in `deploy.env`
   und wandert von dort in `backend/.env`). Vorher gibt es kein Passwort, das
-  funktionieren könnte — das ist kein Frontend-Fehler.
-- [ ] → Phase 3: Lokal ist der Content jetzt ebenfalls zugesperrt. Ohne
+  funktionieren könnte — das ist kein Frontend-Fehler. Steht als Vorbedingung
+  in STATE.md, keine Frontend-Änderung nötig.
+- [x] → Phase 3: Lokal ist der Content jetzt ebenfalls zugesperrt. Ohne
   Sitzungs-Cookie liefert `/content/**` auch am Entwicklungsserver `403`, alle
   Bilder bleiben leer. Solange die Anmeldung lokal nicht geht (Datenbank von
   außen zu), heißt „bei mir sind alle Bilder weg" also erst einmal genau das
-  Richtige, nicht einen Bug.
+  Richtige, nicht einen Bug. Keine Frontend-Änderung nötig.
 
 - [ ] → Meilenstein 5: Kartenbesitz braucht eine eigene Ablage. Der
   Spielstand-Zustand (Phase 5) hat dafür bewusst **kein** Feld — beim Bau der

@@ -82,6 +82,13 @@ weichen in der Umsetzung ab — jeweils mit Grund:
    nur `dialog` und `minigame` (Multiple Choice) visuell ab. Beide neuen
    Aufgaben-Typen übernehmen die gemeinsame Aufgaben-Hülle (`ui/task-card/`)
    und folgen deren Bildsprache, ohne eigene Prototyp-Vorlage.
+9. **Kein Mockup für den Account-Login.** Der Prototyp-Screen `login` ist die
+   Profilauswahl (`features/profile/`, Phase 4), nicht die neue
+   E-Mail/Passwort-Anmeldung davor. `features/auth/login.ts` baut freihändig,
+   aber ausschließlich aus vorhandenen Tokens: gleiche Deko wie die
+   Profilauswahl (Kreis, Wolken-Pillen, Wellen-Halbkreise), Kicker + H1
+   „Questoria", eine Karte mit E-Mail-/Passwort-Feld. Struktur im Detail:
+   [phase-3-anmeldebildschirm.md](../planning/2026-08-17_nutzerverwaltung-und-spielstand/phase-3-anmeldebildschirm.md).
 
 ## Offene Punkte
 

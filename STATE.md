@@ -4,10 +4,10 @@
 [Nutzerverwaltung & Spielstand, Meilenstein 4](docs/planning/2026-08-17_nutzerverwaltung-und-spielstand/README.md)
 — 9 Phasen, freigegeben am 17.08.2026.
 
-**Phase:** 2/9 — Türsteher vor Content und App (complete)
+**Phase:** 3/9 — Anmeldebildschirm im Frontend (complete)
 
-**Nächster Schritt:** Phase 3 (Anmeldebildschirm im Frontend) —
-[phase-3-anmeldebildschirm.md](docs/planning/2026-08-17_nutzerverwaltung-und-spielstand/phase-3-anmeldebildschirm.md).
+**Nächster Schritt:** Phase 4 (Spielerprofile) —
+[phase-4-profile.md](docs/planning/2026-08-17_nutzerverwaltung-und-spielstand/phase-4-profile.md).
 Rating „standard".
 
 **Vor dem nächsten echten Test auf dem Server nötig:** einmal `deploy.cmd`
@@ -18,9 +18,11 @@ in
 [phase-2-tuersteher.md](docs/planning/2026-08-17_nutzerverwaltung-und-spielstand/phase-2-tuersteher.md)
 ganz unten.
 
-**Zuletzt abgeschlossen:** Phase 2 — `/content/**` läuft jetzt durch eine
-PHP-Weiche mit derselben Sitzungsprüfung wie die Schnittstelle, lokal wie auf
-dem Server; dazu `POST /api/setup/user` für den ersten Account.
+**Zuletzt abgeschlossen:** Phase 3 — Anmeldebildschirm (`/login`), `AuthService`
+mit Sitzungs-Signal, `authGuard` vor allen Routen außer `/login`, ein globaler
+Interceptor wirft bei jedem `401` auf den Anmeldebildschirm. `ng build` und
+`ng lint` grün; gegen den Server noch nicht getestet (lokal keine
+Datenbankverbindung).
 
 **Merkposten:** PHP/Composer liegen unter `C:\Users\sasch\develop\.tools\`
 (`php.cmd`/`composer.cmd`), nicht im Suchpfad des Benutzers. Ad-hoc-Testserver

@@ -1,0 +1,183 @@
+:host {
+  display: block;
+  position: relative;
+  min-block-size: 100vh;
+  overflow: hidden;
+  background: var(--color-bg);
+}
+
+.login {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  min-block-size: 100vh;
+  padding: var(--space-6) var(--space-4);
+  text-align: center;
+
+  &__decor {
+    position: absolute;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  &--circle {
+    inset-block-start: 7%;
+    inset-inline-end: 10%;
+    inline-size: 8.25rem;
+    block-size: 8.25rem;
+    border-radius: var(--radius-pill);
+    background: var(--palette-accent-300);
+  }
+
+  &--cloud-a {
+    inset-block-start: 18%;
+    inset-inline-start: 8%;
+    inline-size: 6rem;
+    block-size: 2.5rem;
+    border-radius: var(--radius-pill);
+    background: var(--palette-neutral-100);
+    animation: eqBob var(--duration-ambient) ease-in-out infinite;
+  }
+
+  &--cloud-b {
+    inset-block-start: 32%;
+    inset-inline-end: 18%;
+    inline-size: 4.5rem;
+    block-size: 2rem;
+    border-radius: var(--radius-pill);
+    background: var(--palette-neutral-200);
+    animation: eqBob var(--duration-ambient) ease-in-out infinite;
+    animation-delay: 1.5s;
+  }
+
+  &--wave-a {
+    inset-block-end: -6rem;
+    inset-inline-start: -12%;
+    inline-size: 65%;
+    block-size: 14rem;
+    border-radius: var(--radius-pill);
+    background: var(--palette-moss-400);
+  }
+
+  &--wave-b {
+    inset-block-end: -8rem;
+    inset-inline-end: -12%;
+    inline-size: 65%;
+    block-size: 14rem;
+    border-radius: var(--radius-pill);
+    background: var(--palette-moss-600);
+  }
+
+  &__kicker {
+    position: relative;
+    z-index: 1;
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-kicker);
+    letter-spacing: var(--letter-spacing-kicker);
+    text-transform: uppercase;
+  }
+
+  &__title {
+    position: relative;
+    z-index: 1;
+    margin: 0 0 var(--space-4);
+    color: var(--color-text-accent);
+    font-size: clamp(3.25rem, 8vw, 6rem);
+  }
+
+  &__card {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    inline-size: 100%;
+    max-inline-size: 26.25rem;
+    padding: var(--space-6) var(--space-4);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-md);
+    text-align: start;
+  }
+
+  &__card-title {
+    margin: 0 0 var(--space-4);
+    color: var(--color-text);
+    font-size: var(--font-size-section);
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  &__label {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-control);
+  }
+
+  &__input {
+    min-block-size: var(--size-touch-target);
+    padding-inline: var(--space-3);
+    border: 1px solid var(--color-divider);
+    border-radius: var(--radius-md);
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: inherit;
+    font-size: var(--font-size-body);
+
+    &:focus-visible {
+      outline: 2px solid var(--color-focus-ring);
+      outline-offset: 2px;
+    }
+  }
+
+  &__error {
+    margin: 0;
+    color: var(--color-status-error);
+    font-size: var(--font-size-detail);
+  }
+
+  &__submit {
+    min-block-size: var(--size-touch-target);
+    margin-block-start: var(--space-2);
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: var(--color-accent);
+    color: var(--color-text-on-accent);
+    font-family: inherit;
+    font-size: var(--font-size-body);
+    font-weight: 600;
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+      background: var(--color-accent-hover);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-focus-ring);
+      outline-offset: 2px;
+    }
+  }
+
+  &__hint {
+    margin: var(--space-4) 0 0;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-detail);
+  }
+}

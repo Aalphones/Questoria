@@ -57,35 +57,51 @@ aus"):
 
 ## Checkliste
 
-- [ ] `frontend/src/app/services/auth.service.ts`: Signal
+- [x] `frontend/src/app/services/auth.service.ts`: Signal
       `currentUser = signal<AuthUser | null>(null)`, Methoden `login(email, password)`,
       `logout()`, `restoreSession()` (ruft `GET /api/auth/me`).
       Muster: `content.service.ts`. Kein Token im Browser-Speicher — das
       Cookie erledigt das, der Dienst hält nur den Benutzer im Speicher.
-- [ ] `frontend/src/app/models/auth.types.ts`: `AuthUser` (`id`, `username`,
-      `role`) und `PlayerProfile` (schon hier definieren, Phase 4 nutzt es).
-- [ ] `frontend/src/app/features/auth/login.ts` + `login.html` + `login.scss`
+      Zusätzlich `markSignedOut()` und ein `sessionChecked`-Merker, damit ein
+      gecachtes `restoreSession()`-Ergebnis nach Login/Logout/`401` nicht
+      veraltet weiterlebt (beim Bauen entdeckt, nicht im Plan vorgezeichnet).
+- [x] `frontend/src/app/models/auth.types.ts`: `AuthUser` (`id`, `username`,
+      `role`) und `PlayerProfile` (schon hier definiert, Phase 4 nutzt es).
+- [x] `frontend/src/app/features/auth/login.ts` + `login.html` + `login.scss`
       nach der Struktur oben. Formular als Reactive Form.
-- [ ] `frontend/src/app/routing/auth.guard.ts`: prüft `currentUser()`; ist es
+- [x] `frontend/src/app/routing/auth.guard.ts`: prüft `currentUser()`; ist es
       leer, einmal `restoreSession()` abwarten und erst dann auf `/login`
       umleiten — sonst wirft ein Neuladen jeden angemeldeten Benutzer raus.
       Die ursprünglich gewünschte Adresse als `redirectTo`-Parameter mitgeben.
-- [ ] `frontend/src/app/routing/session-expired.interceptor.ts`: fängt `401`
+- [x] `frontend/src/app/routing/session-expired.interceptor.ts`: fängt `401`
       aus jedem Aufruf ab, leert `currentUser` und schickt auf `/login`.
       Ausgenommen: der Anmelde-Aufruf selbst (sonst überschreibt der Abfang die
       Fehlermeldung im Formular).
-- [ ] Routen: `/login` ohne Wächter, alle bestehenden Routen bekommen den
+- [x] Routen: `/login` ohne Wächter, alle bestehenden Routen bekommen den
       `authGuard` **vor** `worldConfigResolver` — ein nicht Angemeldeter darf
       keinen Content-Aufruf auslösen.
-- [ ] Interceptor in `app.config.ts` registrieren.
+- [x] Interceptor in `app.config.ts` registrieren.
 
 ## Doku-Updates
 
-- [ ] `docs/code-map.md`: `features/auth/` und `services/auth.service.ts` vom
+- [x] `docs/code-map.md`: `features/auth/` und `services/auth.service.ts` vom
       Soll- in den Ist-Stand, neue Zeile in der Routen-Tabelle für `/login`,
       Hinweis auf den Wächter.
-- [ ] `docs/design/README.md` → „Bewusste Abweichungen": neuer Punkt, dass der
+- [x] `docs/design/README.md` → „Bewusste Abweichungen": neuer Punkt, dass der
       Anmeldebildschirm ohne Mockup entstanden ist und welche Struktur dafür
       festgelegt wurde (Verweis auf diese Phasendatei).
 
 ## Report-Back
+
+`ng build` und `ng lint` laufen grün. Einzige Abweichung vom Plan: der
+`AuthService` braucht einen `sessionChecked`-Merker zusätzlich zum
+gecachten `restoreSession()`-Observable — ohne ihn hätte der Wächter nach
+einem Login oder Logout innerhalb derselben Seitenladung eine veraltete
+Antwort wiederverwendet (Endlosschleife bzw. fälschlich noch angemeldet nach
+Logout). Kein Backend-Kontakt möglich (Datenbank lokal nicht erreichbar,
+siehe STATE.md) — die Smoke-Checkliste in der README läuft am Server.
+
+**Unsicherste Stelle:** [login.scss](login.scss) — die Deko-Elemente (Kreis,
+Wolken, Wellen) sind freihändig aus Tokens gebaut, ohne Mockup zum Abgleich.
+Prüfen: sieht der Screen im Browser wie in der Design-Deckung oben
+beschrieben aus, nicht nur strukturell korrekt.

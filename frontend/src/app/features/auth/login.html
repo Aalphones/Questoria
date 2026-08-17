@@ -1,0 +1,48 @@
+<div class="login">
+  <div class="login__decor login__decor--circle" aria-hidden="true"></div>
+  <div class="login__decor login__decor--cloud-a" aria-hidden="true"></div>
+  <div class="login__decor login__decor--cloud-b" aria-hidden="true"></div>
+  <div class="login__decor login__decor--wave-a" aria-hidden="true"></div>
+  <div class="login__decor login__decor--wave-b" aria-hidden="true"></div>
+
+  <p class="login__kicker">Story-Lernabenteuer</p>
+  <h1 class="login__title">Questoria</h1>
+
+  <section class="login__card">
+    <h2 class="login__card-title">Anmelden</h2>
+
+    <form class="login__form" [formGroup]="form" (ngSubmit)="submit()">
+      <div class="login__field">
+        <label class="login__label" for="login-email">E-Mail</label>
+        <input
+          class="login__input"
+          id="login-email"
+          type="email"
+          formControlName="email"
+          autocomplete="email"
+        />
+      </div>
+
+      <div class="login__field">
+        <label class="login__label" for="login-password">Passwort</label>
+        <input
+          class="login__input"
+          id="login-password"
+          type="password"
+          formControlName="password"
+          autocomplete="current-password"
+        />
+      </div>
+
+      @if (errorMessage() !== null) {
+        <p class="login__error" role="alert">{{ errorMessage() }}</p>
+      }
+
+      <button class="login__submit" type="submit" [disabled]="submitting()">Los geht's</button>
+    </form>
+
+    <p class="login__hint">
+      Diese Anmeldung ist für Erwachsene. Danach wählt dein Kind nur noch sein Bild.
+    </p>
+  </section>
+</div>
