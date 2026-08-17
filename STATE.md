@@ -4,24 +4,23 @@
 [Event Engine, Meilenstein 3](docs/planning/2026-08-14_event-engine/README.md),
 7 Phasen, freigegeben am 14.08.2026
 
-**Phase:** 6/7 — Weiterspielen nach Abbruch (complete)
+**Phase:** 7/7 — Testwelt, Authoring-Toolkit, Doku (complete) — **alle Phasen fertig**
 
-**Nächster Schritt:** Neue Session, `/clear` durchführen, dann `/implement` für
-Phase 7 (Testwelt, Authoring-Toolkit, Doku) — Rating „mechanisch", also
-`sonnet`.
+**Nächster Schritt:** Sascha macht die Smoke-Checkliste aus der Plan-README
+(Abschnitt „Smoke-Checkliste", 7 Punkte, die ersten drei 🔴 sind die
+Wackelstellen). Danach: Plan archivieren (`docs/planning/2026-08-14_event-engine/`
+→ `docs/archive/2026-08/`) und STATE.md auf „kein aktiver Plan" setzen.
 
-**Zuletzt abgeschlossen:** Phase 6 der Event Engine — Abbruch mitten in einer
-Episode wird jetzt aufgefangen. Neuer Dienst `RunStoreService` merkt genau
-einen angefangenen Lauf im Browser-Speicher (`questoria.run.v1`), `EpisodeRun`
-schreibt ihn nach jedem `finish()`. Neuer Dialog `features/episode/resume-prompt/`
-(natives `<dialog>`, Muster wie der Fortschritt-zurücksetzen-Dialog aus der
-Timeline) fragt „Weiterspielen oder von vorn?", sobald ein passender Eintrag
-zur gerade geladenen Episode existiert; ein Eintrag zu einer anderen Episode
-bleibt unangetastet. Eintrag wird beim Episodenabschluss und bei „Von vorn
-anfangen" gelöscht, ein beschädigter/veralteter Eintrag still verworfen. Build
-und Frontend-Lint grün, Backend unverändert. Noch nicht am echten Gerät
-durchgespielt — das ist Smoke-Punkt 3 am Plan-Ende (Tab schließen, neu öffnen,
-„Weiterspielen" landet am richtigen Event).
+**Zuletzt abgeschlossen:** Phase 7 — die Testwelt `dev_fixture` spielt jetzt
+alle fünf Eventtypen in einer Episode durch (`test_leuchtturm`: Dialog → Quiz →
+Texteingabe → Bildsuche → Belohnung), neue `cards.json` mit einer Karte. Die
+Schema-Referenz bekommt den Bewertungssatz (Weiterraten, erster Versuch zählt)
+und den Lernstufen-Checklistenpunkt; ein stale gewordener 🟡-Verifikationshinweis
+ist korrigiert. `docs/design/README.md` und `docs/PROJECT.md` sind auf den
+gebauten Stand gezogen (vier neue bewusste Abweichungen, Schema-Verifikation
+als erledigt markiert). `code-map.md`, `glossary.md`, `AGENTS.md` waren schon
+aktuell aus früheren Phasen — nur gegengelesen. Build, Frontend-Lint und
+Backend-Lint laufen grün.
 
 **Merkposten:** PHP/Composer liegen unter `C:\Users\sasch\develop\.tools\`
 (`php.cmd`/`composer.cmd`), nicht im Suchpfad des Benutzers. Ad-hoc-Testserver
