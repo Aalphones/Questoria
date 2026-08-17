@@ -158,13 +158,13 @@ einem Meilenstein fertig statt über zwei verteilt.
   relativ zum Kartenbild, festgehalten in `data/_authoring/JSON_SCHEMA_REFERENCE.md`
   Abschnitt 2. Die konkreten Werte pro Welt bleiben Handarbeit am fertigen
   Kartenbild.
-- 🟡 Der komplette Content-Schema-Stand in `data/_authoring/` ist noch nicht
-  gegen eine laufende Engine verifiziert (die Event Engine aus Meilenstein 3
-  steht aus) — als 🟡 markiert, bis das passiert ist
+- ~~Der komplette Content-Schema-Stand in `data/_authoring/` ist noch nicht
+  gegen eine laufende Engine verifiziert~~ — geklärt in Meilenstein 3, Phase 7:
+  die Testwelt `dev_fixture` spielt alle fünf Eventtypen durch, die Typ-Tabelle
+  in `JSON_SCHEMA_REFERENCE.md` Abschnitt 5.0 stimmt wieder.
 - 🟡 Ob Sprachausgabe über die Browser-Stimme reicht oder pro Dialogzeile
-  vorproduzierte Aufnahmen nötig sind, entscheidet sich erst am echten Gerät.
-  Das Schema trägt beides (`audio_path` optional), die Antwort kommt mit
-  Meilenstein 3.
+  vorproduzierte Aufnahmen nötig sind: *(Antwort nach Smoke-Punkt 2 des
+  Event-Engine-Plans eintragen — noch offen, Sascha prüft am echten Gerät.)*
 - Kein festgelegtes Datum für "Spiel muss laufen" — falls es eins gibt
   (Schuljahr, Geburtstag eines Kindes o.ä.), bitte nachtragen
 

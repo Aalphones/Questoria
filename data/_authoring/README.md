@@ -71,6 +71,6 @@ werden können. Selbst verschuldet, vermeidbar, unnötig.
 
 ## Status-Markierung
 
-Inhalte in diesem Toolkit, die noch nicht gegen die echte Engine verifiziert
-wurden (weil die Event Engine aus Meilenstein 3 noch nicht steht), sind mit
-🟡 markiert.
+🟡 markiert offene Design-Hinweise, keinen Verifikationsstatus. Das
+Content-Schema selbst ist seit Meilenstein 3 gegen die laufende Engine
+verifiziert — die Testwelt `dev_fixture` spielt alle fünf Eventtypen durch.

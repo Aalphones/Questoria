@@ -5,7 +5,9 @@ keine Variante. Ein LLM, das Content generiert, MUSS diese Schemas exakt
 einhalten — keine zusätzlichen Felder, keine fehlenden Pflichtfelder, keine
 umbenannten Keys.
 
-🟡 = Vorschlag, noch nicht gegen die laufende Engine verifiziert (Meilenstein 3 steht aus).
+🟡 = offener Hinweis/Design-Notiz, kein Verifikationsstatus. Das Schema selbst
+ist seit Meilenstein 3 (Testwelt `dev_fixture` spielt alle fünf Eventtypen
+durch) gegen die laufende Engine verifiziert.
 
 **Das Grundprinzip:** Eine Episode ist eine **Eventliste**, sonst nichts. Dialog,
 Rätsel, Erkundung, Kampf und Belohnung sind gleichrangige Events derselben
@@ -311,6 +313,14 @@ Die Engine kennt Eventtypen — das Content-JSON liefert nur deren Konfiguration
 Zu jedem Typ gehört genau eine Angular-Komponente, geladen über
 `ngComponentOutlet`. **Neue Gameplay-Arten entstehen durch einen neuen Eventtyp
 plus Komponente, nie durch Backend-Code.**
+
+**Wie die Engine bewertet:** Eine falsche Antwort ist kein Sackgassen-Ende —
+das Kind darf weiterraten, bis die Antwort stimmt. Für die Sterne zählt
+ausschließlich der **erste** Versuch. Autoren müssen dafür nichts konfigurieren
+— das gilt für jeden Aufgaben-Typ gleich. Bei einem ausgelagerten Event löst
+die Engine `config.ref` und die Variante der aktiven Lernstufe auf, bevor die
+Komponente etwas sieht; die Komponente selbst kennt weder `ref` noch
+Lernstufen.
 
 ### 5.0 Verbindliche Typ-Tabelle
 
@@ -628,7 +638,9 @@ nicht Dialog → Quiz → Ende.
 - [ ] Jedes `config.ref` trifft eine Datei unter `events/`, deren `type`
       identisch ist
 - [ ] Jede ausgelagerte Event-Datei hat eine Variante für JEDE `id` aus
-      `difficulty_levels`
+      `difficulty_levels` — auch beim Nachtragen einer einzelnen neuen Datei in
+      einer bestehenden Welt: alle Lernstufen der Welt, nicht nur die gerade
+      gebrauchte
 - [ ] Keine Aufgabeninhalte (Frage, Antworten, Ziele) inline in der Episode —
       die gehören in die ausgelagerte Datei
 - [ ] Jede referenzierte Datei (`background`, `sprite`, `audio_path`, `image`,

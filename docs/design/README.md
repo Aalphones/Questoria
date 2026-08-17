@@ -38,16 +38,18 @@ Die globale Kopfleiste (HUD) ist auf allen Screens außer `login` sichtbar →
 
 ## Bewusste Abweichungen vom Prototyp
 
-Der Prototyp ist Design-Vorlage, keine Architekturvorlage. Fünf Stellen weichen
-in der Umsetzung ab — jeweils mit Grund:
+Der Prototyp ist Design-Vorlage, keine Architekturvorlage. Diese Stellen
+weichen in der Umsetzung ab — jeweils mit Grund:
 
-0. **Der Prototyp kennt noch keine Eventliste.** Er hat feste Screens `dialog`
-   und `minigame` und eine fest verdrahtete Abfolge dazwischen. Produktiv ist
-   eine Episode eine Eventliste, die die Event Engine abspielt
+0. ✅ **Der Prototyp kannte noch keine Eventliste.** Er hat feste Screens
+   `dialog` und `minigame` und eine fest verdrahtete Abfolge dazwischen.
+   Produktiv ist eine Episode eine Eventliste, die die Event Engine abspielt
    ([ADR-004](../decisions/004-event-engine.md)) — das Aussehen der beiden
    Screens bleibt gültig, ihre Rolle als Sonderweg nicht. Auch die Vokabeln im
    Prototyp-Code (`minigame`, `game_type`) sind alter Stand und werden nicht
-   nachgezogen; verbindlich ist [glossary.md](../glossary.md).
+   nachgezogen; verbindlich ist [glossary.md](../glossary.md). **Gebaut:** fünf
+   Eventtypen laufen über denselben Ablaufmechanismus, die Testwelt
+   `dev_fixture` spielt alle fünf in einer Episode durch.
 1. **Content bleibt gesplittet.** Der Prototyp packt Welt, Etappen, Orte und
    Karten in eine Datei. Das Projekt bleibt bei `main_hub.json` /
    `world_config.json` / Episoden / Event-Konfigurationen. Das Kartenformat und
@@ -62,6 +64,24 @@ in der Umsetzung ab — jeweils mit Grund:
 4. **Kartenvergabe ist ein eigenes Event.** Im Prototyp ist die gewonnene Karte
    fest verdrahtet; produktiv steht am Ende der Eventliste ein `reward`-Event
    mit der Karten-ID in seiner Konfiguration.
+5. **„Weiter" statt „Minispiel starten".** Der Prototyp beschriftet den
+   Übergang vom Dialog zur Aufgabe mit dem Namen der Spielart. Produktiv
+   heißt der Knopf schlicht „Weiter" — die Aufgabe folgt ohnehin als
+   nächstes Event, ein Eventname im Knopf würde eine Kategorie betonen, die
+   für das Kind keine Rolle spielt.
+6. **Weiterraten statt Sperre.** Der Prototyp sperrt eine Aufgabe nach dem
+   ersten falschen Klick endgültig. Produktiv bleibt sie offen — falsche
+   Antworten werden ausgegraut, das Kind darf weiterprobieren, bis die
+   richtige gefunden ist. Für die Sterne zählt trotzdem nur der erste
+   Versuch (Entschieden-vor-dem-Bauen, Punkt 1 im Plan).
+7. **Keine dritte Statistik-Karte im Ergebnis-Screen.** Der Prototyp zeigt
+   drei Kacheln, die dritte („Neue Wörter gelernt") braucht echte
+   Statistiken aus der Datenbank. Bis Meilenstein 4 zeigt der Screen nur die
+   zwei Kacheln, die aus dem laufenden Spiel selbst kommen.
+8. **Kein Mockup für `text_input` und `image_search`.** Der Prototyp bildet
+   nur `dialog` und `minigame` (Multiple Choice) visuell ab. Beide neuen
+   Aufgaben-Typen übernehmen die gemeinsame Aufgaben-Hülle (`ui/task-card/`)
+   und folgen deren Bildsprache, ohne eigene Prototyp-Vorlage.
 
 ## Offene Punkte
 

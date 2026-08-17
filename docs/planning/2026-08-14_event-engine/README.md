@@ -20,7 +20,7 @@ Ort-Platzhalter aus Meilenstein 2 verschwindet.
 | 4 | [`text_input` + `image_search`](phase-4-texteingabe-und-bildsuche.md) | standard | complete |
 | 5 | [`reward` + Ergebnis-Screen + echte Sterne](phase-5-belohnung-und-ergebnis.md) | standard | complete |
 | 6 | [Weiterspielen nach Abbruch](phase-6-weiterspielen.md) | standard | complete |
-| 7 | [Testwelt, Authoring-Toolkit, Doku](phase-7-testwelt-und-doku.md) | mechanisch | pending |
+| 7 | [Testwelt, Authoring-Toolkit, Doku](phase-7-testwelt-und-doku.md) | mechanisch | complete |
 
 Reihenfolge ist bindend: 1 liefert den Vorlesedienst, den jede
 Event-Komponente braucht. 2 legt den Kontrakt fest, in den 3–5 einhängen. 6
