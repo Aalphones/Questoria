@@ -22,6 +22,8 @@ sie im Code, in Docs oder Tickets auftauchen.
 | Testwelt | Die schema-vollständige Entwicklerwelt `dev_fixture` unter `data/themes/dev_fixture/` — dient dem Testen von Karten, Routing und Fortschritt, ohne auf echten (Fandom-)Content zu warten. |
 | Authoring-Toolkit | Die Schema-Referenz + LLM-Prompts + Asset-Vorgaben unter `data/_authoring/`, mit denen Content von Hand/per LLM erzeugt wird. |
 | Savegame | Datenbank-Eintrag, der nur Content-IDs referenziert (aktive Episode, aktiver Node, abgeschlossene Events, besessene Sammelkarten) — nie Content selbst. |
+| Account | Der Eltern-Zugang zu einer Installation: E-Mail plus Passwort, Zeile in der Tabelle `users`. Genau ein Account meldet ein Gerät an; die Kinder darunter sind **Spielerprofile**. Angelegt wird ein Account nie in der Oberfläche, sondern vom Betreiber ([ADR-008](decisions/008-zugang-und-sitzung.md)). |
+| Sitzung | Die laufende Anmeldung eines Geräts — technisch das Cookie `qst_session` mit einem signierten Token, 30 Tage gültig. Sie gilt für die Schnittstelle unter `/api/` **und** für die Content-Dateien unter `/content/`. Abgrenzung: Die Sitzung sagt, **welcher Account** angemeldet ist; **welches Kind** gerade spielt, sagt das aktive Spielerprofil. |
 | Spielerprofil | Ein Profil innerhalb eines Accounts (ein Account kann mehrere Kinder/Profile haben). |
 | Planetenkarte | Der Einstieg: alle installierten Themenwelten als Knoten auf einer Karte (`main_hub.json` → `hub_map`). Eine pro Installation, ohne Kopfleiste — von hier führt kein Weg zurück. |
 | Etappenkarte | Die Übersichtskarte einer Welt: alle Story-Arcs als Inseln, mit Sternen pro Etappe. Eine pro Welt. |

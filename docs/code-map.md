@@ -91,17 +91,25 @@ Struktur übernommen aus promptigofant (gleiches Muster, eigenes Repo):
 | `Http/` | Request/Response-Helper |
 | `public/` | Einstiegspunkt `index.php` + `.htaccess`; das ist die Web-Wurzel auf dem Server |
 
-**Ist-Stand:** gebaut sind `Http/`, `Exceptions/`, `Database/`, `Middleware/`,
+**Ist-Stand:** gebaut sind `Http/` (`JsonResponse.php`, `RequestBody.php` als
+JSON-Leser für den Anfragekörper, `SessionCookie.php` für das Sitzungs-Cookie
+`qst_session`), `Exceptions/`, `Database/`, `Middleware/`,
 `Controllers/HealthController.php`, `Controllers/MigrateController.php`,
-`Controllers/ContentController.php`, `Services/ContentService.php`,
+`Controllers/ContentController.php`, `Controllers/AuthController.php`,
+`Services/ContentService.php`, `Services/AuthService.php`,
+`Repositories/UserRepository.php`, `Validators/LoginValidator.php`,
 `Migrations/` (7 Tabellen in 8 Schritten unter `sql/`, `MigrationRunner.php`, plus
 `backend/bin/migrate.php` als CLI-Hülle für den Fall eines späteren lokalen/
-Fernzugriff-Tests) und der Einstiegspunkt. Fehlende Migrationen werden bei
+Fernzugriff-Tests) und der Einstiegspunkt. `backend/bin/create-user.php` legt
+einen Account an (dieselbe Einschränkung wie `migrate.php`: braucht eine
+Datenbankverbindung von außen). Fehlende Migrationen werden bei
 jedem echten API-Aufruf automatisch nachgezogen (`AutoMigrator`, verdrahtet in
 `public/index.php`, Not-Aus über `AUTO_MIGRATE` in `.env`) — `MigrateController`
-bleibt zusätzlich als manuell aufrufbares Debug-Werkzeug. `Repositories/` und
-`Validators/` sind Soll-Zustand für spätere Meilensteine und existieren noch
-nicht als Ordner.
+bleibt zusätzlich als manuell aufrufbares Debug-Werkzeug. Der Sitzungs-Schutz
+sitzt in `public/index.php` zwischen Routen-Treffer und Controller-Aufruf; die
+Liste der ohne Anmeldung erreichbaren Routen steht dort als Konstante
+`OPEN_ROUTES`. Die übrigen Repository- und Validator-Klassen sind Soll-Zustand
+für spätere Phasen.
 
 ## Projektstamm
 

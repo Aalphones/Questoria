@@ -35,7 +35,7 @@ Diese Punkte sind Vorgabe, nicht Ermessen des Umsetzers:
 
 | # | Phase | Inhalt | Rating | Status |
 |---|---|---|---|---|
-| 1 | [Anmeldung im Backend](phase-1-anmeldung-backend.md) | `Repositories/`, `UserRepository`, `AuthController`, Sitzungs-Cookie, geschützte Routen, Account-Skript | heikel | pending |
+| 1 | [Anmeldung im Backend](phase-1-anmeldung-backend.md) | `Repositories/`, `UserRepository`, `AuthController`, Sitzungs-Cookie, geschützte Routen, Account-Skript | heikel | complete |
 | 2 | [Türsteher vor Content und App](phase-2-tuersteher.md) | PHP-Weiche vor `/content/`, Schutz der App-Dateien, `deploy.cmd`, lokaler Entwicklungs-Router | heikel | pending |
 | 3 | [Anmeldebildschirm im Frontend](phase-3-anmeldebildschirm.md) | `features/auth/`, `AuthService`, Abfang bei abgelaufener Sitzung, Zugangs-Wächter | standard | pending |
 | 4 | [Spielerprofile](phase-4-profile.md) | `ProfileRepository`/`ProfileController`, `features/profile/` nach Prototyp-Screen `login`, aktives Profil im `GameStateService` | standard | pending |

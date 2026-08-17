@@ -2,14 +2,17 @@
 
 declare(strict_types=1);
 
+use App\Controllers\AuthController;
 use App\Controllers\ContentController;
 use App\Controllers\HealthController;
 use App\Controllers\MigrateController;
 use App\Database\Connection;
 use App\Exceptions\ApiException;
 use App\Http\JsonResponse;
+use App\Http\SessionCookie;
 use App\Middleware\CorsMiddleware;
 use App\Migrations\AutoMigrator;
+use App\Services\AuthService;
 use Dotenv\Dotenv;
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
@@ -64,12 +67,26 @@ set_error_handler(static function (int $severity, string $message, string $file,
     throw new ErrorException($message, 0, $severity, $file, $line);
 });
 
+$requestMethod = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
+
 $corsMiddleware = new CorsMiddleware($_ENV['CORS_ORIGINS'] ?? '');
-$corsMiddleware->handle($_SERVER['REQUEST_METHOD'] ?? 'GET', $_SERVER['HTTP_ORIGIN'] ?? null);
+$corsMiddleware->handle($requestMethod, $_SERVER['HTTP_ORIGIN'] ?? null);
+
+// Alles unter /api/ verlangt eine gueltige Sitzung — bis auf diese drei. Die
+// Liste steht bewusst an einer einzigen Stelle: verstreute Ausnahmen im Code
+// sind der Weg, auf dem ein Endpunkt still ungeschuetzt bleibt.
+const OPEN_ROUTES = [
+    'POST /api/auth/login',
+    'GET /api/health',
+    'POST /api/migrate',
+];
 
 $dispatcher = FastRoute\simpleDispatcher(static function (RouteCollector $routes): void {
     $routes->addRoute('GET', '/api/health', [HealthController::class, 'handle']);
     $routes->addRoute('POST', '/api/migrate', [MigrateController::class, 'handle']);
+    $routes->addRoute('POST', '/api/auth/login', [AuthController::class, 'login']);
+    $routes->addRoute('POST', '/api/auth/logout', [AuthController::class, 'logout']);
+    $routes->addRoute('GET', '/api/auth/me', [AuthController::class, 'me']);
     $routes->addRoute('GET', '/api/content/themes', [ContentController::class, 'themes']);
     $routes->addRoute('GET', '/api/content/themes/{themeId}', [ContentController::class, 'world']);
     $routes->addRoute(
@@ -89,7 +106,7 @@ $dispatcher = FastRoute\simpleDispatcher(static function (RouteCollector $routes
 // auch. Eine Kuerzung wuerde das Praefix wegschneiden, das hier gebraucht wird.
 $requestPath = rawurldecode(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/');
 
-$route = $dispatcher->dispatch($_SERVER['REQUEST_METHOD'] ?? 'GET', $requestPath);
+$route = $dispatcher->dispatch($requestMethod, $requestPath);
 
 if ($route[0] === Dispatcher::NOT_FOUND) {
     JsonResponse::error(404, 'Not Found');
@@ -116,7 +133,32 @@ if (($_ENV['AUTO_MIGRATE'] ?? 'true') !== 'false') {
     }
 }
 
+// Der Sitzungs-Schutz sitzt zwischen Routen-Treffer und Controller-Aufruf: erst
+// hier steht fest, welche Route gemeint war, und noch hat kein Controller-Code
+// gelaufen. Der geprueft Angemeldete wandert als Konstruktor-Argument weiter —
+// kein Controller liest selbst am Cookie.
+$authenticatedUser = null;
+
+if (!in_array($requestMethod . ' ' . $requestPath, OPEN_ROUTES, true)) {
+    $sessionToken = SessionCookie::read();
+
+    if ($sessionToken === null) {
+        JsonResponse::error(401, 'Nicht angemeldet');
+    }
+
+    $authenticatedUser = (new AuthService())->userFromToken($sessionToken);
+}
+
 [$controllerClass, $controllerMethod] = $route[1];
-$payload = (new $controllerClass())->{$controllerMethod}(...array_values($route[2]));
+
+// Controller ohne Konstruktor-Parameter (Health, Migrate, Content) bekommen den
+// Benutzer nicht aufgedraengt — sonst traegt jede Klasse ein Feld, das sie nie
+// benutzt.
+$controllerConstructor = (new ReflectionClass($controllerClass))->getConstructor();
+$controller = $controllerConstructor === null || $controllerConstructor->getNumberOfParameters() === 0
+    ? new $controllerClass()
+    : new $controllerClass($authenticatedUser);
+
+$payload = $controller->{$controllerMethod}(...array_values($route[2]));
 
 JsonResponse::send(200, $payload);
