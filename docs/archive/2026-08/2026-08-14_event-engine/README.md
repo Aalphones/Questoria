@@ -230,20 +230,85 @@ Steht hier, damit es nicht als Lücke gelesen wird:
 
 ## Summary
 
-*(beim Archivieren füllen)*
+Abgeschlossen am 17.08.2026, alle sieben Phasen. Eine Episode ist von der
+Ortskarte aus komplett durchspielbar: Dialog mit zwei Bühnenplätzen →
+Multiple Choice → Texteingabe → Bildsuche → Belohnung → Ergebnis-Screen mit
+echten Sternen → zurück auf die Ortskarte. Der Ort-Platzhalter aus
+Meilenstein 2 ist verschwunden. Der Umschalter „Bilder & Vorlesen" / „Selbst
+lesen" steuert Textfassung, Bildantworten und automatische Sprachausgabe;
+vorproduzierte Aufnahmen über `audio_path` gehen der Browser-Stimme immer
+vor. Ein Abbruch mitten in der Episode wird aufgefangen (`RunStoreService`)
+und beim Wiedereintritt mit „Weiterspielen oder von vorn?" beantwortet. Die
+Testwelt `dev_fixture` spielt alle fünf Eventtypen in einer Episode durch —
+das Authoring-Toolkit ist damit erstmals gegen eine laufende Engine
+verifiziert.
+
+Smoke-Test durch Sascha am 17.08.2026: Vorlesen und Computerstimme bestanden
+(„klingt ok") — die Browser-Stimme reicht für den MVP, vorproduzierte
+Aufnahmen bleiben als Veredelung eingebaut. Die übrigen Smoke-Punkte
+(Weiterspielen am echten Gerät, Sterne, Tastatur/Fokus, 200 % Schriftgröße)
+liefen nicht einzeln protokolliert, Archivierung erfolgte auf Wunsch nach der
+Rückmeldung „sieht gut aus soweit".
 
 ## Files touched
 
-*(beim Archivieren füllen)*
+- **Frontend Event Engine:** `features/episode/` (Ablauf-Gerüst
+  `episode.ts`, Laufzustand `episode-run.ts`, Event Loader + Typ-Prüfungen
+  `event-type-map.ts`, Auflösung ausgelagerter Configs
+  `resolve-event-config.ts`, Sternenformel `star-rules.ts`,
+  `resume-prompt/`)
+- **Frontend Event-Komponenten:** `features/events/dialog/`,
+  `features/events/multiple-choice/`, `features/events/text-input/`,
+  `features/events/image-search/`, `features/events/reward/`
+- **Frontend Ergebnis:** `features/result/`
+- **Frontend gemeinsame UI:** `ui/task-card/`, `ui/read-aloud-button/`,
+  `ui/hud/` (Modus-Umschalter + Ton-Knopf), `ui/content-error/`
+- **Frontend Services:** `services/narration.service.ts`,
+  `services/run-store.service.ts`, `services/progress.service.ts`
+  (Sternenformel-Anbindung)
+- **Styles:** `styles/_tokens.scss` (`rem`-Umstellung), `styles/_motion.scss`
+- **Content:** `data/themes/dev_fixture/` (fünfte Episode vervollständigt,
+  zwei neue ausgelagerte Events, neue `cards.json`)
+- **Authoring-Toolkit:** `data/_authoring/JSON_SCHEMA_REFERENCE.md`,
+  `data/_authoring/README.md`
+- **Docs:** `docs/code-map.md`, `docs/glossary.md`, `AGENTS.md`,
+  `docs/design/README.md`, `docs/PROJECT.md`, ADR-007
 
 ## Commits
 
-*(beim Archivieren füllen)*
+`c28e010` Vorlesemodus, Ton-Steuerung, `rem`-Tokens (Phase 1) · `7812262`
+Ablauf-Gerüst, Event Loader, Dialog (Phase 2) · `70694cf` Ausgelagerte Events
++ Quiz (Phase 3) · `e80e887` Texteingabe + Bildsuche (Phase 4) · `813be03`
+Belohnung, Ergebnis-Screen, echte Sterne (Phase 5) · `752b8fd` STATE.md
+Zwischenstand · `3654c13` Weiterspielen nach Abbruch (Phase 6) · `08c5d3f`
+Testwelt, Authoring-Toolkit, Doku (Phase 7) · `ab9ff97` STATE.md-Abschluss ·
+`92c2500` offene Frage Sprachausgabe geklärt
 
 ## Deviations from plan
 
-*(beim Archivieren füllen)*
+Keine — alle sieben Phasen liefen wie in der README/den Phasendateien
+beschrieben. Die einzige Verschiebung war organisatorisch: Der Smoke-Test am
+Plan-Ende wurde nicht Punkt für Punkt einzeln abgehakt, sondern pauschal
+(„sieht gut aus, Vorlesen klingt ok") mit explizitem Archivierungs-Auftrag
+quittiert — protokolliert hier, damit es nicht als vollständige
+Einzelabnahme missverstanden wird.
 
 ## Follow-ups
 
-*(beim Archivieren füllen)*
+- **Fragen-Vertonung ist ungeplant.** `audio_path` existiert nur pro
+  Dialogzeile (Schema Abschnitt 5.1); Quiz-/Aufgaben-Fragen haben kein
+  Audiofeld, obwohl `ui/task-card/` technisch schon eine Audio-URL entgegen-
+  nimmt. Bewusste Lücke, keine Schema-Entscheidung bisher nötig gewesen.
+- **Reale Fandom-Welt fehlt weiterhin.** Die Sprach-Werkstatt
+  (`data/_authoring/voice-tools/`) ist einsatzbereit, aber es gibt noch keine
+  echte Welt zum Vertonen — nur die Testwelt `dev_fixture`.
+- **Weiterspielen, Sterne, Tastatur/Fokus, 200 %-Schriftgröße** aus der
+  Smoke-Checkliste sind nicht einzeln protokolliert bestätigt (siehe
+  Deviations) — bei Auffälligkeiten in den nächsten Spielsessions zuerst hier
+  nachschauen.
+- Die aus FINDINGS.md übernommenen Meilenstein-4/5-Haken bleiben unverändert
+  offen: `RunStoreService` tauscht seine Datenquelle gegen die
+  Savegame-Schnittstelle (Meilenstein 4), der Ergebnis-Screen bekommt
+  Erfolge + dritte Statistik-Karte (Meilenstein 4) und ein Karten-Banner
+  (Meilenstein 5), das `reward`-Event vergibt bisher nur Sterne, keine echte
+  Sammelkarte (Meilenstein 5).
