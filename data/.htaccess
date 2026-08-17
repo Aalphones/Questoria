@@ -1,0 +1,29 @@
+# Diese Datei liegt bewusst neben dem Content und nicht irgendwo zentral:
+# "deploy.cmd content" spiegelt diesen Ordner auf den Server (public/content/)
+# und loescht dort alles, was hier nicht vorkommt. Eine Regel von woanders waere
+# beim naechsten Hochladen weg.
+#
+# Ab hier gibt der Webserver keine Content-Datei mehr selbst heraus. Jede
+# Anfrage geht durch die PHP-Weiche, die dasselbe Sitzungs-Cookie prueft wie die
+# Schnittstelle (ADR-008). Ohne Anmeldung: 403, ohne ein Byte Dateiinhalt.
+
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Ohne Bedingung, mit Absicht: Auch ein nicht existierender Pfad und ein
+    # Verzeichnis laufen in die Weiche. Sonst beantwortet der Webserver den
+    # Fehlerfall selbst und verraet dabei, was es gibt und was nicht.
+    # Das Ziel liegt ausserhalb dieses Ordners, die Regel greift also nicht
+    # erneut auf sich selbst.
+    # "/api/" ist API_URL_SEGMENT aus deploy.env. Wird der Wert dort je
+    # geaendert, muss diese Zeile mitwandern — sie kennt ihn nicht.
+    RewriteRule ^(.*)$ /api/content-gate.php?file=$1 [QSA,L]
+</IfModule>
+
+# Fehlt mod_rewrite, greift die Regel oben nicht — und ohne diesen Block laege
+# der gesamte Content wieder offen. Lieber gar nichts ausliefern als alles.
+<IfModule !mod_rewrite.c>
+    Require all denied
+</IfModule>

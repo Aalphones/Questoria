@@ -1,8 +1,10 @@
 @echo off
 rem ==========================================================================
 rem  Lokaler Entwicklungs-Server fuer das Backend.
-rem  Beantwortet /api/... aus backend/public/index.php und /content/... direkt
-rem  aus data/ (siehe dev-router.php). Nur fuer die Entwicklung, nie deployen.
+rem  Beantwortet /api/... aus backend/public/index.php und /content/... aus
+rem  backend/public/content-gate.php - derselben Weiche wie auf dem Server, also
+rem  auch lokal nur mit gueltigem Sitzungs-Cookie (siehe dev-router.php).
+rem  Nur fuer die Entwicklung, nie deployen.
 rem ==========================================================================
 cd /d "%~dp0.."
 

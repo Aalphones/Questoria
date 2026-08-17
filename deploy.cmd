@@ -57,6 +57,7 @@ call :needValue DB_USER
 call :needValue JWT_SECRET
 call :needValue DIAG_TOKEN
 call :needValue MIGRATE_TOKEN
+call :needValue SETUP_TOKEN
 call :needValue CORS_ORIGINS
 call :needValue PUBLIC_BASE_URL
 if defined MISSING goto :fail
@@ -152,6 +153,7 @@ echo [3/5] backend\.env schreiben ...
 >>"backend\.env" echo JWT_SECRET='!JWT_SECRET!'
 >>"backend\.env" echo DIAG_TOKEN='!DIAG_TOKEN!'
 >>"backend\.env" echo MIGRATE_TOKEN='!MIGRATE_TOKEN!'
+>>"backend\.env" echo SETUP_TOKEN='!SETUP_TOKEN!'
 >>"backend\.env" echo AUTO_MIGRATE='!AUTO_MIGRATE!'
 >>"backend\.env" echo CORS_ORIGINS='!CORS_ORIGINS!'
 >>"backend\.env" echo PUBLIC_BASE_URL='!PUBLIC_BASE_URL!'
@@ -186,7 +188,9 @@ if defined DO_FRONTEND (
     >>"!WINSCP_SCRIPT!" echo synchronize remote -delete -filemask="^|!API_URL_SEGMENT!/;content/" "!FRONTEND_DIST!" "!REMOTE_WEB_PATH!"
 )
 rem _authoring/ bleibt aussen vor: sonst wandert die Python-Umgebung unter
-rem data/_authoring/voice-tools/ mit auf den Server.
+rem data/_authoring/voice-tools/ mit auf den Server. data\.htaccess dagegen MUSS
+rem mit - sie ist die Umschreibe-Regel, die den Content hinter die Anmeldung
+rem stellt. Faellt sie hier je aus der Maske, liegen alle Bilder wieder offen.
 if defined DO_CONTENT (
     >>"!WINSCP_SCRIPT!" echo synchronize remote -delete -filemask="^|_authoring/" "data" "!REMOTE_CONTENT_PATH!"
 )

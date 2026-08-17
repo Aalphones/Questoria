@@ -6,6 +6,7 @@ use App\Controllers\AuthController;
 use App\Controllers\ContentController;
 use App\Controllers\HealthController;
 use App\Controllers\MigrateController;
+use App\Controllers\SetupController;
 use App\Database\Connection;
 use App\Exceptions\ApiException;
 use App\Http\JsonResponse;
@@ -72,18 +73,24 @@ $requestMethod = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
 $corsMiddleware = new CorsMiddleware($_ENV['CORS_ORIGINS'] ?? '');
 $corsMiddleware->handle($requestMethod, $_SERVER['HTTP_ORIGIN'] ?? null);
 
-// Alles unter /api/ verlangt eine gueltige Sitzung — bis auf diese drei. Die
+// Alles unter /api/ verlangt eine gueltige Sitzung — bis auf diese vier. Die
 // Liste steht bewusst an einer einzigen Stelle: verstreute Ausnahmen im Code
 // sind der Weg, auf dem ein Endpunkt still ungeschuetzt bleibt.
+//
+// /api/setup/user steht hier, weil es den ERSTEN Account anlegt — es kann keine
+// Sitzung voraussetzen, sonst gaebe es nie eine. Geschuetzt ist es stattdessen
+// ueber ein eigenes Token im Kopf; ohne das antwortet es 404 (SetupController).
 const OPEN_ROUTES = [
     'POST /api/auth/login',
     'GET /api/health',
     'POST /api/migrate',
+    'POST /api/setup/user',
 ];
 
 $dispatcher = FastRoute\simpleDispatcher(static function (RouteCollector $routes): void {
     $routes->addRoute('GET', '/api/health', [HealthController::class, 'handle']);
     $routes->addRoute('POST', '/api/migrate', [MigrateController::class, 'handle']);
+    $routes->addRoute('POST', '/api/setup/user', [SetupController::class, 'createUser']);
     $routes->addRoute('POST', '/api/auth/login', [AuthController::class, 'login']);
     $routes->addRoute('POST', '/api/auth/logout', [AuthController::class, 'logout']);
     $routes->addRoute('GET', '/api/auth/me', [AuthController::class, 'me']);

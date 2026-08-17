@@ -81,7 +81,7 @@ Struktur übernommen aus promptigofant (gleiches Muster, eigenes Repo):
 | Ordner | Zweck |
 |---|---|
 | `Controllers/` | HTTP-Endpunkte (Content-API, User-API, Savegame-API) |
-| `Services/` | Geschäftslogik. `ContentService` liest `data/` (Wurzel: `CONTENT_PATH` oder `DOCUMENT_ROOT/content`) — Welt, Episode und ausgelagerte Event-Datei, dazu später Savegame-Verwaltung und Auth |
+| `Services/` | Geschäftslogik. `ContentService` liest `data/` (Wurzel: `CONTENT_PATH` oder `DOCUMENT_ROOT/content`) — Welt, Episode und ausgelagerte Event-Datei; `ContentFileService` liefert aus derselben Wurzel die Dateien selbst aus (Bilder, Töne) samt Pfadprüfung und Zwischenspeicher-Köpfen; dazu später Savegame-Verwaltung und Auth |
 | `Repositories/` | MySQL-Zugriff (users, player_profiles, savegames, achievements, statistics) |
 | `Middleware/` | Herkunftssperre (`CorsMiddleware`) und Anmelde-Token (`JwtAuthMiddleware`) |
 | `Validators/` | Request-Validierung (respect/validation) |
@@ -89,15 +89,17 @@ Struktur übernommen aus promptigofant (gleiches Muster, eigenes Repo):
 | `Database/` | Connection/PDO-Setup |
 | `Exceptions/` | Domänen-Exceptions |
 | `Http/` | Request/Response-Helper |
-| `public/` | Einstiegspunkt `index.php` + `.htaccess`; das ist die Web-Wurzel auf dem Server |
+| `public/` | Einstiegspunkt `index.php` + `.htaccess`; dazu `content-gate.php`, die Weiche vor `/content/**` (prüft dasselbe Sitzungs-Cookie, ohne Datenbank-Blick — ADR-008). Das ist die Web-Wurzel auf dem Server |
 
 **Ist-Stand:** gebaut sind `Http/` (`JsonResponse.php`, `RequestBody.php` als
 JSON-Leser für den Anfragekörper, `SessionCookie.php` für das Sitzungs-Cookie
 `qst_session`), `Exceptions/`, `Database/`, `Middleware/`,
 `Controllers/HealthController.php`, `Controllers/MigrateController.php`,
 `Controllers/ContentController.php`, `Controllers/AuthController.php`,
-`Services/ContentService.php`, `Services/AuthService.php`,
+`Controllers/SetupController.php`, `Services/ContentService.php`,
+`Services/ContentFileService.php`, `Services/AuthService.php`,
 `Repositories/UserRepository.php`, `Validators/LoginValidator.php`,
+`Validators/CreateUserValidator.php`,
 `Migrations/` (7 Tabellen in 8 Schritten unter `sql/`, `MigrationRunner.php`, plus
 `backend/bin/migrate.php` als CLI-Hülle für den Fall eines späteren lokalen/
 Fernzugriff-Tests) und der Einstiegspunkt. `backend/bin/create-user.php` legt
@@ -108,7 +110,10 @@ jedem echten API-Aufruf automatisch nachgezogen (`AutoMigrator`, verdrahtet in
 bleibt zusätzlich als manuell aufrufbares Debug-Werkzeug. Der Sitzungs-Schutz
 sitzt in `public/index.php` zwischen Routen-Treffer und Controller-Aufruf; die
 Liste der ohne Anmeldung erreichbaren Routen steht dort als Konstante
-`OPEN_ROUTES`. Die übrigen Repository- und Validator-Klassen sind Soll-Zustand
+`OPEN_ROUTES`. `SetupController` legt über `POST /api/setup/user` einen Account
+an — der einzige Weg zum **ersten**, weil die Datenbank des Pakets von außen
+nicht erreichbar ist; geschützt über den eigenen Kopf `X-Setup-Token`, ohne den
+er sich wie ein nicht existierender Pfad verhält. Die übrigen Repository- und Validator-Klassen sind Soll-Zustand
 für spätere Phasen.
 
 ## Projektstamm
@@ -117,14 +122,15 @@ für spätere Phasen.
 |---|---|
 | `deploy.cmd` | Bringt Backend, Frontend und Content auf den Server (Ziel wählbar: `backend`, `frontend`, `content`, ohne Angabe alle drei) |
 | `deploy.env.example` | Vorlage für die Zugangsdaten; die echte `deploy.env` liegt nicht im Git |
-| `api-bridge/` | Die drei Dateien, die im ausgelieferten Bereich stehen und auf das Backend daneben zeigen ([ADR-003](decisions/003-backend-ausserhalb-des-webbereichs.md)). Landen auf dem Server unter `public/api/` |
-| `backend/serve.cmd` | Startet den lokalen PHP-Entwicklungsserver auf Port 8000 (`backend/dev-router.php` als Weiche: `/content/` direkt aus `data/`, alles andere durch `public/index.php`) — nur für die Entwicklung, nie deployen |
+| `api-bridge/` | Die Dateien, die im ausgelieferten Bereich stehen und auf das Backend daneben zeigen ([ADR-003](decisions/003-backend-ausserhalb-des-webbereichs.md)): `index.php` (Schnittstelle), `content-gate.php` (Weiche vor den Content-Dateien), `diag.php` (Serverauskunft). Landen auf dem Server unter `public/api/` |
+| `backend/serve.cmd` | Startet den lokalen PHP-Entwicklungsserver auf Port 8000 (`backend/dev-router.php` als Weiche: `/content/` durch `public/content-gate.php` — dieselbe Sitzungsprüfung wie auf dem Server —, alles andere durch `public/index.php`) — nur für die Entwicklung, nie deployen |
 | `frontend/proxy.conf.json` | Leitet `/api` und `/content` beim lokalen Entwickeln an `localhost:8000` weiter (`backend\serve.cmd`) — so laufen die Aufrufe im Code relativ, lokal wie in Betrieb |
 
 ## Content-Repository (`data/`)
 
 | Ordner | Zweck |
 |---|---|
+| `data/.htaccess` | Schickt auf dem Server jede Anfrage an `/content/**` durch die Weiche `/api/content-gate.php`. Liegt bewusst neben dem Content, weil `deploy.cmd content` diesen Ordner spiegelt und eine Regel von woanders dabei verloren ginge |
 | `data/_authoring/` | LLM-Prompt-Toolkit + Schema-Referenz — kein Runtime-Code |
 | `data/main_hub.json` | Installierte Welten für die Planetenkarte — ausgeliefert über `GET /api/content/themes` |
 | `data/hub/` | Bilder der Planetenkarte (Hintergrund), ausgeliefert über `GET /content/hub/<datei>` |

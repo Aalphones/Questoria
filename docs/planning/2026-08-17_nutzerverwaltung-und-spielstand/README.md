@@ -15,9 +15,11 @@ Diese Punkte sind Vorgabe, nicht Ermessen des Umsetzers:
 
 1. **Ein Eltern-Login pro Gerät, danach nur noch Profilwahl.** Ein Kind tippt
    nie ein Passwort. Die Anmeldung gilt 30 Tage, danach fragt sie erneut.
-2. **Keine Registrierung in der Oberfläche.** Accounts legt ein Skript an
-   (`backend/bin/create-user.php`, Phase 1) — der Betrieb bleibt auf einen
-   privaten Kreis beschränkt ([Critical Rule 6](../../../AGENTS.md)).
+2. **Keine Registrierung in der Oberfläche.** Accounts legt der Betreiber an —
+   auf dem Server über `POST /api/setup/user` mit eigenem Token (Phase 2),
+   lokal über `backend/bin/create-user.php`, falls die Datenbank je von außen
+   erreichbar ist. Der Betrieb bleibt auf einen privaten Kreis beschränkt
+   ([Critical Rule 6](../../../AGENTS.md)).
 3. **Die Sitzung ist ein HttpOnly-Cookie, kein Token im Browser-Speicher.**
    Nur so kann auch die Auslieferung der Bilder und Audiodateien dieselbe
    Sitzung prüfen ([ADR-008](../../decisions/008-zugang-und-sitzung.md), Phase 1+2).
@@ -36,7 +38,7 @@ Diese Punkte sind Vorgabe, nicht Ermessen des Umsetzers:
 | # | Phase | Inhalt | Rating | Status |
 |---|---|---|---|---|
 | 1 | [Anmeldung im Backend](phase-1-anmeldung-backend.md) | `Repositories/`, `UserRepository`, `AuthController`, Sitzungs-Cookie, geschützte Routen, Account-Skript | heikel | complete |
-| 2 | [Türsteher vor Content und App](phase-2-tuersteher.md) | PHP-Weiche vor `/content/`, Schutz der App-Dateien, `deploy.cmd`, lokaler Entwicklungs-Router | heikel | pending |
+| 2 | [Türsteher vor Content und App](phase-2-tuersteher.md) | PHP-Weiche vor `/content/`, Schutz der App-Dateien, `deploy.cmd`, lokaler Entwicklungs-Router, Endpunkt für den ersten Account | heikel | complete |
 | 3 | [Anmeldebildschirm im Frontend](phase-3-anmeldebildschirm.md) | `features/auth/`, `AuthService`, Abfang bei abgelaufener Sitzung, Zugangs-Wächter | standard | pending |
 | 4 | [Spielerprofile](phase-4-profile.md) | `ProfileRepository`/`ProfileController`, `features/profile/` nach Prototyp-Screen `login`, aktives Profil im `GameStateService` | standard | pending |
 | 5 | [Spielstand-Schnittstelle](phase-5-savegame.md) | `SavegameRepository`/`SavegameController`, `SavegameService` mit Puffer und Nachreichen | heikel | pending |
@@ -47,9 +49,16 @@ Diese Punkte sind Vorgabe, nicht Ermessen des Umsetzers:
 
 ## Kontrakt: die Schnittstelle
 
-Alles unter `/api/` außer `POST /api/auth/login`, `GET /api/health` und
-`POST /api/migrate` verlangt eine gültige Sitzung. Ohne: `401` mit dem
-üblichen Fehlerkörper `{"error": {"code": 401, "message": "..."}}`.
+Alles unter `/api/` außer `POST /api/auth/login`, `GET /api/health`,
+`POST /api/migrate` und `POST /api/setup/user` verlangt eine gültige Sitzung.
+Ohne: `401` mit dem üblichen Fehlerkörper
+`{"error": {"code": 401, "message": "..."}}`.
+
+Die beiden Betreiber-Endpunkte (`/api/migrate`, `/api/setup/user`) können keine
+Sitzung voraussetzen — der eine richtet die Datenbank ein, der andere legt den
+allerersten Account an. Sie schützen sich stattdessen über einen eigenen Token
+im Kopf und antworten ohne ihn mit `404`, verhalten sich also wie nicht
+vorhandene Pfade.
 
 **Warum das keine Verletzung von [Critical Rule 8](../../../AGENTS.md) ist:**
 Die Regel verbietet neue Endpunkte für *Gameplay*. Anmeldung, Profile und
@@ -65,6 +74,7 @@ gerechnet hat.
 | `POST /api/auth/login` | `{"email": string, "password": string}` | `200 {"user": {"id": int, "username": string, "role": string}}` + `Set-Cookie` · `401` bei falschen Daten |
 | `POST /api/auth/logout` | — | `204`, löscht das Cookie |
 | `GET /api/auth/me` | — | `200 {"user": {...}}` · `401` |
+| `POST /api/setup/user` | `{"email": string, "username": string, "password": string}` | `201 {"user": {...}}` · `409` bei vergebener E-Mail/Benutzername · `404` ohne Kopf `X-Setup-Token` |
 
 Cookie: `qst_session=<JWT>; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=2592000`.
 `Secure` entfällt nur, wenn `APP_ENV=local` gesetzt ist — sonst käme das Cookie

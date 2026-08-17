@@ -12,21 +12,11 @@ $_ENV['CONTENT_PATH'] = dirname(__DIR__) . '/data';
 
 $requestPath = rawurldecode(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/');
 
+// Content laeuft durch dieselbe Weiche wie auf dem Server, samt Sitzungspruefung.
+// Frueher lieferte dieser Router jede Datei ungeprueft aus — dann verhaelt sich
+// lokal genau das anders, was am Ende schuetzen soll.
 if (str_starts_with($requestPath, '/content/')) {
-    $relativePath = substr($requestPath, strlen('/content/'));
-    $filePath = $_ENV['CONTENT_PATH'] . '/' . $relativePath;
-
-    if (!is_file($filePath)) {
-        http_response_code(404);
-        header('Content-Type: application/json; charset=utf-8');
-        echo json_encode(['error' => ['code' => 404, 'message' => 'Not Found']]);
-
-        return true;
-    }
-
-    $mimeType = mime_content_type($filePath) ?: 'application/octet-stream';
-    header('Content-Type: ' . $mimeType);
-    readfile($filePath);
+    require __DIR__ . '/public/content-gate.php';
 
     return true;
 }
