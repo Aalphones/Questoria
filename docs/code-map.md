@@ -49,6 +49,8 @@ Weltknoten aus `theme-card/`, Routen, Info-Panel; dazu der eigene Screen
 steht; löst ausgelagerte Konfigurationen über `config.ref` auf),
 `features/events/dialog/` (Visual-Novel-Bühne mit zwei Plätzen),
 `features/events/multiple-choice/` (Quiz mit Weiterraten),
+`features/events/text-input/` (Texteingabe mit Weiterraten),
+`features/events/image-search/` (Bildsuche mit Fehlgriff-Zählung, Ziele auch per Tastatur erreichbar),
 `ui/map-canvas/`,
 `ui/image-slot/`, `ui/task-card/`, `ui/hud/` (inkl. Modus-Umschalter + Ton-Knopf),
 `ui/content-error/`, `ui/read-aloud-button/`, `services/narration.service.ts`,

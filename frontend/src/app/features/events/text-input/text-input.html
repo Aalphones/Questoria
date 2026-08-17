@@ -1,0 +1,33 @@
+<qst-task-card
+  tag="Aufgabe · Texteingabe"
+  [question]="questionText()"
+  [stepDone]="stepDone()"
+  [stepTotal]="stepTotal()"
+>
+  <form class="text-input__form" (submit)="check($event)">
+    <label class="text-input__label" for="text-input-field">Deine Antwort</label>
+    <input
+      id="text-input-field"
+      class="text-input__field"
+      type="text"
+      [attr.inputmode]="inputMode()"
+      autocomplete="off"
+      autocapitalize="off"
+      [disabled]="solved()"
+      [value]="value()"
+      (input)="onInput($event)"
+    />
+    <button type="submit" class="text-input__submit" [disabled]="solved()">Prüfen</button>
+  </form>
+
+  <div task-card-feedback class="text-input__feedback" role="status" aria-live="polite">
+    @if (feedbackTitle(); as title) {
+      <p class="text-input__feedback-title">{{ title }}</p>
+      <p class="text-input__feedback-text">{{ feedbackText() }}</p>
+
+      @if (solved()) {
+        <button type="button" class="text-input__next" (click)="finish()">Weiter</button>
+      }
+    }
+  </div>
+</qst-task-card>

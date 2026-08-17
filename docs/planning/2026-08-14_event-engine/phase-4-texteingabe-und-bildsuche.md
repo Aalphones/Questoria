@@ -68,29 +68,58 @@ Plan-Freigabe — siehe Report-Back, falls stattdessen ein Entwurf kam.)*
 
 ## Checkliste
 
-- [ ] `models/content.types.ts`: `TextInputVariant` (`question`,
+- [x] `models/content.types.ts`: `TextInputConfig` (`question`,
       `question_simple?`, `input_type: 'text' | 'number'`,
       `accepted_answers: string[]`, `case_sensitive?: boolean`),
-      `SearchTarget` (`label`, `x`, `y`, `radius`) und `ImageSearchVariant`
+      `SearchTarget` (`label`, `x`, `y`, `radius`) und `ImageSearchConfig`
       (`image`, `question`, `question_simple?`, `targets`, `find_all`).
-- [ ] `ng generate component features/events/text-input --skip-tests`, Zeile
+- [x] `ng generate component features/events/text-input --skip-tests`, Zeile
       `text_input` in `EVENT_COMPONENTS`.
-- [ ] Antwortvergleich als reine Funktion neben der Komponente
+- [x] Antwortvergleich als reine Funktion neben der Komponente
       (`matchesAcceptedAnswer(input, variant)`), damit die Regel an einer Stelle
       steht.
-- [ ] `ng generate component features/events/image-search --skip-tests`, Zeile
+- [x] `ng generate component features/events/image-search --skip-tests`, Zeile
       `image_search` in `EVENT_COMPONENTS`.
-- [ ] Trefferprüfung als reine Funktion (`hitTarget(targets, x, y)`), Abstand
+- [x] Trefferprüfung als reine Funktion (`hitTarget(targets, x, y)`), Abstand
       in Prozent der **Bildbreite** gerechnet — dasselbe Bezugsmaß wie
       `radius`, sonst trifft nichts auf hohen Bildern.
-- [ ] Beide Komponenten: Außenfläche exakt nach Kontrakt (`config`, `context`,
+- [x] Beide Komponenten: Außenfläche exakt nach Kontrakt (`config`, `context`,
       `inject(EpisodeRun)`), kein eigener Ladeweg, kein Router.
-- [ ] Beide nutzen `ui/task-card/` — Frage, Vorlesen und Fortschrittspunkte
+- [x] Beide nutzen `ui/task-card/` — Frage, Vorlesen und Fortschrittspunkte
       werden **nicht** nachgebaut.
-- [ ] Bewegung (Markierungs-Animation, Fehlgriff-Rückmeldung) mit
+- [x] Bewegung (Markierungs-Animation, Fehlgriff-Rückmeldung) mit
       `prefers-reduced-motion`-Zweig.
-- [ ] `docs/code-map.md`: beide Ordner aufnehmen.
+- [x] `docs/code-map.md`: beide Ordner aufnehmen.
 
 ## Report-Back
 
-*(beim Umsetzen füllen)*
+**Kein Entwurf eingegangen** — beide Typen freihändig gebaut, wie bei der
+Plan-Freigabe vereinbart.
+
+**Naming-Abweichung:** Die Checkliste nannte die aufgelösten Konfigurationstypen
+`TextInputVariant`/`ImageSearchVariant`. Gebaut wurden `TextInputConfig`/
+`ImageSearchConfig` — konsistent zum bereits bestehenden `MultipleChoiceConfig`/
+`DialogConfig` (Phase 2/3 nennen die aufgelöste, spielbereite Form durchweg
+„Config", nicht „Variant"). Inhaltlich identisch, nur der Name geändert.
+
+**`image_search` — wie „Trefferfläche" und „Treffer-Prüfung" auseinandergehalten
+werden** (AK 13): Ein Tipp wird **immer** über die echten Zeigerkoordinaten
+gegen `radius` geprüft (`hitTarget()`), unabhängig davon, welches DOM-Element
+darunterliegt. Über jedem noch nicht gefundenen Ziel liegt zusätzlich eine
+unsichtbare, über `qst-map-point` positionierte Fläche
+(`.image-search__hit-floor`), deren CSS-Mindestgröße `--size-touch-target`
+nie unterschreitet — sie beeinflusst nur, wie leicht ein Ziel physisch zu
+treffen ist, nicht die Auswertung selbst.
+
+**Tastaturweg getrennt vom Zeigerweg:** Eine zusätzliche, visuell verborgene
+Knopfliste (`.visually-hidden`, wie schon im Quiz für Zustandstexte genutzt)
+bietet jedes Ziel als eigenen, per Tab erreichbaren Knopf an — Enter zählt
+als exakter Tipp auf genau dieses Ziel, ohne Koordinatenrechnung.
+
+**Ein neuer Baustein wiederverwendet:** `qst-map-point` (bisher nur auf den
+Kartenscreens) positioniert jetzt auch die Ziel-Markierungen und die
+Fehlgriff-Rückmeldung der Bildsuche — dieselbe Prozent-auf-Container-Projektion
+wie auf der Ortskarte, wie in der Phase vorgeschlagen.
+
+`cd frontend && npm run build` und `npm run lint` laufen grün,
+`cd backend && composer lint` unverändert grün (kein Backend-Code berührt).

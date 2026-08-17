@@ -1,0 +1,122 @@
+:host {
+  display: contents;
+}
+
+.image-search {
+  &__area {
+    display: block;
+    position: relative;
+    inline-size: 100%;
+    aspect-ratio: 16 / 9;
+    padding: 0;
+    border: none;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: none;
+    cursor: crosshair;
+    // Bezugsgröße für die cqw-Angaben der Ziel-Punkte, siehe qst-map-point.
+    container-type: inline-size;
+
+    &:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+  }
+
+  // Unsichtbare Fläche über jedem noch nicht gefundenen Ziel. Sie ändert die
+  // Treffer-Prüfung nicht — die läuft immer über die Tipp-Koordinaten gegen
+  // `radius` (hitTarget()) — sondern sorgt nur dafür, dass auf schmalen
+  // Fenstern eine Mindestgröße zum Antippen dort steht, wo `radius` selbst
+  // dafür zu klein wäre.
+  &__hit-floor {
+    display: block;
+    inline-size: var(--map-point-size, 0px);
+    block-size: var(--map-point-size, 0px);
+    min-inline-size: var(--size-touch-target);
+    min-block-size: var(--size-touch-target);
+    border-radius: var(--radius-pill);
+  }
+
+  &__mark {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-1);
+    pointer-events: none;
+  }
+
+  &__mark-ring {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: var(--size-answer-key);
+    block-size: var(--size-answer-key);
+    border-radius: var(--radius-pill);
+    background: var(--color-progress-done-strong);
+    box-shadow: var(--shadow-md);
+    color: var(--color-text-on-accent);
+    font-size: var(--font-size-body);
+    animation: eqPop var(--duration-enter) var(--easing-standard);
+  }
+
+  &__mark-label {
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-pill);
+    background: var(--color-bg);
+    box-shadow: var(--shadow-sm);
+    color: var(--color-text);
+    font-size: var(--font-size-detail);
+    white-space: nowrap;
+  }
+
+  &__miss {
+    display: block;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-pill);
+    background: var(--color-hover-wash);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-detail);
+    white-space: nowrap;
+    pointer-events: none;
+    animation: eqPop var(--duration-enter) var(--easing-standard);
+  }
+
+  &__counter {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-detail);
+  }
+
+  &__feedback {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-2);
+  }
+
+  &__feedback-title {
+    margin: 0;
+    color: var(--color-text-accent);
+    font-family: var(--font-heading);
+    font-size: var(--font-size-section);
+  }
+
+  &__next {
+    min-block-size: var(--size-touch-target);
+    padding-inline: var(--space-6);
+    border: none;
+    border-radius: var(--radius-pill);
+    background: var(--color-accent);
+    color: var(--color-text-on-accent);
+    font-family: var(--font-body);
+    font-size: var(--font-size-body);
+    font-weight: 600;
+    cursor: pointer;
+
+    &:hover {
+      background: var(--color-accent-hover);
+    }
+  }
+}
+
+.image-search__feedback:not(:empty) {
+  animation: eqRise var(--duration-enter) var(--easing-standard);
+}

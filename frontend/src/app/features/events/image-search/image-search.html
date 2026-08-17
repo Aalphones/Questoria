@@ -1,0 +1,52 @@
+<qst-task-card
+  tag="Aufgabe · Bildsuche"
+  [question]="questionText()"
+  [stepDone]="stepDone()"
+  [stepTotal]="stepTotal()"
+>
+  <button type="button" class="image-search__area" (click)="onImageTap($event)">
+    <qst-image-slot [src]="imageUrl()" [label]="config().image" />
+
+    @for (view of targetViews(); track view.index) {
+      <qst-map-point [x]="view.target.x" [y]="view.target.y" [size]="view.target.radius * 2">
+        @if (view.found) {
+          <span class="image-search__mark">
+            <span class="image-search__mark-ring" aria-hidden="true">✓</span>
+            <span class="image-search__mark-label">{{ view.target.label }}</span>
+          </span>
+        } @else {
+          <span class="image-search__hit-floor" aria-hidden="true"></span>
+        }
+      </qst-map-point>
+    }
+
+    @if (missMarker(); as marker) {
+      <qst-map-point [x]="marker.x" [y]="marker.y">
+        <span class="image-search__miss" aria-hidden="true">Da ist nichts</span>
+      </qst-map-point>
+    }
+  </button>
+
+  <ul class="visually-hidden image-search__keyboard-targets">
+    @for (view of targetViews(); track view.index) {
+      <li>
+        <button
+          type="button"
+          [disabled]="view.found || solved()"
+          (click)="pickTarget(view.index)"
+        >
+          {{ view.target.label }}
+        </button>
+      </li>
+    }
+  </ul>
+
+  <p class="image-search__counter" role="status" aria-live="polite">{{ foundLabel() }}</p>
+
+  <div task-card-feedback class="image-search__feedback" role="status" aria-live="polite">
+    @if (feedbackTitle(); as title) {
+      <p class="image-search__feedback-title">{{ title }}</p>
+      <button type="button" class="image-search__next" (click)="finish()">Weiter</button>
+    }
+  </div>
+</qst-task-card>

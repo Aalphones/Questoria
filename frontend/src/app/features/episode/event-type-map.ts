@@ -2,7 +2,9 @@ import { Type } from '@angular/core';
 
 import { EventType } from '../../models/content.types';
 import { isDialogConfig } from '../events/dialog/dialog.types';
+import { isImageSearchConfig } from '../events/image-search/image-search.types';
 import { isMultipleChoiceConfig } from '../events/multiple-choice/multiple-choice.types';
+import { isTextInputConfig } from '../events/text-input/text-input.types';
 
 /**
  * Die einzige Stelle, an der ein Eventtyp seiner Komponente zugeordnet wird —
@@ -18,6 +20,9 @@ export const EVENT_COMPONENTS: Readonly<Partial<Record<EventType, () => Promise<
   dialog: () => import('../events/dialog/dialog').then((module) => module.Dialog),
   multiple_choice: () =>
     import('../events/multiple-choice/multiple-choice').then((module) => module.MultipleChoice),
+  text_input: () => import('../events/text-input/text-input').then((module) => module.TextInput),
+  image_search: () =>
+    import('../events/image-search/image-search').then((module) => module.ImageSearch),
 };
 
 /**
@@ -49,6 +54,8 @@ export function assertPlayableConfig(type: EventType, config: unknown): void {
 const EVENT_CONFIG_GUARDS: Readonly<Partial<Record<EventType, (config: unknown) => boolean>>> = {
   dialog: isDialogConfig,
   multiple_choice: isMultipleChoiceConfig,
+  text_input: isTextInputConfig,
+  image_search: isImageSearchConfig,
 };
 
 /** Lädt die Komponente zu einem Eventtyp — unbekannter Typ wirft, das Gerüst zeigt die Meldung. */

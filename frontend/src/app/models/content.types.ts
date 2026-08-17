@@ -128,6 +128,38 @@ export interface MultipleChoiceConfig {
   correct_index: number;
 }
 
+/** Die aufgelöste Konfiguration eines `text_input`-Events (Abschnitt 5.4, ausgelagert). */
+export interface TextInputConfig {
+  question: string;
+  /** kurze Fassung für den Vorlesemodus, siehe Abschnitt 6 */
+  question_simple?: string;
+  input_type: 'text' | 'number';
+  accepted_answers: string[];
+  /** default false — ohne `true` wird Groß-/Kleinschreibung ignoriert */
+  case_sensitive?: boolean;
+}
+
+/** Ein Suchziel eines `image_search`-Events (Abschnitt 5.5). */
+export interface SearchTarget {
+  label: string;
+  /** horizontale Position, in % der Bildbreite */
+  x: number;
+  /** vertikale Position, in % der Bildhöhe */
+  y: number;
+  /** Toleranzradius, in % der Bildbreite — dasselbe Bezugsmaß wie `x` */
+  radius: number;
+}
+
+/** Die aufgelöste Konfiguration eines `image_search`-Events (Abschnitt 5.5, ausgelagert). */
+export interface ImageSearchConfig {
+  /** Dateiname unter backgrounds/ oder eigenem images/-Ordner */
+  image: string;
+  question: string;
+  question_simple?: string;
+  targets: SearchTarget[];
+  find_all: boolean;
+}
+
 /**
  * Eine ausgelagerte Event-Datei unter `events/<event_id>.json` mit einer
  * Variante je Lernstufe (Abschnitt 4 „Inline oder ausgelagert" + Varianten-Regel).
