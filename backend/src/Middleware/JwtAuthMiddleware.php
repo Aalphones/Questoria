@@ -17,6 +17,20 @@ final class JwtAuthMiddleware
     {
     }
 
+    public static function fromEnvironment(): self
+    {
+        $secret = (string) ($_ENV['JWT_SECRET'] ?? '');
+
+        if ($secret === '' || $secret === 'change-me-in-production') {
+            // Ohne echtes Geheimnis waeren alle Sitzungstoken faelschbar. Lieber
+            // eine ehrliche 500 als eine Anmeldung, die nur so aussieht, als
+            // wuerde sie schuetzen.
+            throw new ApiException(500, 'Serverkonfiguration unvollstaendig');
+        }
+
+        return new self($secret);
+    }
+
     public function issue(array $claims): string
     {
         return JWT::encode($claims, $this->secret, self::ALGORITHM);

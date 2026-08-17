@@ -23,7 +23,7 @@ final class AuthService
     public function __construct(?UserRepository $users = null, ?JwtAuthMiddleware $tokens = null)
     {
         $this->users = $users ?? new UserRepository();
-        $this->tokens = $tokens ?? new JwtAuthMiddleware(self::secret());
+        $this->tokens = $tokens ?? JwtAuthMiddleware::fromEnvironment();
     }
 
     /**
@@ -95,19 +95,5 @@ final class AuthService
             'username' => (string) $row['username'],
             'role' => (string) $row['role'],
         ];
-    }
-
-    private static function secret(): string
-    {
-        $secret = (string) ($_ENV['JWT_SECRET'] ?? '');
-
-        if ($secret === '' || $secret === 'change-me-in-production') {
-            // Ohne echtes Geheimnis waeren alle Sitzungstoken faelschbar. Lieber
-            // eine ehrliche 500 als eine Anmeldung, die nur so aussieht, als
-            // wuerde sie schuetzen.
-            throw new ApiException(500, 'Serverkonfiguration unvollstaendig');
-        }
-
-        return $secret;
     }
 }
