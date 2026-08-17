@@ -4,24 +4,25 @@
 [Event Engine, Meilenstein 3](docs/planning/2026-08-14_event-engine/README.md),
 7 Phasen, freigegeben am 14.08.2026
 
-**Phase:** 4/7 — `text_input` + `image_search` (complete)
+**Phase:** 5/7 — `reward` + Ergebnis-Screen + echte Sterne (complete)
 
 **Nächster Schritt:** Neue Session, `/clear` durchführen, dann `/implement` für
-Phase 5 (`reward` + Ergebnis-Screen + echte Sterne) — Rating „standard", also
-`sonnet`.
+Phase 6 (Weiterspielen nach Abbruch) — Rating „standard", also `sonnet`.
 
-**Zuletzt abgeschlossen:** Phase 4 der Event Engine — zwei weitere Aufgaben-Typen
-in der Hülle aus Phase 3, beide ohne Mockup freihändig gebaut (Entscheidung war
-bei der Plan-Freigabe schon getroffen). `text_input`: Eingabefeld mit Prüfen-Knopf,
-Weiterraten erlaubt, Vergleich gegen `accepted_answers` als reine Funktion.
-`image_search`: Suchbild mit unsichtbaren Zielen, Trefferprüfung immer über die
-echten Tipp-Koordinaten gegen `radius` (nie über die vergrößerte Tastfläche),
-Ziele zusätzlich per Tastatur (Tab + Enter) erreichbar; wiederverwendet
-`qst-map-point` aus den Kartenscreens für die Prozent-Positionierung. Beide Typen
-in `EVENT_COMPONENTS` und `EVENT_CONFIG_GUARDS` eingetragen. Build und
+**Zuletzt abgeschlossen:** Phase 5 der Event Engine — der Platzhalter-Abschluss
+(pauschal 3 Sterne, sofortige Navigation) ist raus. `star-rules.ts` berechnet
+die echte Sternenformel als reine Funktion; `episode.ts` schreibt sie einmalig
+per `effect()`, sobald die Eventliste durch ist. Neuer Eventtyp `reward`:
+Belohnungs-Karte mit `eqPop`, merkt `card_id` in `EpisodeRun.pendingCardId`
+für Meilenstein 5 (optional, fehlende ID ist kein Fehler). Neuer
+Ergebnis-Screen `features/result/` — keine eigene Route, wird vom
+Episoden-Screen nach dem letzten Event gezeigt: Sterne, Konfetti (rein per
+CSS, kein JS-Zufall), zwei Statistik-Karten aus dem Lauf, CTAs zurück zur
+Ortskarte bzw. zur Etappenkarte. `prefers-reduced-motion` läuft über die
+bestehenden globalen Dauer-Tokens mit, kein eigener Zweig nötig. Build und
 Frontend-Lint grün, Backend-Lint unverändert grün (kein Backend-Code berührt).
-Noch nicht am echten Gerät/Browser durchgespielt — das passiert im Smoke-Test am
-Plan-Ende.
+Noch nicht am echten Gerät/Browser durchgespielt — das passiert im Smoke-Test
+am Plan-Ende.
 
 **Merkposten:** PHP/Composer liegen unter `C:\Users\sasch\develop\.tools\`
 (`php.cmd`/`composer.cmd`), nicht im Suchpfad des Benutzers. Ad-hoc-Testserver
