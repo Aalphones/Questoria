@@ -51,27 +51,55 @@ Dialog anzufangen.
 
 ## Checkliste
 
-- [ ] `models/game-state.types.ts`: `StoredRun`-Typ ergänzen (Felder aus AK 1,
+- [x] `models/game-state.types.ts`: `StoredRun`-Typ ergänzen (Felder aus AK 1,
       alle `readonly`).
-- [ ] `services/run-store.service.ts` anlegen (`@Service()`): `load()`,
+- [x] `services/run-store.service.ts` anlegen (`@Service()`): `load()`,
       `save(run)`, `clear()`. Kaputter Eintrag → `clear()` + `console.warn`,
       Muster aus `ProgressService`.
-- [ ] `EpisodeRun`: nach jedem `finish()` speichern; `startAt()` setzt alle
+- [x] `EpisodeRun`: nach jedem `finish()` speichern; `startAt()` setzt alle
       drei Zähler auf einmal (kein halb gesetzter Zustand).
-- [ ] `episode.ts`: Nach dem Laden der Episode prüfen, ob ein passender
+- [x] `episode.ts`: Nach dem Laden der Episode prüfen, ob ein passender
       Eintrag existiert; nur dann den Dialog zeigen und das erste Event bis zur
       Entscheidung **nicht** einsetzen.
-- [ ] Dialog als eigene kleine Komponente unter `features/episode/resume-prompt/`
+- [x] Dialog als eigene kleine Komponente unter `features/episode/resume-prompt/`
       (nicht in `episode.html` einbetten — der Screen ist ohnehin die
       komplexeste Datei des Features).
-- [ ] Beim Abschluss der Episode (Phase-5-Pfad) `clear()` aufrufen, bevor der
+- [x] Beim Abschluss der Episode (Phase-5-Pfad) `clear()` aufrufen, bevor der
       Ergebnis-Screen erscheint.
-- [ ] `docs/code-map.md`: `services/run-store.service.ts` und
+- [x] `docs/code-map.md`: `services/run-store.service.ts` und
       `features/episode/resume-prompt/` aufnehmen.
-- [ ] `docs/glossary.md`: Eintrag **Fortschritt** um die Abgrenzung ergänzen —
+- [x] `docs/glossary.md`: Eintrag **Fortschritt** um die Abgrenzung ergänzen —
       Fortschritt = geschaffte Orte, angefangener Lauf = die eine
       unterbrochene Episode.
 
 ## Report-Back
 
-*(beim Umsetzen füllen)*
+Der angefangene Lauf lebt komplett client-seitig unter `questoria.run.v1`
+(`RunStoreService`, Muster wie `ProgressService`): genau ein Eintrag, egal
+welche Episode. `EpisodeRun` kennt seit dieser Phase `themeId`/`episodeId`
+(gesetzt über `configure()` aus `episode.ts`s bestehendem
+„neue Episode → neuer Lauf"-Effekt) und schreibt nach jedem `finish()`.
+
+`episode.ts` prüft nach dem Laden der Episode einmalig per Effekt, ob der
+gespeicherte Eintrag zu `themeId`+`episodeId` passt und sein `eventIndex`
+innerhalb der Eventliste liegt (`0 < eventIndex < events.length`). Passt er,
+zeigt das Template `qst-resume-prompt` **statt** der Bühne — das erste Event
+wird nicht eingesetzt, es lädt im Hintergrund höchstens vor (harmlos, da nie
+gerendert). Ein Eintrag zu einer *anderen* Episode wird nicht angerührt — er
+gehört dorthin und wird erst durch deren eigenes Speichern überschrieben,
+genau wie AK 1 es verlangt.
+
+`qst-resume-prompt` ist ein natives `<dialog>` nach dem Muster des
+Fortschritt-zurücksetzen-Dialogs aus `features/timeline/`: `showModal()` beim
+Einsetzen, kein Schließen durch Klick daneben (kein Backdrop-Handler), und
+zusätzlich `(cancel)="preventDefault()"` gegen Escape — beide Antworten sind
+gleichrangige Entscheidungen, keine ist ein „Abbrechen". Die Frage wird im
+Vorlesemodus automatisch gesprochen, gleiches Muster wie `reward.ts`.
+
+Abweichung von der Skizze im Kontext: der Output-Name `resume` kollidiert mit
+dem ESLint-Regelwerk `no-output-native` (steht auf der globalen DOM-Event-
+Liste, u. a. wegen `SpeechSynthesisUtterance`) — umbenannt zu `resumeRun`.
+
+Build und Lint laufen grün. Nicht am echten Gerät geprüft — das ist
+Smoke-Punkt 3 am Plan-Ende (Tab schließen, neu öffnen, „Weiterspielen" landet
+am richtigen Event).

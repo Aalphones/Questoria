@@ -33,7 +33,7 @@ sie im Code, in Docs oder Tickets auftauchen.
 | Druckbogen | Die druckbare DIN-A4-Seite mit 3×3 ausgewählten Sammelkarten in Originalgröße, optional mit Schnittmarken. |
 | Vorlesemodus | Der Modus "Bilder & Vorlesen" (`mode: 'listen'` im `NarrationService`) für Kinder, die noch nicht lesen: kurze Textfassung, Bildantworten im Quiz, automatische Sprachausgabe. Gegenstück: "Selbst lesen" (`mode: 'read'`). |
 | Design-Token | Ein benannter Gestaltungswert (Farbe, Abstand, Radius, Schatten) aus `docs/design/`. Einzige Quelle für das Aussehen — keine Hardcodes in Komponenten. |
-| Fortschritt | Der gespeicherte Stand, welche Episoden ein Kind abgeschlossen hat — bis Meilenstein 4 im Browser-Speicher (`ProgressService`), danach über die Savegame-Schnittstelle (ADR-006). |
+| Fortschritt | Der gespeicherte Stand, welche Episoden ein Kind abgeschlossen hat — bis Meilenstein 4 im Browser-Speicher (`ProgressService`), danach über die Savegame-Schnittstelle (ADR-006). Abgrenzung: der **angefangene Lauf** ist die eine unterbrochene Episode mittendrin (`RunStoreService`, Phase 6) — kein Fortschritt im Sinn dieser Zeile, sondern ein Zwischenstand, der beim Durchspielen oder „Von vorn anfangen" wieder verschwindet. |
 | Sterne | Bewertung einer geschafften Episode (0–3), Teil von `EpisodeProgress`. Formel (`star-rules.ts`): Anteil der beim ersten Versuch richtig gelösten bewerteten Events — alle richtig = 3, mindestens die Hälfte = 2, darunter = 1; eine Episode ohne bewertetes Event gibt 3. Ein zweiter, schlechterer Durchlauf verschlechtert das gespeicherte Ergebnis nicht. |
 | Etappen-Zustand | `geschafft`/`aktuell`/`gesperrt` (`ProgressState`) — Ergebnis der reinen Freischaltregeln in `progress.rules.ts`, gilt gleichermaßen für Orte und Etappen. |
 

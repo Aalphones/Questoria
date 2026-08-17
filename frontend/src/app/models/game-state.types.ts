@@ -22,3 +22,15 @@ export type ThemeProgress = Record<string, EpisodeProgress>;
 
 /** Gesamter gespeicherter Stand, indiziert über `theme_id`. */
 export type ProgressStore = Record<string, ThemeProgress>;
+
+/**
+ * Der eine angefangene Lauf, der einen geschlossenen Tab übersteht — genau
+ * einer für die ganze App, keiner pro Episode (`RunStoreService`, Phase 6).
+ */
+export interface StoredRun {
+  readonly themeId: string;
+  readonly episodeId: string;
+  readonly eventIndex: number;
+  readonly scoredCount: number;
+  readonly correctFirstTryCount: number;
+}

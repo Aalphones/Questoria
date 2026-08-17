@@ -4,25 +4,24 @@
 [Event Engine, Meilenstein 3](docs/planning/2026-08-14_event-engine/README.md),
 7 Phasen, freigegeben am 14.08.2026
 
-**Phase:** 5/7 — `reward` + Ergebnis-Screen + echte Sterne (complete)
+**Phase:** 6/7 — Weiterspielen nach Abbruch (complete)
 
 **Nächster Schritt:** Neue Session, `/clear` durchführen, dann `/implement` für
-Phase 6 (Weiterspielen nach Abbruch) — Rating „standard", also `sonnet`.
+Phase 7 (Testwelt, Authoring-Toolkit, Doku) — Rating „mechanisch", also
+`sonnet`.
 
-**Zuletzt abgeschlossen:** Phase 5 der Event Engine — der Platzhalter-Abschluss
-(pauschal 3 Sterne, sofortige Navigation) ist raus. `star-rules.ts` berechnet
-die echte Sternenformel als reine Funktion; `episode.ts` schreibt sie einmalig
-per `effect()`, sobald die Eventliste durch ist. Neuer Eventtyp `reward`:
-Belohnungs-Karte mit `eqPop`, merkt `card_id` in `EpisodeRun.pendingCardId`
-für Meilenstein 5 (optional, fehlende ID ist kein Fehler). Neuer
-Ergebnis-Screen `features/result/` — keine eigene Route, wird vom
-Episoden-Screen nach dem letzten Event gezeigt: Sterne, Konfetti (rein per
-CSS, kein JS-Zufall), zwei Statistik-Karten aus dem Lauf, CTAs zurück zur
-Ortskarte bzw. zur Etappenkarte. `prefers-reduced-motion` läuft über die
-bestehenden globalen Dauer-Tokens mit, kein eigener Zweig nötig. Build und
-Frontend-Lint grün, Backend-Lint unverändert grün (kein Backend-Code berührt).
-Noch nicht am echten Gerät/Browser durchgespielt — das passiert im Smoke-Test
-am Plan-Ende.
+**Zuletzt abgeschlossen:** Phase 6 der Event Engine — Abbruch mitten in einer
+Episode wird jetzt aufgefangen. Neuer Dienst `RunStoreService` merkt genau
+einen angefangenen Lauf im Browser-Speicher (`questoria.run.v1`), `EpisodeRun`
+schreibt ihn nach jedem `finish()`. Neuer Dialog `features/episode/resume-prompt/`
+(natives `<dialog>`, Muster wie der Fortschritt-zurücksetzen-Dialog aus der
+Timeline) fragt „Weiterspielen oder von vorn?", sobald ein passender Eintrag
+zur gerade geladenen Episode existiert; ein Eintrag zu einer anderen Episode
+bleibt unangetastet. Eintrag wird beim Episodenabschluss und bei „Von vorn
+anfangen" gelöscht, ein beschädigter/veralteter Eintrag still verworfen. Build
+und Frontend-Lint grün, Backend unverändert. Noch nicht am echten Gerät
+durchgespielt — das ist Smoke-Punkt 3 am Plan-Ende (Tab schließen, neu öffnen,
+„Weiterspielen" landet am richtigen Event).
 
 **Merkposten:** PHP/Composer liegen unter `C:\Users\sasch\develop\.tools\`
 (`php.cmd`/`composer.cmd`), nicht im Suchpfad des Benutzers. Ad-hoc-Testserver

@@ -18,7 +18,12 @@
       <h1 class="episode__title">{{ locationName() ?? episode.data.episode_id }}</h1>
 
       <div class="episode__stage">
-        @if (isEpisodeFinished()) {
+        @if (pendingResume(); as stored) {
+          <qst-resume-prompt
+            (resumeRun)="resumeStoredRun(stored)"
+            (restartRun)="discardStoredRun()"
+          />
+        } @else if (isEpisodeFinished()) {
           <qst-result
             [stars]="resultStars()"
             [correctFirstTry]="resultCorrectFirstTry()"

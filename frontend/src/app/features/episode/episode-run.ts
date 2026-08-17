@@ -1,6 +1,7 @@
-import { Service, signal } from '@angular/core';
+import { Service, inject, signal } from '@angular/core';
 
 import { EventOutcome } from '../../models/event-runtime.types';
+import { RunStoreService } from '../../services/run-store.service';
 
 /**
  * Der Stand des laufenden Durchgangs durch eine Episode: an welchem Event er
@@ -12,6 +13,12 @@ import { EventOutcome } from '../../models/event-runtime.types';
  */
 @Service()
 export class EpisodeRun {
+  private readonly runStore = inject(RunStoreService);
+
+  /** Für welche Episode dieser Lauf gerade steht — gesetzt von `EpisodeScreen`, nötig um den Fortschritt zuzuordnen (Phase 6). */
+  private themeId = '';
+  private episodeId = '';
+
   /** Position in `Episode.events` — steht der Index hinter dem letzten Event, ist die Episode durch. */
   readonly eventIndex = signal(0);
   /** Wie viele bewertete Events (Aufgaben) bisher gespielt wurden. */
@@ -26,6 +33,12 @@ export class EpisodeRun {
    */
   readonly pendingCardId = signal<string | null>(null);
 
+  /** Für welche Episode gespeichert wird — aufgerufen von `EpisodeScreen` bei jedem Episodenwechsel. */
+  configure(themeId: string, episodeId: string): void {
+    this.themeId = themeId;
+    this.episodeId = episodeId;
+  }
+
   finish(outcome: EventOutcome): void {
     if (outcome.kind === 'scored') {
       this.scoredCount.update((count: number) => count + 1);
@@ -36,6 +49,7 @@ export class EpisodeRun {
     }
 
     this.eventIndex.update((index: number) => index + 1);
+    this.persist();
   }
 
   restart(): void {
@@ -50,5 +64,20 @@ export class EpisodeRun {
     this.eventIndex.set(eventIndex);
     this.scoredCount.set(scoredCount);
     this.correctFirstTryCount.set(correctFirstTryCount);
+  }
+
+  /** Nach jedem abgeschlossenen Event — ein geschlossener Tab meldet sich nicht ab (Plan AK 2). */
+  private persist(): void {
+    if (this.themeId === '' || this.episodeId === '') {
+      return;
+    }
+
+    this.runStore.save({
+      themeId: this.themeId,
+      episodeId: this.episodeId,
+      eventIndex: this.eventIndex(),
+      scoredCount: this.scoredCount(),
+      correctFirstTryCount: this.correctFirstTryCount(),
+    });
   }
 }

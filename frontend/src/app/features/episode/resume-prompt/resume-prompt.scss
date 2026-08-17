@@ -1,0 +1,53 @@
+:host {
+  display: contents;
+}
+
+.resume-prompt {
+  max-inline-size: 30rem;
+  padding: var(--space-6);
+  border: none;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+
+  &::backdrop {
+    background: color-mix(in srgb, var(--palette-ink) 55%, transparent);
+  }
+
+  &__question {
+    margin: 0 0 var(--space-4);
+    color: var(--color-text);
+    font-size: var(--font-size-body);
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-3);
+  }
+
+  &__resume,
+  &__restart {
+    min-block-size: var(--size-touch-target);
+    padding-inline: var(--space-4);
+    border: none;
+    border-radius: var(--radius-pill);
+    font-family: var(--font-body);
+    font-weight: 600;
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 2px solid var(--color-focus-ring);
+      outline-offset: 2px;
+    }
+  }
+
+  &__resume {
+    background: var(--color-accent);
+    color: var(--color-text-on-accent);
+  }
+
+  &__restart {
+    background: var(--color-hover-wash);
+    color: var(--color-text);
+  }
+}

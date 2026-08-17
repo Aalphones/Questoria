@@ -9,6 +9,7 @@ import {
   inject,
   input,
   resource,
+  signal,
   untracked,
 } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
@@ -16,10 +17,11 @@ import { Observable, catchError, map, of, startWith, switchMap } from 'rxjs';
 
 import { DialogConfig, Episode, EpisodeEvent, EventFile, EventType, WorldConfig } from '../../models/content.types';
 import { EventContext } from '../../models/event-runtime.types';
-import { LoadState } from '../../models/game-state.types';
+import { LoadState, StoredRun } from '../../models/game-state.types';
 import { ContentService } from '../../services/content.service';
 import { GameStateService } from '../../services/game-state.service';
 import { ProgressService } from '../../services/progress.service';
+import { RunStoreService } from '../../services/run-store.service';
 import { ContentError } from '../../ui/content-error/content-error';
 import { Hud } from '../../ui/hud/hud';
 import { ImageSlot } from '../../ui/image-slot/image-slot';
@@ -27,6 +29,7 @@ import { Result } from '../result/result';
 import { EpisodeRun } from './episode-run';
 import { SCORED_EVENT_TYPES, assertPlayableConfig, loadEventComponent } from './event-type-map';
 import { eventRefOf, resolveEventConfig } from './resolve-event-config';
+import { ResumePrompt } from './resume-prompt/resume-prompt';
 import { starsForRun } from './star-rules';
 
 /**
@@ -42,7 +45,7 @@ import { starsForRun } from './star-rules';
  */
 @Component({
   selector: 'qst-episode',
-  imports: [NgComponentOutlet, Hud, ContentError, ImageSlot, Result],
+  imports: [NgComponentOutlet, Hud, ContentError, ImageSlot, Result, ResumePrompt],
   templateUrl: './episode.html',
   styleUrl: './episode.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -52,6 +55,7 @@ export class EpisodeScreen {
   private readonly content = inject(ContentService);
   private readonly gameState = inject(GameStateService);
   private readonly progressService = inject(ProgressService);
+  private readonly runStore = inject(RunStoreService);
   private readonly run = inject(EpisodeRun);
 
   readonly themeId = input.required<string>();
@@ -190,8 +194,53 @@ export class EpisodeScreen {
 
   /** Eine andere Episode heißt ein neuer Lauf — die Route lässt den Screen sonst stehen. */
   private readonly resetOnEpisodeChange = effect(() => {
-    this.episodeId();
-    untracked(() => this.run.restart());
+    const themeId = this.themeId();
+    const episodeId = this.episodeId();
+
+    untracked(() => {
+      this.run.configure(themeId, episodeId);
+      this.run.restart();
+    });
+  });
+
+  /**
+   * Angefangener Lauf im Browser-Speicher — `null` sobald die Entscheidung
+   * gefallen ist oder gar keiner passt. Solange er gesetzt ist, zeigt das
+   * Template den Dialog statt der Bühne (Plan Phase 6, AK 3/5).
+   */
+  protected readonly pendingResume = signal<StoredRun | null>(null);
+
+  /**
+   * Prüft einmal je Episodenladen, ob ein passender angefangener Lauf
+   * existiert. Ein Eintrag zu einer anderen Episode bleibt unangetastet — er
+   * gehört dorthin und wird erst durch deren eigenes Speichern überschrieben.
+   */
+  private readonly checkForResumableRun = effect(() => {
+    const episode = this.loadedEpisode();
+    const themeId = this.themeId();
+    const episodeId = this.episodeId();
+
+    if (episode === null) {
+      return;
+    }
+
+    untracked(() => {
+      const stored = this.runStore.load();
+
+      if (stored === null || stored.themeId !== themeId || stored.episodeId !== episodeId) {
+        return;
+      }
+
+      const isResumable = stored.eventIndex > 0 && stored.eventIndex < episode.events.length;
+
+      if (isResumable) {
+        this.pendingResume.set(stored);
+        return;
+      }
+
+      // Beschädigt oder veraltet (Episode leer/schon durch) — still verwerfen (Plan AK 7).
+      this.runStore.clear();
+    });
   });
 
   /** Die Eventliste ist durch — der Episoden-Screen zeigt ab hier den Ergebnis-Screen statt der Bühne. */
@@ -234,8 +283,25 @@ export class EpisodeScreen {
 
     const stars = this.resultStars();
 
-    untracked(() => this.progressService.completeEpisode(this.themeId(), this.episodeId(), stars));
+    untracked(() => {
+      // Der angefangene Lauf ist durchgespielt — vor dem Ergebnis-Screen weg (Plan AK 6).
+      this.runStore.clear();
+      this.progressService.completeEpisode(this.themeId(), this.episodeId(), stars);
+    });
   });
+
+  /** „Weiterspielen": Lauf auf den gemerkten Stand setzen, Eintrag ist damit verbraucht. */
+  protected resumeStoredRun(stored: StoredRun): void {
+    this.run.startAt(stored.eventIndex, stored.scoredCount, stored.correctFirstTryCount);
+    this.runStore.clear();
+    this.pendingResume.set(null);
+  }
+
+  /** „Von vorn anfangen": Der Lauf steht bereits bei Event 0 (`resetOnEpisodeChange`), nur der Eintrag muss weg. */
+  protected discardStoredRun(): void {
+    this.runStore.clear();
+    this.pendingResume.set(null);
+  }
 
   /**
    * Inline-Events sind sofort da, ausgelagerte kommen über die

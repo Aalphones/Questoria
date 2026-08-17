@@ -1,0 +1,7 @@
+<dialog #dialog class="resume-prompt" (cancel)="preventCancel($event)">
+  <p class="resume-prompt__question">{{ question }}</p>
+  <div class="resume-prompt__actions">
+    <button type="button" class="resume-prompt__resume" (click)="chooseResume()">Weiterspielen</button>
+    <button type="button" class="resume-prompt__restart" (click)="chooseRestart()">Von vorn anfangen</button>
+  </div>
+</dialog>
