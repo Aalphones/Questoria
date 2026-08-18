@@ -98,6 +98,72 @@
     font-size: var(--font-size-body);
   }
 
+  // Erfolge-Panel oben rechts (Design-Handoff Abschnitt 2) — reine Anzeige,
+  // kein Ausklapp-Verhalten wie beim Info-Panel: die Liste ist kurz genug.
+  &__achievements {
+    position: absolute;
+    inset-block-start: var(--space-4);
+    inset-inline-end: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    max-inline-size: min(70cqw, 18rem);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-lg);
+    background: color-mix(in srgb, var(--color-map-label-bg) 90%, transparent);
+    box-shadow: var(--shadow-md);
+  }
+
+  &__achievements-tag {
+    font-size: var(--font-size-kicker);
+    letter-spacing: var(--letter-spacing-kicker);
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  &__achievements-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__achievement {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--color-text-accent);
+    font-weight: 600;
+    font-size: var(--font-size-detail);
+
+    &--locked {
+      opacity: 0.85;
+      color: var(--color-text-muted);
+      font-weight: 400;
+
+      .main-hub__achievement-icon {
+        background: var(--color-progress-locked);
+      }
+    }
+  }
+
+  &__achievement-icon {
+    position: relative;
+    flex: none;
+    inline-size: 16px;
+    block-size: 16px;
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    background: var(--color-progress-current-strong);
+  }
+
+  &__achievement-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   &__continue {
     display: flex;
     align-items: center;

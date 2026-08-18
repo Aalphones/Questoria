@@ -82,49 +82,77 @@ PNG mit Transparenz.
 
 ## Checkliste
 
-- [ ] `backend/src/Migrations/sql/010_player_achievements_content_keys.sql`:
+- [x] `backend/src/Migrations/sql/010_player_achievements_content_keys.sql`:
       `player_achievements` neu aufbauen mit
       (`profile_id`, `theme_id`, `achievement_key`, `unlocked_at`),
       Primärschlüssel über die ersten drei, Fremdschlüssel auf `player_profiles`.
       Danach `DROP TABLE achievements`. Kommentarkopf mit Begründung wie in
       Migration 008.
-- [ ] `backend/src/Repositories/AchievementRepository.php`: `allForProfile`,
+- [x] `backend/src/Repositories/AchievementRepository.php`: `allForProfile`,
       `unlock` (mit `INSERT IGNORE`, damit ein doppelter Aufruf kein Fehler ist).
-- [ ] `backend/src/Controllers/AchievementController.php`, Routen registrieren.
-- [ ] `frontend/src/app/models/content.types.ts`: `Achievement` und
+- [x] `backend/src/Controllers/AchievementController.php`, Routen registrieren.
+- [x] `frontend/src/app/models/content.types.ts`: `Achievement` und
       `AchievementCondition` als unterscheidbare Vereinigung über `type`.
-- [ ] `frontend/src/app/services/achievement.rules.ts`: **reine Funktionen**,
+- [x] `frontend/src/app/services/achievement.rules.ts`: **reine Funktionen**,
       `evaluate(achievements, worldConfig, progress): string[]` gibt die
       Schlüssel aller erfüllten Erfolge zurück. Kein Dienst-Zugriff, kein
       Signal — Vorbild `progress.rules.ts`.
-- [ ] `frontend/src/app/services/achievement.service.ts`: erreichte Erfolge als
-      Signal, `refresh(profileId)`, `unlock(themeId, key)`. Schreibt über
+- [x] `frontend/src/app/services/achievement.service.ts`: erreichte Erfolge als
+      Signal, `ensureLoaded(profileId)`, `unlock(themeId, key)`. Schreibt über
       denselben Puffer-Weg wie der Spielstand.
-- [ ] Auswertung am Ende einer Episode anstoßen, nachdem der Fortschritt
+- [x] Auswertung am Ende einer Episode anstoßen, nachdem der Fortschritt
       geschrieben ist — die neu hinzugekommenen Schlüssel wandern an den
       Ergebnis-Screen.
-- [ ] `features/result/`: Erfolgs-Pille nach Mockup.
-- [ ] `features/main-hub/`: Erfolge-Panel oben rechts nach Mockup.
-- [ ] Testwelt `data/themes/dev_fixture/world_config.json` um zwei Erfolge
+- [x] `features/result/`: Erfolgs-Pille nach Mockup.
+- [x] `features/main-hub/`: Erfolge-Panel oben rechts nach Mockup.
+- [x] Testwelt `data/themes/dev_fixture/world_config.json` um zwei Erfolge
       erweitern (einer sofort erreichbar, einer nicht) plus die zwei Bilder
       unter `achievements/`.
 
 ## Doku-Updates
 
-- [ ] `docs/decisions/010-erfolge-im-content.md` anlegen (Kontext, Optionen,
+- [x] `docs/decisions/010-erfolge-im-content.md` anlegen (Kontext, Optionen,
       Entscheidung, Konsequenzen — Kurzfassung des Abschnitts oben).
-- [ ] `data/_authoring/JSON_SCHEMA_REFERENCE.md`: `achievements[]` in Abschnitt 2
+- [x] `data/_authoring/JSON_SCHEMA_REFERENCE.md`: `achievements[]` in Abschnitt 2
       aufnehmen, Bedingungstypen als geschlossene Tabelle. In Abschnitt 7 die
       Zeile „Story-Merker, Inventar, Statistiken und Erfolge" präzisieren:
       **erreichte** Erfolge gehören in den Spielstand, ihre Beschreibung ist
       Content.
-- [ ] `data/_authoring/ASSET_REQUIREMENTS.md`: Ordner `achievements/` mit
+- [x] `data/_authoring/ASSET_REQUIREMENTS.md`: Ordner `achievements/` mit
       Bildmaß aufnehmen.
-- [ ] `data/_authoring/LLM_WORLD_BUILDER_PROMPT.md`: Erfolge in den Prompt
+- [x] `data/_authoring/LLM_WORLD_BUILDER_PROMPT.md`: Erfolge in den Prompt
       aufnehmen — sonst erzeugt der nächste Weltbau-Lauf Welten ohne Erfolge
       (Pflegepflicht aus `data/_authoring/README.md`).
-- [ ] `docs/glossary.md`: Eintrag „Erfolg" mit der Trennung Definition/Erreichen.
-- [ ] `docs/code-map.md`: neue Dateien in den Ist-Stand, Content-Tabelle um den
+- [x] `docs/glossary.md`: Eintrag „Erfolg" mit der Trennung Definition/Erreichen.
+- [x] `docs/code-map.md`: neue Dateien in den Ist-Stand, Content-Tabelle um den
       Ordner `achievements/`.
 
 ## Report-Back
+
+**Umgesetzt wie geplant**, mit zwei benannten Abweichungen:
+
+- Die Checkliste nannte die Methode `refresh(profileId)` — übernommen wurde
+  stattdessen `ensureLoaded(profileId)`, derselbe Name wie in
+  `SavegameService` (Phase 5/6). Gleiche Aufgabe (einmal je Sitzung laden,
+  danach zwischengespeichert), nur konsistent zum bereits etablierten Namen.
+- Das Erfolge-Panel auf der Planetenkarte lädt `world_config.json` für **alle**
+  installierten Welten, nicht nur für gestartete (anders als `startedWorlds`,
+  das für die Status-Pille bewusst nur gestartete Welten lädt). AK 4 verlangt
+  „alle Erfolge der Welten" — ein noch nicht gestartetes Erfolgsziel muss
+  also sichtbar sein. Bei wenigen installierten Welten ist das unkritisch;
+  bei sehr vielen Welten lohnt sich ein Blick auf die Ladezeit.
+
+Icons der Testwelt (`erster_ausflug.png`, `kapitaen_testriff.png`) sind
+generierte Platzhalter-Rauten (Node-Skript, keine echte Bildgenerierung) —
+für die Testwelt ausreichend, kein Vorbild für echten Content.
+
+`ng build`/`ng lint` und `composer run lint` sind grün (Details im
+Plan-README, AK 10).
+
+**Wackligste Stelle:** `evaluateAchievements()` in `episode.ts` liest
+`progressService.store()` direkt nach `progressService.completeEpisode(...)` —
+das funktioniert nur, weil beide auf demselben synchronen Signal-Update
+(`SavegameService.save()`) hängen. Ein Mock-freier End-to-End-Test gegen den
+Server fehlt (lokal keine DB-Verbindung, siehe STATE.md) — ungeprüft bleibt,
+ob eine neu freigeschaltete Pille bei totem Server tatsächlich nach dem
+Neustart nachgereicht wird (Smoke-Punkt 7 im Plan-README).

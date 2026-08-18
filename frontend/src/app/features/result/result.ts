@@ -1,6 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
+import { Achievement } from '../../models/content.types';
+import { ContentService } from '../../services/content.service';
+import { ImageSlot } from '../../ui/image-slot/image-slot';
 import { ReadAloudButton } from '../../ui/read-aloud-button/read-aloud-button';
 
 const HINT_TEXT = 'Toll gemacht! Du hast diesen Ort geschafft.';
@@ -16,16 +19,21 @@ const CONFETTI_PIECES = Array.from({ length: 10 }, (_unused: unknown, index: num
  */
 @Component({
   selector: 'qst-result',
-  imports: [RouterLink, ReadAloudButton],
+  imports: [RouterLink, ReadAloudButton, ImageSlot],
   templateUrl: './result.html',
   styleUrl: './result.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Result {
+  private readonly content = inject(ContentService);
+
+  readonly themeId = input.required<string>();
   readonly stars = input.required<number>();
   readonly correctFirstTry = input.required<number>();
   readonly scoredTotal = input.required<number>();
   readonly dialogLines = input.required<number>();
+  /** Neu freigeschaltete Erfolge dieses Laufs — leer, wenn keiner fällig wurde. */
+  readonly achievements = input<readonly Achievement[]>([]);
   readonly mapLink = input.required<readonly string[]>();
   readonly timelineLink = input.required<readonly string[]>();
 
@@ -36,4 +44,8 @@ export class Result {
   protected readonly correctAnswersLabel = computed<string>(
     () => `${this.correctFirstTry()} / ${this.scoredTotal()}`,
   );
+
+  protected achievementIconUrl(achievement: Achievement): string {
+    return this.content.assetUrl(this.themeId(), 'achievements', achievement.icon);
+  }
 }

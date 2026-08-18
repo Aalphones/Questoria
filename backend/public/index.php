@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Controllers\AchievementController;
 use App\Controllers\AuthController;
 use App\Controllers\ContentController;
 use App\Controllers\HealthController;
@@ -109,6 +110,16 @@ $dispatcher = FastRoute\simpleDispatcher(static function (RouteCollector $routes
         'PUT',
         '/api/profiles/{profileId}/savegames/{themeId}',
         [SavegameController::class, 'upsert'],
+    );
+    $routes->addRoute(
+        'GET',
+        '/api/profiles/{profileId}/achievements',
+        [AchievementController::class, 'index'],
+    );
+    $routes->addRoute(
+        'POST',
+        '/api/profiles/{profileId}/achievements',
+        [AchievementController::class, 'unlock'],
     );
     $routes->addRoute('GET', '/api/content/themes', [ContentController::class, 'themes']);
     $routes->addRoute('GET', '/api/content/themes/{themeId}', [ContentController::class, 'world']);

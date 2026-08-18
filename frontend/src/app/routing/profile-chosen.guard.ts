@@ -1,7 +1,8 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { catchError, map, of, switchMap } from 'rxjs';
+import { catchError, forkJoin, map, of, switchMap } from 'rxjs';
 
+import { AchievementService } from '../services/achievement.service';
 import { GameStateService } from '../services/game-state.service';
 import { ProfileService } from '../services/profile.service';
 import { SavegameService } from '../services/savegame.service';
@@ -12,13 +13,14 @@ import { SavegameService } from '../services/savegame.service';
  * `ensureLoaded()`, bevor er entscheidet: erst danach steht fest, ob das
  * lokal gemerkte Profil noch zum angemeldeten Account gehört.
  *
- * Danach holt er einmal je Sitzung den Spielstand des Profils. Das muss vor
- * dem ersten Screen passieren, sonst zeigte die Planetenkarte kurz den Stand
- * des Browsers statt den des Profils (Plan Phase 6, AK 1/2).
+ * Danach holt er einmal je Sitzung Spielstand und Erfolge des Profils. Das
+ * muss vor dem ersten Screen passieren, sonst zeigte die Planetenkarte kurz
+ * den Stand des Browsers statt den des Profils (Plan Phase 6, AK 1/2).
  */
 export const profileChosenGuard: CanActivateFn = () => {
   const profileService = inject(ProfileService);
   const savegameService = inject(SavegameService);
+  const achievementService = inject(AchievementService);
   const gameState = inject(GameStateService);
   const router = inject(Router);
 
@@ -30,7 +32,10 @@ export const profileChosenGuard: CanActivateFn = () => {
         return of(router.createUrlTree(['/profiles']));
       }
 
-      return savegameService.ensureLoaded(profileId).pipe(
+      return forkJoin([
+        savegameService.ensureLoaded(profileId),
+        achievementService.ensureLoaded(profileId),
+      ]).pipe(
         map(() => true),
         // Antwortet der Server nicht, wird mit dem lokalen Spiegel gespielt —
         // ein totes Netz darf niemanden aus dem Spiel werfen (Plan AK 6).

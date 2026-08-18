@@ -125,9 +125,42 @@ Enthält die Lernstufen und **zwei Kartenebenen**: die Etappenkarte (Übersicht
       ],
       "routes": [["string — node id", "string — node id"]]
     }
+  ],
+
+  "achievements": [
+    {
+      "key": "string — snake_case, eindeutig innerhalb der Welt",
+      "title": "string — Anzeigename",
+      "description": "string — ein Satz, was geschafft wurde",
+      "icon": "string — Dateiname unter achievements/, 128×128 px PNG mit Transparenz",
+      "condition": "AchievementCondition — siehe Tabelle unten"
+    }
   ]
 }
 ```
+
+**Erfolge sind optional** — eine Welt ohne `achievements[]` ist gültig, aber
+kein Designziel (ADR-010).
+
+### Bedingungstypen (`achievements[].condition`)
+
+Geschlossene Wertemenge, dieselbe Disziplin wie bei den Eventtypen (Critical
+Rule 2): ein Typ steht hier erst, wenn `frontend/src/app/services/achievement.rules.ts`
+ihn auswertet.
+
+| `type` | Felder | Erfüllt, wenn |
+|---|---|---|
+| `episodes_completed` | `count` | so viele Episoden der Welt geschafft sind |
+| `stars_total` | `count` | die Sterne der Welt zusammen den Wert erreichen |
+| `episode_perfect` | `episode_id` | diese Episode mit 3 Sternen geschafft ist |
+| `stage_completed` | `stage_id` | alle Episoden dieser Etappe geschafft sind |
+
+```json
+{ "key": "erster_landgang", "title": "Erster Landgang", "description": "…", "icon": "erster_landgang.png", "condition": { "type": "episodes_completed", "count": 1 } }
+```
+
+Die Auswertung macht ausschließlich das Frontend — das Backend speichert nur,
+WER WELCHEN Schlüssel WANN bekam ([ADR-010](../../docs/decisions/010-erfolge-im-content.md)).
 
 **Mehrere Karten sind der Normalfall, keine Ausnahme.** Eine Themenwelt
 bildet typischerweise mehrere Story-Arcs ab, jeder Arc = eine eigene Map.
@@ -561,7 +594,8 @@ Datenbank — nie in eine JSON-Datei:
 | Sterne pro Etappe | Ergebnis, kein Inhalt |
 | welche Karten ein Kind besitzt und wann es sie bekam | Besitz, kein Inhalt |
 | gewählte Lernstufe, Vorlese-/Lesemodus, Ton an/aus | Einstellung, kein Inhalt |
-| Story-Merker, Inventar, Statistiken und Erfolge | Ergebnis, kein Inhalt |
+| Story-Merker, Inventar und Statistiken | Ergebnis, kein Inhalt |
+| **erreichte** Erfolge (wer welchen Schlüssel wann bekam) | Ergebnis, kein Inhalt — die **Definition** eines Erfolgs (Titel, Bild, Bedingung) ist dagegen Content und gehört in `achievements[]` (Abschnitt 2, ADR-010) |
 
 Der Beispiel-Content des Design-Prototyps führt `status`, `stars` und `earned`
 mit — das ist Prototyp-Pragmatik, damit die Screens ohne Datenbank etwas

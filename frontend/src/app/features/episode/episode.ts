@@ -15,9 +15,19 @@ import {
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { Observable, catchError, map, of, startWith, switchMap } from 'rxjs';
 
-import { DialogConfig, Episode, EpisodeEvent, EventFile, EventType, WorldConfig } from '../../models/content.types';
+import {
+  Achievement,
+  DialogConfig,
+  Episode,
+  EpisodeEvent,
+  EventFile,
+  EventType,
+  WorldConfig,
+} from '../../models/content.types';
 import { EventContext } from '../../models/event-runtime.types';
 import { LoadState, StoredRun } from '../../models/game-state.types';
+import { evaluate } from '../../services/achievement.rules';
+import { AchievementService } from '../../services/achievement.service';
 import { ContentService } from '../../services/content.service';
 import { GameStateService } from '../../services/game-state.service';
 import { ProgressService } from '../../services/progress.service';
@@ -55,6 +65,7 @@ export class EpisodeScreen {
   private readonly content = inject(ContentService);
   private readonly gameState = inject(GameStateService);
   private readonly progressService = inject(ProgressService);
+  private readonly achievementService = inject(AchievementService);
   private readonly runStore = inject(RunStoreService);
   private readonly run = inject(EpisodeRun);
 
@@ -200,6 +211,7 @@ export class EpisodeScreen {
     untracked(() => {
       this.run.configure(themeId, episodeId);
       this.run.restart();
+      this.newAchievements.set([]);
     });
   });
 
@@ -275,6 +287,13 @@ export class EpisodeScreen {
     starsForRun(this.run.scoredCount(), this.run.correctFirstTryCount()),
   );
 
+  /**
+   * Neu erreichte Erfolge dieses Laufs — wandern an die Pille im
+   * Ergebnis-Screen (Plan Phase 7, Checkliste). Leer, solange nichts fällig
+   * wurde oder die Welt keine Erfolge kennt.
+   */
+  protected readonly newAchievements = signal<readonly Achievement[]>([]);
+
   /** Schreibt den Fortschritt genau einmal, sobald die Eventliste durch ist. */
   private readonly completeWhenFinished = effect(() => {
     if (!this.isEpisodeFinished()) {
@@ -282,11 +301,15 @@ export class EpisodeScreen {
     }
 
     const stars = this.resultStars();
+    const world = this.world();
+    const themeId = this.themeId();
+    const episodeId = this.episodeId();
 
     untracked(() => {
       // Der angefangene Lauf ist durchgespielt — vor dem Ergebnis-Screen weg (Plan AK 6).
       this.runStore.clear();
-      this.progressService.completeEpisode(this.themeId(), this.episodeId(), stars);
+      this.progressService.completeEpisode(themeId, episodeId, stars);
+      this.evaluateAchievements(world, themeId);
     });
   });
 
@@ -344,6 +367,32 @@ export class EpisodeScreen {
           return config;
         }),
       ),
+    );
+  }
+
+  /**
+   * Wertet die Erfolge der Welt gegen den (bereits geschriebenen) Fortschritt
+   * aus und schaltet neu erfüllte frei. Läuft nach `progressService.store()`
+   * synchron nach — der Spielstand-Spiegel ist ein Signal, das bereits den
+   * neuen Stand trägt (Plan Phase 7, AK 1/7).
+   */
+  private evaluateAchievements(world: WorldConfig | null, themeId: string): void {
+    if (world === null || world.achievements === undefined || world.achievements.length === 0) {
+      return;
+    }
+
+    const themeProgress = this.progressService.store()[themeId] ?? {};
+    const satisfiedKeys = evaluate(world.achievements, world, themeProgress);
+    const newKeys = satisfiedKeys.filter(
+      (key: string) => !this.achievementService.isUnlocked(themeId, key),
+    );
+
+    for (const key of newKeys) {
+      this.achievementService.unlock(themeId, key);
+    }
+
+    this.newAchievements.set(
+      world.achievements.filter((achievement: Achievement) => newKeys.includes(achievement.key)),
     );
   }
 

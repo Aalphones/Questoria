@@ -5,9 +5,12 @@ import { Observable, catchError, forkJoin, map, of, startWith, switchMap } from 
 
 import { InstalledTheme, MainHub as MainHubContent, WorldConfig } from '../../models/content.types';
 import { LoadState } from '../../models/game-state.types';
+import { conditionHint } from '../../services/achievement.rules';
+import { AchievementService } from '../../services/achievement.service';
 import { ContentService } from '../../services/content.service';
 import { stageStates } from '../../services/progress.rules';
 import { ProgressService } from '../../services/progress.service';
+import { ImageSlot } from '../../ui/image-slot/image-slot';
 import { MapCanvas } from '../../ui/map-canvas/map-canvas';
 import { MapCanvasPoint } from '../../ui/map-canvas/map-canvas.types';
 import { MapPoint } from '../../ui/map-canvas/map-point/map-point';
@@ -24,7 +27,7 @@ import { ThemeCard } from './theme-card/theme-card';
  */
 @Component({
   selector: 'qst-main-hub',
-  imports: [RouterLink, MapCanvas, MapPoint, ThemeCard],
+  imports: [RouterLink, MapCanvas, MapPoint, ThemeCard, ImageSlot],
   templateUrl: './main-hub.html',
   styleUrl: './main-hub.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -32,6 +35,7 @@ import { ThemeCard } from './theme-card/theme-card';
 export class MainHub {
   private readonly content = inject(ContentService);
   private readonly progressService = inject(ProgressService);
+  private readonly achievementService = inject(AchievementService);
   private readonly router = inject(Router);
 
   readonly hubState = toSignal(asLoadState(this.content.getInstalledThemes()), {
@@ -55,6 +59,59 @@ export class MainHub {
     ),
     { initialValue: new Map<string, WorldConfig>() },
   );
+
+  /**
+   * Alle installierten Welten, unabhängig vom Fortschritt — anders als
+   * `startedWorlds` unten (Status-Pille), weil das Erfolge-Panel Erfolge auch
+   * für noch nicht gestartete Welten zeigt (Plan Phase 7, AK 4: "alle Erfolge
+   * der Welten").
+   */
+  private readonly installedThemeIds = computed<readonly string[]>(() => {
+    const hub = this.hubState();
+
+    return hub.status === 'loaded' ? hub.data.installed_themes.map((theme) => theme.id) : [];
+  });
+
+  private readonly allWorlds = toSignal(
+    toObservable(this.installedThemeIds).pipe(
+      switchMap((themeIds: readonly string[]) => this.loadWorlds(themeIds)),
+    ),
+    { initialValue: new Map<string, WorldConfig>() },
+  );
+
+  /** Ein Eintrag je Erfolg jeder installierten Welt — erreicht oder offen mit Hinweis (Plan AK 4/5). */
+  protected readonly achievementEntries = computed<readonly AchievementPanelEntry[]>(() => {
+    const hub = this.hubState();
+
+    if (hub.status !== 'loaded') {
+      return [];
+    }
+
+    const worlds = this.allWorlds();
+    const entries: AchievementPanelEntry[] = [];
+
+    for (const theme of hub.data.installed_themes) {
+      const world = worlds.get(theme.id);
+
+      if (world === undefined) {
+        continue;
+      }
+
+      const unlockedKeys = this.achievementService.unlockedByTheme()[theme.id] ?? new Set<string>();
+
+      for (const achievement of world.achievements ?? []) {
+        entries.push({
+          key: `${theme.id}:${achievement.key}`,
+          title: achievement.title,
+          iconUrl: this.content.assetUrl(theme.id, 'achievements', achievement.icon),
+          unlocked: unlockedKeys.has(achievement.key),
+          hint: conditionHint(achievement.condition, world),
+        });
+      }
+    }
+
+    return entries;
+  });
 
   protected readonly backgroundFile = computed<string>(() => {
     const hub = this.hubState();
@@ -178,6 +235,16 @@ export class MainHub {
       ),
     );
   }
+}
+
+/** Ein Eintrag im Erfolge-Panel — bereits auf Anzeigedaten reduziert. */
+interface AchievementPanelEntry {
+  readonly key: string;
+  readonly title: string;
+  readonly iconUrl: string;
+  readonly unlocked: boolean;
+  /** Nur für offene Erfolge gedacht — ein Kind soll wissen, was zu tun ist. */
+  readonly hint: string;
 }
 
 /** Verpackt einen HTTP-Aufruf in den Ladezustand, den die Templates lesen. */

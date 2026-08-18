@@ -77,6 +77,56 @@ export interface MapEntry {
   routes: RoutePair[];
 }
 
+/**
+ * Bedingungstypen für Erfolge — geschlossene Wertemenge, dieselbe Disziplin
+ * wie bei den Eventtypen (Critical Rule 2). Ein Typ steht hier erst, wenn
+ * `achievement.rules.ts` ihn auswertet.
+ */
+export const ACHIEVEMENT_CONDITION_TYPES = [
+  'episodes_completed',
+  'stars_total',
+  'episode_perfect',
+  'stage_completed',
+] as const;
+export type AchievementConditionType = (typeof ACHIEVEMENT_CONDITION_TYPES)[number];
+
+export interface EpisodesCompletedCondition {
+  type: 'episodes_completed';
+  count: number;
+}
+
+export interface StarsTotalCondition {
+  type: 'stars_total';
+  count: number;
+}
+
+export interface EpisodePerfectCondition {
+  type: 'episode_perfect';
+  episode_id: string;
+}
+
+export interface StageCompletedCondition {
+  type: 'stage_completed';
+  stage_id: string;
+}
+
+/** Als unterscheidbare Vereinigung über `type` (Plan Phase 7, Checkliste). */
+export type AchievementCondition =
+  | EpisodesCompletedCondition
+  | StarsTotalCondition
+  | EpisodePerfectCondition
+  | StageCompletedCondition;
+
+/** Ein Erfolg, wie er im Content steht — Definition, nicht Ergebnis (ADR-010). */
+export interface Achievement {
+  key: string;
+  title: string;
+  description: string;
+  /** Dateiname unter achievements/, 128×128 px PNG mit Transparenz */
+  icon: string;
+  condition: AchievementCondition;
+}
+
 export interface WorldConfig {
   theme_id: string;
   title: string;
@@ -85,6 +135,8 @@ export interface WorldConfig {
   difficulty_levels: DifficultyLevel[];
   arc_overview: ArcOverview;
   maps: MapEntry[];
+  /** optional — eine Welt ohne Erfolge ist erlaubt, aber kein Designziel */
+  achievements?: Achievement[];
 }
 
 /**

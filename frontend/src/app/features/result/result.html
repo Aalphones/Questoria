@@ -29,6 +29,22 @@
     </div>
   </div>
 
+  @if (achievements().length > 0) {
+    <ul class="result__achievements">
+      @for (achievement of achievements(); track achievement.key) {
+        <li class="result__achievement">
+          <div class="result__achievement-icon">
+            <qst-image-slot [src]="achievementIconUrl(achievement)" [label]="achievement.title" />
+          </div>
+          <div class="result__achievement-copy">
+            <span class="result__achievement-kicker">Neuer Erfolg</span>
+            <span class="result__achievement-title">{{ achievement.title }}</span>
+          </div>
+        </li>
+      }
+    </ul>
+  }
+
   <div class="result__ctas">
     <a class="result__cta result__cta--primary" [routerLink]="mapLink()">Zurück zur Karte</a>
     <a class="result__cta result__cta--secondary" [routerLink]="timelineLink()">Zur Karte der Etappen</a>

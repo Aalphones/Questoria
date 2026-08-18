@@ -53,6 +53,26 @@
             }
           </div>
         </div>
+
+        @if (achievementEntries().length > 0) {
+          <div class="main-hub__achievements">
+            <span class="main-hub__achievements-tag">Erfolge</span>
+            <ul class="main-hub__achievements-list">
+              @for (entry of achievementEntries(); track entry.key) {
+                <li
+                  class="main-hub__achievement"
+                  [class.main-hub__achievement--locked]="!entry.unlocked"
+                  [title]="entry.unlocked ? entry.title : entry.hint"
+                >
+                  <div class="main-hub__achievement-icon">
+                    <qst-image-slot [src]="entry.iconUrl" [label]="entry.title" />
+                  </div>
+                  <span class="main-hub__achievement-name">{{ entry.title }}</span>
+                </li>
+              }
+            </ul>
+          </div>
+        }
       </qst-map-canvas>
     </div>
   }

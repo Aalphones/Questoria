@@ -25,10 +25,12 @@
           />
         } @else if (isEpisodeFinished()) {
           <qst-result
+            [themeId]="themeId()"
             [stars]="resultStars()"
             [correctFirstTry]="resultCorrectFirstTry()"
             [scoredTotal]="resultScoredTotal()"
             [dialogLines]="dialogLineCount()"
+            [achievements]="newAchievements()"
             [mapLink]="mapBackLink()"
             [timelineLink]="timelineLink()"
           />

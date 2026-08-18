@@ -39,7 +39,11 @@ Zielalter: {z. B. "6-10 Jahre, auch Kinder die noch nicht lesen"}
 Erzeuge folgende Dateien vollständig:
 1. world_config.json — mit ALLEN genannten Maps in maps[], je Map die
    nodes[] mit Prozent-Koordinaten (x/y zwischen 0 und 100), plus
-   arc_overview mit einem stages[]-Eintrag pro Arc
+   arc_overview mit einem stages[]-Eintrag pro Arc. Dazu achievements[]:
+   mindestens ein Erfolg pro Arc (Bedingungstypen und Felder siehe Abschnitt 2
+   des Schemas) — einer davon episodes_completed mit count 1, damit gleich zu
+   Beginn etwas zu erreichen ist, der Rest zunehmend anspruchsvoll
+   (stars_total, episode_perfect, stage_completed)
 2. cards.json — card_format unverändert übernehmen, plus eine Sammelkarte
    pro Episode und zusätzlich 1-2 seltene Karten pro Arc. Jede Karte:
    id, name, set (= "Etappe N · <Arc-Name>"), rarity, asset, flavor, hint.

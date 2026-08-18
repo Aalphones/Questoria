@@ -28,6 +28,8 @@ Komposition auseinander.
 │   └── antwort_<slug>.png          ← Bildantworten für den Vorlesemodus
 ├── cards/
 │   └── karte_<card_id>.png         ← Sammelkarten, 630 × 880 px
+├── achievements/
+│   └── <icon>.png                  ← Erfolgs-Icons, 128 × 128 px
 ├── audio/
 │   └── voices/
 │       └── <character_id>_<episode_id>_<line_nr>.mp3
@@ -164,7 +166,16 @@ Ein passender Prompt für Kartenrahmen und Kartenmotiv liegt in
 
 ---
 
-## 6. Bildantworten (Vorlesemodus)
+## 6. Erfolgs-Icons
+
+| Eigenschaft | Vorgabe |
+|---|---|
+| Format | `.png` mit Alpha-Kanal (echte Transparenz) |
+| Seitenverhältnis | quadratisch, **128 × 128 px** |
+| Dateiname | frei wählbar, steht als `icon` in `achievements[]` (Schema-Referenz Abschnitt 2) |
+| Inhalt | ein einzelnes, kompaktes Motiv — die Engine schneidet das Icon zur Raute zu, wichtige Teile mittig halten |
+
+## 7. Bildantworten (Vorlesemodus)
 
 Für Kinder, die noch nicht lesen, zeigt jedes `multiple_choice`-Event ein Bild
 über jeder Antwort. Ohne diese Bilder rät das Kind.
