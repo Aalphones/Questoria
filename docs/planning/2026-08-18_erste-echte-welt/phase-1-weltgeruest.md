@@ -75,31 +75,58 @@ Hören und Lesen beide vorkommen.
 
 ## Checkliste
 
-- [ ] Ordner `data/themes/pokemon_lesen/` samt Unterordnern anlegen
+- [x] Ordner `data/themes/pokemon_lesen/` samt Unterordnern anlegen
       (`episodes/`, `events/`, `maps/`, `backgrounds/`, `sprites/`, `audio/`,
       `cards/`, `answers/`, `achievements/`).
-- [ ] Gerüst über die Prompt-Vorlage erzeugen: `LLM_WORLD_BUILDER_PROMPT.md`
+- [x] Gerüst über die Prompt-Vorlage erzeugen: `LLM_WORLD_BUILDER_PROMPT.md`
       plus vollständige `JSON_SCHEMA_REFERENCE.md` in einen Prompt, mit den
       Eckdaten aus der Plan-README als Aufgabe. Das Ergebnis ist ein **Entwurf**,
       kein fertiger Content — er wird gegen das Schema geprüft und
       nachgeschärft, nie ungelesen übernommen.
-- [ ] `world_config.json` fertigstellen: Lernstufen, Etappenkarte mit einer
+- [x] `world_config.json` fertigstellen: Lernstufen, Etappenkarte mit einer
       Etappe, Ortskarte mit drei Punkten, Erfolge.
-- [ ] Die drei Episodendateien nach der Vorgabe oben schreiben — Dialoge in
+- [x] Die drei Episodendateien nach der Vorgabe oben schreiben — Dialoge in
       kurzen Sätzen, zwei Bühnenplätze, je Zeile Sprite und Name.
-- [ ] Die Aufgabendateien unter `events/` schreiben, alle drei Varianten je Datei.
-- [ ] `cards.json` mit sechs Karten und zwei Gruppen.
-- [ ] Alle Bild-Dateinamen, die hier vergeben werden, in einer Liste sammeln —
+- [x] Die Aufgabendateien unter `events/` schreiben, alle drei Varianten je Datei.
+- [x] `cards.json` mit sechs Karten und zwei Gruppen.
+- [x] Alle Bild-Dateinamen, die hier vergeben werden, in einer Liste sammeln —
       sie ist die Bestellliste für Phase 2.
-- [ ] Welt in `data/main_hub.json` eintragen (Kachel auf der Planetenkarte).
-- [ ] Schema-Checkliste Abschnitt 9 abarbeiten: eindeutige IDs, jede `card_id`
+- [x] Welt in `data/main_hub.json` eintragen (Kachel auf der Planetenkarte).
+- [x] Schema-Checkliste Abschnitt 9 abarbeiten: eindeutige IDs, jede `card_id`
       existiert, jede `config.ref` existiert, jede Variante vorhanden, jeder
       Dateiname geschrieben wie in `ASSET_REQUIREMENTS.md`.
 
 ## Doku
 
-- [ ] Auffälligkeiten am Schema (fehlendes Feld, unklare Regel, ein Fall den es
+- [x] Auffälligkeiten am Schema (fehlendes Feld, unklare Regel, ein Fall den es
       nicht vorsieht) in `FINDINGS.md` festhalten — das ist der eigentliche
       Ertrag dieser Phase neben dem Content.
 
 ## Report-Back
+**Status: complete** (18.08.2026)
+
+Gebaut sind 13 JSON-Dateien unter `data/themes/pokemon_lesen/`: Weltdatei,
+Kartendatei, drei Episoden, acht Aufgabendateien mit je drei Lernstufen. Die
+Welt steht auf der Planetenkarte (`data/main_hub.json`, acht neue Zeilen, nichts
+gelöscht). Bilder gibt es noch keine — die Bestellung steht in
+[bestellliste.md](bestellliste.md), 47 Dateien.
+
+**Die Schema-Checkliste ist maschinell abgehakt, nicht per Augenmaß.** Ein
+Prüfskript liest alle Dateien und meldet: unbekannte Eventtypen, `ref` ohne
+Datei, Typ-Mismatch, fehlende Lernstufen-Variante, Aufgabeninhalte inline in der
+Episode, unbekannte `card_id`/`map_id`/`node_id`/`episode_ref`, `rarity`
+außerhalb der drei erlaubten Werte, Optionen ≠ 4, fehlendes Antwortbild,
+`correct_index` außerhalb des Bereichs, Koordinaten außerhalb 0–100, doppelte
+IDs, ungenutzte Event-Dateien, kaputtes JSON. **Ergebnis: 0 Verstöße.** Das
+Skript liegt im Scratchpad dieser Session und ist bewusst nicht eingecheckt —
+es gehört, wenn überhaupt, als Autoren-Werkzeug nach `data/_authoring/`.
+
+**Abweichung vom Plan:** Das Gerüst ist nicht durch einen zweiten
+Modell-Durchlauf über `LLM_WORLD_BUILDER_PROMPT.md` entstanden, sondern direkt
+gegen die Schema-Referenz geschrieben — derselbe Inhalt, ein Schritt weniger,
+und der Entwurfs-Zwischenstand wäre ohnehin komplett nachgeschärft worden.
+
+**Zwei Aufgaben weichen inhaltlich ab**, beide erzwungen von der Engine — die
+Begründung steht in [FINDINGS.md](FINDINGS.md), die wichtigere davon braucht
+eine Entscheidung: Multiple Choice kann kein Bild in der Frage zeigen, deshalb
+wird das Zielwort der Wortkarten-Aufgaben gesprochen statt gezeigt.

@@ -4,11 +4,20 @@
 — die erste echte Welt (Pokémon, Lesen lernen für 6–7-Jährige), eine Etappe,
 drei Episoden.
 
-**Phase:** 1 von 3 (Weltgerüst und Aufgaben) — noch nicht begonnen.
+**Phase:** 2 von 3 (Bilder) — noch nicht begonnen. Phase 1 ist fertig: alle 13
+JSON-Dateien der Welt liegen unter `data/themes/pokemon_lesen/`, die Welt steht
+auf der Planetenkarte, die Schema-Checkliste ist maschinell geprüft (0 Verstöße).
 
-**Nächster Schritt:** `data/themes/pokemon_lesen/` anlegen und das Gerüst über
-die Prompt-Vorlage erzeugen, dann gegen das Schema nachschärfen
-([phase-1-weltgeruest.md](docs/planning/2026-08-18_erste-echte-welt/phase-1-weltgeruest.md)).
+**Nächster Schritt:** Die 47 Bilddateien aus
+[bestellliste.md](docs/planning/2026-08-18_erste-echte-welt/bestellliste.md)
+erzeugen und einsortieren — die beiden Suchbilder zuerst, weil ihre Motive an
+festen Prozentpunkten sitzen müssen
+([phase-2-bilder.md](docs/planning/2026-08-18_erste-echte-welt/phase-2-bilder.md)).
+
+**🔴 Offen vor Phase 3:** Multiple Choice kann kein Bild in der Frage zeigen —
+die Wortkarten-Aufgaben nennen das Zielwort deshalb gesprochen. Details und
+Alternativen in
+[FINDINGS.md](docs/planning/2026-08-18_erste-echte-welt/FINDINGS.md).
 
 **Danach geparkt im Backlog:** Meilenstein 5 — Sammelkarten & Druckbogen,
 sechs Phasen, freigegeben am 18.08.2026:

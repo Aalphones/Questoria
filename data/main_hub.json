@@ -11,6 +11,14 @@
       "x": 32,
       "y": 54,
       "size": 18
+    },
+    {
+      "id": "pokemon_lesen",
+      "title": "Pokémon — Die Buchstaben-Route",
+      "cover": "cover.webp",
+      "x": 63,
+      "y": 36,
+      "size": 20
     }
   ]
 }
