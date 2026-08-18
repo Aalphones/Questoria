@@ -1,38 +1,22 @@
 # STATE
 
-**Aktiver Plan:** [docs/planning/2026-08-18_wort-bild-paare.md](docs/planning/2026-08-18_wort-bild-paare.md)
-— die neue Aufgabenform, bei der das Kind Bilder und geschriebene Wörter
-zusammenlegt. Freigegeben am 18.08.2026, zwei Phasen.
+**Kein aktiver Plan aus „Wort-Bild-Paare"** — archiviert am 18.08.2026:
+[docs/archive/2026-08/2026-08-18_wort-bild-paare.md](docs/archive/2026-08/2026-08-18_wort-bild-paare.md).
+Beide Phasen fertig, Prüfskript meldet 0 strukturelle Verstöße über
+`pokemon_lesen`. Ungeprüft bleibt die Sichtprüfung am Bildschirm — es fehlen
+noch alle Bilder.
 
-**Phase:** 2 von 2 (Die Welt umbauen) — noch nicht begonnen. Rating
-**standard**: Content und Doku, keine offenen Entscheidungen.
-
-**Nächster Schritt:** Phase 2 abarbeiten — die Checkliste im Plan ist die
-Reihenfolge. Einstieg: `data/themes/pokemon_lesen/events/wortkarte_1.json` und
-`wortkarte_2.json` durch `wortpaare_1.json` / `wortpaare_2.json` ersetzen (drei
-Lernstufen je Datei), danach `ep_route_1_wiese.json`, dann Bestellliste und
-Welt-Plan nachziehen. **Ein Punkt aus Phase 2 ist schon erledigt**: die
-Bildregel in `ASSET_REQUIREMENTS.md` Abschnitt 8 (Pflegepflicht des
-Authoring-Toolkits, musste in den Schema-Commit).
-
-**Phase 1 ist fertig.** Der Eventtyp `word_match` steht: Schema-Abschnitt 5.6,
-[ADR-014](docs/decisions/014-zuordnen-als-eigener-eventtyp.md), Komponente
-`frontend/src/app/features/events/word-match/`, registriert in
-`event-type-map.ts` (Komponente, bewertet, Prüfung), Testwelt-Aufgabe
-`probe_word_match` in der Leuchtturm-Episode. Build und Lint sind grün.
-**Angesehen hat die Aufgabe noch niemand** — die Smoke-Checkliste am Plan-Ende
-ist die erste Sichtprüfung, ihre drei 🔴-Punkte zuerst.
-
-**Alle Design-Entscheidungen stehen im Plan** (Sektion „Entschieden, bevor
-gebaut wird", neun Punkte). **Nicht neu aufrollen.**
+**Nächster Schritt:**
+[docs/planning/2026-08-18_erste-echte-welt/README.md](docs/planning/2026-08-18_erste-echte-welt/README.md)
+Phase 2 (Bilder) — 52 Dateien nach
+[bestellliste.md](docs/planning/2026-08-18_erste-echte-welt/bestellliste.md)
+erzeugen und einsortieren (🟡 Sascha-Aufgabe an der Bildmaschine, danach
+Namen gegen den Content abgleichen). Danach Phase 3 (Durchspielen).
 
 **Danach in dieser Reihenfolge:**
 
-1. [docs/planning/2026-08-18_erste-echte-welt/](docs/planning/2026-08-18_erste-echte-welt/README.md)
-   Phase 2 (Bilder) und Phase 3 (Durchspielen). Phase 1 ist fertig: alle
-   JSON-Dateien der Welt liegen unter `data/themes/pokemon_lesen/`, die Welt
-   steht auf der Planetenkarte, Schema-Checkliste maschinell geprüft
-   (0 Verstöße).
+1. Erste echte Welt Phase 3 (Durchspielen) — echte Runde am Bildschirm,
+   gefundene Lücken protokollieren, Doku und Deploy.
 2. Meilenstein 5 — Sammelkarten & Druckbogen, sechs Phasen, freigegeben am
    18.08.2026:
    [docs/planning/2026-08-18_sammelkarten-und-druckbogen/](docs/planning/2026-08-18_sammelkarten-und-druckbogen/README.md).

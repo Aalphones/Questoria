@@ -37,13 +37,12 @@ Abgearbeitete Zeilen abhaken, nicht löschen.
   Engine nachziehen oder das Beispiel aus dem Schema streichen. *(Nur
   `background` geprüft, `music` nicht.)*
 
-- [ ] → **Phase 2:** Die Regel „ein Antwortbild pro Option" und eine
-  **Leseaufgabe** widersprechen sich: ein Motivbild neben dem geschriebenen
-  Wort löst die Aufgabe, ohne dass gelesen wird. Gebaut ist deshalb **eine**
-  neutrale Wortkarten-Grafik (`antwort_wortkarte.png`) für alle vier Optionen
-  der beiden Wortkarten-Aufgaben — Bildplatz gefüllt, kein Hinweis verraten.
-  Falls das im Spiel öde aussieht, wäre die saubere Lösung ein Schalter in der
-  Aufgabenform („diese Aufgabe zeigt keine Antwortbilder").
+- [x] → **Phase 2:** *Geschlossen durch den `word_match`-Plan
+  ([2026-08-18_wort-bild-paare.md](../2026-08-18_wort-bild-paare.md)).* Statt
+  des Behelfs mit einer neutralen Wortkarten-Grafik gibt es jetzt einen
+  eigenen Eventtyp: Bilder und Wortkarten stehen getrennt, das Kind ordnet zu.
+  Die beiden Wortkarten-Aufgaben (`wortkarte_1`/`_2`) sind durch
+  `wortpaare_1`/`_2` ersetzt, `antwort_wortkarte.png` entfällt.
 
 - [ ] → **Phase 2:** `ASSET_REQUIREMENTS.md` verlangt für jede Figur alle vier
   Gefühlsbilder (`neutral`, `happy`, `worried`, `angry`) und nennt das „nicht
@@ -52,10 +51,13 @@ Abgearbeitete Zeilen abhaken, nicht löschen.
   Gegenwert. Wenn die Vorgabe so gemeint ist, gehört sie entschärft; wenn nicht,
   fehlen acht Dateien.
 
-- [ ] → **Phase 2:** Die Welt braucht **47 Bilddateien**, nicht die im Plan
+- [x] → **Phase 2:** Die Welt braucht **52 Bilddateien**, nicht die im Plan
   geschätzten „rund 25" — Liste in [bestellliste.md](bestellliste.md). Treiber
-  sind die Antwortbilder (20), weil jede Aufgabe drei Lernstufen mit je vier
-  Bildantworten hat. Wer die Zahl drücken will, kürzt bei den Reim-Ablenkern.
+  sind die Antwortbilder (25), weil jede Aufgabe drei Lernstufen mit je vier
+  Bildantworten hat, und die Zuordnungs-Aufgabe (`word_match`) pro Wort ein
+  eigenes Bild statt der einen Wortkarten-Grafik braucht. *(Zahl war zunächst
+  47, gestiegen durch den `word_match`-Umbau — sechs neue Wortbilder,
+  `antwort_wortkarte.png` entfällt.)*
 
 - [ ] → **Phase 3:** Alle Kartenkoordinaten (drei Orte, eine Etappe, die
   Weltkugel auf der Planetenkarte) sind geraten — die Kartenbilder gibt es noch

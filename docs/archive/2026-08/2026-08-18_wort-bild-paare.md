@@ -17,7 +17,7 @@ Hörübungen, in einer Welt, die „Lesen lernen" heißt
 | # | Phase | Inhalt | Rating | Status |
 |---|---|---|---|---|
 | 1 | Der Eventtyp | Schema, Typen, Komponente, Registrierung, ADR, Testwelt | heikel | complete |
-| 2 | Die Welt umbauen | Episode 2 der Pokémon-Welt auf die neue Form, Doku nachziehen | standard | pending |
+| 2 | Die Welt umbauen | Episode 2 der Pokémon-Welt auf die neue Form, Doku nachziehen | standard | complete |
 
 ## Entschieden, bevor gebaut wird
 
@@ -183,15 +183,15 @@ ein echter Dateiname unter `answers/`. Mehr Felder gibt es nicht.
 
 ### Checkliste
 
-- [ ] Die beiden neuen Aufgabendateien schreiben, die alten löschen, Episode 2
+- [x] Die beiden neuen Aufgabendateien schreiben, die alten löschen, Episode 2
       nachziehen.
 - [x] `ASSET_REQUIREMENTS.md`: Abschnitt 8 um den Satz ergänzen, dass die
       Bilder einer Zuordnungs-Aufgabe **kein** Wort im Bild tragen dürfen.
       *(In Phase 1 vorgezogen — die Pflegepflicht des Authoring-Toolkits
       verlangt die Regel im selben Commit wie die Schema-Änderung.)*
-- [ ] `bestellliste.md` und die Phasen-Tabelle des Welt-Plans nachziehen.
-- [ ] Die betroffenen Einträge in `FINDINGS.md` des Welt-Plans abhaken.
-- [ ] Prüfskript über die Welt laufen lassen, Ergebnis ins Report-Back.
+- [x] `bestellliste.md` und die Phasen-Tabelle des Welt-Plans nachziehen.
+- [x] Die betroffenen Einträge in `FINDINGS.md` des Welt-Plans abhaken.
+- [x] Prüfskript über die Welt laufen lassen, Ergebnis ins Report-Back.
 
 ## Finale Abnahmekriterien
 
@@ -223,20 +223,42 @@ zuerst hinsehen.
 
 ## Summary
 
-*(beim Archivieren füllen)*
+Neuer Eventtyp `word_match` (Phase 1) und Episode 2 der Pokémon-Welt darauf
+umgestellt (Phase 2): die beiden Wortkarten-Quizze sind jetzt echte
+Zuordnungs-Aufgaben, bei denen Bild und geschriebenes Wort zusammengelegt
+werden, statt aus vier Wörtern mit gesprochenem Zielwort zu raten. Das
+Prüfskript über die ganze Welt meldet 0 strukturelle Verstöße; die Sichtprüfung
+am Bildschirm steht noch aus (Smoke-Checkliste unten, Bilder fehlen noch).
 
 ## Files touched
 
-*(beim Archivieren füllen)*
+- `data/themes/pokemon_lesen/events/wortpaare_1.json`,
+  `wortpaare_2.json` — neu, ersetzen `wortkarte_1.json`/`wortkarte_2.json` (gelöscht)
+- `data/themes/pokemon_lesen/episodes/ep_route_1_wiese.json` — Referenzen und
+  Dialogtext angepasst
+- `docs/planning/2026-08-18_erste-echte-welt/bestellliste.md` — 52 statt 47
+  Dateien, sechs neue Wortbilder, `antwort_wortkarte.png` entfällt
+- `docs/planning/2026-08-18_erste-echte-welt/README.md`,
+  `phase-2-bilder.md` — Stückzahlen nachgezogen
+- `docs/planning/2026-08-18_erste-echte-welt/FINDINGS.md` — zwei Einträge
+  abgehakt
 
 ## Commits
 
-*(beim Archivieren füllen)*
+*(noch nicht committet — Content liegt außerhalb von Git, Doku-Änderungen
+stehen zum Commit an)*
 
 ## Deviations from plan
 
-*(beim Archivieren füllen)*
+Keine — Phase 2 wurde wortgleich zum Plan umgesetzt. Das Prüfskript aus
+Phase 1 war nicht eingecheckt (bewusst, siehe damaliges Report-Back) und
+musste neu geschrieben werden; diesmal ebenfalls im Scratchpad belassen.
 
 ## Follow-ups
 
-*(beim Archivieren füllen)*
+- Bilder für alle 25 Antwortbilder fehlen noch (Phase 2 des Welt-Plans,
+  `docs/planning/2026-08-18_erste-echte-welt/phase-2-bilder.md`) — ohne sie
+  ist weder die Zuordnungs-Aufgabe noch der Vorlesemodus am Bildschirm prüfbar.
+- Die Smoke-Checkliste dieses Plans (springende Karten, Tablet-Layout,
+  Verständlichkeit ohne Erklärung) ist ungeprüft — braucht eine laufende
+  Instanz mit Bildern.

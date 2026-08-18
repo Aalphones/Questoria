@@ -42,7 +42,7 @@ das Falsche misst.
 | # | Phase | Inhalt | Rating | Status |
 |---|---|---|---|---|
 | 1 | [Weltgerüst und Aufgaben](phase-1-weltgeruest.md) | `world_config.json`, `cards.json`, 3 Episoden, ausgelagerte Aufgaben je Lernstufe | standard | **complete** |
-| 2 | [Bilder](phase-2-bilder.md) | Rund 25 Bilddateien nach den Prompt-Vorlagen erzeugen und einsortieren | mechanisch | pending |
+| 2 | [Bilder](phase-2-bilder.md) | 52 Bilddateien nach den Prompt-Vorlagen erzeugen und einsortieren ([bestellliste.md](bestellliste.md)) | mechanisch | pending |
 | 3 | [Durchspielen und Nachziehen](phase-3-durchspielen.md) | Echte Runde am Bildschirm, gefundene Lücken protokollieren, Doku und Deploy | standard | pending |
 
 ## Wo dieser Content liegt

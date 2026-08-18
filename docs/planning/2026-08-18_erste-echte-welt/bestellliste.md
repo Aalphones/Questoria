@@ -4,9 +4,11 @@ Erzeugt aus dem fertigen Content von Phase 1 (jede Datei, die eine JSON-Datei
 referenziert und die noch nicht existiert). Nachprüfbar mit dem Prüfskript aus
 dem Report-Back von Phase 1.
 
-**47 Dateien**, nicht die im Plan geschätzten „rund 25" — die Antwortbilder
-sind der Grund (20 Stück, weil jede Reim-Aufgabe drei Lernstufen mit je vier
-Bildantworten hat). Vorgaben je Ordner: `data/_authoring/ASSET_REQUIREMENTS.md`.
+**52 Dateien**, nicht die im Plan geschätzten „rund 25" — die Antwortbilder
+sind der Grund (25 Stück, weil jede Reim-Aufgabe drei Lernstufen mit je vier
+Bildantworten hat, und die Zuordnungs-Aufgabe pro Wort ein eigenes Bild
+braucht statt der einen Wortkarten-Grafik). Vorgaben je Ordner:
+`data/_authoring/ASSET_REQUIREMENTS.md`.
 
 ## Was wo hingehört
 
@@ -15,7 +17,7 @@ Bildantworten hat). Vorgaben je Ordner: `data/_authoring/ASSET_REQUIREMENTS.md`.
 | `cover.webp` + `maps/` | 4 | 16:9, mind. 1536 × 864 |
 | `backgrounds/` | 5 | 16:9, mind. 1536 × 864 — davon 2 Suchbilder |
 | `sprites/` | 8 | PNG mit Transparenz, Hochformat ~2:3 |
-| `answers/` | 20 | PNG, quadratisch, Ausgabe 512 × 512 |
+| `answers/` | 25 | PNG, quadratisch, Ausgabe 512 × 512 |
 | `cards/` | 6 | PNG, exakt 630 × 880, randlos |
 | `achievements/` | 4 | PNG mit Transparenz, 128 × 128 |
 
@@ -29,10 +31,11 @@ Bildantworten hat). Vorgaben je Ordner: `data/_authoring/ASSET_REQUIREMENTS.md`.
   werden.
 - **`backgrounds/suchbild_waldlichtung.webp`** genauso für Episode 3:
   **Sonne, Stein, Specht**, Koordinaten aus `events/wald_suche.json`.
-- **`answers/antwort_wortkarte.png`** ist bewusst **eine** Datei für alle
-  Wortkarten-Antworten: eine leere Wortkarte/ein Papierschnipsel ohne Text.
-  Ein Motivbild neben dem geschriebenen Wort würde die Leseaufgabe lösen,
-  bevor das Kind liest (siehe FINDINGS).
+- **`answers/antwort_wortkarte.png` entfällt.** Die beiden Wortkarten-Aufgaben
+  sind Zuordnungs-Aufgaben (`word_match`) geworden — dort braucht jedes Wort
+  ein eigenes Motivbild, sonst lässt sich nichts zuordnen. Die neue Bildregel
+  in `ASSET_REQUIREMENTS.md` Abschnitt 8 verbietet dafür Text im Bild selbst
+  (siehe FINDINGS).
 
 ## Vollständige Liste
 
@@ -44,9 +47,15 @@ Bildantworten hat). Vorgaben je Ordner: `data/_authoring/ASSET_REQUIREMENTS.md`.
 - `answers/antwort_ball.png`
 - `answers/antwort_baum.png`
 - `answers/antwort_blume.png`
+- `answers/antwort_boot.png`
+- `answers/antwort_dose.png`
 - `answers/antwort_hase.png`
+- `answers/antwort_haus.png`
+- `answers/antwort_hose.png`
 - `answers/antwort_igel.png`
 - `answers/antwort_katze.png`
+- `answers/antwort_laus.png`
+- `answers/antwort_mais.png`
 - `answers/antwort_maus.png`
 - `answers/antwort_milch.png`
 - `answers/antwort_mond.png`
@@ -55,7 +64,6 @@ Bildantworten hat). Vorgaben je Ordner: `data/_authoring/ASSET_REQUIREMENTS.md`.
 - `answers/antwort_ofen.png`
 - `answers/antwort_rose.png`
 - `answers/antwort_vase.png`
-- `answers/antwort_wortkarte.png`
 - `answers/antwort_ziffer_1.png`
 - `answers/antwort_ziffer_2.png`
 - `answers/antwort_ziffer_3.png`

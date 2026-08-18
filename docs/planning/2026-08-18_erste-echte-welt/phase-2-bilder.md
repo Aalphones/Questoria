@@ -36,7 +36,7 @@ dass die Liste stimmt, die Prompts fertig sind und nichts am falschen Ort landet
 | `maps/` | Ortskarte Route 1, Etappenkarten-Hintergrund | 2 |
 | `backgrounds/` | Szenenhintergründe der drei Episoden | 3 |
 | `sprites/` | Professor Eich, Bisasam, Pikachu, Rattfratz — je 1–2 Ausdrücke | 6 |
-| `answers/` | Antwortbilder der Aufgaben (Dinge, Ziffern 1–4) | ~10 |
+| `answers/` | Antwortbilder der Aufgaben (Dinge, Ziffern 1–4, Wort-Bild-Paare) | 25 |
 | `cards/` | sechs Sammelkarten | 6 |
 | `achievements/` | Erfolgs-Symbole | 3 |
 
