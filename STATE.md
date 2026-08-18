@@ -1,28 +1,38 @@
 # STATE
 
-**Aktiver Plan:** [docs/planning/2026-08-18_erste-echte-welt/](docs/planning/2026-08-18_erste-echte-welt/README.md)
-— die erste echte Welt (Pokémon, Lesen lernen für 6–7-Jährige), eine Etappe,
-drei Episoden.
+**Aktiver Plan:** [docs/planning/2026-08-18_wort-bild-paare.md](docs/planning/2026-08-18_wort-bild-paare.md)
+— eine neue Aufgabenform, bei der das Kind Bilder und geschriebene Wörter
+zusammenlegt. Freigegeben am 18.08.2026, zwei Phasen.
 
-**Phase:** 2 von 3 (Bilder) — noch nicht begonnen. Phase 1 ist fertig: alle 13
-JSON-Dateien der Welt liegen unter `data/themes/pokemon_lesen/`, die Welt steht
-auf der Planetenkarte, die Schema-Checkliste ist maschinell geprüft (0 Verstöße).
+**Phase:** 1 von 2 (Der Eventtyp) — noch nicht begonnen. Rating **heikel**:
+neues Bedienkonzept, neue Bewertungsregel, der Kontrakt entsteht hier.
 
-**Nächster Schritt:** Die 47 Bilddateien aus
-[bestellliste.md](docs/planning/2026-08-18_erste-echte-welt/bestellliste.md)
-erzeugen und einsortieren — die beiden Suchbilder zuerst, weil ihre Motive an
-festen Prozentpunkten sitzen müssen
-([phase-2-bilder.md](docs/planning/2026-08-18_erste-echte-welt/phase-2-bilder.md)).
+**Nächster Schritt:** Phase 1 abarbeiten — die Checkliste im Plan ist die
+Reihenfolge. Der Einstieg ist `docs/decisions/014-zuordnen-als-eigener-eventtyp.md`
+(Nummer 014 ist frei, 011–013 sind vom Sammelkarten-Plan reserviert), danach
+Schema-Abschnitt 5.6, dann der Code.
 
-**🔴 Offen vor Phase 3:** Multiple Choice kann kein Bild in der Frage zeigen —
-die Wortkarten-Aufgaben nennen das Zielwort deshalb gesprochen. Details und
-Alternativen in
-[FINDINGS.md](docs/planning/2026-08-18_erste-echte-welt/FINDINGS.md).
+**Alle Design-Entscheidungen stehen im Plan** (Sektion „Entschieden, bevor
+gebaut wird", neun Punkte) — inklusive der Antwort auf die Design-Frage:
+freihändig innerhalb der bestehenden Aufgaben-Hülle `ui/task-card/`, kein
+eigener Screen. **Nicht neu aufrollen.**
 
-**Danach geparkt im Backlog:** Meilenstein 5 — Sammelkarten & Druckbogen,
-sechs Phasen, freigegeben am 18.08.2026:
-[docs/planning/2026-08-18_sammelkarten-und-druckbogen/](docs/planning/2026-08-18_sammelkarten-und-druckbogen/README.md).
-Bewusst nach der Welt, damit die Halle an echten Karten gebaut wird.
+**Warum dieser Plan die Welt überholt hat:** Die Pokémon-Welt steht bei Phase 2
+(die 47 Bilder) und wartet bewusst. Ihre Episode 2 wird auf die neue
+Aufgabenform umgebaut, und das ändert die Bestellliste — erst der Eventtyp,
+dann der Umbau (Phase 2 dieses Plans), dann die Bilder. Andersherum würde ein
+Teil der Bilder zweimal gemalt.
+
+**Danach in dieser Reihenfolge:**
+
+1. [docs/planning/2026-08-18_erste-echte-welt/](docs/planning/2026-08-18_erste-echte-welt/README.md)
+   Phase 2 (Bilder) und Phase 3 (Durchspielen). Phase 1 ist fertig: alle
+   JSON-Dateien der Welt liegen unter `data/themes/pokemon_lesen/`, die Welt
+   steht auf der Planetenkarte, Schema-Checkliste maschinell geprüft
+   (0 Verstöße).
+2. Meilenstein 5 — Sammelkarten & Druckbogen, sechs Phasen, freigegeben am
+   18.08.2026:
+   [docs/planning/2026-08-18_sammelkarten-und-druckbogen/](docs/planning/2026-08-18_sammelkarten-und-druckbogen/README.md).
 
 **Offen aus Meilenstein 4:** Die Smoke-Checkliste der archivierten README
 ([docs/archive/2026-08/2026-08-17_nutzerverwaltung-und-spielstand/README.md](docs/archive/2026-08/2026-08-17_nutzerverwaltung-und-spielstand/README.md))
