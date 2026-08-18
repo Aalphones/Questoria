@@ -36,7 +36,7 @@ im Frontend-Ordnernamen, PascalCase in PHP-Klassen):
 | Aufgaben-Hülle | `ui/task-card/` | Gemeinsame Karte aller Aufgaben-Typen: Aufgaben-Tag, Fortschrittspunkte, Frage mit Vorlese-Knopf (und automatischem Vorlesen), Platz für Aufgabenkörper und Feedback-Leiste |
 | Gemeinsame UI | `ui/hud/`, `ui/content-error/`, `ui/speech-bubble/`, `ui/read-aloud-button/` | Kopfleiste auf allen Spiel-Screens (jeder Screen bindet sie selbst ein, trägt jetzt auch Modus-Umschalter + Ton-Knopf); Meldung bei fehlgeschlagener Welt/Ort-Ladung mit Weg zurück; Sprechblasen; runder Knopf „Nochmal vorlesen" |
 | Routing | `routing/` | `world-config.resolver.ts` lädt die Welt-Konfiguration zentral für jede `theme/:themeId/…`-Route, setzt die aktive Welt und schreibt sie bei echtem Wechsel ins aktive Profil; `difficulty-chosen.guard.ts` schickt ohne gewählte Lernstufe auf die Lernstufen-Auswahl zurück; `profile-chosen.guard.ts` schickt ohne aktives Profil auf `/profiles` zurück (wartet dafür einmal auf `ProfileService.ensureLoaded()`); `auth.guard.ts` schickt ohne Sitzung auf `/login` (wartet dafür einmal auf `AuthService.restoreSession()`); `session-expired.interceptor.ts` fängt ein `401` aus jedem Aufruf ab und schickt ebenfalls auf `/login` |
-| Zentrale Services | `services/game-state.service.ts`, `services/content.service.ts`, `services/progress.service.ts`, `services/progress.rules.ts`, `services/run-store.service.ts`, `services/savegame.service.ts`, `services/achievement.service.ts`, `services/achievement.rules.ts`, `services/narration.service.ts`, `services/auth.service.ts`, `services/profile.service.ts`, `services/legacy-progress-import.ts` | Aktive Welt/Profil-ID/Lernstufe (Profil-ID im Browser-Speicher, überlebt Neuladen), JSON-Content lesen, Fortschritt aus dem Spielstand des Profils + Freischaltregeln als reine Funktionen (ADR-009 löst ADR-006 ab), der eine angefangene Lauf im Spielstand derselben Welt, Speichern/Laden mit Puffer im Browser, einmalige Übernahme des alten Browser-Stands, erreichte Erfolge mit demselben Puffer + Auswertung der Content-Bedingungen als reine Funktionen (ADR-010), Vorlesemodus + Sprachausgabe, angemeldeter Benutzer (Sitzung selbst bleibt im HttpOnly-Cookie), Profilliste des Accounts (laden, anlegen, ändern, löschen, wählen). **`ContentService` ist die einzige Ladestelle für Content** — dort hängt später der Offline-Cache (Meilenstein 6) |
+| Zentrale Services | `services/game-state.service.ts`, `services/content.service.ts`, `services/progress.service.ts`, `services/progress.rules.ts`, `services/run-store.service.ts`, `services/savegame.service.ts`, `services/achievement.service.ts`, `services/achievement.rules.ts`, `services/statistics.service.ts`, `services/narration.service.ts`, `services/auth.service.ts`, `services/profile.service.ts`, `services/legacy-progress-import.ts` | Aktive Welt/Profil-ID/Lernstufe (Profil-ID im Browser-Speicher, überlebt Neuladen), JSON-Content lesen, Fortschritt aus dem Spielstand des Profils + Freischaltregeln als reine Funktionen (ADR-009 löst ADR-006 ab), der eine angefangene Lauf im Spielstand derselben Welt, Speichern/Laden mit Puffer im Browser, einmalige Übernahme des alten Browser-Stands, erreichte Erfolge mit demselben Puffer + Auswertung der Content-Bedingungen als reine Funktionen (ADR-010), über alle Läufe wachsende Statistiken mit demselben Puffer, aber als Warteschlange additiver Zuwächse statt eines ersetzenden Stands (Plan Phase 8), Vorlesemodus + Sprachausgabe, angemeldeter Benutzer (Sitzung selbst bleibt im HttpOnly-Cookie), Profilliste des Accounts (laden, anlegen, ändern, löschen, wählen). **`ContentService` ist die einzige Ladestelle für Content** — dort hängt später der Offline-Cache (Meilenstein 6) |
 | Content-Typen | `models/` | TypeScript-Abbild des JSON-Schemas (`content.types.ts`), der Ladezustände (`game-state.types.ts`) und der Anmeldung/Profile (`auth.types.ts`) |
 | Design-Tokens | `frontend/src/styles/` | `_tokens.scss` (Farben, Schrift, Abstände, Radien, Kartenmaße), `_fonts.scss` und `_motion.scss` (Bildfolgen, die mehrere Komponenten teilen); global über `src/styles.scss` eingebunden |
 
@@ -53,14 +53,16 @@ Plätzen), `features/events/multiple-choice/` (Quiz mit Weiterraten),
 `features/events/image-search/` (Bildsuche mit Fehlgriff-Zählung, Ziele auch per Tastatur erreichbar),
 `features/events/reward/` (Belohnungs-Moment mit Sternen; merkt `card_id` für
 Meilenstein 5, vergibt noch keine Sammelkarte), `features/result/` (Sterne,
-zwei Statistik-Karten aus dem Lauf, Erfolgs-Pillen für neu freigeschaltete
-Erfolge — noch kein Karten-Banner), `ui/map-canvas/`, `ui/image-slot/`, `ui/task-card/`,
+drei Statistik-Karten — zwei aus dem laufenden Lauf, eine als über alle
+Läufe gewachsene Weltsumme aus `StatisticsService` —, Erfolgs-Pillen für neu
+freigeschaltete Erfolge — noch kein Karten-Banner), `ui/map-canvas/`, `ui/image-slot/`, `ui/task-card/`,
 `ui/hud/` (inkl. Modus-Umschalter + Ton-Knopf), `ui/content-error/`,
 `ui/read-aloud-button/`, `services/narration.service.ts`, `features/auth/`
 (Anmeldebildschirm, `services/auth.service.ts`, `routing/auth.guard.ts`,
 `routing/session-expired.interceptor.ts`), `features/profile/`
 (Profilauswahl mit Anlegen/Löschen, `services/profile.service.ts`,
-`routing/profile-chosen.guard.ts`), `routing/`,
+`routing/profile-chosen.guard.ts`, das seit Phase 8 auch
+`services/statistics.service.ts` einmal je Profil lädt), `routing/`,
 `services/`, `models/` und `styles/`. Alle übrigen Zeilen sind Soll-Zustand
 für spätere Meilensteine.
 
@@ -105,14 +107,17 @@ JSON-Leser für den Anfragekörper, `SessionCookie.php` für das Sitzungs-Cookie
 `Controllers/ContentController.php`, `Controllers/AuthController.php`,
 `Controllers/SetupController.php`, `Controllers/ProfileController.php`,
 `Controllers/SavegameController.php`, `Controllers/AchievementController.php`,
+`Controllers/StatisticsController.php`,
 `Services/ContentService.php`,
 `Services/ContentFileService.php`, `Services/AuthService.php`,
 `Repositories/UserRepository.php`, `Repositories/ProfileRepository.php`,
 `Repositories/SavegameRepository.php`, `Repositories/AchievementRepository.php`,
+`Repositories/StatisticsRepository.php`,
 `Validators/LoginValidator.php`,
 `Validators/CreateUserValidator.php`, `Validators/ProfileValidator.php`,
 `Validators/SavegameValidator.php`, `Validators/AchievementValidator.php`,
-`Migrations/` (6 Tabellen in 10 Schritten unter `sql/`, `MigrationRunner.php`, plus
+`Validators/StatisticsValidator.php`,
+`Migrations/` (6 Tabellen in 11 Schritten unter `sql/`, `MigrationRunner.php`, plus
 `backend/bin/migrate.php` als CLI-Hülle für den Fall eines späteren lokalen/
 Fernzugriff-Tests) und der Einstiegspunkt. `backend/bin/create-user.php` legt
 einen Account an (dieselbe Einschränkung wie `migrate.php`: braucht eine

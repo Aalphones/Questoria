@@ -74,10 +74,11 @@ weichen in der Umsetzung ab — jeweils mit Grund:
    Antworten werden ausgegraut, das Kind darf weiterprobieren, bis die
    richtige gefunden ist. Für die Sterne zählt trotzdem nur der erste
    Versuch (Entschieden-vor-dem-Bauen, Punkt 1 im Plan).
-7. **Keine dritte Statistik-Karte im Ergebnis-Screen.** Der Prototyp zeigt
-   drei Kacheln, die dritte („Neue Wörter gelernt") braucht echte
-   Statistiken aus der Datenbank. Bis Meilenstein 4 zeigt der Screen nur die
-   zwei Kacheln, die aus dem laufenden Spiel selbst kommen.
+7. ✅ **Die dritte Statistik-Karte heißt anders als im Prototyp.** Der
+   Prototyp zeigt „Neue Wörter gelernt" — diese Zahl gibt es in keiner Spalte
+   und hätte erfunden werden müssen. **Gebaut** (Plan Phase 8): die dritte
+   Kachel zeigt „Aufgaben geschafft", die über alle Läufe gewachsene Zahl
+   dieser Welt aus der Statistik-Tabelle.
 8. **Kein Mockup für `text_input` und `image_search`.** Der Prototyp bildet
    nur `dialog` und `minigame` (Multiple Choice) visuell ab. Beide neuen
    Aufgaben-Typen übernehmen die gemeinsame Aufgaben-Hülle (`ui/task-card/`)

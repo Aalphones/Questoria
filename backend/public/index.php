@@ -10,6 +10,7 @@ use App\Controllers\MigrateController;
 use App\Controllers\ProfileController;
 use App\Controllers\SavegameController;
 use App\Controllers\SetupController;
+use App\Controllers\StatisticsController;
 use App\Database\Connection;
 use App\Exceptions\ApiException;
 use App\Http\JsonResponse;
@@ -120,6 +121,16 @@ $dispatcher = FastRoute\simpleDispatcher(static function (RouteCollector $routes
         'POST',
         '/api/profiles/{profileId}/achievements',
         [AchievementController::class, 'unlock'],
+    );
+    $routes->addRoute(
+        'GET',
+        '/api/profiles/{profileId}/statistics',
+        [StatisticsController::class, 'index'],
+    );
+    $routes->addRoute(
+        'POST',
+        '/api/profiles/{profileId}/statistics/{themeId}',
+        [StatisticsController::class, 'addDeltas'],
     );
     $routes->addRoute('GET', '/api/content/themes', [ContentController::class, 'themes']);
     $routes->addRoute('GET', '/api/content/themes/{themeId}', [ContentController::class, 'world']);

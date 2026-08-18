@@ -32,6 +32,8 @@ export class Result {
   readonly correctFirstTry = input.required<number>();
   readonly scoredTotal = input.required<number>();
   readonly dialogLines = input.required<number>();
+  /** In dieser Welt insgesamt geschaffte Aufgaben — die dritte Kachel (Plan Phase 8). */
+  readonly eventsCompletedTotal = input.required<number>();
   /** Neu freigeschaltete Erfolge dieses Laufs — leer, wenn keiner fällig wurde. */
   readonly achievements = input<readonly Achievement[]>([]);
   readonly mapLink = input.required<readonly string[]>();

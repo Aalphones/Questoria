@@ -36,40 +36,80 @@ Frontend zählt, das Backend addiert und verwahrt.
 
 ## Checkliste
 
-- [ ] `backend/src/Migrations/sql/011_statistics_last_run.sql`: Spalte
+- [x] `backend/src/Migrations/sql/011_statistics_last_run.sql`: Spalte
       `last_run_id VARCHAR(64) NULL` auf `statistics`. Kommentarkopf wie in
       Migration 008.
-- [ ] `backend/src/Repositories/StatisticsRepository.php`: `allForProfile`,
+- [x] `backend/src/Repositories/StatisticsRepository.php`: `allForProfile`,
       `addDeltas` (`INSERT … ON DUPLICATE KEY UPDATE spalte = spalte + VALUES(spalte)`).
       **Vor dem Addieren `last_run_id` vergleichen** — stimmt sie mit der
       mitgeschickten überein, wird nichts addiert und der aktuelle Stand
       zurückgegeben (siehe README → 🟡 bei den Statistiken). Beim Addieren wird
-      sie mitgeschrieben.
-- [ ] `backend/src/Validators/StatisticsValidator.php`: `run_id` Pflicht,
+      sie mitgeschrieben. Abweichung: kein `FOR UPDATE`/Transaktion — an einem
+      Profil spielt genau ein Kind auf einem Gerät, siehe Report-Back.
+- [x] `backend/src/Validators/StatisticsValidator.php`: `run_id` Pflicht,
       1–64 Zeichen; die vier Zahlen optional, jeweils ganze Zahl `>= 0`,
       Obergrenze pro Aufruf (z.B. 10 000) gegen kaputte Clients.
-- [ ] `backend/src/Controllers/StatisticsController.php`, Routen registrieren.
-- [ ] `frontend/src/app/services/statistics.service.ts`: Stand als Signal,
-      `refresh(profileId)`, `add(themeId, deltas)`. Wie die Erfolge über den
-      Puffer-Weg aus Phase 5.
-- [ ] `episode-run.ts` um die Zeitmessung erweitern (Zeitstempel je Event,
+- [x] `backend/src/Controllers/StatisticsController.php`, Routen registrieren.
+- [x] `frontend/src/app/services/statistics.service.ts`: Stand als Signal,
+      `ensureLoaded(profileId)`, `add(themeId, delta)`. Wie die Erfolge über den
+      Puffer-Weg aus Phase 5 — mit einer Warteschlange statt eines einzelnen
+      `pending`-Eintrags, weil ein Zuwachs additiv ist und mehrere offene
+      Läufe pro Welt möglich sind.
+- [x] `episode-run.ts` um die Zeitmessung erweitert (Zeitstempel je Event,
       Deckelung nach Regel 4). Die Zählwerte für richtige/falsche Antworten
-      existieren bereits — nicht neu erfinden, nur einsammeln.
-- [ ] Gegen Doppelzählung, zwei Schichten: (a) die Zuwächse werden genau einmal
+      kommen aus `scoredCount`/`correctFirstTryCount`, die es schon gab.
+- [x] Gegen Doppelzählung, zwei Schichten: (a) die Zuwächse werden genau einmal
       beim Übergang in den Ergebnis-Screen gesendet und im Laufzustand als
-      „gesendet" markiert — der Ergebnis-Screen selbst sendet nichts; (b) jeder
-      Lauf bekommt beim Start eine Kennung aus `crypto.randomUUID()`, die
+      „gesendet" markiert (`EpisodeRun.markStatisticsSent()`) — der
+      Ergebnis-Screen selbst sendet nichts; (b) jeder Lauf bekommt beim Start
+      eine Kennung aus `crypto.randomUUID()` (`EpisodeRun.runId`), die
       mitgeschickt wird und die Wiederholung aus dem Puffer entschärft.
-- [ ] `features/result/`: dritte Kachel „Aufgaben geschafft".
+- [x] `features/result/`: dritte Kachel „Aufgaben geschafft".
 
 ## Doku-Updates
 
-- [ ] `docs/design/README.md` → „Bewusste Abweichungen" Punkt 7 umschreiben:
+- [x] `docs/design/README.md` → „Bewusste Abweichungen" Punkt 7 umgeschrieben:
       die dritte Kachel existiert jetzt, heißt aber „Aufgaben geschafft" statt
       „Neue Wörter gelernt" — die Zahl aus dem Prototyp hat in keiner Spalte
       eine Entsprechung und hätte erfunden werden müssen.
-- [ ] `docs/glossary.md`: Eintrag „Statistik" (vier Zahlen pro Welt und Profil,
+- [x] `docs/glossary.md`: Eintrag „Statistik" (vier Zahlen pro Welt und Profil,
       wachsen über alle Läufe, Abgrenzung zu den Zahlen eines einzelnen Laufs).
-- [ ] `docs/code-map.md`: neue Dateien in den Ist-Stand.
+- [x] `docs/code-map.md`: neue Dateien in den Ist-Stand.
 
 ## Report-Back
+
+**Gebaut:** Migration 011 (`last_run_id` auf `statistics`),
+`StatisticsRepository`/`Controller`/`Validator` im Backend, Routen
+`GET`/`POST /api/profiles/{id}/statistics(/{themeId})`. Im Frontend
+`statistics.service.ts` nach dem Puffer-Muster von Erfolgen/Spielstand, aber
+mit einer Warteschlange offener Zuwächse statt eines einzelnen `pending`-Flags
+(additiv, mehrere Läufe können gleichzeitig offen sein). `EpisodeRun` trägt
+jetzt eine `runId` (`crypto.randomUUID()`), misst die Spielzeit als Summe der
+— je auf 5 Minuten gedeckelten — Abstände zwischen den Events, und bewacht den
+einmaligen Versand über `markStatisticsSent()`. `episode.ts` reicht den
+Zuwachs beim Episodenende ein und speist die dritte Ergebnis-Kachel aus
+`StatisticsService.totalsByTheme()` (optimistisch: bestätigter Stand plus
+offene Zuwächse, damit die gerade geschaffte Aufgabe sofort mitzählt). Der
+Wächter `profile-chosen.guard.ts` lädt Statistiken jetzt mit. `ng build`,
+`ng lint` und `composer run lint` laufen grün; gegen eine echte Datenbank
+nicht geprüft (lokal keine Verbindung, wie in Phase 7).
+
+**Abweichung vom Plan:** `StatisticsRepository::addDeltas` liest den
+bestehenden Stand vor dem Schreiben, ohne `FOR UPDATE`/Transaktion — der Plan
+erwähnt das nicht explizit, aber ein Wettlauf zweier gleichzeitiger Aufrufe
+für dasselbe Profil und dieselbe Welt könnte theoretisch die
+`last_run_id`-Prüfung umgehen. Bei genau einem Kind pro Profil und Gerät ist
+das Risiko praktisch null; bewusst nicht mit einer Transaktion abgesichert,
+um nicht als erste Stelle im Projekt ein neues Muster einzuführen, das sonst
+nirgends gebraucht wird.
+
+**Wackligste Stelle:** Die Spielzeitmessung läuft komplett im Speicher der
+`EpisodeRun`-Instanz (`lastEventAt`/`playtimeMs`) und wird bei einem
+Seiten-Neuladen mitten in der Episode nicht aus dem Spielstand
+wiederhergestellt — ein „Weiterspielen" nach Abbruch (Phase 6) zählt die Zeit
+vor dem Neuladen nicht mit. Das ist keine der vier AK verletzt (keine zählt
+Zeit über einen Neuladen hinweg), aber die Statistik „Spielzeit" fällt nach
+einem Abbruch-Resume etwas niedriger aus als real gespielt. Prüfbar am
+Server: eine Episode zur Hälfte spielen, Seite neu laden, weiterspielen bis
+zum Ende — die verbuchte Spielzeit sollte dann kürzer sein als die tatsächlich
+verstrichene Zeit.

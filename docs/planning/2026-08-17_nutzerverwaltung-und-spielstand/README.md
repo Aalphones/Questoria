@@ -44,7 +44,7 @@ Diese Punkte sind Vorgabe, nicht Ermessen des Umsetzers:
 | 5 | [Spielstand-Schnittstelle](phase-5-savegame.md) | `SavegameRepository`/`SavegameController`, `SavegameService` mit Puffer und Nachreichen | heikel | complete |
 | 6 | [Fortschritt zieht um](phase-6-fortschritt-umzug.md) | `ProgressService` + `RunStoreService` auf den Spielstand umstellen, alten Browser-Stand einmalig übernehmen | heikel | complete |
 | 7 | [Erfolge](phase-7-erfolge.md) | Content-Schema, Migration 010, `AchievementRepository`/`Controller`, Auswertung im Frontend, Erfolgs-Pille + Panel | heikel | complete |
-| 8 | [Statistiken](phase-8-statistiken.md) | `StatisticsRepository`/`Controller`, Aufsummieren am Episodenende, dritte Ergebnis-Kachel | standard | pending |
+| 8 | [Statistiken](phase-8-statistiken.md) | `StatisticsRepository`/`Controller`, Aufsummieren am Episodenende, dritte Ergebnis-Kachel | standard | complete |
 | 9 | [Kopfleiste, Testwelt, Doku](phase-9-kopfleiste-und-doku.md) | Profil-Chip mit echtem Profil + Abmelden, Testwelt um Erfolge ergänzen, Doku-Abgleich | mechanisch | pending |
 
 ## Kontrakt: die Schnittstelle

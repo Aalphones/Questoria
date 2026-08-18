@@ -32,6 +32,7 @@ import { ContentService } from '../../services/content.service';
 import { GameStateService } from '../../services/game-state.service';
 import { ProgressService } from '../../services/progress.service';
 import { RunStoreService } from '../../services/run-store.service';
+import { StatisticsService } from '../../services/statistics.service';
 import { ContentError } from '../../ui/content-error/content-error';
 import { Hud } from '../../ui/hud/hud';
 import { ImageSlot } from '../../ui/image-slot/image-slot';
@@ -66,6 +67,7 @@ export class EpisodeScreen {
   private readonly gameState = inject(GameStateService);
   private readonly progressService = inject(ProgressService);
   private readonly achievementService = inject(AchievementService);
+  private readonly statisticsService = inject(StatisticsService);
   private readonly runStore = inject(RunStoreService);
   private readonly run = inject(EpisodeRun);
 
@@ -288,6 +290,16 @@ export class EpisodeScreen {
   );
 
   /**
+   * Insgesamt in dieser Welt geschaffte Aufgaben — die dritte Statistik-Kachel
+   * (Plan Phase 8, „Entschieden vor dem Bauen" Punkt 6). Bestätigter
+   * Serverstand plus noch offene Zuwächse, inklusive des gerade geschafften
+   * Laufs, sobald `completeWhenFinished` ihn eingereicht hat.
+   */
+  protected readonly resultEventsCompletedTotal = computed<number>(
+    () => this.statisticsService.totalsByTheme()[this.themeId()]?.eventsCompleted ?? 0,
+  );
+
+  /**
    * Neu erreichte Erfolge dieses Laufs — wandern an die Pille im
    * Ergebnis-Screen (Plan Phase 7, Checkliste). Leer, solange nichts fällig
    * wurde oder die Welt keine Erfolge kennt.
@@ -310,8 +322,33 @@ export class EpisodeScreen {
       this.runStore.clear();
       this.progressService.completeEpisode(themeId, episodeId, stars);
       this.evaluateAchievements(world, themeId);
+      this.reportStatistics(themeId);
     });
   });
+
+  /**
+   * Reicht den Zuwachs dieses Laufs ein — genau einmal (Plan Phase 8,
+   * Checkliste Doppelzählung a): `EpisodeRun.markStatisticsSent()` bewacht das,
+   * falls der Effekt aus anderem Grund erneut liefe. Falsche Antworten sind
+   * bewertete Events, die beim ersten Versuch nicht saßen — dieselbe Zahl, die
+   * auch die „Richtige Antworten"-Kachel gegenrechnet.
+   */
+  private reportStatistics(themeId: string): void {
+    if (!this.run.markStatisticsSent()) {
+      return;
+    }
+
+    const scoredCount = this.run.scoredCount();
+    const correctFirstTryCount = this.run.correctFirstTryCount();
+
+    this.statisticsService.add(themeId, {
+      runId: this.run.runId,
+      eventsCompleted: scoredCount,
+      correctAnswers: correctFirstTryCount,
+      wrongAnswers: scoredCount - correctFirstTryCount,
+      playtimeMinutes: Math.round(this.run.playtimeMs() / 60000),
+    });
+  }
 
   /** „Weiterspielen": Lauf auf den gemerkten Stand setzen, Eintrag ist damit verbraucht. */
   protected resumeStoredRun(stored: StoredRun): void {

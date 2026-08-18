@@ -4,11 +4,12 @@
 [Nutzerverwaltung & Spielstand, Meilenstein 4](docs/planning/2026-08-17_nutzerverwaltung-und-spielstand/README.md)
 — 9 Phasen, freigegeben am 17.08.2026.
 
-**Phase:** 7/9 — Erfolge (complete)
+**Phase:** 8/9 — Statistiken (complete)
 
-**Nächster Schritt:** Phase 8 (Statistiken) —
-[phase-8-statistiken.md](docs/planning/2026-08-17_nutzerverwaltung-und-spielstand/phase-8-statistiken.md).
-Rating „standard" — `sonnet` reicht.
+**Nächster Schritt:** Phase 9 (Kopfleiste, Testwelt, Doku) —
+[phase-9-kopfleiste-und-doku.md](docs/planning/2026-08-17_nutzerverwaltung-und-spielstand/phase-9-kopfleiste-und-doku.md).
+Rating „mechanisch" — `sonnet` reicht. Letzte Phase des Plans: danach steht
+die Smoke-Checkliste an (macht Sascha selbst).
 
 **Vor dem nächsten echten Test auf dem Server nötig:** einmal `deploy.cmd`
 laufen lassen (bringt `SETUP_TOKEN` in `backend/.env` und die neue
@@ -18,23 +19,25 @@ in
 [phase-2-tuersteher.md](docs/planning/2026-08-17_nutzerverwaltung-und-spielstand/phase-2-tuersteher.md)
 ganz unten.
 
-**Zuletzt abgeschlossen:** Phase 7 — Erfolge sind jetzt Content
-(`world_config.json` → `achievements[]`, ADR-010) statt Datenbank-Katalog;
-Migration 010 baut `player_achievements` auf Content-Schlüssel um und löscht
-die alte Tabelle `achievements`. Neu im Backend: `AchievementRepository`
-(`allForProfile`, `unlock` mit `INSERT IGNORE`), `AchievementController`
-(`GET`/`POST /api/profiles/{id}/achievements`), `AchievementValidator`. Neu im
-Frontend: `achievement.rules.ts` (reine Auswertung der vier Bedingungstypen +
-`conditionHint()` für den Klartext-Hinweis), `achievement.service.ts`
-(derselbe Puffer-Mechanismus wie `SavegameService`, additiv statt
-überschreibend), eingehängt in `profile-chosen.guard.ts`. `episode.ts` wertet
-nach jedem Episodenende neu erreichte Erfolge aus und schaltet sie frei; die
-Pille sitzt in `features/result/`, das Erfolge-Panel (alle Erfolge aller
-installierten Welten, nicht nur gestarteter) in `features/main-hub/`. Testwelt
-`dev_fixture` hat jetzt zwei Erfolge plus zwei generierte Platzhalter-Icons.
+**Zuletzt abgeschlossen:** Phase 8 — Statistiken. Vier Zahlen pro Welt und
+Profil (`events_completed`, `correct_answers`, `wrong_answers`,
+`playtime_minutes`), die über alle Läufe addiert werden. Migration 011
+ergänzt `last_run_id` auf `statistics` als Schutz gegen Doppelzählung. Neu im
+Backend: `StatisticsRepository` (`allForProfile`, `addDeltas` mit
+Lauf-Kennungs-Vergleich vor dem Addieren), `StatisticsController`
+(`GET`/`POST /api/profiles/{id}/statistics(/{themeId})`),
+`StatisticsValidator`. Neu im Frontend: `statistics.service.ts` — Puffer wie
+bei Erfolgen/Spielstand, aber mit einer Warteschlange offener Zuwächse statt
+eines einzelnen `pending`-Eintrags. `EpisodeRun` trägt jetzt `runId`
+(`crypto.randomUUID()`), misst Spielzeit als Summe der auf 5 Minuten
+gedeckelten Event-Abstände, und bewacht den einmaligen Statistik-Versand über
+`markStatisticsSent()`. Dritte Ergebnis-Kachel „Aufgaben geschafft" zeigt den
+optimistischen Weltstand aus `StatisticsService.totalsByTheme()`.
 `ng build`/`ng lint` und `composer run lint` grün; gegen eine echte Datenbank
-nicht geprüft (lokal keine Verbindung). Wackligste Stelle steht am Ende von
-`phase-7-erfolge.md` → Report-Back.
+nicht geprüft (lokal keine Verbindung). Wackligste Stelle: die
+Spielzeit-Messung lebt im Speicher der `EpisodeRun`-Instanz und überlebt
+einen Seiten-Neuladen mitten in der Episode nicht — Details am Ende von
+`phase-8-statistiken.md` → Report-Back.
 
 **Merkposten:** PHP/Composer liegen unter `C:\Users\sasch\develop\.tools\`
 (`php.cmd`/`composer.cmd`), nicht im Suchpfad des Benutzers. Ad-hoc-Testserver
