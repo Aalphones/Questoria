@@ -143,7 +143,14 @@ export interface WorldConfig {
  * Eventtypen, verbindlich in `JSON_SCHEMA_REFERENCE.md` Abschnitt 5.0 — ein
  * Typ steht hier erst, wenn seine Angular-Komponente existiert.
  */
-export const EVENT_TYPES = ['dialog', 'reward', 'multiple_choice', 'text_input', 'image_search'] as const;
+export const EVENT_TYPES = [
+  'dialog',
+  'reward',
+  'multiple_choice',
+  'text_input',
+  'image_search',
+  'word_match',
+] as const;
 export type EventType = (typeof EVENT_TYPES)[number];
 
 export interface DialogueLine {
@@ -252,4 +259,21 @@ export interface Episode {
   /** Dateiname unter backgrounds/ */
   background: string;
   events: EpisodeEvent[];
+}
+
+/** Ein Bild-Wort-Paar einer Zuordnungs-Aufgabe (Abschnitt 5.6). */
+export interface WordPair {
+  /** Das geschriebene Wort auf der Karte — wird nie vorgelesen. */
+  word: string;
+  /** Dateiname unter answers/ — das Motiv trägt kein Wort im Bild. */
+  image: string;
+}
+
+/** Die aufgelöste Konfiguration eines `word_match`-Events (Abschnitt 5.6, ausgelagert). */
+export interface WordMatchConfig {
+  question: string;
+  /** kurze Fassung für den Vorlesemodus, siehe Abschnitt 6 */
+  question_simple?: string;
+  /** drei oder vier Paare — jedes Wort und jedes Bild genau einmal */
+  pairs: WordPair[];
 }

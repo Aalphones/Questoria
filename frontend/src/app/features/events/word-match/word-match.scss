@@ -1,0 +1,188 @@
+@use '../../../../styles/breakpoints' as bp;
+
+:host {
+  display: contents;
+}
+
+.word-match {
+  // Misst die Breite, die der Aufgabe im Karteninneren bleibt. Eigenes Element,
+  // weil eine Container Query nur Nachfahren des Containers erreicht — läge
+  // `container-type` auf dem Raster selbst, träfe die Regel darunter nichts.
+  &__board {
+    display: block;
+    container-type: inline-size;
+  }
+
+  // Zwei Spalten: links die Bilder, rechts die Wörter. Der Umbruch hängt an der
+  // Breite des Aufgabenkörpers, nicht am Fenster — deshalb Container Query.
+  &__columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+
+    // Auf schmalem Schirm (Tablet hochkant) stehen Bilder und Wörter
+    // untereinander, sonst wird beides zu schmal für Kinderfinger.
+    @container (max-width: #{bp.$task-board-narrow}) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__column {
+    display: grid;
+    align-content: start;
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__slot {
+    display: grid;
+  }
+
+  &__image {
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-2);
+    border: 2px solid var(--color-answer-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg);
+    cursor: pointer;
+    transition: translate var(--duration-fast) var(--easing-standard);
+
+    &:hover:not(:disabled) {
+      translate: 0 -3px;
+    }
+
+    &:disabled {
+      cursor: default;
+    }
+
+    &--selected {
+      border-color: var(--color-accent);
+      background: var(--color-accent-soft);
+    }
+
+    &--matched {
+      border-color: var(--color-answer-correct-border);
+      background: var(--color-answer-correct-surface);
+    }
+
+    &--wrong {
+      border-color: var(--color-answer-wrong-border);
+      background: var(--color-answer-wrong-surface);
+    }
+  }
+
+  // Quadratisch wie die Bilddateien (512 × 512) — der Bildplatz braucht eine
+  // feste Fläche, sonst hat `qst-image-slot` nichts, worin es füllen kann.
+  &__frame {
+    display: block;
+    position: relative;
+    inline-size: var(--size-word-match-tile);
+    block-size: var(--size-word-match-tile);
+  }
+
+  &__word {
+    display: flex;
+    position: relative;
+    align-items: center;
+    gap: var(--space-3);
+    min-block-size: var(--size-answer-min-block);
+    padding: var(--space-3) var(--space-4);
+    border: 2px solid var(--color-answer-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg);
+    color: var(--color-text);
+    text-align: start;
+    cursor: pointer;
+    transition: translate var(--duration-fast) var(--easing-standard);
+
+    &:hover:not(:disabled) {
+      translate: 0 -3px;
+    }
+
+    &:disabled {
+      cursor: default;
+    }
+
+    &--selected {
+      border-color: var(--color-accent);
+      background: var(--color-accent-soft);
+    }
+
+    &--matched {
+      border-color: var(--color-answer-correct-border);
+      background: var(--color-answer-correct-surface);
+    }
+
+    &--wrong {
+      border-color: var(--color-answer-wrong-border);
+      background: var(--color-answer-wrong-surface);
+    }
+  }
+
+  &__label {
+    font-family: var(--font-heading);
+    font-size: var(--font-size-answer);
+    line-height: var(--line-height-heading);
+  }
+
+  // Die Nummer steht auf beiden Seiten eines gelegten Paares — wer Farben
+  // schlecht unterscheidet, sieht trotzdem, was zu was gehört.
+  &__badge {
+    display: flex;
+    position: absolute;
+    inset-block-start: calc(var(--space-1) * -1);
+    inset-inline-end: calc(var(--space-1) * -1);
+    align-items: center;
+    justify-content: center;
+    inline-size: var(--size-pair-badge);
+    block-size: var(--size-pair-badge);
+    border-radius: var(--radius-pill);
+    background: var(--color-answer-correct-border);
+    color: var(--color-text-on-accent);
+    font-family: var(--font-heading);
+    font-size: var(--font-size-detail);
+  }
+
+  &__feedback {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-2);
+  }
+
+  &__feedback-title {
+    margin: 0;
+    color: var(--color-text-accent);
+    font-family: var(--font-heading);
+    font-size: var(--font-size-section);
+  }
+
+  &__feedback-text {
+    margin: 0;
+  }
+
+  &__next {
+    min-block-size: var(--size-touch-target);
+    padding-inline: var(--space-6);
+    border: none;
+    border-radius: var(--radius-pill);
+    background: var(--color-accent);
+    color: var(--color-text-on-accent);
+    font-family: var(--font-body);
+    font-size: var(--font-size-body);
+    font-weight: 600;
+    cursor: pointer;
+
+    &:hover {
+      background: var(--color-accent-hover);
+    }
+  }
+}
+
+.word-match__feedback:not(:empty) {
+  animation: eqRise var(--duration-enter) var(--easing-standard);
+}

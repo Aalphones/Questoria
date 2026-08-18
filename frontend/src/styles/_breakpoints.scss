@@ -13,3 +13,8 @@ $map-narrow: 42rem;
 // Bezug: FENSTERBREITE (Media Query). Darunter rücken Außenabstände und
 // Kopfleiste zusammen, damit die Karte die Breite bekommt. ≈ 640px Fenster.
 $screen-narrow: 40rem;
+
+// Bezug: BREITE DES AUFGABEN-KÖRPERS (Container Query in word-match).
+// Darunter passen Bilderspalte und Wortspalte nicht mehr nebeneinander — sie
+// rücken untereinander. ≈ 544px Aufgabenbreite.
+$task-board-narrow: 34rem;

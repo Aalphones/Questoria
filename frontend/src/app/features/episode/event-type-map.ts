@@ -6,6 +6,7 @@ import { isImageSearchConfig } from '../events/image-search/image-search.types';
 import { isMultipleChoiceConfig } from '../events/multiple-choice/multiple-choice.types';
 import { isRewardConfig } from '../events/reward/reward.types';
 import { isTextInputConfig } from '../events/text-input/text-input.types';
+import { isWordMatchConfig } from '../events/word-match/word-match.types';
 
 /**
  * Die einzige Stelle, an der ein Eventtyp seiner Komponente zugeordnet wird —
@@ -17,15 +18,17 @@ import { isTextInputConfig } from '../events/text-input/text-input.types';
  * Ein Typ steht hier erst, wenn seine Komponente existiert; die übrigen Typen
  * aus `EVENT_TYPES` laufen bis dahin in den Fehlerpfad des Gerüsts.
  */
-export const EVENT_COMPONENTS: Readonly<Partial<Record<EventType, () => Promise<Type<unknown>>>>> = {
-  dialog: () => import('../events/dialog/dialog').then((module) => module.Dialog),
-  multiple_choice: () =>
-    import('../events/multiple-choice/multiple-choice').then((module) => module.MultipleChoice),
-  text_input: () => import('../events/text-input/text-input').then((module) => module.TextInput),
-  image_search: () =>
-    import('../events/image-search/image-search').then((module) => module.ImageSearch),
-  reward: () => import('../events/reward/reward').then((module) => module.Reward),
-};
+export const EVENT_COMPONENTS: Readonly<Partial<Record<EventType, () => Promise<Type<unknown>>>>> =
+  {
+    dialog: () => import('../events/dialog/dialog').then((module) => module.Dialog),
+    multiple_choice: () =>
+      import('../events/multiple-choice/multiple-choice').then((module) => module.MultipleChoice),
+    text_input: () => import('../events/text-input/text-input').then((module) => module.TextInput),
+    image_search: () =>
+      import('../events/image-search/image-search').then((module) => module.ImageSearch),
+    reward: () => import('../events/reward/reward').then((module) => module.Reward),
+    word_match: () => import('../events/word-match/word-match').then((module) => module.WordMatch),
+  };
 
 /**
  * Welche Eventtypen bewertet werden — nur sie gehen in die Sternenformel ein
@@ -36,6 +39,7 @@ export const SCORED_EVENT_TYPES: ReadonlySet<EventType> = new Set<EventType>([
   'multiple_choice',
   'text_input',
   'image_search',
+  'word_match',
 ]);
 
 /**
@@ -59,6 +63,7 @@ const EVENT_CONFIG_GUARDS: Readonly<Partial<Record<EventType, (config: unknown) 
   text_input: isTextInputConfig,
   image_search: isImageSearchConfig,
   reward: isRewardConfig,
+  word_match: isWordMatchConfig,
 };
 
 /** Lädt die Komponente zu einem Eventtyp — unbekannter Typ wirft, das Gerüst zeigt die Meldung. */

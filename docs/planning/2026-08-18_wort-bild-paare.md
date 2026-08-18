@@ -16,7 +16,7 @@ Hörübungen, in einer Welt, die „Lesen lernen" heißt
 
 | # | Phase | Inhalt | Rating | Status |
 |---|---|---|---|---|
-| 1 | Der Eventtyp | Schema, Typen, Komponente, Registrierung, ADR, Testwelt | heikel | pending |
+| 1 | Der Eventtyp | Schema, Typen, Komponente, Registrierung, ADR, Testwelt | heikel | complete |
 | 2 | Die Welt umbauen | Episode 2 der Pokémon-Welt auf die neue Form, Doku nachziehen | standard | pending |
 
 ## Entschieden, bevor gebaut wird
@@ -132,25 +132,25 @@ ein echter Dateiname unter `answers/`. Mehr Felder gibt es nicht.
 
 ### Checkliste
 
-- [ ] `docs/decisions/014-zuordnen-als-eigener-eventtyp.md` schreiben: warum ein
+- [x] `docs/decisions/014-zuordnen-als-eigener-eventtyp.md` schreiben: warum ein
       neuer Typ statt eines Bildfelds in Multiple Choice (Kontext, betrachtete
       Optionen, Entscheidung, Konsequenzen). **Nummer 014 ist frei** — 011 bis
       013 sind vom Sammelkarten-Plan reserviert.
-- [ ] `JSON_SCHEMA_REFERENCE.md`: Zeile in Tabelle 5.0, neuer Abschnitt 5.6 mit
+- [x] `JSON_SCHEMA_REFERENCE.md`: Zeile in Tabelle 5.0, neuer Abschnitt 5.6 mit
       dem Kontrakt oben, Zeile in der Checkliste Abschnitt 9 („`word_match` hat
       3–4 Paare, jedes mit echtem Bildnamen").
-- [ ] `content.types.ts`: `word_match` in `EVENT_TYPES`, Typ `WordMatchConfig`
+- [x] `content.types.ts`: `word_match` in `EVENT_TYPES`, Typ `WordMatchConfig`
       mit `question`, optionalem `question_simple` und `pairs`.
-- [ ] `features/events/word-match/word-match.types.ts`: Ansichts-Typen plus
+- [x] `features/events/word-match/word-match.types.ts`: Ansichts-Typen plus
       `isWordMatchConfig` — Muster: `multiple-choice.types.ts`.
-- [ ] Komponente `word-match.ts` + Template + Styles, eingehängt in
+- [x] Komponente `word-match.ts` + Template + Styles, eingehängt in
       `qst-task-card` mit dem Tag „Aufgabe · Wörter zuordnen".
-- [ ] `event-type-map.ts`: die drei Einträge (Komponente, bewertet, Guard) — die
+- [x] `event-type-map.ts`: die drei Einträge (Komponente, bewertet, Guard) — die
       Datei nennt selbst die Regel „eine Zeile hier, ein Ordner dort".
-- [ ] Testwelt: `data/themes/dev_fixture/events/probe_word_match.json` anlegen
+- [x] Testwelt: `data/themes/dev_fixture/events/probe_word_match.json` anlegen
       und in eine Episode der Testwelt einhängen.
-- [ ] `docs/code-map.md`: Zeile für das neue Feature.
-- [ ] `docs/glossary.md`: Eintrag „Wort-Bild-Paare" mit einer Zeile, was die
+- [x] `docs/code-map.md`: Zeile für das neue Feature.
+- [x] `docs/glossary.md`: Eintrag „Wort-Bild-Paare" mit einer Zeile, was die
       Aufgabe misst.
 
 ## Phase 2 — Die Welt umbauen
@@ -185,8 +185,10 @@ ein echter Dateiname unter `answers/`. Mehr Felder gibt es nicht.
 
 - [ ] Die beiden neuen Aufgabendateien schreiben, die alten löschen, Episode 2
       nachziehen.
-- [ ] `ASSET_REQUIREMENTS.md`: Abschnitt 8 um den Satz ergänzen, dass die
+- [x] `ASSET_REQUIREMENTS.md`: Abschnitt 8 um den Satz ergänzen, dass die
       Bilder einer Zuordnungs-Aufgabe **kein** Wort im Bild tragen dürfen.
+      *(In Phase 1 vorgezogen — die Pflegepflicht des Authoring-Toolkits
+      verlangt die Regel im selben Commit wie die Schema-Änderung.)*
 - [ ] `bestellliste.md` und die Phasen-Tabelle des Welt-Plans nachziehen.
 - [ ] Die betroffenen Einträge in `FINDINGS.md` des Welt-Plans abhaken.
 - [ ] Prüfskript über die Welt laufen lassen, Ergebnis ins Report-Back.

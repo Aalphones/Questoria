@@ -195,7 +195,7 @@ Neue Datei nach `data/avatars/` legen, Dateiname in `AVAILABLE_AVATARS`
 kein Deploy-Sonderfall: `deploy.cmd content` synct `data/` ohnehin komplett.
 Prompt-Vorlage: [image-prompts/AVATARS.md](image-prompts/AVATARS.md).
 
-## 8. Bildantworten (Vorlesemodus)
+## 8. Bildantworten (Vorlesemodus und Zuordnung)
 
 Für Kinder, die noch nicht lesen, zeigt jedes `multiple_choice`-Event ein Bild
 über jeder Antwort. Ohne diese Bilder rät das Kind.
@@ -206,6 +206,12 @@ Für Kinder, die noch nicht lesen, zeigt jedes `multiple_choice`-Event ein Bild
 | Seitenverhältnis | quadratisch, **Ausgabegröße** mind. 512 × 512 px |
 | Dateiname | `antwort_<slug>.png`, Slug in `snake_case` ohne Umlaute |
 | Inhalt | ein einzelnes, eindeutig erkennbares Motiv, kein Text im Bild |
+
+Dieselben Bilder benutzt die Zuordnungs-Aufgabe (`word_match`, Schema 5.6) —
+dort allerdings als die eigentliche Aufgabe. **Ein Motiv für eine
+Zuordnungs-Aufgabe darf das gesuchte Wort nicht zeigen**: kein Schriftzug,
+kein Etikett, kein Buchstabe im Bild. Sonst löst sich die Aufgabe von
+selbst, und das Kind hat kein einziges Wort gelesen.
 
 Der Dateiname steht als `image` in der Event-Datei und wird **nicht** aus dem
 Antworttext berechnet — sonst bricht jede Textkorrektur das Bild.

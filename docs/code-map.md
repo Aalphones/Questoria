@@ -51,6 +51,8 @@ Ergebnis-Screen nach dem letzten Event; löst ausgelagerte Konfigurationen über
 Plätzen), `features/events/multiple-choice/` (Quiz mit Weiterraten),
 `features/events/text-input/` (Texteingabe mit Weiterraten),
 `features/events/image-search/` (Bildsuche mit Fehlgriff-Zählung, Ziele auch per Tastatur erreichbar),
+`features/events/word-match/` (Wort-Bild-Paare: Bilder links, gemischte Wortkarten
+rechts, Zuordnung per zwei Tipps — die Wörter werden nie vorgelesen),
 `features/events/reward/` (Belohnungs-Moment mit Sternen; merkt `card_id` für
 Meilenstein 5, vergibt noch keine Sammelkarte), `features/result/` (Sterne,
 drei Statistik-Karten — zwei aus dem laufenden Lauf, eine als über alle

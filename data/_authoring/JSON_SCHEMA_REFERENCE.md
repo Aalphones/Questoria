@@ -368,6 +368,7 @@ referenzieren generierte Welten Events, die es nicht gibt.
 | `multiple_choice` | `MultipleChoice` | ausgelagert, Abschnitt 5.3 | ja |
 | `text_input` | `TextInput` | ausgelagert, Abschnitt 5.4 | ja |
 | `image_search` | `ImageSearch` | ausgelagert, Abschnitt 5.5 | ja |
+| `word_match` | `WordMatch` | ausgelagert, Abschnitt 5.6 | ja |
 
 **Vorgemerkt, noch nicht gebaut** — nicht im Content verwenden, bis sie oben
 stehen: `cutscene`, `choice`, `exploration`, `investigation`, `search`,
@@ -504,6 +505,46 @@ verwenden.
   }
 }
 ```
+
+### 5.6 `word_match` (ausgelagert)
+
+Drei oder vier Bilder, ebenso viele Wortkarten — das Kind legt zusammen, was
+zusammengehört. Erst ein Bild antippen, dann die Wortkarte (oder umgekehrt).
+Die Aufgabe, bei der wirklich gelesen wird: **Die Wörter werden nie
+vorgelesen**, auch im Vorlesemodus nicht. Gesprochen wird nur die Frage.
+
+```json
+{
+  "event_id": "string",
+  "type": "word_match",
+  "variants": {
+    "<difficulty_level_id>": {
+      "question": "string",
+      "question_simple": "string (optional) — kurze Fassung für den Vorlesemodus",
+      "pairs": [
+        {
+          "word": "string — das geschriebene Wort auf der Karte",
+          "image": "string — Dateiname unter answers/, z. B. antwort_ball.png"
+        }
+      ]
+    }
+  }
+}
+```
+
+**Drei oder vier Paare, nicht mehr** — alles darüber sprengt die Fläche auf dem
+Tablet. Jedes `word` kommt innerhalb einer Variante genau einmal vor, jedes
+`image` ebenso; doppelte Wörter oder doppelte Bilder machen die Aufgabe
+unlösbar und laufen in den Fehlerpfad der Engine.
+
+**Das Bild darf das Wort nicht zeigen.** Ein Motiv mit aufgedrucktem Schriftzug
+löst die Aufgabe von selbst (`ASSET_REQUIREMENTS.md`, Abschnitt 8). Aus demselben
+Grund darf das gesuchte Wort nicht in der Frage stehen.
+
+Bewertet wird die ganze Aufgabe: Der Stern fällt, sobald **ein** Paar falsch
+gelegt wurde — nicht anteilig pro Paar. Ein Fehlgriff ist trotzdem kein Ende,
+beide Karten gehen wieder auf und es geht weiter. Warum das ein eigener Typ ist
+und kein Bildfeld im Quiz: [ADR-014](../../docs/decisions/014-zuordnen-als-eigener-eventtyp.md).
 
 ### Varianten-Regel (gilt für jede ausgelagerte Datei)
 
@@ -686,6 +727,8 @@ nicht Dialog → Quiz → Ende.
 - [ ] `rarity` ist einer der drei erlaubten Werte — keine erfundenen Stufen
 - [ ] `set`-Schreibweise innerhalb der Welt konsistent (sonst zerfällt die Trophäenhalle in Extra-Gruppen)
 - [ ] Multiple-Choice-Antworten haben `image`, wenn die Welt den Vorlesemodus unterstützt
+- [ ] Jedes `word_match`-Event hat 3–4 Paare, jedes mit einem echten Bildnamen
+      unter `answers/`; kein Wort und kein Bild doppelt, kein Lesewort in der Frage
 - [ ] Kein `status`, `stars` oder `earned` im Content — das ist Spielstand (Abschnitt 7)
 - [ ] Alle Koordinaten sind Prozentwerte zwischen 0 und 100, keine Pixel
 - [ ] JSON ist valide (kein Trailing Comma, korrekte Anführungszeichen) — im Zweifel durch `jq .` jagen

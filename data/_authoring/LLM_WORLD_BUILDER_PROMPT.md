@@ -60,7 +60,10 @@ Erzeuge folgende Dateien vollständig:
 4. Pro Episode genau ein events/<event_id>.json mit EINER Variante pro
    übergebener Lernstufe — Inhalt muss sich nach Schwierigkeit
    unterscheiden, nicht nur im Wortlaut. Bei multiple_choice hat jede
-   Option ein image (antwort_<slug>.png), und die leichteste Lernstufe
+   Option ein image (antwort_<slug>.png). Bei word_match trägt jedes Paar
+   ein word und ein image (antwort_<slug>.png), 3-4 Paare pro Variante,
+   kein Wort und kein Bild doppelt — und das gesuchte Wort steht NIE in
+   der Frage, sonst liest das Kind es dort ab. Die leichteste Lernstufe
    bekommt zusätzlich question_simple. Die Datei trägt event_id, type und
    variants — sonst nichts.
 

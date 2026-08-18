@@ -1,0 +1,77 @@
+<qst-task-card
+  tag="Aufgabe · Wörter zuordnen"
+  [question]="questionText()"
+  [stepDone]="stepDone()"
+  [stepTotal]="stepTotal()"
+>
+  <div class="word-match__board">
+    <div class="word-match__columns">
+      <ul class="word-match__column">
+        @for (tile of imageTiles(); track tile.pairIndex; let position = $index) {
+          <li class="word-match__slot">
+            <button
+              type="button"
+              class="word-match__image"
+              [class.word-match__image--selected]="tile.state === 'selected'"
+              [class.word-match__image--matched]="tile.state === 'matched'"
+              [class.word-match__image--wrong]="tile.state === 'wrong'"
+              [attr.aria-pressed]="tile.state === 'selected'"
+              [disabled]="tile.locked"
+              (click)="pickImage(tile.pairIndex)"
+            >
+              <span class="word-match__frame">
+                <qst-image-slot [src]="tile.imageUrl" [label]="tile.placeholderLabel" />
+              </span>
+
+              <span class="visually-hidden">Bild {{ position + 1 }}</span>
+
+              @if (tile.badge; as badge) {
+                <span class="word-match__badge" aria-hidden="true">{{ badge }}</span>
+              }
+
+              @if (tile.stateLabel; as stateLabel) {
+                <span class="visually-hidden">{{ stateLabel }}</span>
+              }
+            </button>
+          </li>
+        }
+      </ul>
+
+      <ul class="word-match__column">
+        @for (card of wordCards(); track card.pairIndex) {
+          <li class="word-match__slot">
+            <button
+              type="button"
+              class="word-match__word"
+              [class.word-match__word--selected]="card.state === 'selected'"
+              [class.word-match__word--matched]="card.state === 'matched'"
+              [class.word-match__word--wrong]="card.state === 'wrong'"
+              [attr.aria-pressed]="card.state === 'selected'"
+              [disabled]="card.locked"
+              (click)="pickWord(card.pairIndex)"
+            >
+              <span class="word-match__label">{{ card.word }}</span>
+
+              @if (card.badge; as badge) {
+                <span class="word-match__badge" aria-hidden="true">{{ badge }}</span>
+              }
+
+              @if (card.stateLabel; as stateLabel) {
+                <span class="visually-hidden">{{ stateLabel }}</span>
+              }
+            </button>
+          </li>
+        }
+      </ul>
+    </div>
+  </div>
+
+  <div task-card-feedback class="word-match__feedback" role="status" aria-live="polite">
+    @if (feedbackTitle(); as title) {
+      <p class="word-match__feedback-title">{{ title }}</p>
+      <p class="word-match__feedback-text">{{ feedbackText() }}</p>
+
+      <button type="button" class="word-match__next" (click)="finish()">Weiter</button>
+    }
+  </div>
+</qst-task-card>
