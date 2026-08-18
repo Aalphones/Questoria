@@ -40,7 +40,7 @@ Diese Punkte sind Vorgabe, nicht Ermessen des Umsetzers:
 | 1 | [Anmeldung im Backend](phase-1-anmeldung-backend.md) | `Repositories/`, `UserRepository`, `AuthController`, Sitzungs-Cookie, geschützte Routen, Account-Skript | heikel | complete |
 | 2 | [Türsteher vor Content und App](phase-2-tuersteher.md) | PHP-Weiche vor `/content/`, Schutz der App-Dateien, `deploy.cmd`, lokaler Entwicklungs-Router, Endpunkt für den ersten Account | heikel | complete |
 | 3 | [Anmeldebildschirm im Frontend](phase-3-anmeldebildschirm.md) | `features/auth/`, `AuthService`, Abfang bei abgelaufener Sitzung, Zugangs-Wächter | standard | complete |
-| 4 | [Spielerprofile](phase-4-profile.md) | `ProfileRepository`/`ProfileController`, `features/profile/` nach Prototyp-Screen `login`, aktives Profil im `GameStateService` | standard | pending |
+| 4 | [Spielerprofile](phase-4-profile.md) | `ProfileRepository`/`ProfileController`, `features/profile/` nach Prototyp-Screen `login`, aktives Profil im `GameStateService` | standard | complete |
 | 5 | [Spielstand-Schnittstelle](phase-5-savegame.md) | `SavegameRepository`/`SavegameController`, `SavegameService` mit Puffer und Nachreichen | heikel | pending |
 | 6 | [Fortschritt zieht um](phase-6-fortschritt-umzug.md) | `ProgressService` + `RunStoreService` auf den Spielstand umstellen, alten Browser-Stand einmalig übernehmen | heikel | pending |
 | 7 | [Erfolge](phase-7-erfolge.md) | Content-Schema, Migration 010, `AchievementRepository`/`Controller`, Auswertung im Frontend, Erfolgs-Pille + Panel | heikel | pending |

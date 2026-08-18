@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 
 import { WorldConfig } from '../../../models/content.types';
 import { GameStateService } from '../../../services/game-state.service';
+import { ProfileService } from '../../../services/profile.service';
 import { ContentError } from '../../../ui/content-error/content-error';
 import { Hud } from '../../../ui/hud/hud';
 import { DifficultyPicker } from '../difficulty-picker/difficulty-picker';
@@ -22,6 +23,7 @@ import { DifficultyPicker } from '../difficulty-picker/difficulty-picker';
 export class LevelSelect {
   private readonly router = inject(Router);
   private readonly gameState = inject(GameStateService);
+  private readonly profileService = inject(ProfileService);
 
   readonly themeId = input.required<string>();
   readonly world = input<WorldConfig | null>(null);
@@ -30,6 +32,19 @@ export class LevelSelect {
 
   chooseDifficultyLevel(levelId: string): void {
     this.gameState.setActiveDifficultyLevel(levelId);
+
+    const activeProfileId = this.gameState.activeProfileId();
+
+    // Wie im Welt-Resolver: die Ablage im Profil ist ein bester Versuch, kein
+    // blockierender Schritt (Plan Phase 4, Checkliste „selected_level ... PATCH").
+    if (activeProfileId !== null) {
+      this.profileService.update(activeProfileId, { selected_level: levelId }).subscribe({
+        // Absichtlich leer: ein Fehlschlag ist kein Grund, die Navigation zu
+        // blockieren — beim nächsten Wechsel wird es erneut versucht.
+        error: (): void => undefined,
+      });
+    }
+
     void this.router.navigate(['theme', this.themeId(), 'timeline']);
   }
 }

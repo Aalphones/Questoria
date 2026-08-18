@@ -6,6 +6,7 @@ use App\Controllers\AuthController;
 use App\Controllers\ContentController;
 use App\Controllers\HealthController;
 use App\Controllers\MigrateController;
+use App\Controllers\ProfileController;
 use App\Controllers\SetupController;
 use App\Database\Connection;
 use App\Exceptions\ApiException;
@@ -94,6 +95,10 @@ $dispatcher = FastRoute\simpleDispatcher(static function (RouteCollector $routes
     $routes->addRoute('POST', '/api/auth/login', [AuthController::class, 'login']);
     $routes->addRoute('POST', '/api/auth/logout', [AuthController::class, 'logout']);
     $routes->addRoute('GET', '/api/auth/me', [AuthController::class, 'me']);
+    $routes->addRoute('GET', '/api/profiles', [ProfileController::class, 'index']);
+    $routes->addRoute('POST', '/api/profiles', [ProfileController::class, 'create']);
+    $routes->addRoute('PATCH', '/api/profiles/{profileId}', [ProfileController::class, 'update']);
+    $routes->addRoute('DELETE', '/api/profiles/{profileId}', [ProfileController::class, 'delete']);
     $routes->addRoute('GET', '/api/content/themes', [ContentController::class, 'themes']);
     $routes->addRoute('GET', '/api/content/themes/{themeId}', [ContentController::class, 'world']);
     $routes->addRoute(

@@ -3,6 +3,7 @@ import { Service, inject, signal } from '@angular/core';
 import { Observable, catchError, map, of, shareReplay, tap } from 'rxjs';
 
 import { AuthUser } from '../models/auth.types';
+import { ProfileService } from './profile.service';
 
 /**
  * Hält den angemeldeten Benutzer im Speicher — die Sitzung selbst steckt im
@@ -12,6 +13,7 @@ import { AuthUser } from '../models/auth.types';
 @Service()
 export class AuthService {
   private readonly http = inject(HttpClient);
+  private readonly profileService = inject(ProfileService);
 
   readonly currentUser = signal<AuthUser | null>(null);
 
@@ -46,6 +48,10 @@ export class AuthService {
   markSignedOut(): void {
     this.currentUser.set(null);
     this.sessionChecked = true;
+    // Ohne das würde nach einer erneuten Anmeldung mit einem anderen Account
+    // noch die Profilliste des vorherigen im Speicher stehen (Plan Phase 4:
+    // „beim Anmelden mit einem anderen Account wird der Wert verworfen").
+    this.profileService.reset();
   }
 
   /**

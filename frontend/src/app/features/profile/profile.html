@@ -1,0 +1,109 @@
+<div class="profile-picker">
+  <div class="profile-picker__decor profile-picker__decor--circle" aria-hidden="true"></div>
+  <div class="profile-picker__decor profile-picker__decor--cloud-a" aria-hidden="true"></div>
+  <div class="profile-picker__decor profile-picker__decor--cloud-b" aria-hidden="true"></div>
+  <div class="profile-picker__decor profile-picker__decor--wave-a" aria-hidden="true"></div>
+  <div class="profile-picker__decor profile-picker__decor--wave-b" aria-hidden="true"></div>
+
+  <div class="profile-picker__intro">
+    <p class="profile-picker__kicker">Story-Lernabenteuer</p>
+    <h1 class="profile-picker__title">Questoria</h1>
+    <div class="profile-picker__question">
+      <qst-read-aloud-button [text]="spokenQuestion" />
+      <p class="profile-picker__question-text">Wer segelt heute mit?</p>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <p class="profile-picker__note">Profile werden geladen …</p>
+  } @else {
+    @if (errorMessage(); as message) {
+      <p class="profile-picker__note profile-picker__note--error" role="alert">{{ message }}</p>
+    }
+
+    <div class="profile-picker__cards">
+      @for (profile of profiles(); track profile.id) {
+        <div class="profile-picker__card">
+          <button type="button" class="profile-picker__avatar" (click)="selectProfile(profile)">
+            <qst-image-slot [src]="profile.avatar" [label]="profile.display_name" />
+          </button>
+          <button type="button" class="profile-picker__pick" (click)="selectProfile(profile)">
+            <span class="profile-picker__pick-name">{{ profile.display_name }}</span>
+            <span class="profile-picker__pick-sub">Weiterspielen</span>
+          </button>
+          <button
+            type="button"
+            class="profile-picker__delete"
+            aria-label="Profil {{ profile.display_name }} löschen"
+            title="Profil löschen"
+            (click)="askDelete(profile, $event)"
+          >
+            ×
+          </button>
+        </div>
+      }
+
+      @if (!creating()) {
+        <button type="button" class="profile-picker__new" (click)="startCreate()">
+          <span class="profile-picker__new-plus" aria-hidden="true">+</span>
+          <span class="profile-picker__new-label">Neues Profil</span>
+        </button>
+      } @else {
+        <form class="profile-picker__form" [formGroup]="createForm" (ngSubmit)="submitCreate()">
+          <label class="profile-picker__form-label" for="profile-name">Name</label>
+          <input
+            id="profile-name"
+            class="profile-picker__form-input"
+            type="text"
+            formControlName="displayName"
+            maxlength="50"
+          />
+
+          <span class="profile-picker__form-label">Bild</span>
+          <div class="profile-picker__avatar-grid" role="radiogroup" aria-label="Bild auswählen">
+            @for (avatar of avatars; track avatar) {
+              <label class="profile-picker__avatar-option">
+                <input type="radio" formControlName="avatar" [value]="avatar" />
+                <qst-image-slot [src]="avatar" label="Bild" />
+              </label>
+            }
+          </div>
+
+          <div class="profile-picker__form-actions">
+            <button type="button" class="profile-picker__form-cancel" (click)="cancelCreate()">
+              Abbrechen
+            </button>
+            <button
+              type="submit"
+              class="profile-picker__form-submit"
+              [disabled]="createForm.invalid || submittingCreate()"
+            >
+              Anlegen
+            </button>
+          </div>
+        </form>
+      }
+    </div>
+  }
+
+  <dialog #deleteDialog class="profile-picker__delete-dialog">
+    @if (profileToDelete(); as profile) {
+      <p class="profile-picker__delete-question">
+        Profil „{{ profile.display_name }}" wirklich löschen? Der Spielstand geht mit.
+      </p>
+      <div class="profile-picker__delete-actions">
+        <button type="button" class="profile-picker__delete-cancel" (click)="cancelDelete()">
+          Abbrechen
+        </button>
+        <button
+          type="button"
+          class="profile-picker__delete-confirm"
+          [disabled]="deleting()"
+          (click)="confirmDelete()"
+        >
+          Löschen
+        </button>
+      </div>
+    }
+  </dialog>
+</div>

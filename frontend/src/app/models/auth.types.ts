@@ -16,3 +16,18 @@ export interface PlayerProfile {
   selected_theme: string | null;
   selected_level: string | null;
 }
+
+/**
+ * Feste Auswahl mitgelieferter Bilder für die Profilanlage (Plan Phase 4,
+ * Checkliste „Bildauswahl") — kein Datei-Upload. Die Dateien selbst sind
+ * Platzhalter unter `frontend/public/avatars/`; fehlt eine, zeigt
+ * `qst-image-slot` den Farbkreis-Ersatz aus dem Mockup.
+ */
+export const AVAILABLE_AVATARS: readonly string[] = [
+  'avatars/avatar-1.svg',
+  'avatars/avatar-2.svg',
+  'avatars/avatar-3.svg',
+  'avatars/avatar-4.svg',
+  'avatars/avatar-5.svg',
+  'avatars/avatar-6.svg',
+];

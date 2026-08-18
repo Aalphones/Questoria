@@ -24,7 +24,7 @@ sie im Code, in Docs oder Tickets auftauchen.
 | Savegame | Datenbank-Eintrag, der nur Content-IDs referenziert (aktive Episode, aktiver Node, abgeschlossene Events, besessene Sammelkarten) — nie Content selbst. |
 | Account | Der Eltern-Zugang zu einer Installation: E-Mail plus Passwort, Zeile in der Tabelle `users`. Genau ein Account meldet ein Gerät an; die Kinder darunter sind **Spielerprofile**. Angelegt wird ein Account nie in der Oberfläche, sondern vom Betreiber ([ADR-008](decisions/008-zugang-und-sitzung.md)). |
 | Sitzung | Die laufende Anmeldung eines Geräts — technisch das Cookie `qst_session` mit einem signierten Token, 30 Tage gültig. Sie gilt für die Schnittstelle unter `/api/` **und** für die Content-Dateien unter `/content/`. Abgrenzung: Die Sitzung sagt, **welcher Account** angemeldet ist; **welches Kind** gerade spielt, sagt das aktive Spielerprofil. |
-| Spielerprofil | Ein Profil innerhalb eines Accounts (ein Account kann mehrere Kinder/Profile haben). |
+| Spielerprofil | Ein Profil innerhalb eines Accounts (ein Account kann mehrere Kinder/Profile haben). Lernstufen- und Weltwahl hängen am Profil, nicht am Gerät — sie wandern beim Wechseln mit ins `PATCH /api/profiles/{id}` (`selected_theme`, `selected_level`). |
 | Planetenkarte | Der Einstieg: alle installierten Themenwelten als Knoten auf einer Karte (`main_hub.json` → `hub_map`). Eine pro Installation, ohne Kopfleiste — von hier führt kein Weg zurück. |
 | Etappenkarte | Die Übersichtskarte einer Welt: alle Story-Arcs als Inseln, mit Sternen pro Etappe. Eine pro Welt. |
 | Ortskarte | Die begehbare Karte eines einzelnen Arcs mit den Nodes, die Episoden starten. Eine pro Arc. |

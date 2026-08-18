@@ -30,13 +30,13 @@ im Frontend-Ordnernamen, PascalCase in PHP-Klassen):
 | Event-Komponenten | `features/events/<type>/` | Eine Komponente pro Eventtyp (`features/events/dialog/`, `features/events/multiple-choice/`, ...), dynamisch geladen über `ngComponentOutlet` |
 | Ergebnis | `features/result/` | Sterne, Statistiken, Erfolge, Banner für die neu gewonnene Sammelkarte |
 | Sammelkarten | `features/cards/`, `features/cards/print/` | Trophäenhalle (Gruppen, Filter, Detail, Druckauswahl) und A4-Druckbogen |
-| Nutzerverwaltung | `features/auth/`, `features/profile/` | Anmeldebildschirm (`features/auth/login.ts`), Profile anlegen/wechseln (Soll) |
+| Nutzerverwaltung | `features/auth/`, `features/profile/` | Anmeldebildschirm (`features/auth/login.ts`), Profilauswahl mit Anlegen/Löschen (`features/profile/profile.ts`, nach Prototyp-Screen `login`) |
 | Kartenfläche | `ui/map-canvas/` | Gemeinsames Bauteil von Planeten-, Etappen- und Ortskarte: Fläche im Seitenverhältnis 16:9, Hintergrund, Routenlinien; `map-point/` setzt ein beliebiges Kind auf eine Prozent-Position |
 | Bildfläche | `ui/image-slot/` | Bild mit beschriftetem Platzhalter, wenn die Datei fehlt |
 | Aufgaben-Hülle | `ui/task-card/` | Gemeinsame Karte aller Aufgaben-Typen: Aufgaben-Tag, Fortschrittspunkte, Frage mit Vorlese-Knopf (und automatischem Vorlesen), Platz für Aufgabenkörper und Feedback-Leiste |
 | Gemeinsame UI | `ui/hud/`, `ui/content-error/`, `ui/speech-bubble/`, `ui/read-aloud-button/` | Kopfleiste auf allen Spiel-Screens (jeder Screen bindet sie selbst ein, trägt jetzt auch Modus-Umschalter + Ton-Knopf); Meldung bei fehlgeschlagener Welt/Ort-Ladung mit Weg zurück; Sprechblasen; runder Knopf „Nochmal vorlesen" |
-| Routing | `routing/` | `world-config.resolver.ts` lädt die Welt-Konfiguration zentral für jede `theme/:themeId/…`-Route und setzt die aktive Welt; `difficulty-chosen.guard.ts` schickt ohne gewählte Lernstufe auf die Lernstufen-Auswahl zurück; `auth.guard.ts` schickt ohne Sitzung auf `/login` (wartet dafür einmal auf `AuthService.restoreSession()`); `session-expired.interceptor.ts` fängt ein `401` aus jedem Aufruf ab und schickt ebenfalls auf `/login` |
-| Zentrale Services | `services/game-state.service.ts`, `services/content.service.ts`, `services/progress.service.ts`, `services/progress.rules.ts`, `services/run-store.service.ts`, `services/savegame.service.ts`, `services/narration.service.ts`, `services/auth.service.ts` | Aktive Welt/Profil/Lernstufe, JSON-Content lesen, Fortschritt im Browser-Speicher + Freischaltregeln als reine Funktionen (ADR-006), der eine angefangene Lauf im Browser-Speicher (Phase 6), Speichern/Laden, Vorlesemodus + Sprachausgabe, angemeldeter Benutzer (Sitzung selbst bleibt im HttpOnly-Cookie). **`ContentService` ist die einzige Ladestelle für Content** — dort hängt später der Offline-Cache (Meilenstein 6) |
+| Routing | `routing/` | `world-config.resolver.ts` lädt die Welt-Konfiguration zentral für jede `theme/:themeId/…`-Route, setzt die aktive Welt und schreibt sie bei echtem Wechsel ins aktive Profil; `difficulty-chosen.guard.ts` schickt ohne gewählte Lernstufe auf die Lernstufen-Auswahl zurück; `profile-chosen.guard.ts` schickt ohne aktives Profil auf `/profiles` zurück (wartet dafür einmal auf `ProfileService.ensureLoaded()`); `auth.guard.ts` schickt ohne Sitzung auf `/login` (wartet dafür einmal auf `AuthService.restoreSession()`); `session-expired.interceptor.ts` fängt ein `401` aus jedem Aufruf ab und schickt ebenfalls auf `/login` |
+| Zentrale Services | `services/game-state.service.ts`, `services/content.service.ts`, `services/progress.service.ts`, `services/progress.rules.ts`, `services/run-store.service.ts`, `services/savegame.service.ts`, `services/narration.service.ts`, `services/auth.service.ts`, `services/profile.service.ts` | Aktive Welt/Profil-ID/Lernstufe (Profil-ID im Browser-Speicher, überlebt Neuladen), JSON-Content lesen, Fortschritt im Browser-Speicher + Freischaltregeln als reine Funktionen (ADR-006), der eine angefangene Lauf im Browser-Speicher (Phase 6), Speichern/Laden, Vorlesemodus + Sprachausgabe, angemeldeter Benutzer (Sitzung selbst bleibt im HttpOnly-Cookie), Profilliste des Accounts (laden, anlegen, ändern, löschen, wählen). **`ContentService` ist die einzige Ladestelle für Content** — dort hängt später der Offline-Cache (Meilenstein 6) |
 | Content-Typen | `models/` | TypeScript-Abbild des JSON-Schemas (`content.types.ts`), der Ladezustände (`game-state.types.ts`) und der Anmeldung/Profile (`auth.types.ts`) |
 | Design-Tokens | `frontend/src/styles/` | `_tokens.scss` (Farben, Schrift, Abstände, Radien, Kartenmaße), `_fonts.scss` und `_motion.scss` (Bildfolgen, die mehrere Komponenten teilen); global über `src/styles.scss` eingebunden |
 
@@ -58,7 +58,9 @@ zwei Statistik-Karten aus dem Lauf — noch keine Erfolge, kein Karten-Banner),
 `ui/hud/` (inkl. Modus-Umschalter + Ton-Knopf), `ui/content-error/`,
 `ui/read-aloud-button/`, `services/narration.service.ts`, `features/auth/`
 (Anmeldebildschirm, `services/auth.service.ts`, `routing/auth.guard.ts`,
-`routing/session-expired.interceptor.ts`), `routing/`,
+`routing/session-expired.interceptor.ts`), `features/profile/`
+(Profilauswahl mit Anlegen/Löschen, `services/profile.service.ts`,
+`routing/profile-chosen.guard.ts`), `routing/`,
 `services/`, `models/` und `styles/`. Alle übrigen Zeilen sind Soll-Zustand
 für spätere Meilensteine.
 
@@ -67,15 +69,17 @@ für spätere Meilensteine.
 | Adresse | Screen |
 |---|---|
 | `login` | Anmeldebildschirm (`features/auth/login.ts`), ohne Wächter |
+| `profiles` | Profilauswahl (`features/profile/profile.ts`), nur `authGuard` |
 | `` (leer) | Planetenkarte (`features/main-hub/`) |
 | `theme/:themeId/level` | Lernstufen-Auswahl (`features/main-hub/level-select/`) |
 | `theme/:themeId/timeline` | Etappenkarte (`features/timeline/`) |
 | `theme/:themeId/map/:mapId` | Ortskarte (`features/map/`) |
 | `theme/:themeId/episode/:episodeId` | Episode, spielt die Eventliste ab (`features/episode/`) |
 
-Alle Routen außer `login` verlangen `authGuard`; alle vier `theme/…`-Routen
-laden zusätzlich die Welt-Konfiguration über `worldConfigResolver`, alle außer
-der Lernstufen-Route zusätzlich `difficultyChosenGuard`.
+Alle Routen außer `login` und `profiles` verlangen `authGuard` **und**
+`profileChosenGuard`; die vier `theme/…`-Routen laden zusätzlich die
+Welt-Konfiguration über `worldConfigResolver`, alle außer der
+Lernstufen-Route zusätzlich `difficultyChosenGuard`.
 
 ## Backend (`backend/src/`)
 
@@ -99,10 +103,12 @@ JSON-Leser für den Anfragekörper, `SessionCookie.php` für das Sitzungs-Cookie
 `qst_session`), `Exceptions/`, `Database/`, `Middleware/`,
 `Controllers/HealthController.php`, `Controllers/MigrateController.php`,
 `Controllers/ContentController.php`, `Controllers/AuthController.php`,
-`Controllers/SetupController.php`, `Services/ContentService.php`,
+`Controllers/SetupController.php`, `Controllers/ProfileController.php`,
+`Services/ContentService.php`,
 `Services/ContentFileService.php`, `Services/AuthService.php`,
-`Repositories/UserRepository.php`, `Validators/LoginValidator.php`,
-`Validators/CreateUserValidator.php`,
+`Repositories/UserRepository.php`, `Repositories/ProfileRepository.php`,
+`Validators/LoginValidator.php`,
+`Validators/CreateUserValidator.php`, `Validators/ProfileValidator.php`,
 `Migrations/` (7 Tabellen in 8 Schritten unter `sql/`, `MigrationRunner.php`, plus
 `backend/bin/migrate.php` als CLI-Hülle für den Fall eines späteren lokalen/
 Fernzugriff-Tests) und der Einstiegspunkt. `backend/bin/create-user.php` legt

@@ -4,11 +4,11 @@
 [Nutzerverwaltung & Spielstand, Meilenstein 4](docs/planning/2026-08-17_nutzerverwaltung-und-spielstand/README.md)
 — 9 Phasen, freigegeben am 17.08.2026.
 
-**Phase:** 3/9 — Anmeldebildschirm im Frontend (complete)
+**Phase:** 4/9 — Spielerprofile (complete)
 
-**Nächster Schritt:** Phase 4 (Spielerprofile) —
-[phase-4-profile.md](docs/planning/2026-08-17_nutzerverwaltung-und-spielstand/phase-4-profile.md).
-Rating „standard".
+**Nächster Schritt:** Phase 5 (Spielstand-Schnittstelle) —
+[phase-5-savegame.md](docs/planning/2026-08-17_nutzerverwaltung-und-spielstand/phase-5-savegame.md).
+Rating „heikel" — `opusplan` empfohlen.
 
 **Vor dem nächsten echten Test auf dem Server nötig:** einmal `deploy.cmd`
 laufen lassen (bringt `SETUP_TOKEN` in `backend/.env` und die neue
@@ -18,10 +18,16 @@ in
 [phase-2-tuersteher.md](docs/planning/2026-08-17_nutzerverwaltung-und-spielstand/phase-2-tuersteher.md)
 ganz unten.
 
-**Zuletzt abgeschlossen:** Phase 3 — Anmeldebildschirm (`/login`), `AuthService`
-mit Sitzungs-Signal, `authGuard` vor allen Routen außer `/login`, ein globaler
-Interceptor wirft bei jedem `401` auf den Anmeldebildschirm. `ng build` und
-`ng lint` grün; gegen den Server noch nicht getestet (lokal keine
+**Zuletzt abgeschlossen:** Phase 4 — Spielerprofile: `ProfileRepository`,
+`ProfileValidator`, `ProfileController` mit den vier Aufrufen aus dem
+Kontrakt; `ProfileService` (Liste als Signal, laden/anlegen/ändern/löschen/
+wählen), `GameStateService.activeProfileId` (überlebt Neuladen über
+`questoria.profile.v1`), `profileChosenGuard` vor Planetenkarte und allen
+`theme/…`-Routen, Screen `features/profile/` nach dem Prototyp-Screen `login`
+(Profilkarten, „Neues Profil", Lösch-Bestätigung als `<dialog>`). Lernstufe
+und Welt wandern beim Wechseln automatisch ins Profil. 6 Platzhalter-Avatare
+unter `frontend/public/avatars/`. `ng build` und `ng lint` sowie der
+PHP-Linter grün; gegen den Server noch nicht getestet (lokal keine
 Datenbankverbindung).
 
 **Merkposten:** PHP/Composer liegen unter `C:\Users\sasch\develop\.tools\`
