@@ -22,7 +22,8 @@ werden daraus Routen/Features (siehe [code-map.md](../code-map.md)):
 
 | Screen im Prototyp | Feature | Inhalt |
 |---|---|---|
-| `login` | `features/profile/` | Profilauswahl, 3 Demo-Profile + „Neues Profil" |
+| *(kein Prototyp-Screen)* | `features/auth/` | Echter Anmeldebildschirm (E-Mail/Passwort) — kommt vor der Profilauswahl, freihändig gebaut aus vorhandenen Tokens, siehe Abweichung 9 |
+| `login` | `features/profile/` | Profilauswahl, 3 Demo-Profile + „Neues Profil" — der Prototyp-Name ist irreführend: das ist die Profilwahl, **nicht** die Anmeldung (siehe Abweichung 9) |
 | `hub` | `features/main-hub/` | Planetenkarte mit den installierten Themenwelten |
 | `level` | `features/main-hub/level-select/` | Lernstufen-Auswahl (Matrose/Navigator/Kapitän) — eigener Screen unter derselben Feature-Wurzel |
 | `timeline` | `features/timeline/` | Etappenkarte der Story-Arcs, Sterne pro Etappe |

@@ -41,7 +41,9 @@ Spielstand. Neue Abenteuer entstehen durch Content, nicht durch Backend-Logik
 - **Sammelkarten als Belohnung:** freispielen, in einer Trophäenhalle ansehen,
   auswählen und maßstabsgetreu auf DIN A4 ausdrucken (63 × 88 mm, 3×3 pro Bogen)
 - Lernstufen-Filterung, datengetrieben — keine Klassenstufen fest im Code
-- Nutzerverwaltung: Accounts, mehrere Spielerprofile pro Account, Login
+- Nutzerverwaltung: Accounts, mehrere Spielerprofile pro Account, Login. Kein
+  Registrierungs-UI — Accounts legt ausschließlich der Betreiber an
+  ([docs/knowledge/erster-account.md](knowledge/erster-account.md))
 - Spielstände: Speichern, Laden, Fortschritt, Achievements, Statistiken
 - Content-Repository als von Hand geschriebene, versionierte JSON-Dateien im
   Git-Repo (`data/themes/<theme_id>/...`), LLM-gestützt über das
@@ -125,7 +127,7 @@ der Praxis bewährt hat (Meilenstein 6+).
    und `reward`. Dazu der Vorlesemodus vollständig: der globale Umschalter
    „Bilder & Vorlesen" / „Selbst lesen", Sprachausgabe, Textfassungs-Auswahl und
    Bildantworten. Am Ende dieses Meilensteins ist eine Episode durchspielbar.
-4. **Nutzerverwaltung & Spielstand** — Login, Profile, Savegame-API,
+4. **Nutzerverwaltung & Spielstand** — abgeschlossen (18.08.2026). Login, Profile, Savegame-API,
    Achievements, Statistiken. Das verbindliche DB-Schema (7 Tabellen: `users`,
    `player_profiles`, `savegames`, `achievements`, `player_achievements`,
    `statistics`, `schema_migrations`) liegt bereits als rohes SQL unter

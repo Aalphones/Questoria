@@ -10,11 +10,54 @@
     <span class="hud__world-title">{{ title }}</span>
   }
 
-  <span class="hud__profile">
-    <!-- Runder Platzhalter-Punkt: echte Profile kommen mit Meilenstein 4. -->
-    <span class="hud__profile-avatar" aria-hidden="true"></span>
-    Gast
-  </span>
+  <div class="hud__profile" #profileWrapper>
+    <button
+      type="button"
+      #profileButton
+      class="hud__profile-trigger"
+      aria-haspopup="menu"
+      [attr.aria-expanded]="profileMenuOpen()"
+      (click)="toggleProfileMenu()"
+    >
+      @if (activeProfile(); as profile) {
+        <span class="hud__profile-avatar" aria-hidden="true">
+          @if (profile.avatar !== null && !avatarFailed()) {
+            <img
+              class="hud__profile-avatar-image"
+              [src]="profile.avatar"
+              alt=""
+              (error)="markAvatarFailed()"
+            />
+          }
+        </span>
+        {{ profile.display_name }}
+      } @else {
+        <span class="hud__profile-avatar" aria-hidden="true"></span>
+        Gast
+      }
+    </button>
+
+    @if (profileMenuOpen()) {
+      <div class="hud__profile-menu" role="menu">
+        <a
+          class="hud__profile-menu-item"
+          role="menuitem"
+          routerLink="/profiles"
+          (click)="closeProfileMenu()"
+        >
+          Profil wechseln
+        </a>
+        <button
+          type="button"
+          class="hud__profile-menu-item"
+          role="menuitem"
+          (click)="logout()"
+        >
+          Abmelden
+        </button>
+      </div>
+    }
+  </div>
 
   @if (levelLink(); as link) {
     <a

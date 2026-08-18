@@ -45,7 +45,7 @@ Diese Punkte sind Vorgabe, nicht Ermessen des Umsetzers:
 | 6 | [Fortschritt zieht um](phase-6-fortschritt-umzug.md) | `ProgressService` + `RunStoreService` auf den Spielstand umstellen, alten Browser-Stand einmalig übernehmen | heikel | complete |
 | 7 | [Erfolge](phase-7-erfolge.md) | Content-Schema, Migration 010, `AchievementRepository`/`Controller`, Auswertung im Frontend, Erfolgs-Pille + Panel | heikel | complete |
 | 8 | [Statistiken](phase-8-statistiken.md) | `StatisticsRepository`/`Controller`, Aufsummieren am Episodenende, dritte Ergebnis-Kachel | standard | complete |
-| 9 | [Kopfleiste, Testwelt, Doku](phase-9-kopfleiste-und-doku.md) | Profil-Chip mit echtem Profil + Abmelden, Testwelt um Erfolge ergänzen, Doku-Abgleich | mechanisch | pending |
+| 9 | [Kopfleiste, Testwelt, Doku](phase-9-kopfleiste-und-doku.md) | Profil-Chip mit echtem Profil + Abmelden, Testwelt um Erfolge ergänzen, Doku-Abgleich | mechanisch | complete |
 
 ## Kontrakt: die Schnittstelle
 
@@ -201,20 +201,53 @@ unsichersten bin — dort zuerst hinsehen.
 
 ## Summary
 
-*(beim Archivieren füllen)*
+Meilenstein 4 abgeschlossen (18.08.2026): Login, Spielerprofile, Spielstand
+mit Puffer, Fortschritt am Profil statt am Browser, Erfolge, Statistiken und
+eine echte Kopfleiste mit Profil-Chip + Abmelden. Backend, Frontend und
+Content liegen live auf `questoria.info`, der erste echte Account ist
+angelegt und geprüft (Login `200`).
 
 ## Files touched
 
-*(beim Archivieren füllen)*
+Über alle 9 Phasen: `backend/src/Repositories/`, `backend/src/Controllers/`
+(Auth, Setup, Profile, Savegame, Achievement, Statistics), zugehörige
+Validatoren, Migrationen 005–011, `backend/public/content-gate.php`,
+`backend/dev-router.php`; Frontend `features/auth/`, `features/profile/`,
+`services/auth.service.ts`, `services/profile.service.ts`,
+`services/savegame.service.ts`, `services/achievement.service.ts`,
+`services/achievement.rules.ts`, `services/statistics.service.ts`,
+`routing/auth.guard.ts`, `routing/profile-chosen.guard.ts`,
+`routing/session-expired.interceptor.ts`, `ui/hud/`, `features/result/`,
+`features/main-hub/`; Content-Schema (`achievements[]` in
+`world_config.json`), Testwelt `dev_fixture`; Doku (`docs/PROJECT.md`,
+`docs/code-map.md`, `docs/glossary.md`, `docs/design/README.md`,
+`AGENTS.md`, `docs/decisions/008-010`, `docs/knowledge/erster-account.md`).
+Vollständige Liste je Phase in den einzelnen Phasen-Dateien.
 
 ## Commits
 
-*(beim Archivieren füllen)*
+Ein Commit pro Phase auf `master` (privates Solo-Projekt, kein Feature-Branch
+— siehe Account-Profil). Letzter Commit dieses Plans folgt direkt nach der
+Archivierung.
 
 ## Deviations from plan
 
-*(beim Archivieren füllen)*
+- Phase 7: `ensureLoaded(profileId)` statt der in der Checkliste genannten
+  `refresh(profileId)` — Namenskonsistenz mit `SavegameService`.
+- Phase 7: Erfolge-Panel lädt `world_config.json` für alle installierten
+  Welten, nicht nur gestartete (AK 4 verlangt „alle Erfolge der Welten").
+- Phase 9: zwei zusätzliche Testwelt-Erfolge (`stars_total`,
+  `episode_perfect`) ergänzt, die die Checkliste nicht namentlich nannte —
+  nötig, damit die Testwelt tatsächlich alle vier Bedingungstypen abdeckt.
+- Phase 9: `SETUP_TOKEN` fehlte in `backend/.env.example` (Lücke aus Phase 2)
+  — nachgetragen.
 
 ## Follow-ups
 
-*(beim Archivieren füllen)*
+- Smoke-Checkliste (oben) steht noch aus — macht Sascha am Server.
+- Meilenstein 5 (Kartenbesitz) und Meilenstein 6 (Offline-Cache) haben je
+  eine offene Notiz in `FINDINGS.md`, die beim Start der jeweiligen Phase
+  gelesen werden muss.
+- `evaluateAchievements()` in `episode.ts` (Phase 7) ist nie gegen einen
+  echten Server-Neustart mitten im Puffer-Nachreichen geprüft worden — lokal
+  keine DB-Verbindung. Beim ersten echten Vorfall dort zuerst hinsehen.
