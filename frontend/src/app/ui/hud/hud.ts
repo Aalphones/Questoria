@@ -15,6 +15,7 @@ import { Router, RouterLink } from '@angular/router';
 
 import { PlayerProfile } from '../../models/auth.types';
 import { AuthService } from '../../services/auth.service';
+import { ContentService } from '../../services/content.service';
 import { GameStateService } from '../../services/game-state.service';
 import { NarrationService, ReadingMode } from '../../services/narration.service';
 import { ProfileService } from '../../services/profile.service';
@@ -44,6 +45,7 @@ export class Hud {
   private readonly profileService = inject(ProfileService);
   private readonly gameState = inject(GameStateService);
   private readonly authService = inject(AuthService);
+  private readonly content = inject(ContentService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -69,9 +71,15 @@ export class Hud {
     return this.profileService.profiles().find((profile) => profile.id === profileId) ?? null;
   });
 
+  protected readonly avatarUrl = computed<string | null>(() => {
+    const file = this.activeProfile()?.avatar ?? null;
+
+    return file === null ? null : this.content.avatarUrl(file);
+  });
+
   /** Wechselt der Avatar (anderes Profil, geändertes Bild), beginnt der Fehlerzustand neu. */
   protected readonly avatarFailed = linkedSignal<string | null, boolean>({
-    source: () => this.activeProfile()?.avatar ?? null,
+    source: () => this.avatarUrl(),
     computation: () => false,
   });
 

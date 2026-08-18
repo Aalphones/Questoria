@@ -6,6 +6,7 @@ deploy.env
 # Content-Ablage: Junction auf Google Drive (H:\Meine Ablage\U105_Questoria),
 # lebt außerhalb von Git — siehe AGENTS.md -> Content-Repository
 data/themes/
+data/avatars/
 
 # Frontend
 frontend/node_modules/

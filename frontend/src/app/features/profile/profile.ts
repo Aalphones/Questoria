@@ -4,6 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { AVAILABLE_AVATARS, PlayerProfile } from '../../models/auth.types';
+import { ContentService } from '../../services/content.service';
 import { ProfileService } from '../../services/profile.service';
 import { ImageSlot } from '../../ui/image-slot/image-slot';
 import { ReadAloudButton } from '../../ui/read-aloud-button/read-aloud-button';
@@ -31,6 +32,7 @@ export class ProfilePicker {
   private readonly router = inject(Router);
   private readonly formBuilder = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
+  protected readonly content = inject(ContentService);
 
   protected readonly spokenQuestion = SPOKEN_QUESTION;
   protected readonly avatars = AVAILABLE_AVATARS;

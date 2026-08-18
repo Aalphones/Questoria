@@ -21,13 +21,15 @@
     >
       @if (activeProfile(); as profile) {
         <span class="hud__profile-avatar" aria-hidden="true">
-          @if (profile.avatar !== null && !avatarFailed()) {
-            <img
-              class="hud__profile-avatar-image"
-              [src]="profile.avatar"
-              alt=""
-              (error)="markAvatarFailed()"
-            />
+          @if (avatarUrl(); as url) {
+            @if (!avatarFailed()) {
+              <img
+                class="hud__profile-avatar-image"
+                [src]="url"
+                alt=""
+                (error)="markAvatarFailed()"
+              />
+            }
           }
         </span>
         {{ profile.display_name }}

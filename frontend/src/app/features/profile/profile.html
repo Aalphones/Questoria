@@ -25,7 +25,10 @@
       @for (profile of profiles(); track profile.id) {
         <div class="profile-picker__card">
           <button type="button" class="profile-picker__avatar" (click)="selectProfile(profile)">
-            <qst-image-slot [src]="profile.avatar" [label]="profile.display_name" />
+            <qst-image-slot
+              [src]="profile.avatar === null ? null : content.avatarUrl(profile.avatar)"
+              [label]="profile.display_name"
+            />
           </button>
           <button type="button" class="profile-picker__pick" (click)="selectProfile(profile)">
             <span class="profile-picker__pick-name">{{ profile.display_name }}</span>
@@ -64,7 +67,7 @@
             @for (avatar of avatars; track avatar) {
               <label class="profile-picker__avatar-option">
                 <input type="radio" formControlName="avatar" [value]="avatar" />
-                <qst-image-slot [src]="avatar" label="Bild" />
+                <qst-image-slot [src]="content.avatarUrl(avatar)" label="Bild" />
               </label>
             }
           </div>

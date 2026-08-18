@@ -11,6 +11,7 @@ Alle Prompt-Vorlagen für Questoria-Grafik an einer Stelle. Platzhalter in
 | [MAPS.md](MAPS.md) | Planetenkarte, Etappenkarte, Ortskarte |
 | [CARDS.md](CARDS.md) | Sammelkarten — Rahmen und Kartenmotiv |
 | [ANSWER_IMAGES.md](ANSWER_IMAGES.md) | Bildantworten für den Vorlesemodus |
+| [AVATARS.md](AVATARS.md) | Profil-Avatare — welt-unabhängige Bildauswahl bei der Profilanlage |
 
 Wo die Dateien landen und in welchem Format: [ASSET_REQUIREMENTS.md](../ASSET_REQUIREMENTS.md).
 

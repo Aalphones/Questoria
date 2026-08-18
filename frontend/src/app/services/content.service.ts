@@ -79,4 +79,9 @@ export class ContentService {
   hubAssetUrl(file: string): string {
     return `/content/hub/${file}`;
   }
+
+  /** Profil-Avatar aus der festen Auswahl (`AVAILABLE_AVATARS`), nicht an eine Welt gebunden. */
+  avatarUrl(file: string): string {
+    return `/content/avatars/${file}`;
+  }
 }

@@ -175,7 +175,27 @@ Ein passender Prompt für Kartenrahmen und Kartenmotiv liegt in
 | Dateiname | frei wählbar, steht als `icon` in `achievements[]` (Schema-Referenz Abschnitt 2) |
 | Inhalt | ein einzelnes, kompaktes Motiv — die Engine schneidet das Icon zur Raute zu, wichtige Teile mittig halten |
 
-## 7. Bildantworten (Vorlesemodus)
+## 7. Profil-Avatare
+
+Anders als die Punkte 1–6: **nicht pro Welt**, sondern eine gemeinsame Auswahl
+für die Profilanlage. Liegen deshalb nicht unter `data/themes/<theme_id>/`,
+sondern eigenständig unter `data/avatars/` (selbe Drive-Ablage, eigene
+NTFS-Junction — siehe `AGENTS.md` → Content-Repository).
+
+| Eigenschaft | Vorgabe |
+|---|---|
+| Format | `.png` mit Alpha-Kanal (echte Transparenz) — Ausnahme die sechs alten Platzhalter, die bleiben `.svg` |
+| Seitenverhältnis | quadratisch, Ausgabegröße **512 × 512 px** |
+| Dateiname | `avatar_<slug>.png`, Slug in `snake_case` ohne Umlaute, frei wählbar |
+| Inhalt | Brustporträt einer Figur, mittig, blickt zur Kamera — die Oberfläche schneidet quadratisch zum Kreis zu (CSS `object-fit: cover`), Details also nicht zu nah an die Ecken |
+| Stil | konsistent über alle Avatare hinweg, siehe Master-Prompt |
+
+Neue Datei nach `data/avatars/` legen, Dateiname in `AVAILABLE_AVATARS`
+(`frontend/src/app/models/auth.types.ts`) ergänzen — fertig. Kein Build-Schritt,
+kein Deploy-Sonderfall: `deploy.cmd content` synct `data/` ohnehin komplett.
+Prompt-Vorlage: [image-prompts/AVATARS.md](image-prompts/AVATARS.md).
+
+## 8. Bildantworten (Vorlesemodus)
 
 Für Kinder, die noch nicht lesen, zeigt jedes `multiple_choice`-Event ein Bild
 über jeder Antwort. Ohne diese Bilder rät das Kind.

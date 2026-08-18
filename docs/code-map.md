@@ -151,6 +151,7 @@ für spätere Phasen.
 | `data/_authoring/` | LLM-Prompt-Toolkit + Schema-Referenz — kein Runtime-Code |
 | `data/main_hub.json` | Installierte Welten für die Planetenkarte — ausgeliefert über `GET /api/content/themes` |
 | `data/hub/` | Bilder der Planetenkarte (Hintergrund), ausgeliefert über `GET /content/hub/<datei>` |
+| `data/avatars/` | Profil-Avatare, Drive-Junction wie `data/themes/`, ausgeliefert über `GET /content/avatars/<datei>` — Auswahl in `AVAILABLE_AVATARS` (`frontend/src/app/models/auth.types.ts`) |
 | `data/themes/<theme_id>/world_config.json` | Lernstufen, Etappenkarte, Ortskarten mit Node-Koordinaten, Erfolgs-Katalog (`achievements[]`, ADR-010) |
 | `data/themes/<theme_id>/cards.json` | Kartenformat + alle Sammelkarten der Welt |
 | `data/themes/<theme_id>/episodes/` | Eine Episode je Datei: Hintergrund + Eventliste (Dialoge inline) |

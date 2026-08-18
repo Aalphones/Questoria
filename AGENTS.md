@@ -79,6 +79,18 @@ denselben Weg (`.../themes/{themeId}/events/{eventId}` —
 [ADR-007](docs/decisions/007-ausgelagerte-events-ueber-die-schnittstelle.md));
 dieser eine Aufruf trägt alle Eventtypen, es kommt keiner pro Typ dazu.
 
+**Profil-Avatare** liegen aus demselben Grund neben `data/themes/` in derselben
+Drive-Ablage: `data/avatars/` ist eine eigene NTFS-Junction auf
+`H:\Meine Ablage\U105_Questoria\avatars`, ausgeliefert über
+`GET /content/avatars/<datei>` — technisch derselbe Mechanismus wie
+`data/hub/` (statische Datei hinter der Session-Weiche, kein Endpoint). Die
+feste Auswahl im Frontend (`AVAILABLE_AVATARS`, `models/auth.types.ts`) trägt
+nur noch Dateinamen; `ContentService.avatarUrl()` baut die Adresse. Neue
+Avatare kommen wie neue Welten hinzu: Datei nach Drive, Dateiname in
+`AVAILABLE_AVATARS` ergänzen — kein Build-Schritt nötig, `deploy.cmd content`
+synct `data/` ohnehin komplett (außer `_authoring/`). Prompt-Vorlage fürs
+Nachgenerieren: `data/_authoring/image-prompts/AVATARS.md`.
+
 ## Critical Rules
 
 1. **Content ist read-only über die API** — Schreibzugriff auf `data/themes/` gibt es nur direkt im Dateisystem (Drive-Ordner), nie über einen Endpoint.
