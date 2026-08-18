@@ -26,10 +26,8 @@ export interface PlayerProfile {
  * `qst-image-slot` den Farbkreis-Ersatz aus dem Mockup.
  */
 export const AVAILABLE_AVATARS: readonly string[] = [
-  'avatar-1.svg',
-  'avatar-2.svg',
-  'avatar-3.svg',
-  'avatar-4.svg',
-  'avatar-5.svg',
-  'avatar-6.svg',
+  'ladybug.png',
+  'bloom.png',
+  'einhorn.png',
+  'gabby.png'
 ];
