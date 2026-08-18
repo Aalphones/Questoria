@@ -4,11 +4,14 @@
 [Nutzerverwaltung & Spielstand, Meilenstein 4](docs/planning/2026-08-17_nutzerverwaltung-und-spielstand/README.md)
 — 9 Phasen, freigegeben am 17.08.2026.
 
-**Phase:** 4/9 — Spielerprofile (complete)
+**Phase:** 5/9 — Spielstand-Schnittstelle (complete)
 
-**Nächster Schritt:** Phase 5 (Spielstand-Schnittstelle) —
-[phase-5-savegame.md](docs/planning/2026-08-17_nutzerverwaltung-und-spielstand/phase-5-savegame.md).
-Rating „heikel" — `opusplan` empfohlen.
+**Nächster Schritt:** Phase 6 (Fortschritt zieht um) —
+[phase-6-fortschritt-umzug.md](docs/planning/2026-08-17_nutzerverwaltung-und-spielstand/phase-6-fortschritt-umzug.md).
+Rating „heikel" — `opusplan` empfohlen. Vorher die beiden neuen
+Phase-6-Einträge in
+[FINDINGS.md](docs/planning/2026-08-17_nutzerverwaltung-und-spielstand/FINDINGS.md)
+lesen.
 
 **Vor dem nächsten echten Test auf dem Server nötig:** einmal `deploy.cmd`
 laufen lassen (bringt `SETUP_TOKEN` in `backend/.env` und die neue
@@ -18,17 +21,19 @@ in
 [phase-2-tuersteher.md](docs/planning/2026-08-17_nutzerverwaltung-und-spielstand/phase-2-tuersteher.md)
 ganz unten.
 
-**Zuletzt abgeschlossen:** Phase 4 — Spielerprofile: `ProfileRepository`,
-`ProfileValidator`, `ProfileController` mit den vier Aufrufen aus dem
-Kontrakt; `ProfileService` (Liste als Signal, laden/anlegen/ändern/löschen/
-wählen), `GameStateService.activeProfileId` (überlebt Neuladen über
-`questoria.profile.v1`), `profileChosenGuard` vor Planetenkarte und allen
-`theme/…`-Routen, Screen `features/profile/` nach dem Prototyp-Screen `login`
-(Profilkarten, „Neues Profil", Lösch-Bestätigung als `<dialog>`). Lernstufe
-und Welt wandern beim Wechseln automatisch ins Profil. 6 Platzhalter-Avatare
-unter `frontend/public/avatars/`. `ng build` und `ng lint` sowie der
-PHP-Linter grün; gegen den Server noch nicht getestet (lokal keine
-Datenbankverbindung).
+**Zuletzt abgeschlossen:** Phase 5 — Spielstand-Schnittstelle:
+`SavegameRepository` (`allForProfile`, `upsert` über den eindeutigen Schlüssel),
+`SavegameValidator` (Version 1 Pflicht, 256-KB-Deckel, Zustand wortgetreu aus
+dem Rohtext statt aus dem dekodierten Körper), `SavegameController` mit den
+beiden Aufrufen aus dem Kontrakt, Migration 009 (Episode und Position dürfen
+leer sein). Im Frontend `savegame.types.ts` und `SavegameService` mit Puffer:
+lokaler Spiegel `questoria.savegame.v1` je Profil und Welt, offene Einträge
+gewinnen beim Laden gegen den Server und gehen beim nächsten Anlass erneut
+raus; die Profilauswahl ruft einmal `flushPending()`. Dazu `ADR-009`
+(Aufteilung des Spielstands) und der Ist-Stand in `docs/code-map.md`.
+Das Spielverhalten ist **unverändert** — Phase 6 hängt erst ein.
+`ng build`, `ng lint` und der PHP-Linter grün; gegen eine echte Datenbank
+nicht geprüft (lokal keine Verbindung).
 
 **Merkposten:** PHP/Composer liegen unter `C:\Users\sasch\develop\.tools\`
 (`php.cmd`/`composer.cmd`), nicht im Suchpfad des Benutzers. Ad-hoc-Testserver

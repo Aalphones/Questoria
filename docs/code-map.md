@@ -88,7 +88,7 @@ Struktur übernommen aus promptigofant (gleiches Muster, eigenes Repo):
 | Ordner | Zweck |
 |---|---|
 | `Controllers/` | HTTP-Endpunkte (Content-API, User-API, Savegame-API) |
-| `Services/` | Geschäftslogik. `ContentService` liest `data/` (Wurzel: `CONTENT_PATH` oder `DOCUMENT_ROOT/content`) — Welt, Episode und ausgelagerte Event-Datei; `ContentFileService` liefert aus derselben Wurzel die Dateien selbst aus (Bilder, Töne) samt Pfadprüfung und Zwischenspeicher-Köpfen; dazu später Savegame-Verwaltung und Auth |
+| `Services/` | Geschäftslogik. `ContentService` liest `data/` (Wurzel: `CONTENT_PATH` oder `DOCUMENT_ROOT/content`) — Welt, Episode und ausgelagerte Event-Datei; `ContentFileService` liefert aus derselben Wurzel die Dateien selbst aus (Bilder, Töne) samt Pfadprüfung und Zwischenspeicher-Köpfen; `AuthService` prüft Anmeldedaten und Sitzungs-Token. Spielstände brauchen keinen Dienst — sie gehen ungelesen durch Controller und Repository (ADR-009) |
 | `Repositories/` | MySQL-Zugriff (users, player_profiles, savegames, achievements, statistics) |
 | `Middleware/` | Herkunftssperre (`CorsMiddleware`) und Anmelde-Token (`JwtAuthMiddleware`) |
 | `Validators/` | Request-Validierung (respect/validation) |
@@ -104,12 +104,15 @@ JSON-Leser für den Anfragekörper, `SessionCookie.php` für das Sitzungs-Cookie
 `Controllers/HealthController.php`, `Controllers/MigrateController.php`,
 `Controllers/ContentController.php`, `Controllers/AuthController.php`,
 `Controllers/SetupController.php`, `Controllers/ProfileController.php`,
+`Controllers/SavegameController.php`,
 `Services/ContentService.php`,
 `Services/ContentFileService.php`, `Services/AuthService.php`,
 `Repositories/UserRepository.php`, `Repositories/ProfileRepository.php`,
+`Repositories/SavegameRepository.php`,
 `Validators/LoginValidator.php`,
 `Validators/CreateUserValidator.php`, `Validators/ProfileValidator.php`,
-`Migrations/` (7 Tabellen in 8 Schritten unter `sql/`, `MigrationRunner.php`, plus
+`Validators/SavegameValidator.php`,
+`Migrations/` (7 Tabellen in 9 Schritten unter `sql/`, `MigrationRunner.php`, plus
 `backend/bin/migrate.php` als CLI-Hülle für den Fall eines späteren lokalen/
 Fernzugriff-Tests) und der Einstiegspunkt. `backend/bin/create-user.php` legt
 einen Account an (dieselbe Einschränkung wie `migrate.php`: braucht eine

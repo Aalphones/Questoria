@@ -49,32 +49,32 @@ Unterbau, auf den Phase 6 umschaltet.
 
 ## Checkliste
 
-- [ ] `backend/src/Migrations/sql/009_savegames_nullable_position.sql`:
+- [x] `backend/src/Migrations/sql/009_savegames_nullable_position.sql`:
       `episode_id` und `node_id` auf `NULL` erlauben. Kommentarkopf wie in
       Migration 008 (warum eigene Datei statt Korrektur in 004).
-- [ ] `backend/src/Repositories/SavegameRepository.php`: `allForProfile`,
+- [x] `backend/src/Repositories/SavegameRepository.php`: `allForProfile`,
       `upsert` (`INSERT … ON DUPLICATE KEY UPDATE`). `game_state_json` als
       JSON-Text rein und raus — das Backend liest den Inhalt nicht.
-- [ ] `backend/src/Validators/SavegameValidator.php`: `state` muss ein Objekt
+- [x] `backend/src/Validators/SavegameValidator.php`: `state` muss ein Objekt
       mit `version: 1` sein; unbekannte Version → `422`. Größe deckeln
       (z.B. 256 KB), damit ein kaputter Client die Tabelle nicht sprengt.
-- [ ] `backend/src/Controllers/SavegameController.php`, Routen registrieren.
-- [ ] `frontend/src/app/models/savegame.types.ts`: `SavegameState`
+- [x] `backend/src/Controllers/SavegameController.php`, Routen registrieren.
+- [x] `frontend/src/app/models/savegame.types.ts`: `SavegameState`
       (`version`, `progress`, `run`, `settings`), `Savegame`. `ProgressStore`
       und `StoredRun` aus `game-state.types.ts` wiederverwenden statt neu zu
       erfinden.
-- [ ] `frontend/src/app/services/savegame.service.ts` nach den Puffer-Regeln:
+- [x] `frontend/src/app/services/savegame.service.ts` nach den Puffer-Regeln:
       `loadAll(profileId)`, `stateFor(themeId)`, `save(themeId, state, position)`,
       `flushPending()`. Lokaler Spiegel unter `questoria.savegame.v1`, Aufbau
       `{ [profileId]: { [themeId]: { state, episodeId, nodeId, pending: boolean } } }`.
       Ein beschädigter Eintrag wird verworfen statt geworfen — Muster:
       `run-store.service.ts`.
-- [ ] `flushPending()` beim Start der Anwendung einmal aufrufen (in der
+- [x] `flushPending()` beim Start der Anwendung einmal aufrufen (in der
       Profilauswahl, nachdem das Profil feststeht).
 
 ## Doku-Updates
 
-- [ ] `docs/decisions/009-spielstand-aufteilung.md` anlegen: Kontext (Schema
+- [x] `docs/decisions/009-spielstand-aufteilung.md` anlegen: Kontext (Schema
       liegt seit Meilenstein 1, Offline-Fähigkeit ist Meilenstein 6), Optionen
       (alles in einen JSON-Block / alles in eigene Spalten / gemischt),
       Entscheidung (Fortschritt, angefangener Lauf und Einstellungen im
@@ -82,8 +82,28 @@ Unterbau, auf den Phase 6 umschaltet.
       summiert und zeitgestempelt sind), Konsequenzen (das Backend kann den
       Spielstand nicht auswerten — gewollt; Versionsfeld für spätere
       Formatwechsel; die Puffer-Regeln oben sind Teil dieser Entscheidung).
-- [ ] `docs/code-map.md`: `services/savegame.service.ts`,
+- [x] `docs/code-map.md`: `services/savegame.service.ts`,
       `Repositories/SavegameRepository.php`, `Controllers/SavegameController.php`
       in den Ist-Stand.
 
 ## Report-Back
+
+**Status:** complete (18.08.2026)
+
+Gebaut wie geplant, ohne Abweichung vom Kontrakt. Zwei Dinge, die im Plan so
+nicht standen und beim Abschließen nachgezogen wurden:
+
+- `RequestBody` hat einen zweiten Zugang bekommen (`raw()`). Grund: PHP macht
+  beim Dekodieren aus einem leeren Objekt `{}` eine leere Liste `[]` — ein
+  Spielstand ohne Fortschritt käme so als kaputte Form in der Datenbank an. Der
+  Zustand wird deshalb aus dem Rohtext geschnitten, nicht aus dem dekodierten
+  Körper.
+- Die Herkunftssperre kannte `PUT` nicht (`CorsMiddleware`, erlaubte Methoden).
+  Der erste Spielstand-Aufruf aus einem anderen Ursprung wäre daran gescheitert.
+
+Offen bis Phase 6: `SavegameService` wird von nichts benutzt außer der
+Profilauswahl (dort nur `flushPending()`). Das ist so geplant — Phase 6 hängt
+`ProgressService` und `RunStoreService` ein.
+
+Nicht gegen eine echte Datenbank geprüft: lokal gibt es keine Verbindung
+(FINDINGS, Phase 2). `ng build`, `ng lint` und der PHP-Linter sind grün.

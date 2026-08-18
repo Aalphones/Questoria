@@ -7,6 +7,7 @@ use App\Controllers\ContentController;
 use App\Controllers\HealthController;
 use App\Controllers\MigrateController;
 use App\Controllers\ProfileController;
+use App\Controllers\SavegameController;
 use App\Controllers\SetupController;
 use App\Database\Connection;
 use App\Exceptions\ApiException;
@@ -99,6 +100,16 @@ $dispatcher = FastRoute\simpleDispatcher(static function (RouteCollector $routes
     $routes->addRoute('POST', '/api/profiles', [ProfileController::class, 'create']);
     $routes->addRoute('PATCH', '/api/profiles/{profileId}', [ProfileController::class, 'update']);
     $routes->addRoute('DELETE', '/api/profiles/{profileId}', [ProfileController::class, 'delete']);
+    $routes->addRoute(
+        'GET',
+        '/api/profiles/{profileId}/savegames',
+        [SavegameController::class, 'index'],
+    );
+    $routes->addRoute(
+        'PUT',
+        '/api/profiles/{profileId}/savegames/{themeId}',
+        [SavegameController::class, 'upsert'],
+    );
     $routes->addRoute('GET', '/api/content/themes', [ContentController::class, 'themes']);
     $routes->addRoute('GET', '/api/content/themes/{themeId}', [ContentController::class, 'world']);
     $routes->addRoute(

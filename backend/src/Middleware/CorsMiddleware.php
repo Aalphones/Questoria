@@ -8,7 +8,7 @@ use App\Http\JsonResponse;
 
 final class CorsMiddleware
 {
-    private const ALLOWED_METHODS = 'GET, POST, PATCH, DELETE, OPTIONS';
+    private const ALLOWED_METHODS = 'GET, POST, PUT, PATCH, DELETE, OPTIONS';
     private const ALLOWED_HEADERS = 'Content-Type, Authorization';
 
     /** @var list<string> */

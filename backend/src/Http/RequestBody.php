@@ -10,9 +10,9 @@ final class RequestBody
 {
     public static function json(): array
     {
-        $raw = file_get_contents('php://input');
+        $raw = self::raw();
 
-        if ($raw === false || $raw === '') {
+        if ($raw === '') {
             return [];
         }
 
@@ -23,5 +23,18 @@ final class RequestBody
         }
 
         return $decoded;
+    }
+
+    /**
+     * Der unveraenderte Anfragekoerper. Gebraucht ueberall dort, wo ein Stueck
+     * JSON wortgetreu weitergereicht wird: nach dem assoziativen Dekodieren
+     * sind ein leeres Objekt und eine leere Liste nicht mehr unterscheidbar,
+     * `{}` kaeme als `[]` zurueck (Spielstand, siehe SavegameValidator).
+     */
+    public static function raw(): string
+    {
+        $raw = file_get_contents('php://input');
+
+        return $raw === false ? '' : $raw;
     }
 }

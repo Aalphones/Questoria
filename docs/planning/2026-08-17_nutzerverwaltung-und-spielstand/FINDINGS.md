@@ -56,3 +56,11 @@ Abgehakt wird, sobald die Ziel-Phase die Erkenntnis aufgenommen hat.
   Stunde die richtige Größe ist und ob ein `ETag` dazukommen soll — `private`
   ist dabei nicht verhandelbar, sonst könnte ein gemeinsamer Zwischenspeicher
   die Bilder an Unangemeldete geben.
+- [ ] → Phase 6: `SavegameService.save()` verlangt ein aktives Profil und wirft
+  einen Stand ohne Profil-ID kommentarlos weg (nur eine Warnung in der Konsole).
+  Beim Umhängen von `ProgressService`/`RunStoreService` sicherstellen, dass die
+  einmalige Übernahme des alten Browser-Stands **nach** der Profilwahl läuft —
+  sonst verschwindet sie lautlos.
+- [ ] → Phase 6: Der Spiegel merkt sich pro Welt genau einen Stand, `run` ohne
+  Welt-Kennung (die steckt im Eintrag). `StoredRun` im Frontend trägt die
+  Welt-Kennung dagegen mit — beim Umhängen einmal umformen, nicht durchreichen.
