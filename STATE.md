@@ -4,14 +4,11 @@
 [Nutzerverwaltung & Spielstand, Meilenstein 4](docs/planning/2026-08-17_nutzerverwaltung-und-spielstand/README.md)
 — 9 Phasen, freigegeben am 17.08.2026.
 
-**Phase:** 5/9 — Spielstand-Schnittstelle (complete)
+**Phase:** 6/9 — Fortschritt zieht um (complete)
 
-**Nächster Schritt:** Phase 6 (Fortschritt zieht um) —
-[phase-6-fortschritt-umzug.md](docs/planning/2026-08-17_nutzerverwaltung-und-spielstand/phase-6-fortschritt-umzug.md).
-Rating „heikel" — `opusplan` empfohlen. Vorher die beiden neuen
-Phase-6-Einträge in
-[FINDINGS.md](docs/planning/2026-08-17_nutzerverwaltung-und-spielstand/FINDINGS.md)
-lesen.
+**Nächster Schritt:** Phase 7 (Erfolge) —
+[phase-7-erfolge.md](docs/planning/2026-08-17_nutzerverwaltung-und-spielstand/phase-7-erfolge.md).
+Rating „heikel" — `opusplan` empfohlen.
 
 **Vor dem nächsten echten Test auf dem Server nötig:** einmal `deploy.cmd`
 laufen lassen (bringt `SETUP_TOKEN` in `backend/.env` und die neue
@@ -21,19 +18,18 @@ in
 [phase-2-tuersteher.md](docs/planning/2026-08-17_nutzerverwaltung-und-spielstand/phase-2-tuersteher.md)
 ganz unten.
 
-**Zuletzt abgeschlossen:** Phase 5 — Spielstand-Schnittstelle:
-`SavegameRepository` (`allForProfile`, `upsert` über den eindeutigen Schlüssel),
-`SavegameValidator` (Version 1 Pflicht, 256-KB-Deckel, Zustand wortgetreu aus
-dem Rohtext statt aus dem dekodierten Körper), `SavegameController` mit den
-beiden Aufrufen aus dem Kontrakt, Migration 009 (Episode und Position dürfen
-leer sein). Im Frontend `savegame.types.ts` und `SavegameService` mit Puffer:
-lokaler Spiegel `questoria.savegame.v1` je Profil und Welt, offene Einträge
-gewinnen beim Laden gegen den Server und gehen beim nächsten Anlass erneut
-raus; die Profilauswahl ruft einmal `flushPending()`. Dazu `ADR-009`
-(Aufteilung des Spielstands) und der Ist-Stand in `docs/code-map.md`.
-Das Spielverhalten ist **unverändert** — Phase 6 hängt erst ein.
-`ng build`, `ng lint` und der PHP-Linter grün; gegen eine echte Datenbank
-nicht geprüft (lokal keine Verbindung).
+**Zuletzt abgeschlossen:** Phase 6 — Fortschritt und angefangener Lauf kommen
+jetzt aus dem Spielstand des aktiven Profils statt aus dem Browser-Speicher.
+`ProgressService` liest über eine neue Alle-Welten-Sicht `statesByTheme` des
+`SavegameService`, `RunStoreService` arbeitet auf `state.run` der aktiven Welt.
+Neu: `legacy-progress-import.ts` (holt `questoria.progress.v1`, löscht ihn und
+`questoria.run.v1`) — angewandt in `SavegameService.ensureLoaded()`, das der
+Profil-Wächter vor jedem geschützten Screen einmal je Profil aufruft.
+`progress.rules.ts` und alle vier Screen-Mappen sind unberührt (leerer Diff),
+damit hält die Zusage aus ADR-006; ADR-006 steht jetzt auf „abgelöst".
+`ng build` und `ng lint` grün; gegen eine echte Datenbank nicht geprüft
+(lokal keine Verbindung). Wackligste Stelle steht am Ende von
+`phase-6-fortschritt-umzug.md`.
 
 **Merkposten:** PHP/Composer liegen unter `C:\Users\sasch\develop\.tools\`
 (`php.cmd`/`composer.cmd`), nicht im Suchpfad des Benutzers. Ad-hoc-Testserver

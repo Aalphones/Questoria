@@ -5,7 +5,6 @@ import { Router } from '@angular/router';
 
 import { AVAILABLE_AVATARS, PlayerProfile } from '../../models/auth.types';
 import { ProfileService } from '../../services/profile.service';
-import { SavegameService } from '../../services/savegame.service';
 import { ImageSlot } from '../../ui/image-slot/image-slot';
 import { ReadAloudButton } from '../../ui/read-aloud-button/read-aloud-button';
 
@@ -29,7 +28,6 @@ const GENERIC_DELETE_ERROR = 'Das Profil konnte nicht gelöscht werden.';
 })
 export class ProfilePicker {
   private readonly profileService = inject(ProfileService);
-  private readonly savegameService = inject(SavegameService);
   private readonly router = inject(Router);
   private readonly formBuilder = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
@@ -69,9 +67,8 @@ export class ProfilePicker {
   selectProfile(profile: PlayerProfile): void {
     this.profileService.select(profile.id);
 
-    // Erst jetzt steht fest, wessen Stand gemeint ist: offene Einträge aus
-    // einer Sitzung mit totem Netz gehen hier auf die Reise (Plan Phase 5).
-    this.savegameService.flushPending();
+    // Den Stand holt der Wächter auf dem Weg zur Planetenkarte — dort läuft er
+    // auch dann zu Ende, wenn dieser Screen längst weg ist (Plan Phase 6).
     void this.router.navigateByUrl('/');
   }
 

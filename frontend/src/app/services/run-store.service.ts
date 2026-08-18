@@ -1,65 +1,95 @@
-import { DOCUMENT } from '@angular/common';
 import { Service, inject } from '@angular/core';
 
 import { StoredRun } from '../models/game-state.types';
-
-const STORAGE_KEY = 'questoria.run.v1';
+import { SavegameRun } from '../models/savegame.types';
+import { GameStateService } from './game-state.service';
+import { SavegameService } from './savegame.service';
 
 /**
- * Ablage des einen angefangenen Laufs im Browser-Speicher — genau einer für
- * die ganze App, keiner pro Episode (Plan Phase 6, AK 1). Muster wie
- * `ProgressService`. Wird beim Umstieg auf die Savegame-Schnittstelle
- * (Meilenstein 4) getauscht, siehe FINDINGS.md.
+ * Der eine angefangene Lauf — seit Meilenstein 4 im Spielstand der aktiven
+ * Welt statt im Browser-Speicher (ADR-009). Dort hängt er schon an einer Welt
+ * und trägt deren Kennung nicht mit; `StoredRun` behält sie für die Aufrufer
+ * in `features/episode/`, abgeleitet wird sie aus der aktiven Welt.
  */
 @Service()
 export class RunStoreService {
-  private readonly localStorage = inject(DOCUMENT).defaultView?.localStorage;
+  private readonly savegame = inject(SavegameService);
+  private readonly gameState = inject(GameStateService);
 
   load(): StoredRun | null {
-    const raw = this.localStorage?.getItem(STORAGE_KEY);
+    const themeId = this.gameState.activeThemeId();
 
-    if (raw === null || raw === undefined) {
+    if (themeId === null) {
       return null;
     }
 
-    try {
-      return parseStoredRun(JSON.parse(raw));
-    } catch {
+    const run = this.savegame.stateFor(themeId).run;
+
+    if (run === null) {
+      return null;
+    }
+
+    if (!isCompleteRun(run)) {
       // Ein kaputter Eintrag darf die App nicht blockieren — die Episode
-      // startet stattdessen normal (Plan AK 7).
-      console.warn('Angefangener Lauf im Browser-Speicher ist beschädigt, verwerfe ihn.');
+      // startet stattdessen normal (Meilenstein 3, Plan AK 7).
+      console.warn('Angefangener Lauf im Spielstand ist beschädigt, verwerfe ihn.');
       this.clear();
       return null;
     }
+
+    return { themeId, ...run };
   }
 
   save(run: StoredRun): void {
-    this.localStorage?.setItem(STORAGE_KEY, JSON.stringify(run));
+    this.writeRun(run.themeId, {
+      episodeId: run.episodeId,
+      eventIndex: run.eventIndex,
+      scoredCount: run.scoredCount,
+      correctFirstTryCount: run.correctFirstTryCount,
+    });
   }
 
   clear(): void {
-    this.localStorage?.removeItem(STORAGE_KEY);
+    const themeId = this.gameState.activeThemeId();
+
+    if (themeId === null) {
+      return;
+    }
+
+    this.writeRun(themeId, null);
+  }
+
+  private writeRun(themeId: string, run: SavegameRun | null): void {
+    const state = this.savegame.stateFor(themeId);
+
+    // Der Episoden-Screen räumt an mehreren Stellen auf; ohne diese Bremse
+    // ginge jedes Mal ein unveränderter Spielstand auf die Reise.
+    if (state.run === null && run === null) {
+      return;
+    }
+
+    const position = this.savegame.positionFor(themeId);
+
+    this.savegame.save(
+      themeId,
+      { ...state, run },
+      {
+        episodeId: run?.episodeId ?? position?.episodeId ?? null,
+        nodeId: position?.nodeId ?? null,
+      },
+    );
   }
 }
 
-function parseStoredRun(value: unknown): StoredRun {
-  const parsed = value as Partial<StoredRun>;
-
-  if (
-    typeof parsed.themeId !== 'string' ||
-    typeof parsed.episodeId !== 'string' ||
-    typeof parsed.eventIndex !== 'number' ||
-    typeof parsed.scoredCount !== 'number' ||
-    typeof parsed.correctFirstTryCount !== 'number'
-  ) {
-    throw new Error('malformed stored run');
-  }
-
-  return {
-    themeId: parsed.themeId,
-    episodeId: parsed.episodeId,
-    eventIndex: parsed.eventIndex,
-    scoredCount: parsed.scoredCount,
-    correctFirstTryCount: parsed.correctFirstTryCount,
-  };
+/**
+ * Der Spiegel prüft beim Einlesen nur die Hülle des Zustands — ob der Lauf
+ * darin vollständig ist, entscheidet sich erst hier.
+ */
+function isCompleteRun(run: SavegameRun): boolean {
+  return (
+    typeof run.episodeId === 'string' &&
+    typeof run.eventIndex === 'number' &&
+    typeof run.scoredCount === 'number' &&
+    typeof run.correctFirstTryCount === 'number'
+  );
 }

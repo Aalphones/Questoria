@@ -50,37 +50,74 @@ unberührt. Dasselbe für den angefangenen Lauf.
 
 ## Checkliste
 
-- [ ] `ProgressService` umbauen: Datenquelle ist `SavegameService`, nicht mehr
+- [x] `ProgressService` umbauen: Datenquelle ist `SavegameService`, nicht mehr
       `localStorage`. Öffentliche Methoden (`isEpisodeCompleted`, `starsFor`,
       `completeEpisode`, `resetTheme`) behalten Namen **und** Signatur.
       Der Stern-Vergleich bleibt wortgleich erhalten.
-- [ ] `RunStoreService` umbauen: `load`/`save`/`clear` arbeiten auf
+- [x] `RunStoreService` umbauen: `load`/`save`/`clear` arbeiten auf
       `state.run` der aktiven Welt. Die Signatur bleibt, `StoredRun` bleibt.
       🟡 `StoredRun` trägt heute `themeId` **und** `episodeId`; im Spielstand
       hängt der Lauf schon an einer Welt. `themeId` im Typ belassen (die
       Aufrufer in `features/episode/` lesen ihn), beim Schreiben aus dem
       Schlüssel ableiten.
-- [ ] `frontend/src/app/services/legacy-progress-import.ts`: liest
+- [x] `frontend/src/app/services/legacy-progress-import.ts`: liest
       `questoria.progress.v1`, gibt ihn als `ProgressStore` zurück, löscht den
       Schlüssel. Wird genau einmal aufgerufen — direkt nach der Profilwahl,
       nachdem `SavegameService.loadAll()` durch ist.
-- [ ] Aufrufstellen in `features/episode/`, `features/timeline/`,
+- [x] Aufrufstellen in `features/episode/`, `features/timeline/`,
       `features/map/`, `features/main-hub/` durchsehen: keine sollte sich
       ändern müssen. Muss doch eine — im Report-Back begründen, das wäre ein
       Bruch der ADR-006-Zusage.
-- [ ] `questoria.run.v1` (alter Schlüssel des angefangenen Laufs) beim Umzug
+- [x] `questoria.run.v1` (alter Schlüssel des angefangenen Laufs) beim Umzug
       löschen, ohne Übernahme — ein halb gespielter Lauf ist es nicht wert,
       und ein doppelter Wiedereinstiegs-Dialog verwirrt mehr, als er rettet.
 
 ## Doku-Updates
 
-- [ ] `docs/decisions/006-fortschritt-vor-der-nutzerverwaltung.md`: Status auf
+- [x] `docs/decisions/006-fortschritt-vor-der-nutzerverwaltung.md`: Status auf
       „abgelöst" setzen mit Datum und Verweis auf ADR-009 und diese Phase. Die
       Datei nicht löschen — sie erklärt, warum es den Zwischenstand gab.
-- [ ] `docs/glossary.md`: Eintrag „Fortschritt" — der Halbsatz „bis Meilenstein
+- [x] `docs/glossary.md`: Eintrag „Fortschritt" — der Halbsatz „bis Meilenstein
       4 im Browser-Speicher" wird zur Vergangenheitsform, der angefangene Lauf
       liegt jetzt ebenfalls im Spielstand.
-- [ ] `docs/code-map.md`: die Beschreibung der zentralen Dienste nachziehen
+- [x] `docs/code-map.md`: die Beschreibung der zentralen Dienste nachziehen
       (kein „Browser-Speicher" mehr bei Fortschritt und Lauf).
 
 ## Report-Back
+
+**Status:** complete · 18.08.2026
+
+Fortschritt und angefangener Lauf kommen jetzt aus dem Spielstand des aktiven
+Profils. `progress.rules.ts` ist unangetastet (leerer Diff), und keine der vier
+Screen-Mappen musste angefasst werden — die Zusage aus ADR-006 hält. Der alte
+Browser-Stand zieht beim ersten Anmelden einmalig um, beide alten Schlüssel
+verschwinden dabei.
+
+### Abweichungen vom Plan
+
+- **Die Übernahme hängt nicht am Profil-Screen, sondern im Dienst.** Der Plan
+  sah den Aufruf „direkt nach der Profilwahl" vor. Genau dort geht er verloren:
+  die Profilauswahl navigiert sofort weiter, das Warten auf den Server stirbt
+  mit der Komponente. `SavegameService.ensureLoaded()` holt den Stand deshalb
+  selbst und übernimmt danach — aufgerufen vom Profil-Wächter, der vor jedem
+  geschützten Screen läuft. Nebengewinn: auch ein Neuladen in einem zweiten
+  Browser holt sich den Serverstand, nicht nur die erste Profilwahl.
+- **Übernommen wird nur nach einer geglückten Antwort des Servers.** Bei totem
+  Netz weiß niemand, ob das Profil längst einen Stand hat; die Übernahme würde
+  ihn überschreiben, sobald die Leitung wieder steht. Der alte Schlüssel bleibt
+  dann liegen und wird beim nächsten Versuch geholt.
+- **Die Profilauswahl ruft `flushPending()` nicht mehr selbst** (Phase 5). Der
+  Wächter macht mit `ensureLoaded()` mehr: Serverstand holen, zusammenführen,
+  offene Einträge nachschicken.
+- **Ein Aufrufer hat sich doch geändert:** `routing/profile-chosen.guard.ts`.
+  Kein Bruch der ADR-006-Zusage — die betrifft `progress.rules.ts` und die
+  Screens, und die sind unberührt. Der Wächter ist die einzige Stelle, die
+  „ein Profil ist gewählt" schon kennt und noch vor dem ersten Screen liegt.
+
+### Offene Wackelstelle
+
+`RunStoreService.load()` leitet die Welt aus `GameStateService.activeThemeId()`
+ab, weil der Lauf im Spielstand keine Welt-Kennung mehr trägt. Der Resolver
+setzt sie bei jeder Navigation in eine Welt — steht sie wider Erwarten doch
+einmal leer, bliebe die Weiterspielen-Frage stumm. Prüfung: Episode mittendrin
+verlassen, Seite neu laden, Episode erneut öffnen — die Frage muss kommen.

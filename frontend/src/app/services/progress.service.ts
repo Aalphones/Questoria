@@ -1,21 +1,35 @@
-import { DOCUMENT } from '@angular/common';
-import { Service, inject, signal } from '@angular/core';
+import { Service, computed, inject } from '@angular/core';
 
-import { ProgressStore } from '../models/game-state.types';
-
-const STORAGE_KEY = 'questoria.progress.v1';
+import { ProgressStore, ThemeProgress } from '../models/game-state.types';
+import { SavegameService } from './savegame.service';
 
 /**
- * Ablage des Fortschritts im Browser-Speicher. Bis Meilenstein 4 (Savegame-
- * Schnittstelle) die einzige Datenquelle — beim Umstieg wird genau diese
- * Datei getauscht, `progress.rules.ts` und die Screens bleiben unberührt
- * (ADR-006).
+ * Der Fortschritt aller Welten. Seit Meilenstein 4 kommt er aus dem Spielstand
+ * des aktiven Profils statt aus dem Browser-Speicher (ADR-009 löst ADR-006 ab)
+ * — die öffentliche Form ist dieselbe geblieben, `progress.rules.ts` und die
+ * Screens haben den Umzug nicht bemerkt.
  */
 @Service()
 export class ProgressService {
-  private readonly localStorage = inject(DOCUMENT).defaultView?.localStorage;
+  private readonly savegame = inject(SavegameService);
 
-  readonly store = signal<ProgressStore>(this.readStore());
+  /**
+   * Welten mit mindestens einer geschafften Episode. Ein Spielstand ohne
+   * Fortschritt bleibt draußen: die Planetenkarte liest diese Schlüssel als
+   * „hier wurde schon etwas geschafft", und eine bloß gewählte Lernstufe
+   * gehört nicht dazu.
+   */
+  readonly store = computed<ProgressStore>(() => {
+    const store: ProgressStore = {};
+
+    for (const [themeId, state] of Object.entries(this.savegame.statesByTheme())) {
+      if (Object.keys(state.progress).length > 0) {
+        store[themeId] = state.progress;
+      }
+    }
+
+    return store;
+  });
 
   isEpisodeCompleted(themeId: string, episodeId: string): boolean {
     return this.store()[themeId]?.[episodeId] !== undefined;
@@ -26,7 +40,7 @@ export class ProgressService {
   }
 
   completeEpisode(themeId: string, episodeId: string, stars: number): void {
-    const themeProgress = this.store()[themeId] ?? {};
+    const themeProgress = this.savegame.stateFor(themeId).progress;
     const existing = themeProgress[episodeId];
 
     // Ein zweiter, schlechterer Durchlauf darf ein Ergebnis nicht verschlechtern.
@@ -34,41 +48,24 @@ export class ProgressService {
       return;
     }
 
-    this.store.update((store: ProgressStore) => ({
-      ...store,
-      [themeId]: {
-        ...themeProgress,
-        [episodeId]: { stars, completedAt: existing?.completedAt ?? new Date().toISOString() },
-      },
-    }));
-    this.writeStore(this.store());
+    this.writeProgress(themeId, {
+      ...themeProgress,
+      [episodeId]: { stars, completedAt: existing?.completedAt ?? new Date().toISOString() },
+    });
   }
 
   resetTheme(themeId: string): void {
-    this.store.update((store: ProgressStore) =>
-      Object.fromEntries(Object.entries(store).filter(([id]) => id !== themeId)),
+    this.writeProgress(themeId, {});
+  }
+
+  private writeProgress(themeId: string, progress: ThemeProgress): void {
+    const state = this.savegame.stateFor(themeId);
+    const position = this.savegame.positionFor(themeId);
+
+    this.savegame.save(
+      themeId,
+      { ...state, progress },
+      position ?? { episodeId: null, nodeId: null },
     );
-    this.writeStore(this.store());
-  }
-
-  private readStore(): ProgressStore {
-    const raw = this.localStorage?.getItem(STORAGE_KEY);
-
-    if (raw === null || raw === undefined) {
-      return {};
-    }
-
-    try {
-      return JSON.parse(raw) as ProgressStore;
-    } catch {
-      // Ein kaputter Eintrag darf die App nicht blockieren — das Kind kommt
-      // sonst nicht mehr rein und niemand weiß warum.
-      console.warn('Fortschritt im Browser-Speicher ist beschädigt, setze zurück.');
-      return {};
-    }
-  }
-
-  private writeStore(store: ProgressStore): void {
-    this.localStorage?.setItem(STORAGE_KEY, JSON.stringify(store));
   }
 }

@@ -1,7 +1,7 @@
 import { DOCUMENT } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Service, inject, signal } from '@angular/core';
-import { Observable, map, tap } from 'rxjs';
+import { Service, computed, inject, signal } from '@angular/core';
+import { Observable, map, shareReplay, tap } from 'rxjs';
 
 import {
   EMPTY_SAVEGAME_STATE,
@@ -13,6 +13,7 @@ import {
   SavegameState,
 } from '../models/savegame.types';
 import { GameStateService } from './game-state.service';
+import { takeLegacyProgress } from './legacy-progress-import';
 
 const STORAGE_KEY = 'questoria.savegame.v1';
 
@@ -22,8 +23,9 @@ const STORAGE_KEY = 'questoria.savegame.v1';
  * die Reise. Klappt die Reise nicht, bleibt der Eintrag als offen markiert und
  * wird beim nächsten Anlass erneut geschickt.
  *
- * Diese Phase ändert noch kein Spielverhalten — `ProgressService` und
- * `RunStoreService` hängen erst in Phase 6 hier ein.
+ * Seit Phase 6 hängen `ProgressService` und `RunStoreService` hier ein — der
+ * Spielstand ist damit die einzige Quelle für Fortschritt und angefangenen
+ * Lauf, der Browser-Speicher nur noch der Puffer davor.
  */
 @Service()
 export class SavegameService {
@@ -35,6 +37,56 @@ export class SavegameService {
 
   /** Hält einen geglückten Versand davon ab, denselben Durchlauf erneut zu starten. */
   private flushing = false;
+
+  /** Ein Ladelauf je Profil und Sitzung — der Wächter fragt vor jedem Screen. */
+  private readonly loads = new Map<number, Observable<Savegame[]>>();
+
+  /**
+   * Der Zustand jeder Welt des aktiven Profils — die Datenquelle von
+   * `ProgressService`. Reaktiv: ein eintreffender Serverstand färbt sofort auf
+   * die Planetenkarte durch.
+   */
+  readonly statesByTheme = computed<Record<string, SavegameState>>(() => {
+    const profileId = this.gameState.activeProfileId();
+
+    if (profileId === null) {
+      return {};
+    }
+
+    const states: Record<string, SavegameState> = {};
+
+    for (const [themeId, entry] of Object.entries(this.mirror()[profileId] ?? {})) {
+      states[themeId] = entry.state;
+    }
+
+    return states;
+  });
+
+  /**
+   * Holt den Stand eines Profils genau einmal pro Sitzung und übernimmt danach
+   * einen etwaigen alten Browser-Stand (Plan Phase 6, AK 5). Antwortet der
+   * Server nicht, wird der Versuch vergessen statt gemerkt — beim nächsten
+   * Screenwechsel darf er erneut laufen.
+   */
+  ensureLoaded(profileId: number): Observable<Savegame[]> {
+    const running = this.loads.get(profileId);
+
+    if (running !== undefined) {
+      return running;
+    }
+
+    const load$ = this.loadAll(profileId).pipe(
+      tap({
+        next: () => this.adoptLegacyProgress(profileId),
+        error: () => this.loads.delete(profileId),
+      }),
+      shareReplay({ bufferSize: 1, refCount: false }),
+    );
+
+    this.loads.set(profileId, load$);
+
+    return load$;
+  }
 
   /**
    * Holt den Stand des Profils vom Server und legt ihn über den Spiegel.
@@ -150,6 +202,32 @@ export class SavegameService {
           // und geht beim nächsten Anlass erneut auf die Reise.
         },
       });
+  }
+
+  /**
+   * Übernimmt einen vor Meilenstein 4 im Browser gespielten Stand — einmalig,
+   * und nur für Welten, die dieses Profil noch nicht kennt (Plan Phase 6,
+   * AK 5/6). Die alten Schlüssel verschwinden in jedem Fall: ein liegen
+   * gebliebener Rest stünde sonst bei jedem Start erneut zur Debatte.
+   *
+   * Läuft bewusst nur nach einer **geglückten** Antwort des Servers. Bei totem
+   * Netz wüsste niemand, ob das Profil längst einen Stand hat — die Übernahme
+   * würde ihn überschreiben, sobald die Leitung wieder steht.
+   */
+  private adoptLegacyProgress(profileId: number): void {
+    for (const [themeId, progress] of Object.entries(takeLegacyProgress(this.localStorage))) {
+      if (this.mirror()[profileId]?.[themeId] !== undefined) {
+        continue;
+      }
+
+      this.writeEntry(profileId, themeId, {
+        state: { ...EMPTY_SAVEGAME_STATE, progress },
+        episodeId: null,
+        nodeId: null,
+        pending: true,
+      });
+      this.push(profileId, themeId);
+    }
   }
 
   private mergeFromServer(profileId: number, savegames: Savegame[]): void {

@@ -1,6 +1,6 @@
 # ADR-006: Fortschritt vor der Nutzerverwaltung
 
-**Status:** entschieden · 03.08.2026
+**Status:** abgelöst · entschieden 03.08.2026, abgelöst 18.08.2026 durch [ADR-009](009-spielstand-aufteilung.md) (siehe Nachtrag am Ende)
 
 ## Kontext
 
@@ -35,3 +35,16 @@ Speicherzugriff.
 - Beim Umstieg auf die Savegame-Schnittstelle in Meilenstein 4 wird genau
   `progress.service.ts` gegen eine Variante mit Backend-Zugriff getauscht —
   `progress.rules.ts` und alle Screens bleiben unberührt.
+
+## Nachtrag: abgelöst am 18.08.2026
+
+Meilenstein 4, Phase 6 hat den angekündigten Umstieg vollzogen. Der Fortschritt
+liegt jetzt im Spielstand des Profils ([ADR-009](009-spielstand-aufteilung.md)),
+der angefangene Lauf ebenfalls; `questoria.progress.v1` und `questoria.run.v1`
+gibt es nicht mehr — ein noch vorhandener Alt-Stand wird beim ersten Anmelden
+einmalig übernommen und dann gelöscht. Die Zusage aus den Konsequenzen ist
+eingehalten: getauscht wurden nur `progress.service.ts` und
+`run-store.service.ts`, `progress.rules.ts` und alle Screens blieben unberührt.
+
+Diese Entscheidung bleibt stehen, weil sie erklärt, warum es den Zwischenstand
+überhaupt gab.
