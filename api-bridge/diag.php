@@ -24,6 +24,16 @@ if ($expectedToken === '' || !hash_equals($expectedToken, $providedToken)) {
 
 header('Content-Type: application/json; charset=utf-8');
 
+// Reine Namensauflösung, getrennt vom eigentlichen Verbindungsaufbau (der
+// steckt hinter PDO::ATTR_TIMEOUT) — soll den Verdacht "DNS-Lookup für
+// DB_HOST ist langsam" belegen oder ausräumen, ohne selbst eine DB-Verbindung
+// zu öffnen. gethostbyname() liefert bei Fehlschlag den Eingabewert unveraendert
+// zurueck, deshalb der Vergleich statt eines einfachen Wahrheitswerts.
+$dbHost = $_ENV['DB_HOST'] ?? '';
+$dnsStart = microtime(true);
+$resolved = $dbHost === '' ? null : gethostbyname($dbHost);
+$dnsSeconds = round(microtime(true) - $dnsStart, 3);
+
 echo json_encode([
     'php_version' => PHP_VERSION,
     'extensions' => array_values(array_intersect(
@@ -37,4 +47,6 @@ echo json_encode([
     'upload_max_filesize' => ini_get('upload_max_filesize'),
     'document_root' => $_SERVER['DOCUMENT_ROOT'] ?? null,
     'script_name' => $_SERVER['SCRIPT_NAME'] ?? null,
+    'db_host_dns_seconds' => $dnsSeconds,
+    'db_host_resolved' => $resolved !== null && $resolved !== $dbHost,
 ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
