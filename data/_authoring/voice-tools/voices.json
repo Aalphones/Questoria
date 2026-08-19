@@ -27,6 +27,32 @@
     "speed": 0.95
   },
 
+  "//15": "Welt pokemon_lesen — Vorschlag, am Probelauf zu pruefen und ggf. zu tauschen.",
+
+  "prof_eich": {
+    "engine": "orpheus",
+    "voice": "Julian",
+    "speed": 0.95
+  },
+
+  "bisasam": {
+    "engine": "orpheus",
+    "voice": "Lina",
+    "speed": 1.0
+  },
+
+  "pikachu": {
+    "engine": "orpheus",
+    "voice": "Lea",
+    "speed": 1.05
+  },
+
+  "rattfratz": {
+    "engine": "orpheus",
+    "voice": "Felix",
+    "speed": 1.05
+  },
+
   "//13": "Beispiel fuer die schnelle Rohfassung ueber einen lokalen Kokoro-Server:",
   "//14": "python generate_kokoro.py --backend http --endpoint http://localhost:8880",
   "platzhalter": {

@@ -15,6 +15,10 @@ verstehen, plus fertige Prompts für Text- und Bildgenerierung.
 | `image-prompts/` | Bild-Prompt-Werkstatt: Modellwahl und Einstellungen plus Vorlagen für Hintergründe, Sprites, Karten, Sammelkarten und Bildantworten |
 | `voice-tools/` | Sprach-Werkstatt: Skripte, die aus den Dialogtexten lokal Sprachdateien erzeugen |
 
+Für das Erzeugen selbst gibt es drei Skills, die eine frische Sitzung ohne
+Vorwissen bedienen kann: `krea2-bilder` und `flux2-bilder` für die Bilder,
+`vertonung` für die Sprachausgabe einer Welt.
+
 ## Designentscheidungen, die hier verbindlich gelten
 
 - **Eine Episode ist eine Eventliste, sonst nichts.** Dialog, Rätsel,

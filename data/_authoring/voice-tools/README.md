@@ -8,6 +8,11 @@ Content-JSON. Kein Klickweg, kein Abo, kein Text-Copy-Paste.
 Das Gegenstück auf der Bildseite ist [image-prompts/](../image-prompts/) — dort
 Prompts für Bilder, hier Skripte für Stimmen.
 
+**Soll eine Welt vertont werden, ist der Skill `vertonung` der Einstieg** — er
+führt die fünf Schritte in der richtigen Reihenfolge, nennt die geprüften
+Kommandos und den Stand der Umgebung auf dieser Maschine. Diese Datei hier ist
+das Nachschlagewerk dahinter: Modellwahl, Herleitung, Rechtliches.
+
 | Datei | Wofür |
 |---|---|
 | [SETUP.md](SETUP.md) | Umgebung einrichten: Python, Grafikkartentreiber, Modelle laden |

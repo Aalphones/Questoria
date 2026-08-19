@@ -4,7 +4,9 @@
 
 **Das ist seit dem 19.08.2026 keine Handarbeit mehr.** Die lokale Bildmaschine wird über den MCP-Server `comfy` ferngesteuert, ein Agent erzeugt die Dateien selbst. Bedienung, Werte und drei bekannte Fallen: [data/_authoring/image-prompts/GENERATING.md](data/_authoring/image-prompts/GENERATING.md). Handwerk pro Modell: Skills `krea2-bilder` (Szenen, Karten, Motive) und `flux2-bilder` (Sprites, Referenzbilder). Voraussetzung ist jedes Mal, dass Comfy Desktop läuft.
 
-**Die Vertonung ist ebenfalls arbeitsbereit, gehört aber nicht zu Phase 2.** Skill `vertonung` führt durch Besetzen, Stimmprobe und Stapellauf; die Umgebung steht (`voice-tools/.venv-orpheus`, `HF_TOKEN` gesetzt, das deutsche Mehrstimmen-Modell liegt im Zwischenspeicher). 🟡 **Keine einzige Figur dieser Welt ist besetzt** — ein Trockenlauf über `pokemon_lesen` zeigt alle 16 Dialogzeilen auf der Rückfallstimme Julian, also Professor Eich, Bisasam, Pikachu und Rattfratz mit derselben Männerstimme. Vor dem ersten echten Lauf gehören die vier in `data/_authoring/voice-tools/voices.json`. Sprachausgabe ist optional: fehlt eine Datei, liest das Gerät die Zeile selbst vor.
+**Die Vertonung ist fertig — alle 16 Dialogzeilen dieser Welt sind gesprochen.** Erzeugt am 19.08.2026 mit dem Skill `vertonung`, Modell Orpheus deutsch, 0 Fehler: 16 mp3-Dateien unter `data/themes/pokemon_lesen/audio/voices/`, dazu 16 `audio_path`-Einträge in den drei Episodendateien — Datei und Verweis einzeln abgeglichen. Besetzung in `data/_authoring/voice-tools/voices.json`: Professor Eich → Julian, Bisasam → Lina, Pikachu → Lea, Rattfratz → Felix, Erzähler → Sophie. Sprachausgabe ist ohnehin optional: fehlt eine Datei, liest das Gerät die Zeile selbst vor.
+
+🟡 **Angehört hat das noch niemand.** Die Zahlen belegen, dass die Dateien da sind und das richtige Format haben (24 kHz mono) — ob die Stimmen zu den Figuren passen, entscheidet nur das Ohr. Gehört in die Runde von Phase 3. 🟡 Zweiter offener Punkt: `_default` steht auf **Julian**, derselben Stimme wie Professor Eich — jede künftig unbesetzte Figur klingt damit unbemerkt wie er. Jakob wäre frei und schon geprobt.
 
 ## Die beiden Blocker sind weg
 
