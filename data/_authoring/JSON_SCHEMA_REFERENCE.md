@@ -328,23 +328,28 @@ Reihenfolge im Spiel.
 So bleibt die Episode als Drehbuch lesbar, und die Aufgaben-Varianten bleiben
 wiederverwendbar — dieselbe Aufgabe kann in mehreren Episoden auftauchen.
 
-Ein ausgelagertes Event darf neben `ref` weitere Felder in `config` tragen, die
-**den Auftritt** betreffen und pro Episode unterschiedlich sein dürfen:
+Ein ausgelagertes Event trägt in `config` nur `ref` — mehr liest die Engine
+dort nicht:
 
 ```json
 {
   "type": "multiple_choice",
   "config": {
-    "ref": "kompass_001",
-    "music": "battle.mp3",
-    "background": "sturmsee.webp"
+    "ref": "kompass_001"
   }
 }
 ```
 
-Diese Felder ergänzen die Variante, sie überschreiben nichts aus ihr. Alles, was
-die **Aufgabe selbst** ausmacht (Frage, Antworten, Ziele), gehört in die
-ausgelagerte Datei — nie in die Episode.
+Alles, was die **Aufgabe selbst** ausmacht (Frage, Antworten, Ziele), gehört in
+die ausgelagerte Datei — nie in die Episode. Der Episoden-Hintergrund kommt
+ausschließlich aus dem Episode-Feld `background` oben, für die ganze Episode
+einheitlich — es gibt **keinen** Weg, ihn pro Event zu überschreiben (auch kein
+`music`-Feld für Auftritts-Ton). Beide Felder standen früher als Beispiel hier,
+ohne dass die Engine sie je gelesen hätte — entfernt am 19.08.2026, Fund aus
+dem ersten echten Content-Durchlauf
+([FINDINGS.md](../../docs/planning/2026-08-18_erste-echte-welt/FINDINGS.md)).
+Wer Auftritts-Varianten pro Episode braucht, plant das als eigenes
+Engine-Feature statt es hier erneut zu versprechen.
 
 **Regeln:**
 - Events werden strikt der Reihe nach abgespielt, keine Verzweigungen. (Ein

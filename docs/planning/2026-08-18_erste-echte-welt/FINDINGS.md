@@ -27,15 +27,16 @@ Abgearbeitete Zeilen abhaken, nicht löschen.
   lesende Wort steht nie in der Frage". Alternative wäre ein neues Feld
   `question_image` in der Aufgabenform plus Anpassung der Komponente.
 
-- [ ] → **Doku-Fehler, jetzt melden:** Das Schema (Abschnitt 4) verspricht,
-  dass eine Episode einem ausgelagerten Event Auftritts-Felder mitgeben darf —
-  Beispiel `"background": "sturmsee.webp"`. Die Episode-Ansicht liest den
-  Hintergrund aber ausschließlich aus `episode.background`
-  (`frontend/src/app/features/episode/episode.ts`, `backgroundUrl`); ein
-  `background` im Event-`config` wird zwar sauber durchgereicht
-  (`resolve-event-config.ts`), aber von niemandem angezeigt. Entweder die
-  Engine nachziehen oder das Beispiel aus dem Schema streichen. *(Nur
-  `background` geprüft, `music` nicht.)*
+- [x] → **jetzt geschlossen, Doku korrigiert (19.08.2026):** Das Schema
+  (Abschnitt 4) versprach, dass eine Episode einem ausgelagerten Event
+  Auftritts-Felder mitgeben darf — Beispiel `"background": "sturmsee.webp"`,
+  `"music": "battle.mp3"`. Beide waren tot: `episode.ts` (`backgroundUrl`)
+  liest den Hintergrund ausschließlich aus `episode.background`, ein
+  `music`-Feld liest im ganzen Frontend niemand (geprüft, kein Treffer). Kein
+  Content dieser Welt nutzte die Felder. Statt die Engine für ein
+  Content-Plan-Nebenbei nachzuziehen: Beispiel aus dem Schema gestrichen, die
+  Regel "Hintergrund kommt nur aus dem Episode-Feld, kein Pro-Event-Override"
+  jetzt explizit benannt.
 
 - [x] → **Phase 2:** *Geschlossen durch den `word_match`-Plan
   ([2026-08-18_wort-bild-paare.md](../2026-08-18_wort-bild-paare.md)).* Statt

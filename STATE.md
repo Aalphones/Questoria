@@ -18,7 +18,11 @@
 
 Der Rest der Spielrunden-Befunde (Vollbild-Planetenkarte mit Pfad, Lernstufen-Grafiken, Bildsuche-Layout, „Ort geschafft"-Screen, generelles Vollbild ohne Scrollen) ist **am 19.08.2026 aufgeplant**: [docs/planning/2026-08-19_ui-umbau-vollbild/](docs/planning/2026-08-19_ui-umbau-vollbild/README.md), fünf Phasen, startet direkt nach Abschluss von Phase 3. Die gemeinsame Ursache ist belegt und nicht mehr Vermutung: `app.html` ist nur ein `<router-outlet />`, `app.scss` ist leer, `styles.scss` gibt `body` keine Höhe — es gibt schlicht keine Bühne, auf der ein Screen stehen könnte, also rollt der Browser die ganze Seite.
 
-Nächster Schritt: Rest der Smoke-Checkliste aus der README — Lernstufe wechseln (andere Aufgaben, gleiche Geschichte), alle drei Episoden bis zum Ergebnis, Gerät des Kindes, `deploy.cmd content` + Server-Runde. Danach Phase 3 zu Ende bringen (Doku, Archivierung) und mit dem UI-Umbau beginnen — der Plan steht.
+**Server-Vorfall (19.08.2026):** Nach einem vollen Deploy brauchte jeder API-Aufruf ~30-40s (PHP-Bootstrap selbst nur 1,4s, die Verzögerung liegt vor PHP — DNS und TCP-Connect zur DB sind beide belegt schnell). Ursache noch offen, Diagnose-Zeilen in `api-bridge/diag.php` liegen bereit. Sascha wartet ab und prüft selbst wieder, wann `/api/health` schnell ist — bis dahin kein Live-Spielen möglich.
+
+**Derweil statisch geprüft, ohne Server nötig (19.08.2026):** Vorlesemodus-Regel gegen alle 8 Aufgaben-Dateien und alle 3 Episoden-Dialoge — kein Zielwort wird vor seiner Aufgabe verraten. Alle vier `learning_objectives`-IDs stehen im Lernziel-Katalog. Alle ID-Querverweise (Maps/Nodes/Episoden/Karten) konsistent. Totes `background`/`music`-Beispiel aus `JSON_SCHEMA_REFERENCE.md` Abschnitt 4 gestrichen (Phase-1-Finding jetzt geschlossen).
+
+Nächster Schritt: sobald der Server wieder schnell ist, Rest der Smoke-Checkliste aus der README — Lernstufe wechseln (andere Aufgaben, gleiche Geschichte), alle drei Episoden bis zum Ergebnis, Gerät des Kindes, `deploy.cmd content` + Server-Runde. Danach Phase 3 zu Ende bringen (Doku, Archivierung) und mit dem UI-Umbau beginnen — der Plan steht.
 
 ## Was am 19.08.2026 dazugekommen ist
 
