@@ -30,9 +30,21 @@ header('Content-Type: application/json; charset=utf-8');
 // zu öffnen. gethostbyname() liefert bei Fehlschlag den Eingabewert unveraendert
 // zurueck, deshalb der Vergleich statt eines einfachen Wahrheitswerts.
 $dbHost = $_ENV['DB_HOST'] ?? '';
+$dbPort = (int) ($_ENV['DB_PORT'] ?? 3306);
 $dnsStart = microtime(true);
 $resolved = $dbHost === '' ? null : gethostbyname($dbHost);
 $dnsSeconds = round(microtime(true) - $dnsStart, 3);
+
+// Roher TCP-Connect zum DB-Port, ohne MySQL-Protokoll/PDO davor — soll zeigen,
+// ob schon das nackte Verbinden lahmt (Netzwerk/Firewall) oder erst der
+// MySQL-Handshake danach. errno/errstr sind hier keine Fehlermeldung nach
+// aussen, nur eine lokale Diagnose ohne Zugangsdaten.
+$tcpStart = microtime(true);
+$socket = $dbHost === '' ? false : @fsockopen($dbHost, $dbPort, $errno, $errstr, 10);
+$tcpSeconds = round(microtime(true) - $tcpStart, 3);
+if ($socket !== false) {
+    fclose($socket);
+}
 
 echo json_encode([
     'php_version' => PHP_VERSION,
@@ -49,4 +61,6 @@ echo json_encode([
     'script_name' => $_SERVER['SCRIPT_NAME'] ?? null,
     'db_host_dns_seconds' => $dnsSeconds,
     'db_host_resolved' => $resolved !== null && $resolved !== $dbHost,
+    'db_tcp_connect_seconds' => $tcpSeconds,
+    'db_tcp_connect_ok' => $socket !== false,
 ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
