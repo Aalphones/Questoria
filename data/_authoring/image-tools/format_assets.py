@@ -107,6 +107,27 @@ def crop_to_aspect(image: Image.Image, target_width: int, target_height: int) ->
     return image.crop((0, offset, image.width, offset + new_height))
 
 
+def fit_into_canvas(image: Image.Image, target_width: int, target_height: int) -> Image.Image:
+    """Passt das Bild vollständig ein und füllt den Rest transparent auf.
+
+    Für freigestellte Motive der einzig richtige Weg: nach dem Zuschneiden auf
+    die Figur hat ein Sprite ein beliebiges Seitenverhältnis. Würde hier auf das
+    Zielmaß zugeschnitten, verlöre eine schmale Figur Kopf oder Füße — genau
+    das, was die Prompt-Vorlagen mühsam verhindern.
+    """
+    scale = min(target_width / image.width, target_height / image.height)
+    scaled_width = max(1, round(image.width * scale))
+    scaled_height = max(1, round(image.height * scale))
+    scaled_image = image.resize((scaled_width, scaled_height), Image.LANCZOS)
+
+    canvas = Image.new("RGBA", (target_width, target_height), (0, 0, 0, 0))
+    canvas.paste(
+        scaled_image,
+        ((target_width - scaled_width) // 2, (target_height - scaled_height) // 2),
+    )
+    return canvas
+
+
 def convert_image(source_path: Path, target_path: Path, kind: AssetKind) -> None:
     target_format = TARGET_FORMATS[kind]
 
@@ -120,8 +141,12 @@ def convert_image(source_path: Path, target_path: Path, kind: AssetKind) -> None
                 f"wird hochskaliert und verliert Schärfe."
             )
 
-        image = crop_to_aspect(image, target_format.width, target_format.height)
-        image = image.resize((target_format.width, target_format.height), Image.LANCZOS)
+        if target_format.keep_alpha:
+            # Transparenz erlaubt Rand — also einpassen statt beschneiden.
+            image = fit_into_canvas(image, target_format.width, target_format.height)
+        else:
+            image = crop_to_aspect(image, target_format.width, target_format.height)
+            image = image.resize((target_format.width, target_format.height), Image.LANCZOS)
 
         target_path.parent.mkdir(parents=True, exist_ok=True)
 

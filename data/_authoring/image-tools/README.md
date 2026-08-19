@@ -42,7 +42,16 @@ Den Zieltyp leitet das Werkzeug **aus dem Zielpfad** ab — `backgrounds/` heiß
 | `achievements/` | 128×128, PNG mit Alpha |
 | `sprites/` | 1024×1536, PNG mit Alpha |
 
-**Es wird zugeschnitten, nie verzerrt.** Ein Bild mit falschem Seitenverhältnis verliert mittig Rand, statt dass Figuren in die Länge gezogen werden. Ist die Quelle kleiner als das Ziel, sagt das Werkzeug das ausdrücklich — dann lieber neu erzeugen als hochskalieren.
+**Verzerrt wird nie.** Was stattdessen passiert, hängt davon ab, ob das Ziel Transparenz erlaubt:
+
+| Ziel | Verhalten bei abweichendem Seitenverhältnis |
+|---|---|
+| Szenen, Karten, Sammelkarten (ohne Alpha) | **mittig zuschneiden** — das Motiv füllt die Fläche randlos |
+| Sprites, Erfolgs-Icons, Antwortbilder (mit Alpha) | **vollständig einpassen**, Rest bleibt transparent |
+
+Der Unterschied ist wichtig: Eine freigestellte Figur hat nach `cutout.py --trim` ein beliebiges Seitenverhältnis. Würde sie auf 2:3 zugeschnitten, verlöre eine schmale Figur Kopf oder Füße — genau das, was die Prompt-Vorlagen mühsam verhindern. Wo Transparenz erlaubt ist, darf Rand dazukommen; wo nicht, muss geschnitten werden.
+
+Ist die Quelle kleiner als das Ziel, sagt das Werkzeug das ausdrücklich — dann lieber neu erzeugen als hochskalieren.
 
 ## Freistellen
 
