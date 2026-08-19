@@ -16,6 +16,7 @@ import { NarrationService } from '../../../services/narration.service';
 import { ImageSlot } from '../../../ui/image-slot/image-slot';
 import { TaskCard } from '../../../ui/task-card/task-card';
 import { EpisodeRun } from '../../episode/episode-run';
+import { shuffledIndexes } from '../shuffled-indexes';
 import { ImageTileView, SlotState, WordCardView } from './word-match.types';
 
 /** Wie lange ein falsch gelegtes Paar rot stehen bleibt, bevor beides wieder aufgeht. */
@@ -267,19 +268,4 @@ function stateLabelFor(state: SlotState, badge: string | null): string | null {
   }
 
   return null;
-}
-
-/** Fisher-Yates — die Kartenreihenfolge wird genau einmal gezogen. */
-function shuffledIndexes(length: number): readonly number[] {
-  const indexes = Array.from({ length }, (_unused: unknown, index: number) => index);
-
-  for (let position = indexes.length - 1; position > 0; position--) {
-    const swapWith = Math.floor(Math.random() * (position + 1));
-    const parked = indexes[position];
-
-    indexes[position] = indexes[swapWith];
-    indexes[swapWith] = parked;
-  }
-
-  return indexes;
 }
