@@ -1,6 +1,7 @@
 # UI-Umbau — Vollbild, Karten, Erfolgsmoment
 
-**Status:** in Umsetzung seit 19.08.2026, Phase 1 fertig.
+**Status:** abgeschlossen und archiviert am 19.08.2026. Alle fünf Phasen
+umgesetzt, am Bildschirm abgenommen, drei Abnahmebefunde behoben.
 
 **Vorgezogen:** Der Plan sollte nach Phase 3 der ersten echten Welt starten.
 Phase 3 hängt am langsamen Server und ist nicht abgeschlossen — der UI-Umbau
@@ -67,11 +68,11 @@ schriftlich festgehalten. Nicht gemerkt, geschrieben.
 
 | # | Phase | Rating | Status |
 |---|---|---|---|
-| 1 | [Die Bühne — echtes Vollbild](phase-1-buehne.md) | heikel | complete (Abnahme am Bildschirm offen) |
-| 2 | [Planetenkarte vollflächig mit Pfaden](phase-2-planetenkarte.md) | standard | complete (Abnahme am Bildschirm offen) |
-| 3 | [Etappen- und Ortskarte im Vollbild](phase-3-karten.md) | standard | complete (Abnahme am Bildschirm offen) |
-| 4 | [Lernstufen mit Bild](phase-4-lernstufen.md) | heikel | complete (Abnahme am Bildschirm offen) |
-| 5 | [Aufgabenfläche und Erfolgsmoment](phase-5-aufgabe-und-erfolg.md) | standard | complete (Abnahme am Bildschirm offen) |
+| 1 | [Die Bühne — echtes Vollbild](phase-1-buehne.md) | heikel | complete, abgenommen (Nachbesserung nötig, siehe unten) |
+| 2 | [Planetenkarte vollflächig mit Pfaden](phase-2-planetenkarte.md) | standard | complete, abgenommen (Nachbesserung nötig, siehe unten) |
+| 3 | [Etappen- und Ortskarte im Vollbild](phase-3-karten.md) | standard | complete, abgenommen |
+| 4 | [Lernstufen mit Bild](phase-4-lernstufen.md) | heikel | complete, abgenommen |
+| 5 | [Aufgabenfläche und Erfolgsmoment](phase-5-aufgabe-und-erfolg.md) | standard | complete, abgenommen (Nachbesserung nötig, siehe unten) |
 
 Phase 1 ist Voraussetzung für 2, 3 und 5. Phase 4 hängt an nichts und könnte
 auch vorgezogen werden — sie steht hinten, weil sie als einzige Content-Arbeit
@@ -118,12 +119,81 @@ können:
 
 ## Summary
 
-_(beim Archivieren füllen)_
+Die App hat jetzt eine Bühne: `100dvh` hoch, die Seite selbst rollt nie mehr,
+jeder Screen erbt die Höhe und teilt sie mit einem eigenen Grid auf (Kopfleiste
+oben, Spielfläche über den Rest). Darauf aufgesetzt: Planeten-, Etappen- und
+Ortskarte füllen die Fläche unter der Kopfleiste, die Lernstufen-Auswahl zeigt
+drei Karten mit Bild aus dem Content statt drei Textpillen, die Bildsuche nutzt
+die volle Höhe, und der „Ort geschafft"-Screen stellt seinen Text auf eine
+Kontrastfläche mit dem Konfetti dahinter.
+
+**Die Abnahme am Bildschirm war der eigentliche Wendepunkt.** Sie hat gezeigt,
+dass die Bühne aus Phase 1 nie funktioniert hat — und damit, dass vier Phasen
+lang auf einem Fundament gebaut wurde, das nur im Build grün aussah. Details in
+FINDINGS.md, Abschnitt „Aus der Abnahme am Bildschirm".
 
 ## Files touched
 
+Frontend, ausschließlich (kein Backend, kein Content außer den Lernstufen-Bildern
+in `data/themes/pokemon_lesen/levels/`):
+
+- **Hülle und Fundament:** `app.html`, `app.scss`, `styles.scss`,
+  `styles/_tokens.scss` (Bühnenmaß `--size-stage-block`, `vh` → `dvh` an vier
+  Stellen)
+- **Screens:** `features/main-hub/` (samt `level-select/`,
+  `difficulty-picker/`, `theme-card/`), `features/timeline/`, `features/map/`,
+  `features/episode/`, `features/result/`, `features/auth/`,
+  `features/profile/`
+- **Aufgaben:** `features/events/image-search/`,
+  `features/events/multiple-choice/`, `features/events/word-match/`
+- **Gemeinsame Bausteine:** `ui/task-card/` (neuer `fill`-Eingang),
+  `ui/map-canvas/`, `ui/image-slot/` (neuer `fit`-Eingang), `ui/hud/`
+- **Modelle:** `models/content.types.ts` (Lernstufen-Bilder im Schema)
+
 ## Commits
+
+| Hash | Was |
+|---|---|
+| `cddbfd3` | Bühne für echtes Vollbild — die Seite rollt nie mehr (Phase 1) |
+| `4e5fc77` | Planetenkarte füllt die Bühne (Phase 2) |
+| `b37c7ba` | Etappen- und Ortskarte passen sich im Vollbild ein (Phase 3) |
+| `d6a43ea` | Lernstufen als Karten mit Punkten, Text und Bild (Phase 4) |
+| `3a79d0e` | Bildsuche füllt die Bühne, Erfolgsmoment lesbar (Phase 5) |
+| `05e05f2` | Die Bühne trägt endlich den Screen statt das leere Outlet (Abnahme) |
+| `1d59f22` | Bildsuche bekommt ihre Höhe zurück (Abnahme) |
 
 ## Deviations from plan
 
+1. **Das waagerechte Rollen der Planetenkarte ist ersatzlos entfallen** (Phase 2,
+   AK 6). Es widerspricht der Abnahme-Vorgabe „die Planeten dürfen nicht
+   hinauslaufen". Die Karte passt sich jetzt ein wie Etappen- und Ortskarte, der
+   frei bleibende Bildschirmrand trägt dieselbe Karte weichgezeichnet als zweite
+   Ebene. Festgehalten in `docs/design/README.md` Punkt 12. Folge: Alle Welten
+   sind immer gleichzeitig im Bild — was passiert, wenn eines Tages mehr Welten
+   darauf stehen, als lesbar nebeneinanderpassen, ist offen.
+2. **Das Bühnen-Grid liegt im Screen, nicht in der Hülle** (Entscheidung in
+   Phase 1, [ADR-017](../../decisions/017-vollbild-doktrin.md)). Der Plan hatte
+   die Aufteilung offen gelassen; die Hülle gibt jetzt nur die Höhe, jeder
+   Screen teilt sie selbst auf und bindet seine Kopfleiste weiterhin selbst ein.
+3. **Die Lernstufen-Bilder kommen aus dem Content, nicht aus dem Code**
+   ([ADR-018](../../decisions/018-lernstufen-bilder-im-content.md)) — mit
+   Schema-Änderung, wie in Phase 4 vorgesehen.
+4. **`main-hub.scss` liegt 58 Byte über dem 4-kB-Stylesheet-Budget** des Builds.
+   Warnung, kein Fehler; Budget bewusst nicht angehoben. Vier weitere
+   Stylesheets reißen dasselbe Budget seit Längerem um bis zu 3,8 kB.
+
 ## Follow-ups
+
+1. 🟡 **`--size-answer-image: clamp(4rem, 12vh, 8.75rem)`** in `_tokens.scss` ist
+   die vierte und letzte `vh`-Stelle im Frontend (Bildgröße der Quiz-Antworten).
+   Dieselbe Tablet-Falle wie die drei behobenen: der Wert springt, wenn die
+   Browserleiste ein- und ausfährt. Nicht angefasst, weil außerhalb des
+   Plan-Umfangs.
+2. **Das Stylesheet-Budget passt nicht mehr zum Projekt.** Fünf Dateien liegen
+   darüber, eine um fast das Doppelte. Entweder das Budget auf einen ehrlichen
+   Wert heben oder die großen Stylesheets aufteilen — die Warnung als
+   Dauerzustand macht sie wertlos.
+3. **Der Bühnen-Kontrakt hat keinen automatischen Wächter.** „Kein Screen setzt
+   eigene Bildschirmhöhen" steht als Regel in ADR-017 und wurde von Hand
+   geprüft. Eine Lint-Regel gegen `vh`/`dvh`/`100%`-Höhen außerhalb von
+   `_tokens.scss` und `app.scss` würde den nächsten Rückfall fangen.

@@ -87,8 +87,8 @@ Abgearbeitete Zeilen abhaken, nicht löschen.
   Bildschirm bestätigt (19.08.2026): Übersichtskarte wird angezeigt.** Das `episode.background`-Finding aus
   Phase 1 bleibt offen — anderer Screen, andere Baustelle.
 
-- [x] → **aufgeplant am 19.08.2026:**
-  [docs/planning/2026-08-19_ui-umbau-vollbild/](../2026-08-19_ui-umbau-vollbild/README.md),
+- [x] → **aufgeplant am 19.08.2026, umgesetzt und abgenommen am selben Tag:**
+  [docs/archive/2026-08/2026-08-19_ui-umbau-vollbild/](../../archive/2026-08/2026-08-19_ui-umbau-vollbild/README.md),
   fünf Phasen. Alle sechs Punkte unten sind dort aufgenommen; die gemeinsame
   Ursache ist belegt — es gibt im Frontend keine einzige Höhenangabe für die
   Bühne, deshalb rollt der Browser die ganze Seite. Sammelnotiz aus der ersten
