@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  linkedSignal,
+  signal,
+} from '@angular/core';
 
 import { AnswerOption, MultipleChoiceConfig } from '../../../models/content.types';
 import { EventContext } from '../../../models/event-runtime.types';
@@ -7,6 +15,7 @@ import { NarrationService, ReadingMode } from '../../../services/narration.servi
 import { ImageSlot } from '../../../ui/image-slot/image-slot';
 import { TaskCard } from '../../../ui/task-card/task-card';
 import { EpisodeRun } from '../../episode/episode-run';
+import { shuffledIndexes } from '../shuffled-indexes';
 import { AnswerState, AnswerView } from './multiple-choice.types';
 
 const LETTER_KEYS = ['A', 'B', 'C', 'D'] as const;
@@ -45,6 +54,18 @@ export class MultipleChoice {
   readonly config = input.required<MultipleChoiceConfig>();
   readonly context = input.required<EventContext>();
 
+  /**
+   * Die Anzeigereihenfolge der Antworten. Ohne sie steht die richtige Antwort
+   * immer auf dem Platz, den `correct_index` in der Content-Datei vorgibt — das
+   * Kind lernt dann die Kachel statt der Aufgabe. Bewusst kein `computed`: die
+   * Mischung wird einmal beim Öffnen gezogen, sonst sprängen die Antworten bei
+   * jedem Neuzeichnen.
+   */
+  private readonly answerOrder = linkedSignal<MultipleChoiceConfig, readonly number[]>({
+    source: this.config,
+    computation: (config: MultipleChoiceConfig) => shuffledIndexes(config.options.length),
+  });
+
   /** Alle bereits angetippten Antworten — jede bleibt sichtbar ausgewertet. */
   private readonly pickedIndexes = signal<readonly number[]>([]);
   /** Nur der erste Tipp entscheidet über den Stern (`correctFirstTry`). */
@@ -71,13 +92,17 @@ export class MultipleChoice {
     const solved = this.solved();
     const mode = this.narration.mode();
 
-    return config.options.map((option: AnswerOption, index: number) => {
+    // `index` bleibt der Platz aus der Content-Datei — daran hängen Auswertung
+    // und `track`. Gemischt wird nur, an welcher Stelle die Antwort steht;
+    // Buchstabe bzw. Ziffer folgen deshalb der Anzeigeposition.
+    return this.answerOrder().map((index: number, position: number) => {
+      const option: AnswerOption = config.options[index];
       const state = answerState(index, config.correct_index, picked);
 
       return {
         index,
         label: option.label,
-        key: answerKey(index, mode),
+        key: answerKey(position, mode),
         imageUrl: this.answerImageUrl(option, mode),
         state,
         mark: ANSWER_MARKS[state],
