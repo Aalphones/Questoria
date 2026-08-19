@@ -74,9 +74,12 @@ export class Dialog {
   protected readonly audioUrl = computed<string | undefined>(() => {
     const audioPath = this.currentLine()?.audio_path;
 
+    // audio_path trägt bereits den vollen Unterpfad ("audio/voices/…") —
+    // assetUrl() mit demselben Ordner nochmal davor ergäbe einen doppelten,
+    // nicht existierenden Pfad.
     return audioPath === undefined
       ? undefined
-      : this.content.assetUrl(this.context().themeId, 'audio/voices', audioPath);
+      : this.content.themeAssetUrl(this.context().themeId, audioPath);
   });
 
   /**

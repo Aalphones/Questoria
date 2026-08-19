@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 
 import { MapEntry, WorldConfig } from '../../models/content.types';
 import { ProgressState } from '../../models/game-state.types';
+import { ContentService } from '../../services/content.service';
 import { GameStateService } from '../../services/game-state.service';
 import { stageStars, stageStates, worldProgress } from '../../services/progress.rules';
 import { ProgressService } from '../../services/progress.service';
@@ -25,11 +26,20 @@ import { MapPoint } from '../../ui/map-canvas/map-point/map-point';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Timeline {
+  private readonly content = inject(ContentService);
   private readonly gameState = inject(GameStateService);
   private readonly progressService = inject(ProgressService);
 
   readonly themeId = input.required<string>();
   readonly world = input<WorldConfig | null>(null);
+
+  protected readonly backgroundUrl = computed<string | null>(() => {
+    const background = this.world()?.arc_overview.background;
+
+    return background === undefined
+      ? null
+      : this.content.assetUrl(this.themeId(), 'maps', background);
+  });
 
   protected readonly starIndexes = [0, 1, 2] as const;
 

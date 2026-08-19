@@ -28,7 +28,7 @@ const MAX_BOW = 110;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MapCanvas {
-  /** Bildadresse des Hintergrunds; `null` = keine Bildfläche (die Etappenkarte zeichnet ihr Gitternetz). */
+  /** Bildadresse des Hintergrunds; `null` = keine Bildfläche, es bleibt beim Gitternetz-Fallback. */
   readonly background = input<string | null>(null);
   readonly backgroundLabel = input<string>('');
   /** Nur für die Routengeometrie — das Aussehen der Knoten liefert der Screen. */
