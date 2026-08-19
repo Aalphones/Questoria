@@ -117,6 +117,15 @@ weichen in der Umsetzung ab — jeweils mit Grund:
     derselben Änderung, die jeden Screen gleichzeitig betrifft
     ([ADR-017](../decisions/017-vollbild-doktrin.md)).
 
+12. **Die Planetenkarte rollt waagerecht, statt sich einzupassen.** Etappen-
+    und Ortskarte (Phase 3) passen sich in die Bühne ein, weil jeder Punkt
+    darauf erreichbar bleiben muss. Die Planetenkarte behält stattdessen ihre
+    volle Bühnenhöhe und wächst mit jeder neuen Welt in die Breite; wird sie
+    breiter als der Bildschirm, rollt die Fläche als Ganzes — Bild und Knoten
+    bleiben dabei deckungsgleich (Kontrakt Phase 1: eine rollende Fläche pro
+    Screen ist erlaubt). Schon mit der einen installierten Welt kann der Fall
+    auf schmalen Fenstern eintreten, ohne dass das ein Fehler wäre.
+
 ## Offene Punkte
 
 - ✅ **Node-Größen sind im Prototyp px-Werte** (`size: 200`, `width: 132`),

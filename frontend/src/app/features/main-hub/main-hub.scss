@@ -8,15 +8,22 @@
 }
 
 .main-hub {
-  max-inline-size: 90rem;
-  padding: var(--space-6) var(--space-4);
-  margin-inline: auto;
-  // Übergangsweise: Phase 2 macht die Karte vollflächig, dann rollt hier nichts
-  // mehr. Bis dahin rollt die Fläche statt der Seite.
-  overflow: auto;
+  position: relative;
+  block-size: 100%;
+  // Die einzige rollende Fläche dieses Screens (Kontrakt Phase 1): mehr Welten
+  // als Platz lässt die Karte breiter als die Bühne werden, dann rollt sie
+  // waagerecht als Ganzes — Bild und Knoten bleiben deckungsgleich (AK 6).
+  overflow-x: auto;
+  overflow-y: hidden;
 
   &__canvas {
     position: relative;
+    // Höhe kommt von der Bühne, Breite folgt dem festen 16:9 aus map-canvas —
+    // das Gegenteil von dessen Default (inline-size: 100%), absichtlich: die
+    // Etappen-/Ortskarte passt sich ein (Phase 3), die Planetenkarte wächst
+    // stattdessen in die Breite und lässt die Elternfläche rollen.
+    block-size: 100%;
+    inline-size: auto;
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-md);
   }
@@ -217,12 +224,5 @@
 
   .main-hub__panel--open .main-hub__panel-body {
     display: flex;
-  }
-}
-
-// Schmales Fenster: Außenabstand runter, damit die Karte die Breite bekommt.
-@media (max-width: #{bp.$screen-narrow}) {
-  .main-hub {
-    padding: var(--space-3) var(--space-2);
   }
 }

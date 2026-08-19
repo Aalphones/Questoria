@@ -68,7 +68,7 @@ schriftlich festgehalten. Nicht gemerkt, geschrieben.
 | # | Phase | Rating | Status |
 |---|---|---|---|
 | 1 | [Die Bühne — echtes Vollbild](phase-1-buehne.md) | heikel | complete (Abnahme am Bildschirm offen) |
-| 2 | [Planetenkarte vollflächig mit Pfaden](phase-2-planetenkarte.md) | standard | pending |
+| 2 | [Planetenkarte vollflächig mit Pfaden](phase-2-planetenkarte.md) | standard | complete (Abnahme am Bildschirm offen) |
 | 3 | [Etappen- und Ortskarte im Vollbild](phase-3-karten.md) | standard | pending |
 | 4 | [Lernstufen mit Bild](phase-4-lernstufen.md) | heikel | pending |
 | 5 | [Aufgabenfläche und Erfolgsmoment](phase-5-aufgabe-und-erfolg.md) | standard | pending |

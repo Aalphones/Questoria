@@ -44,20 +44,36 @@ Verdrahtung — die Kartenfläche kann es längst.
 
 ## Checkliste
 
-- [ ] Feld für Weltverbindungen in `data/main_hub.json` und im Schema
-      (Abschnitt 1) ergänzen, Muster wie `routes` bei den Ortskarten
-- [ ] `main-hub` auf `ui/map-canvas/` mit Routen verdrahten
-- [ ] Hintergrund der Planetenkarte auf die Bühnenhöhe bringen (Kartenfläche
+- [x] Feld für Weltverbindungen in `data/main_hub.json` und im Schema
+      (Abschnitt 1) ergänzen, Muster wie `routes` bei den Ortskarten —
+      **war bereits vorhanden** (`hub_map.routes`, leeres Array, Schema
+      Abschnitt 1 dokumentiert es schon), keine Änderung nötig.
+- [x] `main-hub` auf `ui/map-canvas/` mit Routen verdrahten — **war bereits
+      verdrahtet** (`main-hub.html:19`, `[routes]="hub.data.hub_map.routes"`).
+- [x] Hintergrund der Planetenkarte auf die Bühnenhöhe bringen (Kartenfläche
       bleibt 16:9, siehe [phase-3-karten.md](phase-3-karten.md) — dieselbe
-      Entscheidung gilt hier)
-- [ ] Panels als überlagernde Flächen prüfen: verdecken sie Knoten, wandern sie,
-      nicht die Knoten
-- [ ] Waagerechtes Rollen: **die Kartenfläche rollt als Ganzes**, Bild und
-      Knoten liegen darin. Kein getrenntes Verschieben des Hintergrunds
+      Entscheidung gilt hier) — **umgesetzt anders als Phase 3's Einpassen:**
+      die Höhe kommt von der Bühne (`block-size: 100%`), die Breite folgt dem
+      16:9-Verhältnis (`inline-size: auto` + `aspect-ratio` aus `map-canvas`)
+      und wächst frei — kein Einpassen/Beschneiden nötig, weil AK 6 explizit
+      waagerechtes Rollen statt Schrumpfen verlangt.
+- [x] Panels als überlagernde Flächen prüfen: verdecken sie Knoten, wandern sie,
+      nicht die Knoten — unverändert `position: absolute` relativ zum
+      `map-canvas`-Host, der weiterhin die ganze Kartenfläche ist.
+- [x] Waagerechtes Rollen: **die Kartenfläche rollt als Ganzes**, Bild und
+      Knoten liegen darin. Kein getrenntes Verschieben des Hintergrunds —
+      `.main-hub` (Elternfläche) trägt `overflow-x: auto`, `.main-hub__canvas`
+      selbst hat keinen eigenen Scroll-Container, Hintergrundbild und Knoten
+      sind Kinder derselben Fläche.
 - [ ] Die zwei echten Welten am Bildschirm ansehen, dann testweise mit einer
-      erfundenen dritten und vierten Welt gegenprüfen
-- [ ] `docs/design/README.md`: Abweichungen festhalten
-- [ ] `docs/code-map.md` nachziehen, falls sich Zuständigkeiten verschieben
+      erfundenen dritten und vierten Welt gegenprüfen — **nicht gemacht,
+      nur eine Welt ist installiert.** Am Bildschirm ansehen ist ohnehin
+      Sache des Users (Smoke-Checkliste am Plan-Ende), Vier-Welten-Probe geht
+      nur mit erfundenen Testdaten in `data/main_hub.json` — offen für den
+      Smoke-Test.
+- [x] `docs/design/README.md`: Abweichungen festhalten — Punkt 12 ergänzt.
+- [x] `docs/code-map.md` nachziehen, falls sich Zuständigkeiten verschieben —
+      keine Verschiebung, nur CSS in bestehenden Dateien geändert.
 
 ## Risiken
 
@@ -73,3 +89,40 @@ Kontrakt aus Phase 1 erlaubt genau das: **eine** rollende Fläche pro Screen. Di
 Seite rollt trotzdem nicht.
 
 ## Report-Back
+
+**Status: complete, Abnahme am Bildschirm offen.**
+
+Weniger zu bauen als gedacht: Content-Feld, Schema-Text und die Verdrahtung
+zwischen `main-hub` und `map-canvas` gab es schon — vermutlich aus der Arbeit
+an Etappen-/Ortskarte, die dasselbe Muster benutzen. Gebaut wurde nur die
+Größenlogik: `.main-hub__canvas` füllt jetzt die volle Bühnenhöhe
+(`block-size: 100%`) und lässt die Breite frei aus dem 16:9-Verhältnis von
+`map-canvas` folgen (`inline-size: auto`), statt wie vorher die Fensterbreite
+vorzugeben. Wird die Karte dadurch breiter als der Bildschirm, rollt die
+Elternfläche (`.main-hub`, jetzt `overflow-x: auto`) waagerecht als Ganzes —
+Bild, Routen und Knoten sind Kinder derselben Fläche und bleiben deckungsgleich.
+Die transitorischen Phase-1-Reste (`overflow: auto`, `max-inline-size: 90rem`,
+`padding`) sind raus.
+
+Build und Lint sind grün — sagt bei Layout nichts, siehe Phase 1.
+
+🟡 **Wackligste Stelle:** Auto-Sizing von Block-Elementen aus `aspect-ratio`
+(`inline-size: auto` + definite `block-size` + `aspect-ratio` vom Kind-Host)
+ist moderner CSS-Sizing-Algorithmus, keine Angular-Eigenheit — sollte in jedem
+aktuellen Browser funktionieren, aber am Bildschirm noch nicht gesehen.
+
+🟡 **Nur eine Welt installiert.** Das waagerechte Rollen und der
+Route-Rendering-Pfad (mehrere Welten mit Verbindungen) sind nur mit
+erfundenen Testdaten in `data/main_hub.json` prüfbar — nicht Teil dieser
+Phase, aber Punkt für die Smoke-Checkliste.
+
+**Prüfliste für den Bildschirm:**
+1. Planetenkarte füllt die Fläche unter der Kopfleiste, kein Rollbalken am
+   Fensterrand, nur ggf. innerhalb der Karte waagerecht (AK 1, 6).
+2. Info-Panel oben links und Erfolge-Panel oben rechts liegen über der Karte,
+   verdecken den Weltknoten nicht (AK 5).
+3. Fenster schmal machen (Handy-Breite) und wieder normal — Karte bleibt
+   bedienbar, Panel klappt wie gehabt zusammen.
+4. Temporär eine zweite/dritte erfundene Welt mit Koordinaten und einer
+   `routes`-Verbindung in `data/main_hub.json` eintragen: Weg wird gezeichnet,
+   bei genug Welten rollt die Karte waagerecht, Bild bleibt unter den Knoten.

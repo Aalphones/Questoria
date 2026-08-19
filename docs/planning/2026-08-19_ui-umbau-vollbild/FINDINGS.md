@@ -10,11 +10,14 @@ Abgearbeitete Zeilen abhaken, nicht löschen.
 
 ## Aus Phase 1
 
-- [ ] → Phase 2: `.main-hub` hat übergangsweise `overflow: auto` bekommen, damit
+- [x] → Phase 2: `.main-hub` hat übergangsweise `overflow: auto` bekommen, damit
       die Planetenkarte nach dem Bühnen-Umbau nichts abschneidet. Sobald sie
       vollflächig ist, muss das wieder raus — eine Karte, die rollt, ist keine
       Vollbild-Karte. Ebenso fällt `max-inline-size: 90rem` + `padding` weg,
       die halten die Karte heute von den Rändern fern.
+      **Erledigt:** `overflow: auto` durch gezieltes `overflow-x: auto` /
+      `overflow-y: hidden` ersetzt (das ist jetzt die eine rollende Fläche aus
+      AK 6, kein Auffangnetz mehr), `max-inline-size` + `padding` entfernt.
 - [ ] → Phase 3: Dasselbe für `.map` und `.timeline` — beide haben jetzt
       `overflow: auto` als Auffangnetz und dieselbe `90rem`-Begrenzung.
 - [ ] → Phase 5: `.episode__stage` rollt jetzt selbst (`overflow: auto`), statt
