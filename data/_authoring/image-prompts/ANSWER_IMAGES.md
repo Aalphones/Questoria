@@ -119,6 +119,34 @@ Antwort schon durch den Stil richtiger als die anderen:
   Kinder erkennen dieses Muster schneller als jeden Lerninhalt.
 - Alle Bilder eines Satzes in einem Rutsch generieren, nicht über Tage verteilt.
 
+## Was der erste vollständige Satz gelehrt hat (25 Bilder, 19.08.2026)
+
+**Eine Backdrop-Farbe für die ganze Welt, nicht pro Frage.** Die Regel oben verlangt Konsistenz
+je Antwortsatz — in der Praxis reicht das nicht: `antwort_maus.png` steht in drei verschiedenen
+Aufgaben. Wer pro Satz eine eigene Farbe wählt, hat das Bild dreimal unterschiedlich oder
+dreimal doppelt. Eine Farbe für alle Antwortbilder einer Welt löst beides. Hier: blasses
+Flieder — es kommt in keinem der 25 Motive vor.
+
+**Ziffern werden gezählt, nicht gelesen.** Vier Antworten „1, 2, 3, 4" und kein Text im Bild
+erlaubt: die Lösung sind **abzählbare Dinge**, hier goldene Sterne in einer Reihe. Der
+entscheidende Satz im Prompt ist der Abstand — ohne ihn schiebt das Modell die Sterne zusammen,
+bis man sie nicht mehr trennen kann. Formulierung, die sitzt: „standing well apart with a wide
+gap of empty background between each one so that they never touch or overlap".
+
+🟡 **Körperteile sind der harte Fall.** „Nase" und „Mund" gibt es in zwei Formen, und beide sind
+angreifbar: das freigestellte Körperteil schwebt für ein Kind sinnlos im Nichts, das ganze
+Gesicht liest sich als „Kind" statt als „Nase". Erfahrung aus diesem Satz: **beim Mund gewinnt
+das Gesicht** (der offene Mund dominiert das Bild von allein), **bei der Nase das freigestellte
+Motiv** (im Gesicht bleibt die Nase zu klein, um die Antwort zu sein). Bei jedem weiteren
+Körperteil beide Fassungen erzeugen und nebeneinanderlegen — raten kostet mehr als der zweite
+Lauf.
+
+**Ansichten ausdrücklich vorschreiben.** „A rabbit sitting upright in side view" lieferte einen
+Hasen **von hinten** — Ohren und Puschel, kein Gesicht. Erst „sitting in strict side profile so
+that its whole body faces to the left, its head, eye, muzzle and both long upright ears clearly
+visible from the side" saß. Bei Tieren gehört die Blickrichtung in den Prompt, nicht in die
+Hoffnung.
+
 ## Nach der Generierung
 
 1. Freistellen — die Bilder liegen später auf farbigen Antwort-Buttons, ein

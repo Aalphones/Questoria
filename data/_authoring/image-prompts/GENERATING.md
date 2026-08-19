@@ -104,7 +104,7 @@ Bei `Krea2 Txt2Img` und `Flux2 Txt2Img` liegt ein `ResolutionSelector` **außerh
 | Ziel | Einstellung | Ergebnis |
 |---|---|---|
 | Hintergrund 1920×1080 | `16:9 (Widescreen)` · `1.98` | exakt 1920×1080 ✅ gemessen |
-| Sprite 1024×1536 | `2:3 (Portrait Photo)` · `1.57` | rechnerisch, ungeprüft |
+| Sprite 1024×1536 | `2:3 (Portrait Photo)` · `1.57` | 1040×1568 ✅ gemessen, das Formatieren bügelt den Rest |
 
 `1:1 (Square)` mit `2` liefert 1448×1448 — der frühere Standard und der Grund für quadratische Hintergründe.
 
@@ -146,6 +146,83 @@ Das passiert bewusst hier und nicht auf dem Server: Die App soll offline laufen,
 
 ## Bekannte offene Punkte
 
-- Nur die 16:9-Einstellung für Hintergründe ist gemessen. Die Werte für Sprites, Sammelkarten (630×880) und Erfolgs-Icons sind gerechnet, nicht belegt.
-- `Flux2 Txt2Img` und `Flux Edit` sind eingerichtet und zeigen auf das richtige Modell, aber **noch nie durchgelaufen**. Die Knotennummern oben stammen aus der Datei, nicht aus einem Lauf.
+- Die Werte für Sammelkarten (630×880) und Erfolgs-Icons sind gerechnet, nicht an einem echten Bild belegt.
+- `Flux Edit` ist eingerichtet, aber **noch nie durchgelaufen**. Die Knotennummern dafür stammen aus der Datei, nicht aus einem Lauf.
+
+---
+
+## Serien fahren: 35 Bilder in einem Zug (19.08.2026)
+
+Für einen Stapel lohnt sich die Warteschlange. `comfy run --workflow <datei>.json --no-notify`
+**ohne** `--wait` reiht den Auftrag ein und kommt sofort zurück — dreißig Aufrufe
+hintereinander in einer Schleife, danach einmal warten, bis die Warteschlange leer ist:
+
+```
+GET http://127.0.0.1:8188/queue    ->  queue_running + queue_pending, beide leer = fertig
+```
+
+Das ersetzt dreißig einzelne Wartezeiten durch eine. Ein Bild in 1024×1024 braucht auf der
+3060 rund fünfzig Sekunden, ein Stapel von 35 also gut eine halbe Stunde.
+
+Praktischer als Werte einzeln zu setzen: den Ablauf **einmal** über die Schnittstelle holen und
+mit einem kleinen Python-Skript pro Bild eine Kopie schreiben — Prompt in Knoten 19, Startwert
+in Knoten 3, Dateiname-Präfix am `SaveImage` (`Answers/<name>`, damit jedes Bild seinen eigenen
+Zähler bekommt und nie zwei Läufe kollidieren).
+
+🟡 **Der Zähler zählt weiter.** Ein zweiter Lauf desselben Namens wird `<name>_00002_.png`, nicht
+überschrieben. Wer nachbessert, muss beim Einsammeln bewusst die **neueste** Datei nehmen — oder,
+wenn die ältere die bessere war, ausdrücklich die alte. Beides kommt vor.
+
+## Freistellen: das Standardmodell versagt an flacher Grafik
+
+`cutout.py` arbeitet mit `isnet-anime`. Das trifft Figuren zuverlässig — an **flachen
+Grafikmotiven ohne Gesicht** bricht es ein. Vier goldene Sterne in einer Reihe kamen als
+halbdurchsichtige graue Geister zurück, dazu ein Schmutzschleier über dem oberen Bildrand. Ein
+Bild, das nach dem Freistellen ausgewaschen aussieht, ist genau dieser Fall.
+
+Die Abhilfe ist ein Modellwechsel, kein neuer Prompt:
+
+```bat
+.venv\Scripts\python.exe cutout.py roh.png --out ziel.png --trim --model u2net
+```
+
+Faustregel: **Figuren und Lebewesen → `isnet-anime`. Gegenstände, Symbole, Icons → `u2net`.**
+Das Modell lädt beim ersten Aufruf 176 MB nach, danach nie wieder.
+
+## Sammelkarten: 630×880 ist belegt
+
+Das Maß stand bisher gerechnet in `format_assets.py`, geprüft war es nie. Jetzt schon: sechs
+Karten, in `2:3 (Portrait Photo)` bei `1.5` erzeugt (1024×1536), vom Werkzeug **mittig
+beschnitten** auf 630×880. Der Beschnitt kostet oben und unten je rund 60 Pixel — die Vorlage
+verlangt deshalb zu Recht einen ruhigen Rand auf allen vier Seiten.
+
+## Ein Referenzbild anhängen, ohne die Oberfläche
+
+`Flux2 Txt2Img` braucht zwingend ein Referenzbild (siehe unten). In einem Skript heißt das: einen
+`LoadImage`-Knoten auf oberster Ebene ergänzen und ihn auf **Eingang 4** des Paket-Knotens 731
+(`reference_image1`) legen. Zwei Zeilen im JSON:
+
+```python
+d["nodes"].append({"id": 950, "type": "LoadImage", "widgets_values": ["anker_pikachu.png", "image"],
+                   "outputs": [{"name": "IMAGE", "type": "IMAGE", "links": [700]},
+                               {"name": "MASK", "type": "MASK", "links": None}], ...})
+d["links"].append([700, 950, 0, 731, 4, "IMAGE"])
+```
+
+Ob es sitzt, sagt der Server sofort: fehlt die Verbindung, lehnt er den Auftrag beim Einreihen ab
+(`required input 'image' is missing`) — er rechnet gar nicht erst los. Das ist ein billiger Test.
+
+## Was der erste Sprite-Lauf gelehrt hat (19.08.2026, 8 Sprites)
+
+`Flux2 Txt2Img` ist durchgelaufen, die Knotennummern oben stimmen. Drei Dinge, die vorher nicht in dieser Anleitung standen und je einen Fehlversuch gekostet haben:
+
+**1. Der Ablauf läuft nicht ohne Referenzbild.** Er ist im Kern ein Bearbeitungs-Paket: der Skalier-Knoten `ImageScaleToTotalPixels` (717) verlangt ein Bild, und ohne eines lehnt der Server den Auftrag ab, bevor irgendetwas rechnet (`required input 'image' is missing`). Der Eingang heißt `reference_image1` und ist Eingang **4** am Paket-Knoten 731. Ein `LoadImage`-Knoten auf oberster Ebene, mit diesem Eingang verbunden, löst es. Reines Erzeugen ohne Vorlage geht mit diesem Ablauf also nicht — was kein Verlust ist, weil das Referenzbild die Figur ohnehin trifft.
+
+**2. Der Server sieht nur die oberste Ebene seines Eingangsordners.** Dateien in einem Unterordner von `F:\Comfy-Desktop\ComfyUI-Shared\input\` tauchen in der Auswahl von `LoadImage` **nicht** auf, auch nicht als `unterordner/datei.png`. Referenzbilder gehören direkt in den Ordner.
+
+**3. Auflösung.** `ResolutionSelector` auf `2:3 (Portrait Photo)` und `1.57` ergibt **1040×1568** — nah genug an den geforderten 1024×1536, das Formatieren bügelt den Rest.
+
+Der Weg zum Emotionsset hat sich bestätigt: erst `neutral` mit der von Hand gelieferten Vorlage, dieses Rohbild (grauer Hintergrund, **nicht** das freigestellte) zurück in den Eingangsordner, dann die zweite Emotion mit ihm als Vorlage. Die Figur bleibt dabei erkennbar dieselbe, nur das Gesicht ändert sich.
+
+🟡 Das Freistellen schneidet eng an die Figur — ein stehender Mensch kommt dabei auf rund 710 Pixel Breite und wird beim Formatieren auf 1024 hochgerechnet. Sichtbar geschadet hat es nicht; wer es schärfer will, erzeugt größer.
 - Der Dateiname-Zähler beginnt pro Unterordner bei `00001`. Wer Serien fährt, holt die Bilder besser direkt nach jedem Lauf ab, statt sich auf die Nummerierung zu verlassen.

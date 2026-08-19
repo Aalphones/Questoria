@@ -86,11 +86,20 @@ jede Umformulierung an anderer Stelle verändert auch das Gesicht.
 
 Drei Wege zur Konsistenz, in dieser Reihenfolge:
 
-1. **Referenzbild (belastbar).** Das erste gelungene Sprite als Referenzbild in
-   die drei weiteren Läufe geben. FLUX.2 klein nimmt bis zu 3 Referenzbilder.
-   Bei GPT Image dasselbe, dort per Index benennen: *„Image 1: the character
-   reference — keep face, hair, outfit and proportions identical, change only
-   the expression."*
+1. **Referenzbild (belastbar) — und zwar mit Index benannt, auch lokal.** Das
+   erste gelungene Sprite als Referenzbild in die drei weiteren Läufe geben.
+   FLUX.2 klein nimmt bis zu 3 Referenzbilder. 🟡 **Korrektur:** Diese Seite
+   verlangte den Index-Bezug bisher nur für GPT Image — falsch. Black Forest
+   Labs' eigener FLUX.2-Prompting-Guide verlangt dieselbe explizite Zuordnung
+   auch bei lokaler Multi-Reference-Konditionierung: „clearly describe the
+   role of each [reference]: subject from image 1, style from image 2,
+   background from image 3." Fehlt der Satz, konkurriert die volle
+   Text-Neubeschreibung der Figur mit dem Referenzbild, statt sich ihm
+   unterzuordnen — genau das Symptom, wenn das Ergebnis trotz korrekt
+   verdrahteter Konditionierung nicht nach der Referenz aussieht. Bei
+   **beiden** Modellen also wörtlich in den Prompt: *„Image 1: the character
+   reference — keep face, hair, outfit and proportions identical to Image 1,
+   change only the expression."* Quelle: [BFL FLUX.2 Prompting Guide](https://docs.bfl.ml/guides/prompting_guide_flux2).
 2. **Seed festhalten (plausibel, ungemessen).** Lokal denselben Seed über alle
    vier Läufe verwenden. Hilft, ersetzt aber das Referenzbild nicht.
 3. **Vier Läufe direkt hintereinander**, ohne zwischendurch am Stilsatz zu

@@ -15,7 +15,14 @@ Für Hintergründe, Karten und Sammelkarten ist Krea 2 Turbo zuständig → Skil
 
 ComfyUI Desktop muss laufen. Prüfen: `curl http://127.0.0.1:8188/system_stats` — antwortet das nicht, ComfyUI starten lassen.
 
-🟡 **Diese beiden Abläufe sind eingerichtet, aber noch nie durchgelaufen.** Modell, Encoder und VAE zeigen nachweislich richtig; die Knotennummern unten stammen aus der Datei, nicht aus einem erfolgreichen Lauf. Beim ersten Einsatz mit einem Testbild anfangen und das Ergebnis wirklich ansehen, bevor eine Serie startet.
+`Flux2 Txt2Img` ist am 19.08.2026 mit acht Sprites durchgelaufen, die Knotennummern unten stimmen. 🟡 `Flux Edit` dagegen ist eingerichtet, aber **noch nie gelaufen** — dessen Nummern stammen aus der Datei, nicht aus einem Lauf.
+
+**Zwei Dinge, an denen der erste Versuch scheiterte:**
+
+1. **Ohne Referenzbild läuft gar nichts.** Der Ablauf ist im Kern ein Bearbeitungs-Paket: der Skalier-Knoten 717 verlangt ein Bild, und der Server lehnt den Auftrag sonst ab, bevor er rechnet (`required input 'image' is missing`). Ein `LoadImage`-Knoten auf oberster Ebene muss an Eingang **4** (`reference_image1`) des Paket-Knotens 731 hängen. Reines Erzeugen ohne Vorlage kann dieser Ablauf nicht.
+2. **Der Server sieht nur die oberste Ebene des Eingangsordners.** Was in einem Unterordner von `F:\Comfy-Desktop\ComfyUI-Shared\input\` liegt, taucht in der Auswahl von `LoadImage` nicht auf — auch nicht als `unterordner/datei.png`. Referenzbilder direkt in den Ordner legen.
+
+Auflösung: `2:3 (Portrait Photo)` mit `1.57` ergibt **1040×1568**, nah genug an den geforderten 1024×1536.
 
 ## Was der Skill baut
 

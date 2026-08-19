@@ -65,9 +65,13 @@ Größe: **2048×1152**, dann auf 1920×1080 verkleinern.
 Gleicher Ort, gleiche Komposition, andere Stimmung — als **eigene Datei** mit
 gleichem Präfix: `hafendamm.webp` → `hafendamm_corrupted.webp`.
 
-Lokal denselben Seed halten und nur den Stimmungsteil austauschen. Bei GPT
-Image das erste Bild als Referenz mitgeben und ansagen: *„same location, same
-camera angle and composition as Image 1, only the mood changes."*
+Lokal denselben Seed halten und nur den Stimmungsteil austauschen — plausibel,
+aber laut [MODEL_SETTINGS.md](MODEL_SETTINGS.md) nicht gemessen. Belastbarer:
+das Grundbild selbst als Referenzbild mitgeben, genau wie oben mit Index
+benannt: *„Image 1 is the base scene — keep composition and camera angle
+identical to Image 1, only [Stimmungsteil] changes."* Bei GPT Image dasselbe
+Prinzip: *„same location, same camera angle and composition as Image 1, only
+the mood changes."*
 
 | Variante | Austauschsatz |
 |---|---|
@@ -90,8 +94,12 @@ Inpainting-Umweg:
    the colour grading exactly as they are."* Der zweite Satz ist der wichtige —
    ohne ihn driftet das ganze Bild.
 2. **FLUX.2 klein mit Referenzbild** (maximal 3 Stück), dazu der normale
-   Absatz-Prompt oben. Das Referenzbild liefert Ort und Stil, der Prompt die
-   leere Bühne.
+   Absatz-Prompt oben — **den Bezug im Text explizit benennen**, sonst
+   konkurriert der Prompt mit dem Bild statt sich ihm unterzuordnen (Quelle:
+   [BFL FLUX.2 Prompting Guide](https://docs.bfl.ml/guides/prompting_guide_flux2),
+   Details in [SPRITES.md](SPRITES.md)): *„Image 1 is the location and style
+   reference — keep the architecture, the lighting and the colour grading
+   identical to Image 1. [normaler Absatz-Prompt für die leere Bühne]."*
 
 🟡 **Img2Img mit Teil-Denoising ist ungeklärt.** Die alte Library nannte
 Denoising-Stärken aus der FLUX.1-Zeit (0.3–0.4 für den Stil-Nachpass). Für
