@@ -70,7 +70,7 @@ schriftlich festgehalten. Nicht gemerkt, geschrieben.
 | 1 | [Die Bühne — echtes Vollbild](phase-1-buehne.md) | heikel | complete (Abnahme am Bildschirm offen) |
 | 2 | [Planetenkarte vollflächig mit Pfaden](phase-2-planetenkarte.md) | standard | complete (Abnahme am Bildschirm offen) |
 | 3 | [Etappen- und Ortskarte im Vollbild](phase-3-karten.md) | standard | complete (Abnahme am Bildschirm offen) |
-| 4 | [Lernstufen mit Bild](phase-4-lernstufen.md) | heikel | pending |
+| 4 | [Lernstufen mit Bild](phase-4-lernstufen.md) | heikel | complete (Abnahme am Bildschirm offen) |
 | 5 | [Aufgabenfläche und Erfolgsmoment](phase-5-aufgabe-und-erfolg.md) | standard | pending |
 
 Phase 1 ist Voraussetzung für 2, 3 und 5. Phase 4 hängt an nichts und könnte

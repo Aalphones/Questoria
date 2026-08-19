@@ -1,6 +1,9 @@
 import { NgOptimizedImage } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, linkedSignal } from '@angular/core';
 
+/** Wie das Bild seine Fläche ausfüllt — beschneidend oder vollständig eingepasst. */
+export type ImageSlotFit = 'cover' | 'contain';
+
 /**
  * Bildfläche mit beschriftetem Platzhalter, wenn die Datei fehlt.
  *
@@ -19,6 +22,8 @@ export class ImageSlot {
   readonly src = input<string | null>(null);
   /** Text im Platzhalter — üblicherweise der erwartete Dateiname. */
   readonly label = input.required<string>();
+  /** `contain` für freigestellte Motive, die vollständig sichtbar bleiben müssen. */
+  readonly fit = input<ImageSlotFit>('cover');
 
   /** Wechselt `src`, beginnt der Fehlerzustand wieder bei „noch kein Fehler". */
   readonly failed = linkedSignal<string | null, boolean>({

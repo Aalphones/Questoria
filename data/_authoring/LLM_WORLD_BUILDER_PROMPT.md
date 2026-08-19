@@ -55,6 +55,11 @@ Erzeuge folgende Dateien vollständig:
    später wörtlich in jeden Bild-Prompt kopiert; ohne ihn bekommt die Welt
    vierzig verschiedene Handschriften. Ist oben kein Bildstil vorgegeben,
    schlage einen vor, der zum Thema und zum Zielalter passt.
+   Jeder Eintrag in difficulty_levels[] trägt neben id und label auch
+   description (EIN Satz nach dem Muster "Leicht — kurze Aufgaben, viele
+   Hinweise."), image ("stufe_<id>.png") und image_label (ein Satz, der das
+   Bild beschreibt — er wird vorgelesen und steht als Ersatztext da, wenn die
+   Datei fehlt). Die Reihenfolge im Array IST die Schwierigkeit: leicht zuerst.
 2. cards.json — card_format unverändert übernehmen, plus eine Sammelkarte
    pro Episode und zusätzlich 1-2 seltene Karten pro Arc. Jede Karte:
    id, name, set (= "Etappe N · <Arc-Name>"), rarity, asset, flavor, hint.
@@ -123,7 +128,12 @@ Keine Erklärungen zwischen den Dateien. Keine zusammenfassende Antwort danach.
 - Sprite-Dateinamen generiert das Modell nur als String — die Bilder selbst
   entstehen über `image-prompts/SPRITES.md`. Namen vorher festlegen und in
   beide Prompts konsistent einspeisen. Das gilt genauso für Kartenbilder
-  (`karte_<id>.png`) und Bildantworten (`antwort_<slug>.png`).
+  (`karte_<id>.png`), Bildantworten (`antwort_<slug>.png`) und die drei
+  Lernstufen-Bilder (`stufe_<level_id>.png`).
+- **Die drei Lernstufen-Bilder gehören in die Bestellliste jeder neuen Welt.**
+  Sie sind technisch optional — eine Welt ohne sie läuft — aber ihre
+  Stufenauswahl sieht dann schlechter aus als die der Bestandswelten
+  ([ADR-018](../../docs/decisions/018-lernstufen-bilder-im-content.md)).
 - **Koordinaten immer nachjustieren.** Das Modell kann die Kartenillustration
   nicht sehen und rät die Prozentwerte. Nach der Generierung einmal die Karte
   im Spiel öffnen und die Punkte auf die tatsächlichen Landmarken schieben.

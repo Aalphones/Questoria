@@ -90,7 +90,13 @@ Enthält die Lernstufen und **zwei Kartenebenen**: die Etappenkarte (Übersicht
   "art_style": "string — PFLICHT, englischer Satz. Der verbindliche Bildstil der Welt, wird in JEDEN Bild-Prompt wörtlich übernommen",
 
   "difficulty_levels": [
-    { "id": "string — snake_case, z. B. matrose", "label": "string — Anzeigename, z. B. Matrose (Leicht)" }
+    {
+      "id": "string — snake_case, z. B. matrose",
+      "label": "string — Anzeigename, z. B. Matrose (Leicht)",
+      "description": "string — OPTIONAL, ein Satz für die Stufenkarte, z. B. Leicht — kurze Aufgaben, viele Hinweise.",
+      "image": "string — OPTIONAL, Dateiname unter levels/, z. B. stufe_matrose.png",
+      "image_label": "string — PFLICHT, sobald image steht: Beschreibung des Bildes für die Sprachausgabe und als Ersatztext, wenn die Datei fehlt"
+    }
   ],
 
   "arc_overview": {
@@ -140,6 +146,22 @@ Enthält die Lernstufen und **zwei Kartenebenen**: die Etappenkarte (Übersicht
   ]
 }
 ```
+
+### `difficulty_levels[]` — die Lernstufen und ihre Bilder
+
+Die Stufenauswahl zeigt je Stufe eine farbige Karte mit Namen, Punkten
+(ein, zwei, drei — nach der **Reihenfolge im Array**) und, wenn vorhanden,
+`description` und Bild.
+
+- **`description` und `image` sind optional.** Eine Welt ohne beides zeigt
+  weiterhin vollständige Karten, nur schmucklos — das ist ein gültiger Zustand,
+  kein Notbehelf ([ADR-018](../../docs/decisions/018-lernstufen-bilder-im-content.md)).
+- **`image_label` ist Pflicht, sobald `image` steht.** Es wird vorgelesen und
+  steht in der Bildfläche, wenn die Datei fehlt.
+- **Die Reihenfolge im Array ist die Schwierigkeit.** Die Engine leitet Punkte
+  und Farbstufe aus der Position ab, nie aus der `id` — leicht steht vorn.
+- Bilder liegen unter `levels/` der Welt, 512 × 768 PNG mit Alpha
+  (`ASSET_REQUIREMENTS.md`, Abschnitt 9).
 
 ### `art_style` — der Bildstil der Welt
 

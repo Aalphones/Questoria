@@ -30,6 +30,8 @@ Komposition auseinander.
 │   └── karte_<card_id>.png         ← Sammelkarten, 630 × 880 px
 ├── achievements/
 │   └── <icon>.png                  ← Erfolgs-Icons, 128 × 128 px
+├── levels/
+│   └── stufe_<level_id>.png        ← Lernstufen-Bilder, 512 × 768 px, optional
 ├── audio/
 │   └── voices/
 │       └── <character_id>_<episode_id>_<line_nr>.mp3
@@ -220,6 +222,30 @@ Antworttext berechnet — sonst bricht jede Textkorrektur das Bild.
 unter dem Minimum aller eingesetzten Bildmodelle — erzeugt wird in 1024 × 1024
 und anschließend verkleinert, siehe
 [image-prompts/ANSWER_IMAGES.md](image-prompts/ANSWER_IMAGES.md).
+
+## 9. Lernstufen-Bilder
+
+Ein Bild je Lernstufe auf der Stufenauswahl. **Optional** — eine Welt ohne
+diese Bilder zeigt vollständige Karten, nur ohne Motiv
+([ADR-018](../../docs/decisions/018-lernstufen-bilder-im-content.md)).
+
+| Eigenschaft | Vorgabe |
+|---|---|
+| Format | `.png` mit Alpha-Kanal (echte Transparenz) |
+| Seitenverhältnis | Hochformat 2:3, **Ausgabegröße 512 × 768 px** |
+| Dateiname | frei wählbar, steht als `image` in `difficulty_levels[]`; Konvention `stufe_<level_id>.png` |
+| Inhalt | eine einzelne freigestellte Figur oder ein einzelnes Motiv, das die Stufe verkörpert — kein Text im Bild |
+| Stil | `art_style` der Welt, wörtlich wie überall |
+
+**Das Bild trägt die Schwierigkeit nicht.** Die Reihenfolge liest das Kind an
+den Punkten und am Beschreibungssatz ab — das Bild macht die Wahl schöner, nicht
+verständlicher. Ein Motiv, das nur mit Fandom-Wissen als „schwer" erkennbar ist,
+ist deshalb kein Fehler.
+
+**512 × 768 ist die Ausgabegröße, nicht die Generierungsgröße.** Erzeugt wird in
+Sprite-Größe (1024 × 1536) und anschließend freigestellt und verkleinert —
+dieselbe Kette wie bei den Sprites, siehe
+[image-prompts/GENERATING.md](image-prompts/GENERATING.md).
 
 ---
 

@@ -134,6 +134,17 @@ weichen in der Umsetzung ab — jeweils mit Grund:
     Prozentwerte des Kartenbildes — Beschneiden könnte einen Ort unerreichbar
     machen, was für ein Erstklässler-Spiel nicht verhandelbar ist (Phase 3).
 
+14. **Die Lernstufen-Karten tragen ein Bild, das im Design nicht vorkommt.**
+    Abschnitt 3 des HANDOFF zeigt drei reine Farbkarten mit Punkten und einem
+    Beschreibungssatz. Produktiv steht darüber eine optionale Bildfläche: Nennt
+    eine Stufe in `world_config.json` ein `image`, zeigt die Karte es; nennt sie
+    keins, bleibt exakt die Karte aus dem Design übrig. Grund ist die erste
+    Spielrunde — der Screen war der leerste des Spiels. Die Schwierigkeit hängt
+    weiterhin an den Punkten und am Text, nie am Bild und nie allein an der
+    Farbe ([ADR-018](../decisions/018-lernstufen-bilder-im-content.md)).
+    Nebenbefund derselben Phase: die Farbkarten aus dem Design existierten
+    bis dahin gar nicht — gebaut waren Textpillen. Sie sind jetzt nachgezogen.
+
 ## Offene Punkte
 
 - ✅ **Node-Größen sind im Prototyp px-Werte** (`size: 200`, `width: 132`),

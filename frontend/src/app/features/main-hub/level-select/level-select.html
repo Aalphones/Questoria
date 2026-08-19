@@ -4,6 +4,7 @@
   <section class="level-select">
     <h1 class="level-select__title">{{ loadedWorld.title }}</h1>
     <qst-difficulty-picker
+      [themeId]="themeId()"
       [levels]="loadedWorld.difficulty_levels"
       [selectedLevelId]="activeDifficultyLevel()"
       (chosen)="chooseDifficultyLevel($event)"

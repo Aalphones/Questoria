@@ -14,7 +14,7 @@
     align-items: center;
     gap: var(--space-2);
     padding: 0;
-    margin-block-end: var(--space-2);
+    margin-block-end: var(--space-4);
     font-family: var(--font-heading);
     font-weight: var(--font-heading-weight);
     font-size: var(--font-size-card-title);
@@ -37,34 +37,101 @@
   &__options {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-2);
+    justify-content: center;
+    gap: var(--space-4);
   }
 
   &__option {
     cursor: pointer;
   }
 
-  &__label {
-    display: inline-flex;
-    align-items: center;
-    padding: var(--space-2) var(--space-3);
-    border: 1px solid var(--color-divider);
+  // Farbstufe und Textfarbe kommen als lokale Variablen von `data-tier` — so
+  // steht die Farbregel einmal da, statt je Stufe im Layout wiederholt zu werden.
+  &__card {
+    --level-surface: var(--color-level-rest-surface);
+    --level-text: var(--color-level-rest-text);
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+    inline-size: var(--size-level-card-inline);
+    block-size: 100%;
+    padding: var(--space-4);
+    border-radius: var(--radius-card);
+    background: var(--level-surface);
+    box-shadow: var(--shadow-sm);
+    color: var(--level-text);
+    transition:
+      transform var(--duration-fast) var(--easing-standard),
+      box-shadow var(--duration-fast) var(--easing-standard);
+
+    &[data-tier='1'] {
+      --level-surface: var(--color-level-1-surface);
+      --level-text: var(--color-level-1-text);
+    }
+
+    &[data-tier='2'] {
+      --level-surface: var(--color-level-2-surface);
+      --level-text: var(--color-level-2-text);
+    }
+
+    &[data-tier='3'] {
+      --level-surface: var(--color-level-3-surface);
+      --level-text: var(--color-level-3-text);
+    }
+  }
+
+  // Bildfläche nur, wenn die Stufe ein Bild nennt — sonst steht hier nichts,
+  // und die Karte schließt ohne Loch am Namen an (Phase 4, AK 2).
+  &__image {
+    display: block;
+    inline-size: 100%;
+    block-size: var(--size-level-image-block);
+  }
+
+  &__name {
+    font-family: var(--font-heading);
+    font-weight: var(--font-heading-weight);
+    font-size: var(--font-size-section);
+    line-height: var(--line-height-heading);
+  }
+
+  &__pips {
+    display: flex;
+    gap: var(--space-1);
+  }
+
+  // Die Punkte tragen die Reihenfolge allein — ohne Bildkenntnis und ohne
+  // Farbsehen ablesbar (Phase 4, AK 4).
+  &__pip {
+    inline-size: var(--size-level-pip-inline);
+    block-size: var(--size-level-pip-block);
     border-radius: var(--radius-pill);
-    font-size: var(--font-size-control);
-    transition: background var(--duration-fast) var(--easing-standard);
+    background: color-mix(in srgb, currentcolor 22%, transparent);
+
+    &--on {
+      background: currentcolor;
+    }
   }
 
-  &__option:hover &__label {
-    background: var(--color-hover-wash);
+  &__description {
+    font-size: var(--font-size-body);
+    text-wrap: pretty;
   }
 
-  &__option:has(input:checked) &__label {
-    border-color: var(--color-accent);
-    background: var(--color-accent);
-    color: var(--color-text-on-accent);
+  &__option:hover &__card {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px);
   }
 
-  &__option:has(input:focus-visible) &__label {
+  &__option:has(input:checked) &__card {
+    box-shadow:
+      0 0 0 3px var(--color-accent),
+      var(--shadow-md);
+  }
+
+  &__option:has(input:focus-visible) &__card {
     outline: 2px solid var(--color-focus-ring);
     outline-offset: 2px;
   }

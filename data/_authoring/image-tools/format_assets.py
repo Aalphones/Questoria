@@ -36,6 +36,7 @@ class AssetKind(StrEnum):
     CARD = "card"
     ACHIEVEMENT = "achievement"
     SPRITE = "sprite"
+    LEVEL = "level"
 
 
 @dataclass(frozen=True)
@@ -54,6 +55,7 @@ TARGET_FORMATS: dict[AssetKind, TargetFormat] = {
     AssetKind.CARD: TargetFormat(630, 880, ".png", keep_alpha=False),
     AssetKind.ACHIEVEMENT: TargetFormat(128, 128, ".png", keep_alpha=True),
     AssetKind.SPRITE: TargetFormat(1024, 1536, ".png", keep_alpha=True),
+    AssetKind.LEVEL: TargetFormat(512, 768, ".png", keep_alpha=True),
 }
 
 # Der Ordnername unter data/themes/<welt>/ verrät den Typ — das erspart beim
@@ -65,6 +67,7 @@ FOLDER_TO_KIND: dict[str, AssetKind] = {
     "cards": AssetKind.CARD,
     "achievements": AssetKind.ACHIEVEMENT,
     "sprites": AssetKind.SPRITE,
+    "levels": AssetKind.LEVEL,
 }
 
 WEBP_QUALITY = 92

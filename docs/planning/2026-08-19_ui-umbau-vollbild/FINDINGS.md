@@ -31,3 +31,14 @@ Abgearbeitete Zeilen abhaken, nicht löschen.
       `--size-answer-min-block: clamp(…, 8vh, …)`. Das sind keine Bühnenhöhen,
       aber dieselbe Tablet-Falle — die Figur springt beim Ein- und Ausfahren
       der Browserleiste. Beim Anfassen der Aufgabenfläche mitziehen.
+
+## Aus Phase 4
+
+- [ ] → Phase 5: `--size-level-image-block: clamp(6rem, 22vh, 13rem)` ist die
+      dritte Stelle mit `vh` statt `dvh` und gehört zum selben Aufräumen wie die
+      beiden Tokens oben. Nicht dringend — die Stufenauswahl hat Luft nach unten,
+      ein springender Wert kostet dort nichts.
+- [ ] → Phase 5: `qst-image-slot` hat jetzt einen `fit`-Eingang
+      (`cover` | `contain`). Die Bildsuche und die Antwortbilder stehen bis heute
+      auf `cover` und beschneiden damit freigestellte Motive an den Rändern —
+      beim Anfassen der Aufgabenfläche prüfen, ob `contain` dort das Richtige ist.

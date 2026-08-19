@@ -34,6 +34,12 @@ export interface MainHub {
 export interface DifficultyLevel {
   id: string;
   label: string;
+  /** optional — ein Satz, was diese Stufe für das Kind bedeutet */
+  description?: string;
+  /** optional — Dateiname unter levels/ der Welt (ADR-018) */
+  image?: string;
+  /** Pflicht, sobald `image` gesetzt ist — Vorlesetext und Ersatz bei fehlender Datei */
+  image_label?: string;
 }
 
 export interface ArcStage {

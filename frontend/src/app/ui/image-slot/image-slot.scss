@@ -8,6 +8,12 @@
 .image-slot {
   &__image {
     object-fit: cover;
+
+    // Freigestellte Motive (Sprites, Lernstufen-Figuren) dürfen nichts
+    // verlieren — sie werden eingepasst, nicht formatfüllend beschnitten.
+    &--contain {
+      object-fit: contain;
+    }
   }
 
   &__placeholder {

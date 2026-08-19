@@ -99,6 +99,26 @@
   // „einpassen, nicht beschneiden") — Passepartout, kein Grau.
   --color-map-frame-bg: var(--color-surface);
 
+  // ── Lernstufen ───────────────────────────────────────────────────────────
+  // Drei Farbstufen von ruhig nach kräftig (Design Abschnitt 3). Die Farbe
+  // sagt die Reihenfolge nicht allein — dafür stehen die Punkte auf der Karte.
+  // Eine Welt mit mehr als drei Stufen fällt ab der vierten auf `rest` zurück.
+  --color-level-1-surface: var(--palette-moss-200);
+  --color-level-1-text: var(--palette-moss-900);
+  --color-level-2-surface: var(--palette-accent-200);
+  --color-level-2-text: var(--palette-accent-900);
+  --color-level-3-surface: var(--palette-accent-500);
+  --color-level-3-text: var(--palette-neutral-100);
+  --color-level-rest-surface: var(--palette-neutral-200);
+  --color-level-rest-text: var(--palette-neutral-900);
+
+  --size-level-card-inline: 16.625rem;
+  // Bildfläche der Stufenkarte: wächst mit dem Fenster, bleibt aber so flach,
+  // dass Name, Punkte und Beschreibung darunter ohne Rollen ins Bild passen.
+  --size-level-image-block: clamp(6rem, 22vh, 13rem);
+  --size-level-pip-inline: 1.75rem;
+  --size-level-pip-block: 0.75rem;
+
   // ── Schrift ──────────────────────────────────────────────────────────────
   --font-heading: 'Caprasimo', system-ui, sans-serif;
   --font-heading-weight: 400;

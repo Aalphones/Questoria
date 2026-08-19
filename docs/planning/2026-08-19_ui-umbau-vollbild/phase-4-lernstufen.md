@@ -65,24 +65,24 @@ Reihenfolge trotzdem sehen; und Farbe allein trägt einen Zustand nie.
 
 ## Checkliste
 
-- [ ] `difficulty_levels[].image` und `.image_label` in
-      `models/content.types.ts` und in der Schema-Referenz (Abschnitt 2)
-- [ ] Neue Asset-Kategorie `levels/` in `ASSET_REQUIREMENTS.md`: Hochformat wie
-      Sprites, aber kleiner — **Maß in dieser Phase festlegen und dort
-      eintragen**, Vorschlag 512×768 PNG mit Alpha
-- [ ] `format_assets.py`: Zielmaß für `levels/` ergänzen
-- [ ] `difficulty-picker` um die Bildfläche erweitern — additiv, die vorhandene
-      Karte bleibt, das Bild kommt darüber
-- [ ] Drei Bilder für `pokemon_lesen` erzeugen (Skill `flux2-bilder`, Figuren
-      mit Ankerbild wo möglich), freistellen, formatieren, ansehen
-- [ ] `world_config.json` der Pokémon-Welt um die sechs neuen Felder ergänzen
+- [x] `difficulty_levels[].image` und `.image_label` in
+      `models/content.types.ts` und in der Schema-Referenz (Abschnitt 2) —
+      dazu `description`, das es entgegen der Planannahme noch nicht gab
+- [x] Neue Asset-Kategorie `levels/` in `ASSET_REQUIREMENTS.md`: Abschnitt 9,
+      **512 × 768 PNG mit Alpha** (Vorschlag übernommen), Ordnerbaum ergänzt
+- [x] `format_assets.py`: Zielmaß für `levels/` ergänzt (`AssetKind.LEVEL`)
+- [x] `difficulty-picker` auf Karten umgebaut — Bildfläche additiv, aber die
+      Karte selbst musste erst entstehen (siehe Report-Back)
+- [x] Drei Bilder für `pokemon_lesen` erzeugt — **Krea 2 statt FLUX.2**, Grund
+      im Report-Back; freigestellt, formatiert, angesehen
+- [x] `world_config.json` der Pokémon-Welt um die neun neuen Felder ergänzt
+      (drei Stufen × `description`, `image`, `image_label`)
 - [ ] Am Bildschirm ansehen — und einmal mit absichtlich falschem Dateinamen,
       damit AK 3 wirklich geprüft ist
-- [ ] `docs/design/README.md`: Abweichung vom HANDOFF festhalten (Bilder statt
-      reiner Farbkarten)
-- [ ] `LLM_WORLD_BUILDER_PROMPT.md`: neue Welten dürfen die Felder erzeugen
-- [ ] **ADR-018** schreiben: Lernstufen-Bilder im Content statt im Code —
-      warum optional, warum die Punkte bleiben
+- [x] `docs/design/README.md`: Abweichung 14 festgehalten
+- [x] `LLM_WORLD_BUILDER_PROMPT.md`: neue Welten erzeugen die Felder mit, und
+      die drei Bilder stehen als Bestellposten drin
+- [x] **ADR-018** geschrieben: Lernstufen-Bilder im Content statt im Code
 
 ## Risiken
 
@@ -97,3 +97,49 @@ Reihenfolge an den Punkten festgemacht (AK 4) — das Bild macht die Wahl schön
 nicht verständlicher.
 
 ## Report-Back
+
+**Status:** complete (Abnahme am Bildschirm offen) · 19.08.2026
+
+### Die Planannahme, die nicht stimmte
+
+Der Plan sagt „additiv, die vorhandene Karte bleibt" und die AK 1 und 4
+verlangen „Name, **Punkte und Beschreibung** weiterhin". Es gab weder Karte noch
+Punkte noch Beschreibung: `difficulty-picker` rendete drei Textpillen mit
+`level.label`, und `DifficultyLevel` trug genau zwei Felder. Das Kartendesign aus
+`HANDOFF.md` Abschnitt 3 war nie gebaut worden.
+
+Damit widersprachen sich AK 2 („sieht aus wie heute") und AK 1/4. **Sascha hat
+zugunsten von AK 1/4 entschieden:** die Design-Karte wird nachgezogen, AK 2 fällt
+in ihrem Wortlaut. Was von AK 2 bleibt und erfüllt ist: Eine Stufe ohne Bild
+zeigt kein Loch und keinen Platzhalterrahmen, nur die Karte ohne Bildfläche.
+
+Gebaut ist damit: farbige Karte je Stufe (drei Zweck-Token-Stufen, ab der
+vierten neutral), Punkte aus der Position im Array, Beschreibungssatz,
+darüber die optionale Bildfläche.
+
+### Krea 2 statt FLUX.2
+
+Der Plan nennt `flux2-bilder` mit Ankerbild. **FLUX.2 kann in dieser
+Installation gar nichts ohne Referenzbild erzeugen** (`Flux2 Txt2Img` ist im Kern
+ein Bearbeitungs-Paket, der Server lehnt den Auftrag ohne Bild ab) — und für drei
+brandneue Trainerfiguren gibt es keinen Anker. Ein fremdes Sprite als Referenz
+hätte deren Aussehen in die Figuren gezogen. Also `Krea2 Txt2Img`, das ohne
+Vorlage arbeitet; Konsistenzbedarf besteht nicht, weil jede Figur genau einmal
+vorkommt. `art_style` der Welt wurde wörtlich übernommen und geprüft.
+
+### Neu im Code
+
+- `qst-image-slot` hat einen `fit`-Eingang bekommen (`cover` bleibt Standard,
+  `contain` für freigestellte Motive). Ohne ihn hätte die Kartengrafik ihre
+  Ränder verloren.
+- Neue Zweck-Tokens für die drei Farbstufen, die Kartenbreite, die Bildhöhe und
+  die Punktgröße — die rohe Palette bleibt für Komponenten unsichtbar.
+
+### Unsicherste Stelle
+
+`difficulty-picker.scss:110` — die Punkte färben sich über
+`color-mix(in srgb, currentcolor 22%, transparent)` aus der Textfarbe der Karte.
+Auf der dritten Stufe steht heller Text auf kräftigem Orange; ob der ausgeschaltete
+Punkt dort noch als „leer" lesbar ist statt als schmutziger Fleck, entscheidet das
+Auge. Klärender Check: Stufenauswahl öffnen und die dritte Karte ansehen — die
+letzte Reihe muss klar drei volle Punkte zeigen, die erste klar zwei leere.

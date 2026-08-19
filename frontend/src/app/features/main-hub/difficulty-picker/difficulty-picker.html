@@ -12,17 +12,42 @@
   </legend>
 
   <div class="difficulty-picker__options">
-    @for (level of levels(); track level.id) {
+    @for (card of cards(); track card.id) {
       <label class="difficulty-picker__option">
         <input
           class="visually-hidden"
           type="radio"
           name="difficulty-level"
-          [value]="level.id"
-          [checked]="level.id === selectedLevelId()"
-          (change)="chosen.emit(level.id)"
+          [value]="card.id"
+          [checked]="card.id === selectedLevelId()"
+          (change)="chosen.emit(card.id)"
         />
-        <span class="difficulty-picker__label">{{ level.label }}</span>
+        <span class="difficulty-picker__card" [attr.data-tier]="card.tier">
+          @if (card.imageUrl !== null) {
+            <span class="difficulty-picker__image">
+              <qst-image-slot [src]="card.imageUrl" [label]="card.imageLabel" [fit]="'contain'" />
+            </span>
+          }
+
+          <span class="difficulty-picker__name">{{ card.label }}</span>
+
+          <span class="difficulty-picker__pips" aria-hidden="true">
+            @for (pip of card.pips; track pip) {
+              <span
+                class="difficulty-picker__pip"
+                [class.difficulty-picker__pip--on]="pip <= card.rank"
+              ></span>
+            }
+          </span>
+          <span class="visually-hidden">Stufe {{ card.rank }} von {{ card.pips.length }}</span>
+
+          @if (card.description !== null) {
+            <span class="difficulty-picker__description">{{ card.description }}</span>
+          }
+          @if (card.imageLabel.length > 0) {
+            <span class="visually-hidden">Bild: {{ card.imageLabel }}</span>
+          }
+        </span>
       </label>
     }
   </div>
