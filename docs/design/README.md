@@ -86,7 +86,13 @@ weichen in der Umsetzung ab — jeweils mit Grund:
 8. **Kein Mockup für `text_input` und `image_search`.** Der Prototyp bildet
    nur `dialog` und `minigame` (Multiple Choice) visuell ab. Beide neuen
    Aufgaben-Typen übernehmen die gemeinsame Aufgaben-Hülle (`ui/task-card/`)
-   und folgen deren Bildsprache, ohne eigene Prototyp-Vorlage.
+   und folgen deren Bildsprache, ohne eigene Prototyp-Vorlage. **Phase 5**
+   ergänzt für die Bildsuche einen eigenen `fill`-Modus der Hülle: Ihr Körper
+   füllt statt sich am Inhalt zu bemessen die volle Resthöhe der Bühne, das
+   Suchbild wächst darin bis zum Rand bei festem 16:9 (Content-Kontrakt für
+   die Ziel-Koordinaten), Zähler und Rückmeldung bleiben ohne Rollen sichtbar.
+   `fill` ist ein Opt-in-Eingang an `ui/task-card/` — die anderen drei
+   Aufgaben-Typen setzen ihn nicht und bleiben unverändert.
 9. **Kein Mockup für den Account-Login.** Der Prototyp-Screen `login` ist die
    Profilauswahl (`features/profile/`, Phase 4), nicht die neue
    E-Mail/Passwort-Anmeldung davor. `features/auth/login.ts` baut freihändig,

@@ -27,6 +27,9 @@ import { TaskStep, TaskStepState } from './task-card.types';
   templateUrl: './task-card.html',
   styleUrl: './task-card.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '[class.task-card--fill]': 'fill()',
+  },
 })
 export class TaskCard {
   private readonly narration = inject(NarrationService);
@@ -39,6 +42,12 @@ export class TaskCard {
   /** Wie viele bewertete Events dieser Episode vor dieser Aufgabe lagen. */
   readonly stepDone = input.required<number>();
   readonly stepTotal = input.required<number>();
+  /**
+   * Opt-in für Aufgaben, deren Körper die Bühnenhöhe ausfüllen muss statt sich
+   * am Inhalt zu bemessen — bisher nur die Bildsuche (Phase 5). Andere
+   * Aufgaben-Typen lassen das Attribut weg und bleiben unverändert.
+   */
+  readonly fill = input<boolean>(false);
 
   protected readonly steps = computed<readonly TaskStep[]>(() => {
     const done = this.stepDone();

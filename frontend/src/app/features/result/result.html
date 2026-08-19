@@ -11,11 +11,13 @@
     }
   </ul>
 
-  <h2 class="result__title">Ort geschafft!</h2>
+  <div class="result__panel">
+    <h2 class="result__title">Ort geschafft!</h2>
 
-  <div class="result__hint">
-    <qst-read-aloud-button [text]="hintText" />
-    <p>{{ hintText }}</p>
+    <div class="result__hint">
+      <qst-read-aloud-button [text]="hintText" />
+      <p>{{ hintText }}</p>
+    </div>
   </div>
 
   <div class="result__stats">

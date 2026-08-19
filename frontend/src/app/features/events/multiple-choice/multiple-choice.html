@@ -17,7 +17,7 @@
         >
           @if (showAnswerImages()) {
             <span class="multiple-choice__image">
-              <qst-image-slot [src]="answer.imageUrl" [label]="answer.label" />
+              <qst-image-slot [src]="answer.imageUrl" [label]="answer.label" [fit]="'contain'" />
             </span>
           }
 

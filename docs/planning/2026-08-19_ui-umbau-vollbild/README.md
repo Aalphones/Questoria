@@ -71,7 +71,7 @@ schriftlich festgehalten. Nicht gemerkt, geschrieben.
 | 2 | [Planetenkarte vollflächig mit Pfaden](phase-2-planetenkarte.md) | standard | complete (Abnahme am Bildschirm offen) |
 | 3 | [Etappen- und Ortskarte im Vollbild](phase-3-karten.md) | standard | complete (Abnahme am Bildschirm offen) |
 | 4 | [Lernstufen mit Bild](phase-4-lernstufen.md) | heikel | complete (Abnahme am Bildschirm offen) |
-| 5 | [Aufgabenfläche und Erfolgsmoment](phase-5-aufgabe-und-erfolg.md) | standard | pending |
+| 5 | [Aufgabenfläche und Erfolgsmoment](phase-5-aufgabe-und-erfolg.md) | standard | complete (Abnahme am Bildschirm offen) |
 
 Phase 1 ist Voraussetzung für 2, 3 und 5. Phase 4 hängt an nichts und könnte
 auch vorgezogen werden — sie steht hinten, weil sie als einzige Content-Arbeit

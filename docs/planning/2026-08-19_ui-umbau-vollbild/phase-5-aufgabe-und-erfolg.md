@@ -58,22 +58,27 @@ Drei Befunde am „Ort geschafft"-Screen, alle drei mit Vorlage im HANDOFF:
 
 ## Checkliste
 
-- [ ] Bildsuche: Aufbau auf die Bühnenhöhe umstellen, Rückmeldung und „Weiter"
+- [x] Bildsuche: Aufbau auf die Bühnenhöhe umstellen, Rückmeldung und „Weiter"
       an den unteren Rand
-- [ ] Prüfen, ob die Änderung in `ui/task-card/` gehört (dann trifft sie alle
+- [x] Prüfen, ob die Änderung in `ui/task-card/` gehört (dann trifft sie alle
       Aufgaben) oder nur in die Bildsuche — **im Report-Back begründen**
-- [ ] Alle fünf Aufgabentypen nach der Änderung durchspielen (AK 7)
-- [ ] Ergebnis-Screen: Kontrastfläche unter Überschrift, Hinweistext und
+- [ ] Alle fünf Aufgabentypen nach der Änderung durchspielen (AK 7) — **User,
+      Screen für Screen, siehe Report-Back**
+- [x] Ergebnis-Screen: Kontrastfläche unter Überschrift, Hinweistext und
       Statistiken
-- [ ] Konfetti hinter den Inhalt legen und `pointer-events: none` geben
-- [ ] Sternen-Staffelung gegen den HANDOFF prüfen und nachziehen
-- [ ] Kontrast messen (Entwicklerwerkzeuge des Browsers), Ergebnis ins
-      Report-Back
-- [ ] `prefers-reduced-motion`-Zweige für alles Neue
-- [ ] `docs/design/README.md`: die freihändig gebaute Bildsuche als Abweichung
-      festhalten — sie hat keinen Prototyp-Screen und braucht ab jetzt eine
-      schriftliche Beschreibung
-- [ ] `docs/code-map.md` nachziehen
+- [x] Konfetti hinter den Inhalt legen und `pointer-events: none` geben
+      (`pointer-events: none` stand schon)
+- [x] Sternen-Staffelung gegen den HANDOFF prüfen und nachziehen (stand schon,
+      keine Änderung nötig)
+- [x] Kontrast **gerechnet** aus den Token-Hexwerten (kein Browser zur Hand in
+      dieser Session) — Ergebnis und Formel im Report-Back; **User misst mit
+      den Entwicklerwerkzeugen nach**
+- [x] `prefers-reduced-motion`-Zweige für alles Neue (nichts Neues animiert;
+      bestehende globale Regel in `_tokens.scss` deckt Sterne + Konfetti ab)
+- [x] `docs/design/README.md`: die freihändig gebaute Bildsuche als Abweichung
+      festhalten
+- [x] `docs/code-map.md` geprüft — Beschreibung von `ui/task-card/` bleibt auf
+      Grobheitsebene korrekt, keine Änderung nötig
 
 ## Risiken
 
@@ -88,3 +93,57 @@ genug anfühlt, entscheidet nur dein Auge — bleibt es dabei zu blass, ist das 
 neuer Befund, keine offene Phase.
 
 ## Report-Back
+
+**Teil A — Bildsuche füllt die Bühne.** `ui/task-card/` bekam einen neuen,
+optionalen Eingang `fill` (Default `false`). Ohne ihn verhält sich die Hülle
+exakt wie vorher — `.task-card__body` ist `display: contents`, jedes projizierte
+Element bleibt sein eigenes Grid-Item. Nur die Bildsuche setzt `[fill]="true"`:
+der Körper wird dann eine eigene Grid-Zeile mit der restlichen Bühnenhöhe
+(`minmax(0, 1fr)`), intern ein Flex-Column, und die Bildfläche bekommt
+`flex: 1 1 0%` bei festem `aspect-ratio: 16/9` — sie wächst also in die
+verfügbare Höhe, ohne das Seitenverhältnis zu verlassen, an dem die
+Ziel-Koordinaten im Content hängen. Zähler bleibt `flex: none`, Rückmeldung +
+„Weiter" sitzen wie bisher als eigene Grid-Zeile unter dem Körper — die liegt
+schon immer außerhalb des wachsenden Bereichs, das war nicht das Problem.
+
+**Warum in der Hülle statt lokal in der Bildsuche:** Ein rein lokaler Umbau
+hätte bedeutet, `ui/task-card/` zu ignorieren und die Höhenverteilung am
+Elternelement vorbei zu erzwingen — das hätte gegen den Bühnen-Kontrakt aus
+Phase 1 verstoßen („kein Screen rechnet seine Höhe selbst"). Der Opt-in-Eingang
+ist additiv: die drei anderen Konsumenten (Quiz, Wörter zuordnen, Texteingabe)
+übergeben `fill` nicht und sind laut Build/Lint unverändert.
+
+🟡 **Ungeprüft im Browser:** `aspect-ratio` + `flex-grow` mit `flex-basis: 0%`
+in einer Flex-Column ist moderne, aber korrekt spezifizierte Interaktion
+(Chrome/Firefox/Safari unterstützen sie seit ~2021) — trotzdem nur am Bildschirm
+wirklich zu verifizieren, nicht am Code. Prüfen bei 4:3, 16:10 und Hochformat
+(AK 1): füllt das Bild die Höhe, ohne die Breite zu sprengen, und bleibt alles
+ohne Rollen sichtbar?
+
+🟡 **AK 7 (alle Aufgabentypen durchspielen) ist beim User, nicht bei mir** —
+privates Profil, agentenlos, kein Dev-Server in dieser Session gestartet.
+
+**Teil B — Erfolgsmoment.**
+- Titel + Hinweistext stehen jetzt in einem `.result__panel` mit
+  `--color-surface`-Hintergrund, wie die Statistik-Karten. Der Hinweistext lief
+  vorher auf `--color-text-muted` — auf der neuen Fläche gerechnet nur
+  **~3,45:1** Kontrast (color-mix 55% Tinte auf Parchment-Fläche), unter der
+  AK-Vorgabe. Umgestellt auf volle `--color-text`: **~12,4:1** (WCAG-Formel,
+  Hex-Werte aus `_tokens.scss`: `--color-surface #ebddc5` gegen `--color-text
+  #201e1d`). 🟡 **Gerechnet, nicht mit den Entwicklerwerkzeugen gemessen** —
+  kein Browser in dieser Session offen. Bitte einmal nachmessen, auch wenn die
+  Marge groß genug ist, dass ein Rechenfehler sie kaum auffräße.
+- Konfetti bekam `z-index: -1`. `.episode` trägt `isolation: isolate` — das ist
+  der nächste echte Stapelkontext über der Konfetti (weder `:host` von
+  `qst-result` noch `.episode__stage` erzeugen selbst einen, beide setzen kein
+  `z-index`). Darin landet die Konfetti hinter dem unpositionierten Inhalt
+  (Titel, Karten, CTAs), aber vor `.episode__backdrop` (ebenfalls `z-index:
+  -1`, aber früher im Markup). 🟡 Auch das ist Stapelkontext-Logik auf Papier,
+  nicht am Bildschirm bestätigt.
+- Sternen-Staffelung und `pointer-events: none` auf der Konfetti standen schon
+  — keine Änderung nötig, nur geprüft.
+
+**Nebenbefund, nicht behoben:** `--size-answer-image: clamp(4rem, 12vh, 8.75rem)`
+in `_tokens.scss` ist eine vierte `vh`-Stelle (Bildgröße in der Quiz-Antwort),
+nicht in FINDINGS.md getaggt und deshalb bewusst nicht angefasst — dieselbe
+Tablet-Falle wie die drei behobenen. Neuer Befund, keine offene Phase.

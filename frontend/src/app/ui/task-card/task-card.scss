@@ -12,7 +12,31 @@
   animation: eqPop var(--duration-enter) var(--easing-standard);
 }
 
+// Opt-in für Aufgaben, die die Bühnenhöhe ausfüllen müssen (bisher nur die
+// Bildsuche, Phase 5). Der Körper bekommt eine eigene Zeile mit dem Rest der
+// Höhe, statt sich wie im Normalfall am Inhalt zu bemessen. Andere
+// Aufgaben-Typen setzen `fill` nicht und bleiben unverändert.
+:host(.task-card--fill) {
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  block-size: 100%;
+  min-block-size: 0;
+
+  .task-card__body {
+    display: flex;
+    flex-direction: column;
+    min-block-size: 0;
+    gap: var(--space-2);
+  }
+}
+
 .task-card {
+  // Ohne `fill` verhält sich der Körper wie vorher: jedes projizierte Element
+  // wird sein eigenes Grid-Item der Hülle, `display: contents` nimmt den `div`
+  // aus dem Box-Baum.
+  &__body {
+    display: contents;
+  }
+
   &__head {
     display: flex;
     align-items: center;

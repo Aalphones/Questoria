@@ -20,7 +20,7 @@
               (click)="pickImage(tile.pairIndex)"
             >
               <span class="word-match__frame">
-                <qst-image-slot [src]="tile.imageUrl" [label]="tile.placeholderLabel" />
+                <qst-image-slot [src]="tile.imageUrl" [label]="tile.placeholderLabel" [fit]="'contain'" />
               </span>
 
               <span class="visually-hidden">Bild {{ position + 1 }}</span>

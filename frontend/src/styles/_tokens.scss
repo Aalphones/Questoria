@@ -115,7 +115,7 @@
   --size-level-card-inline: 16.625rem;
   // Bildfläche der Stufenkarte: wächst mit dem Fenster, bleibt aber so flach,
   // dass Name, Punkte und Beschreibung darunter ohne Rollen ins Bild passen.
-  --size-level-image-block: clamp(6rem, 22vh, 13rem);
+  --size-level-image-block: clamp(6rem, 22dvh, 13rem);
   --size-level-pip-inline: 1.75rem;
   --size-level-pip-block: 0.75rem;
 
@@ -182,14 +182,14 @@
   // Die Sprites wachsen mit dem Fenster, bis sie ihre Maximalgröße aus dem
   // Design erreichen.
   --size-dialog-figure-inline: min(28vw, 17.875rem);
-  --size-dialog-figure-block: min(46vh, 24.5rem);
+  --size-dialog-figure-block: min(46dvh, 24.5rem);
   // Zeilenlänge des Dialogtexts — gute Lesbarkeit, nicht quer über den Schirm.
   --measure-dialog-text: 52ch;
 
   // Aufgaben-Karte: zentriert, wächst mit dem Fenster bis zu ihrer Maximalbreite.
   --size-task-card-max-inline: 58.75rem;
   --size-progress-dot: 1.0625rem;
-  --size-answer-min-block: clamp(3.75rem, 8vh, 4.875rem);
+  --size-answer-min-block: clamp(3.75rem, 8dvh, 4.875rem);
   --size-answer-key: 2.75rem;
   --size-answer-image: clamp(4rem, 12vh, 8.75rem);
   --measure-task-question: 34ch;

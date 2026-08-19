@@ -17,6 +17,8 @@
   <h2 class="task-card__question-text">{{ question() }}</h2>
 </div>
 
-<ng-content />
+<div class="task-card__body">
+  <ng-content />
+</div>
 
 <ng-content select="[task-card-feedback]" />

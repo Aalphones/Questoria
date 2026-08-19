@@ -27,6 +27,12 @@
 
   &__confetti-piece {
     position: absolute;
+    // Negativ, damit die Rauten hinter Sternen, Titel und Karten liegen statt
+    // darüber (Phase 5, Befund 2) — die Elemente danach im Markup sind
+    // unpositioniert und würden sonst dieselbe Stapelebene wie die Konfetti
+    // teilen, aber erst nach ihr gezeichnet. `.episode` trägt `isolation:
+    // isolate`, das ist der Stapelkontext, in dem `-1` greift.
+    z-index: -1;
     inline-size: var(--space-4);
     block-size: var(--space-4);
     rotate: 45deg;
@@ -77,6 +83,20 @@
     }
   }
 
+  // Kontrastfläche hinter Titel und Hinweis (Phase 5, Befund 1) — vorher stand
+  // der Text direkt auf dem Bühnenbild, das je nach Motiv zu wenig Kontrast
+  // trägt. Dieselbe Fläche wie die Statistik-Karten, damit der Screen aus
+  // einem Guss wirkt.
+  &__panel {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-2);
+    padding: var(--space-4) var(--space-6);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-md);
+  }
+
   &__title {
     margin: 0;
     color: var(--color-accent);
@@ -90,7 +110,10 @@
 
     p {
       margin: 0;
-      color: var(--color-text-muted);
+      // Volle Textfarbe statt gedämpft: auf der neuen Kontrastfläche reißt
+      // `--color-text-muted` das Kontrastverhältnis unter 4,5:1 (gerechnet
+      // ~3,45:1 gegen `--color-surface`), `--color-text` liegt bei ~12,4:1.
+      color: var(--color-text);
     }
   }
 

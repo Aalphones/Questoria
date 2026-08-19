@@ -6,7 +6,17 @@
   &__area {
     display: block;
     position: relative;
-    inline-size: 100%;
+    // Seitenverhältnis bleibt fest 16:9 (Content-Kontrakt für die x/y-Prozente
+    // der Ziele, siehe IMAGE_ASPECT_RATIO in image-search.ts) — nur wie viel
+    // Platz die Fläche dafür bekommt, ist neu: `flex-basis: 0` lässt sie den
+    // ganzen Rest der Körperhöhe beanspruchen (Phase 5, AK 1+2), statt sich an
+    // der vollen Breite auszurichten und dann zu klein zu geraten.
+    flex: 1 1 0%;
+    align-self: center;
+    inline-size: auto;
+    max-inline-size: 100%;
+    min-inline-size: 0;
+    min-block-size: 0;
     aspect-ratio: 16 / 9;
     padding: 0;
     border: none;
@@ -81,6 +91,7 @@
   }
 
   &__counter {
+    flex: none;
     margin: 0;
     color: var(--color-text-muted);
     font-size: var(--font-size-detail);

@@ -1,8 +1,8 @@
 # STATE
 
-**Aktiver Plan:** [docs/planning/2026-08-19_ui-umbau-vollbild/README.md](docs/planning/2026-08-19_ui-umbau-vollbild/README.md) — **Phase 5 von 5 (Aufgabenfläche und Erfolgsmoment)**, Rating standard — `sonnet` reicht.
+**Aktiver Plan:** [docs/planning/2026-08-19_ui-umbau-vollbild/README.md](docs/planning/2026-08-19_ui-umbau-vollbild/README.md) — **alle 5 Phasen fertig (19.08.2026), Abnahme am Bildschirm offen.** Build und Lint grün, das heißt bei Layout wie immer nichts.
 
-**Nächster Schritt:** Phase 5 umsetzen — [phase-5-aufgabe-und-erfolg.md](docs/planning/2026-08-19_ui-umbau-vollbild/phase-5-aufgabe-und-erfolg.md) lesen, dazu die vier für Phase 5 getaggten Einträge in [FINDINGS.md](docs/planning/2026-08-19_ui-umbau-vollbild/FINDINGS.md).
+**Nächster Schritt:** Die finalen Abnahmekriterien der README (Abschnitt „Finale Abnahmekriterien", 8 Punkte) plus Phase-5-Report-Back im Browser prüfen. Danach: Plan-Ende-Schritte (Doc-Abgleich ist erledigt, Archivieren steht noch aus) — oder direkt weiter mit „erste echte Welt" Phase 3 (siehe unten), die auf denselben Screens sitzt und in derselben Runde mitgeprüft werden kann.
 
 **Phase 4 ist fertig (19.08.2026), ungesehen.** Die Lernstufen-Auswahl zeigt jetzt drei farbige Karten mit Punkten, Beschreibungssatz und je einer Trainerfigur — vorher waren es drei Textpillen. Die Bilder stehen im Content (`difficulty_levels[].image` / `.image_label` / `.description`), nicht im Code: eine Welt ohne Bilder zeigt dieselbe Karte ohne Bildfläche, kein Loch. Drei Figuren für die Pokémon-Welt liegen unter `data/themes/pokemon_lesen/levels/`, 512×768 mit Transparenz, mit Krea 2 erzeugt und angesehen. Entscheidung samt Begründung: [ADR-018](docs/decisions/018-lernstufen-bilder-im-content.md). **Beim Ansehen zusätzlich prüfen:** einmal mit absichtlich falschem Dateinamen starten, damit die beschriftete Ersatzfläche wirklich geprüft ist (AK 3 der Phase).
 

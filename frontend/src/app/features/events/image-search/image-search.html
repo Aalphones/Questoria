@@ -3,6 +3,7 @@
   [question]="questionText()"
   [stepDone]="stepDone()"
   [stepTotal]="stepTotal()"
+  [fill]="true"
 >
   <button type="button" class="image-search__area" (click)="onImageTap($event)">
     <qst-image-slot [src]="imageUrl()" [label]="config().image" />
