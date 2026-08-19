@@ -12,6 +12,13 @@
     box-sizing: border-box;
   }
 
+  // Die Höhenkette beginnt hier: ohne diese Zeile ist jedes Prozent weiter
+  // unten wirkungslos, weil es sich auf nichts bezieht.
+  html,
+  body {
+    block-size: 100%;
+  }
+
   body {
     margin: 0;
     background: var(--color-bg);

@@ -1,9 +1,10 @@
 @use '../../../styles/breakpoints' as bp;
 
+// Kein `sticky` mehr: die Kopfleiste ist die obere Zeile des Screen-Grids und
+// steht dadurch von selbst still (ADR-017). `z-index` bleibt — Grid-Elemente
+// stapeln auch ohne `position`, und das Profilmenü muss über den Inhalt.
 :host {
   display: block;
-  position: sticky;
-  inset-block-start: 0;
   z-index: 40;
 }
 

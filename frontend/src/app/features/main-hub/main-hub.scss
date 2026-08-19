@@ -1,13 +1,19 @@
 @use '../../../styles/breakpoints' as bp;
 
+// Die Planetenkarte trägt keine Kopfleiste, also füllt sie die Bühne allein.
 :host {
-  display: block;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+  block-size: 100%;
 }
 
 .main-hub {
   max-inline-size: 90rem;
   padding: var(--space-6) var(--space-4);
   margin-inline: auto;
+  // Übergangsweise: Phase 2 macht die Karte vollflächig, dann rollt hier nichts
+  // mehr. Bis dahin rollt die Fläche statt der Seite.
+  overflow: auto;
 
   &__canvas {
     position: relative;

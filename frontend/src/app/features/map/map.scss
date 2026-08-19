@@ -1,13 +1,20 @@
 @use '../../../styles/breakpoints' as bp;
 
+// Kopfleiste oben in ihrer natürlichen Höhe, Karte darunter über den Rest.
+// Die Höhe kommt von der Bühne, hier wird sie nur aufgeteilt (ADR-017).
 :host {
-  display: block;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  block-size: 100%;
 }
 
 .map {
   max-inline-size: 90rem;
   padding: var(--space-6) var(--space-4);
   margin-inline: auto;
+  // Läuft die Karte über, rollt sie — nicht die Seite. Phase 2 macht sie
+  // vollflächig, danach sollte hier nichts mehr zu rollen sein.
+  overflow: auto;
 
   &__canvas {
     position: relative;

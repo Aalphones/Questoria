@@ -23,6 +23,7 @@ im Frontend-Ordnernamen, PascalCase in PHP-Klassen):
 
 | Feature | Ordner | Zweck |
 |---|---|---|
+| App-Hülle (Bühne) | `app.html`, `app.scss` | Das `<main class="stage">` um den `<router-outlet />`: die einzige Stelle der App, die eine Bildschirmhöhe kennt (`--size-stage-block`, `100dvh`). Die Seite selbst rollt nie; jeder Screen erbt die Höhe mit `100%` und teilt sie selbst in Kopfleiste + Spielfläche ([ADR-017](decisions/017-vollbild-doktrin.md)) |
 | Main-Hub | `features/main-hub/` | Zwei Screens: Planetenkarte (Welten als Knoten auf der Kartenfläche, `theme-card/` als Weltknoten, Info-Panel mit „Weiterspielen", Erfolge-Panel mit allen Erfolgen aller installierten Welten) und `level-select/` mit der Lernstufen-Auswahl (`difficulty-picker/`) |
 | Timeline | `features/timeline/` | Etappenkarte pro Welt, Fortschrittsmarkierung mit Sternen |
 | Map | `features/map/` | Interaktive Ortskarte pro Arc — Orte als Punkte, Routen, Kompassrose |

@@ -1,13 +1,17 @@
 @use '../../../styles/breakpoints' as bp;
 
+// Kopfleiste oben, Etappenkarte über den Rest — Höhe kommt von der Bühne.
 :host {
-  display: block;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  block-size: 100%;
 }
 
 .timeline {
   max-inline-size: 90rem;
   padding: var(--space-6) var(--space-4);
   margin-inline: auto;
+  overflow: auto;
 
   // Zielt auf den Host der Kartenfläche (`qst-map-canvas`) — Seekarten-Optik
   // ist bewusst hier und nicht in `map-canvas` selbst, weil nur die

@@ -1,8 +1,9 @@
+// Höhe kommt von der Bühne. Rollt hier etwas, dann diese Fläche — nie die Seite.
 :host {
-  display: block;
-  position: relative;
-  min-block-size: 100vh;
-  overflow: hidden;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+  block-size: 100%;
+  overflow: auto;
   background: var(--color-bg);
 }
 
@@ -13,9 +14,13 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-4);
-  min-block-size: 100vh;
+  min-block-size: 100%;
   padding: var(--space-6) var(--space-4);
   text-align: center;
+  // Die Wellen unten liegen mit negativem Abstand bewusst über dem Rand. `clip`
+  // hält sie im Bild, ohne Inhalt zu verschlucken: die Fläche wächst mit dem
+  // Formular, gerollt wird eine Ebene höher.
+  overflow: clip;
 
   &__decor {
     position: absolute;

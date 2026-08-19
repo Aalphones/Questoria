@@ -1,7 +1,11 @@
 # UI-Umbau — Vollbild, Karten, Erfolgsmoment
 
-**Status:** Entwurf, wartet auf Freigabe. Startet **nach Abschluss von Phase 3
-der ersten echten Welt**, vor Meilenstein 5.
+**Status:** in Umsetzung seit 19.08.2026, Phase 1 fertig.
+
+**Vorgezogen:** Der Plan sollte nach Phase 3 der ersten echten Welt starten.
+Phase 3 hängt am langsamen Server und ist nicht abgeschlossen — der UI-Umbau
+braucht ihn nicht, also läuft er vorher. Was aus Phase 3 noch offen ist, steht
+weiterhin in `STATE.md`.
 
 ## Warum
 
@@ -63,7 +67,7 @@ schriftlich festgehalten. Nicht gemerkt, geschrieben.
 
 | # | Phase | Rating | Status |
 |---|---|---|---|
-| 1 | [Die Bühne — echtes Vollbild](phase-1-buehne.md) | heikel | pending |
+| 1 | [Die Bühne — echtes Vollbild](phase-1-buehne.md) | heikel | complete (Abnahme am Bildschirm offen) |
 | 2 | [Planetenkarte vollflächig mit Pfaden](phase-2-planetenkarte.md) | standard | pending |
 | 3 | [Etappen- und Ortskarte im Vollbild](phase-3-karten.md) | standard | pending |
 | 4 | [Lernstufen mit Bild](phase-4-lernstufen.md) | heikel | pending |
@@ -83,8 +87,13 @@ können:
 - **Höhe der Bühne:** `100dvh`, nicht `100vh` — auf einem Tablet mit
   ein- und ausfahrender Browserleiste ist `vh` schlicht falsch.
 - **Aufteilung:** Kopfleiste oben in ihrer natürlichen Höhe, darunter die
-  Spielfläche über den gesamten Rest. Als Grid-Zeilen `auto 1fr`, nicht über
-  nachgerechnete Abstände.
+  Spielfläche über den gesamten Rest. Als Grid-Zeilen `auto minmax(0, 1fr)`,
+  nicht über nachgerechnete Abstände. **Dieses Grid liegt im Screen, nicht in
+  der Hülle** (Entscheidung Phase 1, [ADR-017](../../decisions/017-vollbild-doktrin.md)):
+  die Hülle gibt nur die Höhe, jeder Screen teilt sie selbst auf und bindet
+  seine Kopfleiste weiterhin selbst ein. `minmax(0, 1fr)` statt `1fr`, weil ein
+  blankes `1fr` eine Mindesthöhe aus seinem Inhalt hat und die Zeile aufdrückt,
+  statt zu rollen.
 - **Die Kopfleiste bleibt sichtbar** und wird nicht Teil des rollenden Bereichs.
 - **Kein Screen setzt eigene Bildschirmhöhen.** Wer Höhe braucht, bekommt sie
   von der Bühne. Ein `100vh` in einem Screen-Stylesheet ist ab Phase 1 ein

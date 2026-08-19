@@ -107,6 +107,15 @@ weichen in der Umsetzung ab — jeweils mit Grund:
     ([ADR-013](../decisions/013-druckbogen-als-pdf.md)). Die Schnittmarken
     liegen deshalb auch nicht als gestrichelter Rahmen auf den Zellen, sondern
     als kurze Striche in den Blatträndern — über eine Karte läuft nie ein Strich.
+11. **Die Kopfleiste bleibt beim Screen, statt in die App-Hülle zu ziehen.** Im
+    Design steht sie „sticky oben" auf allen Screens außer der Profilauswahl.
+    Produktiv steht sie still, weil sie die obere Zeile eines Screen-Grids ist —
+    kein `sticky` mehr nötig. Eingebunden wird sie weiterhin von jedem Screen
+    selbst: sie nimmt Rückweg, Welttitel, Lernstufe und Fortschritt als Eingaben
+    entgegen, und jeder Screen kennt seinen eigenen Rückweg. Der Umzug in die
+    Hülle würde all das aus der Route rekonstruieren — machbar, aber nicht in
+    derselben Änderung, die jeden Screen gleichzeitig betrifft
+    ([ADR-017](../decisions/017-vollbild-doktrin.md)).
 
 ## Offene Punkte
 

@@ -151,9 +151,13 @@
   --border-width-placeholder: 2px;
 
   // ── Bühnenmaße ───────────────────────────────────────────────────────────
-  // Die Bühne füllt den Rest des Fensters unter der Kopfleiste; die Sprites
-  // wachsen mit dem Fenster, bis sie ihre Maximalgröße aus dem Design erreichen.
-  --size-stage-min-block: 70vh;
+  // Höhe der App-Hülle und damit jedes Screens. `dvh` statt `vh`: auf einem
+  // Tablet fährt die Browserleiste ein und aus, und `vh` rechnet dann mit einem
+  // Fenster, das es gerade nicht gibt. Einzige Stelle im Frontend, an der eine
+  // Bildschirmhöhe steht — Screens erben sie, sie rechnen nicht selbst (ADR-017).
+  --size-stage-block: 100dvh;
+  // Die Sprites wachsen mit dem Fenster, bis sie ihre Maximalgröße aus dem
+  // Design erreichen.
   --size-dialog-figure-inline: min(28vw, 17.875rem);
   --size-dialog-figure-block: min(46vh, 24.5rem);
   // Zeilenlänge des Dialogtexts — gute Lesbarkeit, nicht quer über den Schirm.

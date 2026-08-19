@@ -1,0 +1,16 @@
+// Die Bühne. Sie ist das einzige Element der App, das eine Bildschirmhöhe
+// kennt — alle Screens erben sie und rechnen nicht selbst nach (ADR-017).
+:host {
+  display: block;
+  block-size: var(--size-stage-block);
+  overflow: clip;
+}
+
+// Genau eine Zeile für den Screen. `minmax(0, 1fr)` statt `1fr`: ein Screen mit
+// zu viel Inhalt drückt die Zeile sonst auf und schiebt die Seite ins Rollen,
+// statt selbst zu rollen.
+.stage {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+  block-size: 100%;
+}

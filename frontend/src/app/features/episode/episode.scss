@@ -1,5 +1,8 @@
+// Kopfleiste oben, Ort darunter über den Rest — Höhe kommt von der Bühne.
 :host {
-  display: block;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  block-size: 100%;
 }
 
 .episode__note {
@@ -10,8 +13,8 @@
 .episode {
   display: grid;
   position: relative;
-  grid-template-rows: auto 1fr;
-  min-block-size: var(--size-stage-min-block);
+  grid-template-rows: auto minmax(0, 1fr);
+  min-block-size: 0;
   padding: var(--space-4);
   background: var(--color-stage-bg);
   isolation: isolate;
@@ -38,5 +41,9 @@
     display: grid;
     align-content: end;
     min-inline-size: 0;
+    // Passt ein Ereignis nicht in die Fläche, rollt die Fläche — nicht die
+    // Seite. Phase 5 nimmt der Bildsuche den Grund dafür.
+    min-block-size: 0;
+    overflow: auto;
   }
 }

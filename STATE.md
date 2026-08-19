@@ -1,6 +1,16 @@
 # STATE
 
-**Aktiver Plan:** [docs/planning/2026-08-18_erste-echte-welt/README.md](docs/planning/2026-08-18_erste-echte-welt/README.md) — **Phase 3 (Durchspielen)**. Phase 1 und Phase 2 sind fertig. **Alle 52 Bilder der Welt liegen im Zielformat**, dazu die bis dahin fehlende Planetenkarte. Nichts fehlt mehr, was die Welt zum Spielen braucht.
+**Aktiver Plan:** [docs/planning/2026-08-19_ui-umbau-vollbild/README.md](docs/planning/2026-08-19_ui-umbau-vollbild/README.md) — **Phase 2 von 5 (Planetenkarte vollflächig mit Pfaden)**, Rating standard.
+
+**Nächster Schritt:** Phase 2 umsetzen — die Planetenkarte füllt die Fläche unter der Kopfleiste, bekommt Wege zwischen den Welten und rollt waagerecht, wenn mehr Welten dazukommen. Vorher: die Phase-2-Findings in [FINDINGS.md](docs/planning/2026-08-19_ui-umbau-vollbild/FINDINGS.md) lesen — `.main-hub` trägt aus Phase 1 ein übergangsweises `overflow: auto` und eine `90rem`-Breitenbremse, beides muss dort raus.
+
+**Phase 1 ist fertig (19.08.2026), aber ungesehen.** Die App hat jetzt eine Bühne: `100dvh`, die Seite rollt nie mehr, jeder Screen erbt die Höhe. Build und Lint grün — das heißt bei Layout gar nichts. Die Prüfliste für den Bildschirm (zehn Punkte, Anmeldung bis Tablet) steht im Report-Back von [phase-1-buehne.md](docs/planning/2026-08-19_ui-umbau-vollbild/phase-1-buehne.md). Wackligste Stelle: das Profilmenü in der Kopfleiste muss über dem Inhalt liegen.
+
+**Der Plan wurde vorgezogen** — er sollte nach Phase 3 der ersten echten Welt starten. Die hängt am langsamen Server, der UI-Umbau braucht ihn nicht. Was aus Phase 3 offen ist, steht unverändert unten.
+
+---
+
+**Vorheriger Plan, noch offen:** [docs/planning/2026-08-18_erste-echte-welt/README.md](docs/planning/2026-08-18_erste-echte-welt/README.md) — **Phase 3 (Durchspielen)**. Phase 1 und Phase 2 sind fertig. **Alle 52 Bilder der Welt liegen im Zielformat**, dazu die bis dahin fehlende Planetenkarte. Nichts fehlt mehr, was die Welt zum Spielen braucht.
 
 **Vorlauf-Check (19.08.2026) erledigt:** Alle 42 Bild-/Ton-Verweise aus `world_config.json`, `cards.json`, den drei Episodendateien und `main_hub.json` gegen die Platte geprüft — **0 fehlende Dateien**. Das nimmt dir nur die dumme Hälfte von AK 2 ab (Datei existiert); ob sie an der richtigen Stelle im Layout sitzt, sieht nur dein Auge.
 

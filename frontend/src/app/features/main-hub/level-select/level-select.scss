@@ -1,11 +1,15 @@
+// Kopfleiste oben, Stufenauswahl über den Rest — Höhe kommt von der Bühne.
 :host {
-  display: block;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  block-size: 100%;
 }
 
 .level-select {
   max-inline-size: 40rem;
   padding: var(--space-6) var(--space-4);
   margin-inline: auto;
+  overflow: auto;
 
   &__title {
     margin-block-end: var(--space-4);
