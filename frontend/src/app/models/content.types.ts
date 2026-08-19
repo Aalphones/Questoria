@@ -236,6 +236,13 @@ export interface RewardConfig {
 export interface EventFile<TVariant = unknown> {
   event_id: string;
   type: EventType;
+  /**
+   * Lernziel-IDs aus dem Katalog unter `docs/knowledge/` (Schema 5.0.1).
+   * Reine Autoren-Angabe — die Engine wertet sie nicht aus, sie beantwortet,
+   * was eine Welt fachlich abdeckt. Optional, damit Bestandswelten gültig
+   * bleiben.
+   */
+  learning_objectives?: readonly string[];
   /** Schlüssel ist eine `difficulty_levels[].id` aus `world_config.json`. */
   variants: Record<string, TVariant>;
 }

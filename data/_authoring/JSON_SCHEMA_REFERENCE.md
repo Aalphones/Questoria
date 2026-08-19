@@ -396,6 +396,38 @@ stehen: `cutscene`, `choice`, `exploration`, `investigation`, `search`,
 `memory`, `boss`. Die Liste ist ein Ausblick, kein Versprechen — sie zeigt, dass
 das Repertoire offen ist.
 
+### 5.0.1 `learning_objectives` — was die Aufgabe unterrichtet
+
+Jede **ausgelagerte** Aufgabendatei trägt neben `event_id` und `type` das Feld
+`learning_objectives`: eine Liste von Lernziel-IDs aus dem Lernziel-Katalog
+unter [`docs/knowledge/`](../../docs/knowledge/INDEX.md).
+
+```json
+{
+  "event_id": "silben_klatschen",
+  "type": "multiple_choice",
+  "learning_objectives": ["he_gs1_deu_silben_erkennen"],
+  "variants": { "…": "…" }
+}
+```
+
+Vier Regeln:
+
+- **In der Regel genau ein Eintrag.** Eine Aufgabe prüft eine Fähigkeit. Wer
+  zwei IDs braucht, hat meistens zwei Aufgaben. Die Liste ist trotzdem eine
+  Liste, weil es echte Mischformen gibt.
+- **Am Event, nicht an der Variante.** Die Lernstufen skalieren dieselbe
+  Fähigkeit — ein Lernziel gilt für alle drei Varianten.
+- **Nur ausgelagerte Aufgaben.** `dialog` und `reward` unterrichten nichts und
+  tragen das Feld nicht.
+- **IDs sind stabil.** Eine einmal vergebene ID wird nicht umbenannt. Fehlt ein
+  passendes Lernziel im Katalog, wird es dort nachgetragen (Abschnitt 14 der
+  Katalogdatei) — nicht frei erfunden.
+
+Das Feld ist **optional**: Bestandswelten ohne Lernziel-Bezug bleiben gültig,
+und die Engine liest es nicht. Es ist eine Autoren- und Planungsangabe, die
+beantwortet, was eine Welt fachlich abdeckt und was noch fehlt.
+
 ### 5.1 `dialog` (inline)
 
 Zwei Figuren reden. Die Bühne kennt genau zwei Plätze: `left` und `right`. Jede
@@ -579,6 +611,7 @@ skaliert.
 {
   "event_id": "kompass_001",
   "type": "multiple_choice",
+  "learning_objectives": ["he_gs1_su_orientierung"],
   "variants": {
     "matrose": {
       "question": "In welche Richtung zeigt die Nadel vom Kompass immer?",
@@ -738,6 +771,8 @@ nicht Dialog → Quiz → Ende.
       gebrauchte
 - [ ] Keine Aufgabeninhalte (Frage, Antworten, Ziele) inline in der Episode —
       die gehören in die ausgelagerte Datei
+- [ ] Jede ausgelagerte Aufgabendatei trägt `learning_objectives`, und jede ID
+      darin steht im Lernziel-Katalog unter `docs/knowledge/` (Abschnitt 5.0.1)
 - [ ] Jede referenzierte Datei (`background`, `sprite`, `audio_path`, `image`,
       `asset`, `illustration`) liegt tatsächlich im Ordner
 - [ ] `episode_id`, `event_id`, `cards[].id` sind jeweils eindeutig innerhalb der Welt

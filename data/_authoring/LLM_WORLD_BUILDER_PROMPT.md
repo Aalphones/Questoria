@@ -27,6 +27,9 @@ jedes andere. Die Erzählung folgt dem Muster Dialog → Handlung → Konsequenz
 === AUFGABE ===
 Thema der Welt: {THEMA, z. B. "One Piece - Die hohe See des Wissens"}
 Lerninhalt: {FACH, z. B. "Geometrie und Erdkunde"}
+Lernziele: {Liste von Lernziel-IDs aus dem Katalog, eine pro geplanter
+  Aufgabe, z. B. "he_gs1_deu_silben_erkennen, he_gs1_mat_formen" — leer
+  lassen nur, wenn die Welt bewusst ohne Curriculum-Bezug entsteht}
 Lernstufen: {z. B. "matrose, navigator, kapitaen"}
 Story-Arcs / Karten: {z. B. "East Blue, Alabasta, Skypiea" — jeder Arc wird
   eine eigene Map mit eigenen Episoden}
@@ -72,8 +75,13 @@ Erzeuge folgende Dateien vollständig:
    ein word und ein image (antwort_<slug>.png), 3-4 Paare pro Variante,
    kein Wort und kein Bild doppelt — und das gesuchte Wort steht NIE in
    der Frage, sonst liest das Kind es dort ab. Die leichteste Lernstufe
-   bekommt zusätzlich question_simple. Die Datei trägt event_id, type und
-   variants — sonst nichts.
+   bekommt zusätzlich question_simple. Die Datei trägt event_id, type,
+   learning_objectives und variants — sonst nichts.
+   learning_objectives: genau eine ID aus der oben übergebenen Lernziel-Liste,
+   und zwar die, die diese Aufgabe tatsächlich prüft. Erfinde KEINE IDs. Wurde
+   oben keine Liste übergeben, lasse das Feld weg und schreibe stattdessen
+   unter die Datei eine Zeile "OHNE LERNZIEL: <event_id>", damit die Lücke
+   sichtbar bleibt.
 
 Regeln für text_simple und question_simple:
 - kurze Hauptsätze, keine Nebensatz-Ketten, keine Fremdwörter
