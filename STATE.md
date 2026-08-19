@@ -1,6 +1,6 @@
 # STATE
 
-**Aktiver Plan:** [docs/planning/2026-08-18_erste-echte-welt/README.md](docs/planning/2026-08-18_erste-echte-welt/README.md) — **Phase 2 (Bilder)**. Phase 1 ist fertig und archiviert, das Prüfskript meldet 0 strukturelle Verstöße über `pokemon_lesen`. Was fehlt, sind die Bilder: **0 von 52 vorhanden**, die Ordner unter `data/themes/pokemon_lesen/` sind leer.
+**Aktiver Plan:** [docs/planning/2026-08-18_erste-echte-welt/README.md](docs/planning/2026-08-18_erste-echte-welt/README.md) — **Phase 2 (Bilder)**. Phase 1 ist fertig und archiviert, das Prüfskript meldet 0 strukturelle Verstöße über `pokemon_lesen`. Was fehlt, sind die Bilder: **1 von 52 vorhanden**. Fertig ist `backgrounds/alabastia_labor.webp`; es diente als Stilprobe und ist zugleich das erste echte Asset.
 
 **Das ist seit dem 19.08.2026 keine Handarbeit mehr.** Die lokale Bildmaschine wird über den MCP-Server `comfy` ferngesteuert, ein Agent erzeugt die Dateien selbst. Bedienung, Werte und drei bekannte Fallen: [data/_authoring/image-prompts/GENERATING.md](data/_authoring/image-prompts/GENERATING.md). Handwerk pro Modell: Skills `krea2-bilder` (Szenen, Karten, Motive) und `flux2-bilder` (Sprites, Referenzbilder). Voraussetzung ist jedes Mal, dass Comfy Desktop läuft.
 
@@ -21,15 +21,27 @@
 
 Bei Sprites und Icons **erst freistellen, dann formatieren**. Das passiert bewusst lokal: die App soll offline laufen, also liegt jedes Bild fertig auf der Platte — der Server rechnet nichts um und hängt an keiner PHP-Erweiterung.
 
+## Der Stil ist am Bild bestätigt — hier ist das Rezept
+
+`alabastia_labor.webp` ist durchgelaufen und sitzt: kräftige Kontur, zweistufige Zellschattierung, kindgerecht, Vordergrund unten frei für Sprites. **Der Prompt-Aufbau, der das erzeugt hat, ist die Vorlage für alle weiteren Szenen** — vier Teile, in dieser Reihenfolge zu einem Absatz verbunden, zusammen rund 150 Wörter:
+
+1. **Szene** — Raum oder Ort, in Ebenen beschrieben (Vordergrund, Mitte, Hintergrund), mit Materialien statt Oberbegriffen. Endet mit einem Satz, der die Szene ausdrücklich menschenleer erklärt („The room lies quiet and empty of people.").
+2. **`art_style` aus `world_config.json`** — wörtlich, unverändert, kein Wort umgestellt.
+3. **Licht** — Quelle, Richtung, Charakter („Even friendly daylight falling through the window on the left, soft gentle shadows.").
+4. **Rahmen** — „Wide eye-level framing, the lower left and lower right stay calm and uncluttered, crisp sharply rendered detail throughout, all labels and sign boards are blank surfaces."
+
+Einstellungen: `ResolutionSelector` auf `16:9 (Widescreen)` und `1.98` (ergibt exakt 1920×1080), im Paket 8 Schritte, Führungsstärke 1.0, jedes Mal ein neuer Startwert. Danach `format_assets.py` mit dem Zielpfad — das erledigt webp und Größe.
+
+🟡 Zwei Beobachtungen aus diesem Lauf, die für die Serie zählen: Die Bitte um **blanke Schilder wurde nicht eingehalten** — an der Wand hängen zwei Zettel mit Kritzelschrift. Bei Hintergründen unkritisch, bei Bildantworten wäre es ein Fehler (dort ist Text im Bild verboten), also dort genau hinsehen. Und die Farbigkeit fiel **gedämpfter aus als „warm saturated"** verspricht; wer kräftigere Farben will, verstärkt das im Szenenteil, nicht im Stilsatz — der bleibt unangetastet.
+
 ## Reihenfolge der Arbeit
 
-1. **Ein Testbild** (`backgrounds/alabastia_labor.webp`) mit dem Stilsatz aus `world_config.json`, ansehen, Stil bestätigen. Erst danach Serie.
-2. **Szenen und Karten** mit Krea 2 Turbo — `cover.webp`, 3 Karten unter `maps/`, 3 reguläre Hintergründe. 16:9 bei `1.98` Megapixeln ergibt exakt 1920×1080 (gemessen).
-3. **Die zwei Suchbilder** — Sonderfall, siehe unten.
-4. **Sprites** mit FLUX.2 klein: pro Figur zuerst `neutral` ohne Referenz, bis sie sitzt, dann die zweite Emotion **mit dem neutralen Bild als Referenz**. Nur so bleibt die Figur dieselbe. Danach `cutout.py`, dann `format_assets.py`.
-5. **25 Antwortbilder** mit Krea 2 als Serie — einzelnes Motiv, freigestellt wirkender heller Hintergrund, quadratisch. Kein Text im Bild (`ASSET_REQUIREMENTS.md` Abschnitt 8).
-6. **4 Erfolgs-Icons** (mit Freistellen) und **6 Sammelkarten**.
-7. Dateinamen gegen die Bestellliste abgleichen, Prüfskript laufen lassen.
+1. **Szenen und Karten** mit Krea 2 Turbo — `cover.webp`, 3 Karten unter `maps/`, 2 weitere reguläre Hintergründe (`route_1_wiese`, `vertania_wald`).
+2. **Die zwei Suchbilder** — Sonderfall, siehe unten.
+3. **Sprites** mit FLUX.2 klein: pro Figur zuerst `neutral` ohne Referenz, bis sie sitzt, dann die zweite Emotion **mit dem neutralen Bild als Referenz**. Nur so bleibt die Figur dieselbe. Danach `cutout.py`, dann `format_assets.py`. 🟡 Dieser Ablauf ist noch **nie durchgelaufen** — die Knotennummern im Skill `flux2-bilder` stammen aus der Datei, nicht aus einem Lauf. Mit einer Figur anfangen und das Ergebnis ansehen, bevor die Serie startet.
+4. **25 Antwortbilder** mit Krea 2 als Serie — einzelnes Motiv, freigestellt wirkender heller Hintergrund, quadratisch. Kein Text im Bild (`ASSET_REQUIREMENTS.md` Abschnitt 8), und der Lauf oben zeigt: das Modell hält sich nicht zuverlässig daran, also jedes Bild ansehen.
+5. **4 Erfolgs-Icons** (mit Freistellen) und **6 Sammelkarten**. 🟡 Das Kartenmaß 630×880 ist in `format_assets.py` hinterlegt, aber **an keinem echten Bild geprüft** — die erste Karte kontrollieren.
+6. Dateinamen gegen die Bestellliste abgleichen, Prüfskript laufen lassen.
 
 🟡 **Bei jedem Lauf `--timeout 300` mitgeben.** Der Standard sind 120 Sekunden, die Läufe brauchen 102 bis 131 — ohne den Wert bricht das Warten mitten im Rendern ab, der Auftrag läuft aber weiter und ist über `GET /history/<prompt_id>` abholbar. Und die Bildmaschine ist geteilt: arbeitet jemand parallel in der ComfyUI-Oberfläche, warten die eigenen Aufträge hinter seinen (`GET /queue` zeigt es).
 
