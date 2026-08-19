@@ -64,3 +64,54 @@ Abgearbeitete Zeilen abhaken, nicht löschen.
   nicht. Nach Phase 2 einmal im Spiel öffnen und die Punkte auf die echten
   Landmarken schieben. Dasselbe gilt für die Suchziel-Koordinaten der drei
   Bildsuchen.
+
+## Aus Phase 3 (echte Runde, 19.08.2026)
+
+- [x] → **jetzt geschlossen, Engine-Bug:** Vertonung spielte bei keiner Zeile
+  ab. Ursache: `dialog.ts` (`audioUrl`) hängte den Ordner `audio/voices`
+  **zusätzlich** vor einen `audio_path`, der ihn schon enthält
+  (`"audio/voices/prof_eich_….mp3"`) — Ergebnis war ein doppelter, nicht
+  existierender Pfad, stiller Fallback auf `speechSynthesis`. Fix: `dialog.ts`
+  nutzt jetzt `themeAssetUrl()` (kein zweiter Ordner-Parameter) statt
+  `assetUrl()`. **Am Bildschirm bestätigt (19.08.2026): Vertonung spielt ab.**
+
+- [x] → **jetzt geschlossen, Entscheidung Sascha: Bild verdrahten.** Die
+  Etappenkarte (`Timeline`, `frontend/src/app/features/timeline/timeline.html:11`)
+  übergab der `MapCanvas` hart `[background]="null"`, obwohl der Content
+  `arc_overview.background: "map_route_uebersicht.webp"` liefert — sichtbar
+  im Spiel als leeres grünes Karo-Raster statt der Übersichtskarte. Fix:
+  `Timeline` liest jetzt `arc_overview.background` genau wie `MapScreen` es
+  für die Ortskarte schon tut (`content.assetUrl(themeId, 'maps', …)`), der
+  irreführende „ist Absicht"-Kommentar in `map-canvas.ts` ist korrigiert. **Am
+  Bildschirm bestätigt (19.08.2026): Übersichtskarte wird angezeigt.** Das `episode.background`-Finding aus
+  Phase 1 bleibt offen — anderer Screen, andere Baustelle.
+
+- [x] → **aufgeplant am 19.08.2026:**
+  [docs/planning/2026-08-19_ui-umbau-vollbild/](../2026-08-19_ui-umbau-vollbild/README.md),
+  fünf Phasen. Alle sechs Punkte unten sind dort aufgenommen; die gemeinsame
+  Ursache ist belegt — es gibt im Frontend keine einzige Höhenangabe für die
+  Bühne, deshalb rollt der Browser die ganze Seite. Sammelnotiz aus der ersten
+  echten Spielrunde, alles Layout/Vollbild/Design, keine Content-Fehler dieser
+  Welt:
+  - Planetenkarte (`main-hub`) füllt nicht den Bildschirm; kein Pfad
+    zwischen den Welten; kein horizontales Scrollen bei mehr Welten, ohne
+    dass sich der Hintergrund mitverschiebt.
+  - Route-1-Kartenbild (Ortskarte) wird korrekt angezeigt, aber mit
+    sichtbarem Scrollbalken statt echtem Vollbild.
+  - Lernstufen-Auswahl (`level`-Screen) ist fast leer, nur Text-Chips — Wunsch:
+    Grafiken pro Stufe (z. B. je Figur wie Ash/Misty/Rocko im Pokémon-Theme),
+    Schwierigkeit soll optisch aus dem Bild hervorgehen. Das ist generisch zu
+    lösen (funktioniert über alle Themes), nicht Pokémon-hartkodiert — braucht
+    also auch ein Content-Konzept, nicht nur Engine-Arbeit.
+  - Bildsuche-Event: soll präsenter/vollflächig sitzen, „Weiter"-Button und
+    „Richtig"-Text sollen ohne Scrollen im Bild liegen.
+  - „Ort geschafft"-Screen: Text ist auf dem Hintergrundbild kaum lesbar
+    (keine Kontrastfläche), das Konfetti-/Glitzer-Overlay legt sich über den
+    Text statt dahinter, insgesamt zu wenig Feier für einen Erfolgsmoment.
+  - Übergreifend: alle Spiel-Screens sollen echtes Vollbild ohne
+    Scrollbalken sein — vermutlich eine gemeinsame Ursache (Viewport-Höhe im
+    App-Shell), lohnt sich als eine Grundlagen-Aufgabe statt Screen für
+    Screen zu flicken.
+  
+  Cross-cutting, viele Dateien, kein Fall für einen Ad-hoc-Fix mitten im
+  Content-Plan — braucht einen eigenen `mode-planning`-Durchlauf.
