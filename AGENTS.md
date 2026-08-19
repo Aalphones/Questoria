@@ -91,6 +91,12 @@ Avatare kommen wie neue Welten hinzu: Datei nach Drive, Dateiname in
 synct `data/` ohnehin komplett (außer `_authoring/`). Prompt-Vorlage fürs
 Nachgenerieren: `data/_authoring/image-prompts/AVATARS.md`.
 
+## Bilder kannst du selbst erzeugen
+
+Hintergründe, Sprites, Karten und Sammelkarten entstehen lokal in ComfyUI — ein Agent steuert das über den MCP-Server `comfy` selbst, ohne dass jemand klicken muss. Voraussetzung: Comfy Desktop läuft (`http://127.0.0.1:8188`). Ein Hintergrund in 1920×1080 dauert rund zwei Minuten.
+
+Zwei Skills tragen das Handwerk: `krea2-bilder` für Hintergründe, Karten, Sammelkarten und Bildantworten, `flux2-bilder` für Charakter-Sprites, Referenzbild-gestützte Motive und Bildbearbeitung. Beide laden bei Bedarf die Vorlagen aus `data/_authoring/image-prompts/`; die Bedienung samt bekannter Fallen steht in `data/_authoring/image-prompts/GENERATING.md`, die Zielformate in `data/_authoring/ASSET_REQUIREMENTS.md`.
+
 ## Critical Rules
 
 1. **Content ist read-only über die API** — Schreibzugriff auf `data/themes/` gibt es nur direkt im Dateisystem (Drive-Ordner), nie über einen Endpoint.

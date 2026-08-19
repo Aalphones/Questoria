@@ -5,6 +5,7 @@ Alle Prompt-Vorlagen für Questoria-Grafik an einer Stelle. Platzhalter in
 
 | Datei | Wofür |
 |---|---|
+| [GENERATING.md](GENERATING.md) | **Bedienung:** wie aus einem Prompt eine Datei wird — lokale ComfyUI-Anbindung, Arbeitsabläufe, bekannte Fallen |
 | [MODEL_SETTINGS.md](MODEL_SETTINGS.md) | Welches Modell, welche Einstellungen, welche Auflösung, welche Lizenz |
 | [BACKGROUNDS.md](BACKGROUNDS.md) | Szenen-Hintergründe + Stimmungs-Varianten |
 | [SPRITES.md](SPRITES.md) | Charakter-Sprites inkl. Emotionsset |
