@@ -18,8 +18,10 @@ Abgearbeitete Zeilen abhaken, nicht löschen.
       **Erledigt:** `overflow: auto` durch gezieltes `overflow-x: auto` /
       `overflow-y: hidden` ersetzt (das ist jetzt die eine rollende Fläche aus
       AK 6, kein Auffangnetz mehr), `max-inline-size` + `padding` entfernt.
-- [ ] → Phase 3: Dasselbe für `.map` und `.timeline` — beide haben jetzt
+- [x] → Phase 3: Dasselbe für `.map` und `.timeline` — beide haben jetzt
       `overflow: auto` als Auffangnetz und dieselbe `90rem`-Begrenzung.
+      **Erledigt:** beide entfernt, die Karte passt sich jetzt ein statt zu
+      rollen — kein Auffangnetz mehr nötig.
 - [ ] → Phase 5: `.episode__stage` rollt jetzt selbst (`overflow: auto`), statt
       die Seite zu rollen. Das ist das Auffangnetz, nicht das Ziel: Bei der
       Bildsuche müssen Aufgabe, Bild, „Weiter" und Rückmeldung **ohne** Rollen

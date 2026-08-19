@@ -95,6 +95,9 @@
   --color-map-chart-bg: var(--palette-moss-300);
   --color-map-chart-line: color-mix(in srgb, var(--palette-neutral-100) 42%, transparent);
   --color-map-label-bg: var(--palette-neutral-100);
+  // Rahmenfläche hinter einer eingepassten Karte (Phase 3, Kontrakt
+  // „einpassen, nicht beschneiden") — Passepartout, kein Grau.
+  --color-map-frame-bg: var(--color-surface);
 
   // ── Schrift ──────────────────────────────────────────────────────────────
   --font-heading: 'Caprasimo', system-ui, sans-serif;

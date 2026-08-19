@@ -8,10 +8,16 @@
 }
 
 .timeline {
-  max-inline-size: 90rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  block-size: 100%;
   padding: var(--space-6) var(--space-4);
-  margin-inline: auto;
-  overflow: auto;
+  // Rahmenfläche der eingepassten Karte (AK 3) — kein Grau, sondern ein
+  // Token, damit sie als Passepartout liest statt als fehlender Inhalt.
+  background: var(--color-map-frame-bg);
+  // Bezugsgröße für die Einpass-Formel in map-canvas.scss (cqw/cqh).
+  container-type: size;
 
   // Zielt auf den Host der Kartenfläche (`qst-map-canvas`) — Seekarten-Optik
   // ist bewusst hier und nicht in `map-canvas` selbst, weil nur die

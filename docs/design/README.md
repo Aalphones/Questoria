@@ -126,6 +126,14 @@ weichen in der Umsetzung ab — jeweils mit Grund:
     Screen ist erlaubt). Schon mit der einen installierten Welt kann der Fall
     auf schmalen Fenstern eintreten, ohne dass das ein Fehler wäre.
 
+13. **Etappen- und Ortskarte passen sich ein, statt den Rahmen randlos zu
+    füllen.** Der Prototyp zeigt die Kartenfläche randlos. Produktiv behält
+    sie 16:9 und wird auf jedem Fensterformat so groß wie möglich eingepasst
+    (`min(100cqw, 100cqh·16/9)`), die Rahmenfläche bekommt eine Token-Farbe
+    (`--color-map-frame-bg`) statt Grau. Grund: die Knotenkoordinaten sind
+    Prozentwerte des Kartenbildes — Beschneiden könnte einen Ort unerreichbar
+    machen, was für ein Erstklässler-Spiel nicht verhandelbar ist (Phase 3).
+
 ## Offene Punkte
 
 - ✅ **Node-Größen sind im Prototyp px-Werte** (`size: 200`, `width: 132`),

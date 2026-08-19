@@ -1,8 +1,16 @@
 :host {
   display: block;
   position: relative;
-  inline-size: 100%;
+  // Einpassen statt Beschneiden (Kontrakt Phase 3): die Fläche wird so groß
+  // wie möglich und behält 16:9 — kein Punkt fällt bei ungünstigem Format aus
+  // dem Bild. Der Elternrahmen muss dafür ein Größen-Container sein
+  // (container-type: size), siehe .timeline/.map. main-hub überschreibt beide
+  // Werte bewusst (dort wächst die Karte in die Breite, siehe main-hub.scss).
+  inline-size: min(100cqw, calc(100cqh * 16 / 9));
+  block-size: min(100cqh, calc(100cqw * 9 / 16));
   // Festes Seitenverhältnis: hält Bild, Knoten und Routen deckungsgleich.
+  // Greift nur, wo eine Seite wie bei main-hub auf `auto` steht — sonst
+  // stimmt aspect-ratio ohnehin schon mit der Formel oben überein.
   aspect-ratio: 16 / 9;
   // Bezugsgröße für die cqw-Angaben der Knoten (siehe qst-map-point).
   // ACHTUNG: Wer weiter oben im Baum ein container-type setzt, verschiebt
