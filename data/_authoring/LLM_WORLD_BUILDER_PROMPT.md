@@ -35,6 +35,7 @@ Cast: {z. B. "Shanks, Luffy (Kind), Nami, Ace" — Beschreibung reicht, keine
   separate Stammdatendatei nötig}
 Ton/Stil: {z. B. "abenteuerlich, leicht augenzwinkernd"}
 Zielalter: {z. B. "6-10 Jahre, auch Kinder die noch nicht lesen"}
+Bildstil: {optional — wenn leer, schlage einen vor; siehe Vorgabe unten}
 
 Erzeuge folgende Dateien vollständig:
 1. world_config.json — mit ALLEN genannten Maps in maps[], je Map die
@@ -43,7 +44,14 @@ Erzeuge folgende Dateien vollständig:
    mindestens ein Erfolg pro Arc (Bedingungstypen und Felder siehe Abschnitt 2
    des Schemas) — einer davon episodes_completed mit count 1, damit gleich zu
    Beginn etwas zu erreichen ist, der Rest zunehmend anspruchsvoll
-   (stars_total, episode_perfect, stage_completed)
+   (stars_total, episode_perfect, stage_completed).
+   PFLICHT: das Feld art_style — ein englischer Satz von 15 bis 35 Wörtern, der
+   den verbindlichen Bildstil der Welt festlegt. Beschreibend formuliert
+   (Linienführung, Schattierung, Farbigkeit, Formensprache), ohne Marken- oder
+   Künstlernamen, ohne Motiv und ohne Kameraeinstellung. Dieser Satz wird
+   später wörtlich in jeden Bild-Prompt kopiert; ohne ihn bekommt die Welt
+   vierzig verschiedene Handschriften. Ist oben kein Bildstil vorgegeben,
+   schlage einen vor, der zum Thema und zum Zielalter passt.
 2. cards.json — card_format unverändert übernehmen, plus eine Sammelkarte
    pro Episode und zusätzlich 1-2 seltene Karten pro Arc. Jede Karte:
    id, name, set (= "Etappe N · <Arc-Name>"), rarity, asset, flavor, hint.

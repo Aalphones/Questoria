@@ -27,6 +27,8 @@ Krea 2 hängt nicht an CLIP, sondern an einem Sprachmodell (Qwen3-VL-4B). **Man 
 | Bildantwort für den Vorlesemodus | `data/_authoring/image-prompts/ANSWER_IMAGES.md` |
 | Profil-Avatar | `data/_authoring/image-prompts/AVATARS.md` |
 
+**Der Stil kommt aus der Welt, nicht aus deinem Kopf.** Jede Welt trägt in `data/themes/<welt>/world_config.json` ein Feld `art_style` — einen englischen Satz. Der wird **wörtlich** in den Prompt übernommen, bei jedem Bild derselben Welt dieselbe Zeichenfolge. Nicht umformulieren, nicht kürzen, nicht „sinngemäß". Fehlt das Feld, ist die Welt nicht fertig angelegt: erst festlegen (Regeln im Schema, Abschnitt 2), dann generieren.
+
 Die sechs Regeln, die am meisten ausmachen:
 
 1. **Ein zusammenhängender Prosa-Absatz**, 60–200 Wörter. Unter 40 Wörtern verschenkst du das Modell.
@@ -61,8 +63,10 @@ oben(49).widgets_values     = ['16:9 (Widescreen)', 1.98, 8];    // ResolutionSe
 ```
 
 ```bash
-comfy run --workflow krea2.json --wait --no-notify
+comfy run --workflow krea2.json --wait --timeout 300 --no-notify
 ```
+
+**`--timeout 300` ist Pflicht.** Der Standard sind 120 Sekunden, die Läufe brauchen 102 bis 131 — ohne den Wert bricht das Warten mitten im Rendern ab. Der Auftrag läuft dann trotzdem weiter; er lässt sich über `GET /history/<prompt_id>` nachträglich abholen. Kommt gar nichts, erst in die Warteschlange sehen (`GET /queue`): arbeitet jemand parallel in der ComfyUI-Oberfläche, warten die eigenen Aufträge hinter seinen.
 
 Steht der MCP-Server `comfy` zur Verfügung, geht dasselbe über dessen Werkzeuge (`server_info`, `run_workflow`, `fetch_outputs`). Die Werkzeuge sind erst nach einem Sitzungs-Neustart da; ohne sie ist die Kommandozeile der Weg.
 
@@ -92,7 +96,15 @@ Bildgrößen über den `ResolutionSelector`:
 
 Das Bild abholen (`http://127.0.0.1:8188/view?filename=…&subfolder=Krea2&type=output`) und **ansehen**. „Fertig" heißt nicht „brauchbar" — ein Blick aufs Bild ist Pflicht, bevor es als erledigt gilt.
 
-Dann ins Zielformat bringen und ablegen. Die verbindlichen Vorgaben stehen in `data/_authoring/ASSET_REQUIREMENTS.md`:
+Dann ins Zielformat bringen — dafür gibt es ein Werkzeug, das die Zielgröße aus dem Zielpfad ableitet:
+
+```bat
+data\_authoring\image-tools\.venv\Scripts\python.exe data\_authoring\image-tools\format_assets.py roh.png --out data\themes\<welt>\backgrounds\<szene>.webp
+```
+
+Es schneidet mittig zu statt zu verzerren und meldet, wenn die Quelle kleiner ist als das Ziel. Für einen Stapel `--out-dir` statt `--out`. **Erfolgs-Icons brauchen vorher noch einen Alphakanal** — dafür `cutout.py` aus demselben Ordner, siehe `data/_authoring/image-tools/README.md`.
+
+Die verbindlichen Vorgaben stehen in `data/_authoring/ASSET_REQUIREMENTS.md`:
 
 | Typ | Format | Größe | Ablage |
 |---|---|---|---|

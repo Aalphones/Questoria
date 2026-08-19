@@ -3,9 +3,12 @@
 Alle Prompt-Vorlagen für Questoria-Grafik an einer Stelle. Platzhalter in
 `{GROSSBUCHSTABEN}` ersetzen, Rest wörtlich übernehmen.
 
+> **`{ART_STYLE}` wird nicht erfunden.** Der Platzhalter steht in fast jeder Vorlage hier. Sein Wert ist das Feld `art_style` aus `data/themes/<welt>/world_config.json` und wird **wörtlich** eingesetzt — bei jedem Bild derselben Welt dieselbe Zeichenfolge. Nicht umformulieren, nicht kürzen. Fehlt das Feld, ist die Welt nicht fertig angelegt (Schema Abschnitt 2).
+
 | Datei | Wofür |
 |---|---|
 | [GENERATING.md](GENERATING.md) | **Bedienung:** wie aus einem Prompt eine Datei wird — lokale ComfyUI-Anbindung, Arbeitsabläufe, bekannte Fallen |
+| [../image-tools/README.md](../image-tools/README.md) | **Nachbearbeitung:** freistellen, skalieren, ins Zielformat bringen |
 | [MODEL_SETTINGS.md](MODEL_SETTINGS.md) | Welches Modell, welche Einstellungen, welche Auflösung, welche Lizenz |
 | [BACKGROUNDS.md](BACKGROUNDS.md) | Szenen-Hintergründe + Stimmungs-Varianten |
 | [SPRITES.md](SPRITES.md) | Charakter-Sprites inkl. Emotionsset |

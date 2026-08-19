@@ -24,6 +24,11 @@ data/_authoring/voice-tools/.venv-*/
 data/_authoring/voice-tools/probe/
 data/_authoring/voice-tools/__pycache__/
 
+# Bild-Werkstatt (lokale Umgebung und Rohbilder vor der Nachbearbeitung)
+data/_authoring/image-tools/.venv/
+data/_authoring/image-tools/__pycache__/
+data/_authoring/image-tools/roh/
+
 # OS / editor
 .DS_Store
 Thumbs.db

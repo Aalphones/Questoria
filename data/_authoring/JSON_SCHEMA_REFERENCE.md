@@ -86,6 +86,7 @@ Enthält die Lernstufen und **zwei Kartenebenen**: die Etappenkarte (Übersicht
   "theme_id": "string — identisch zur id in main_hub.json",
   "title": "string — Anzeigename der Welt",
   "subject": "string — Lernfach, z. B. Sachkunde",
+  "art_style": "string — PFLICHT, englischer Satz. Der verbindliche Bildstil der Welt, wird in JEDEN Bild-Prompt wörtlich übernommen",
 
   "difficulty_levels": [
     { "id": "string — snake_case, z. B. matrose", "label": "string — Anzeigename, z. B. Matrose (Leicht)" }
@@ -137,6 +138,25 @@ Enthält die Lernstufen und **zwei Kartenebenen**: die Etappenkarte (Übersicht
     }
   ]
 }
+```
+
+### `art_style` — der Bildstil der Welt
+
+**Pflichtfeld, und zwar bevor das erste Bild erzeugt wird.** Eine Welt braucht zwischen 30 und 60 Bilddateien. Ohne einen festgeschriebenen Stilsatz entstehen ebenso viele verschiedene Handschriften — und das fällt erst auf, wenn schon vierzig Dateien da sind und das Neuerzeugen richtig weh tut.
+
+Der Satz wird **wörtlich in jeden Bild-Prompt kopiert**, an die Stelle, an der die Vorlagen in `image-prompts/` den Platzhalter `{ART_STYLE}` führen. Nicht umformulieren, nicht kürzen, nicht „sinngemäß" — dieselbe Zeichenfolge bei allen Bildern.
+
+Regeln für den Satz selbst:
+
+- **Englisch**, weil die Bildmodelle darauf trainiert sind.
+- **Beschreibend, keine Marken- oder Künstlernamen.** „im Stil von Studio X" funktioniert bei diesen Modellen schlecht und ist rechtlich unnötig heikel; die sichtbaren Merkmale benennen (Linienführung, Schattierung, Farbigkeit, Formensprache).
+- **Nur Stil, kein Inhalt.** Kein Motiv, kein Licht einer bestimmten Szene, keine Kameraeinstellung — das kommt aus der jeweiligen Vorlage.
+- **Ein Satz, 15–35 Wörter.** Kürzer trägt nicht, länger drängt das eigentliche Motiv aus dem Prompt.
+
+Beispiel aus `pokemon_lesen`:
+
+```json
+"art_style": "Bright anime illustration in the style of a children's television series: clean confident linework with a slightly heavier outline around each subject, soft cel-shading in two tones, warm saturated colours, gentle rounded shapes, even friendly lighting without harsh shadows, and no photographic texture."
 ```
 
 **Erfolge sind optional** — eine Welt ohne `achievements[]` ist gültig, aber

@@ -31,6 +31,8 @@ Der Weg zum konsistenten Set:
 
 FLUX.2 klein hängt an einem Sprachmodell (Qwen3-8B), nicht an CLIP. **Sätze, keine Tag-Listen.** Die vollständige Vorlage samt ausgefülltem Beispiel steht in `data/_authoring/image-prompts/SPRITES.md`, die allgemeinen Regeln in `data/_authoring/image-prompts/README.md`.
 
+**Der Stil kommt aus der Welt, nicht aus deinem Kopf.** Jede Welt trägt in `data/themes/<welt>/world_config.json` ein Feld `art_style` — einen englischen Satz. Der wird **wörtlich** in den Prompt übernommen, bei jedem Bild derselben Welt dieselbe Zeichenfolge. Bei einem Emotionsset ist das doppelt wichtig: schon eine umformulierte Stilzeile lässt die Figur zwischen zwei Bildern anders aussehen.
+
 Das Wichtigste:
 
 1. **Ein zusammenhängender Prosa-Absatz**, 60–200 Wörter, Reihenfolge Subjekt → Handlung → Szene → Stil → Licht → Kamera.
@@ -75,8 +77,10 @@ innen(715).widgets_values[0] = Math.floor(Math.random() * 1e15);
 ```
 
 ```bash
-comfy run --workflow flux2.json --wait --no-notify
+comfy run --workflow flux2.json --wait --timeout 300 --no-notify
 ```
+
+**`--timeout 300` ist Pflicht.** Der Standard sind 120 Sekunden und liegt auf der Kante — ohne den Wert bricht das Warten mitten im Rendern ab. Der Auftrag läuft trotzdem weiter und lässt sich über `GET /history/<prompt_id>` abholen. Kommt gar nichts, erst in die Warteschlange sehen (`GET /queue`): arbeitet jemand parallel in der ComfyUI-Oberfläche, warten die eigenen Aufträge hinter seinen.
 
 Steht der MCP-Server `comfy` zur Verfügung, geht dasselbe über dessen Werkzeuge. Sie sind erst nach einem Sitzungs-Neustart da; ohne sie ist die Kommandozeile der Weg.
 
@@ -101,11 +105,17 @@ Bei Sampling-Fehlern die Vorschau-Methode in ComfyUI auf „none" stellen.
 
 Bild abholen (`http://127.0.0.1:8188/view?filename=…&subfolder=Flux2&type=output`) und **ansehen**. Bei Sprites besonders auf Hände, Gesicht und darauf achten, dass die Figur vollständig im Bild steht.
 
-Dann freistellen — das Sprite braucht einen echten Alphakanal, der flache Hintergrund muss weg. Ablage:
+Dann freistellen — das Sprite braucht einen echten Alphakanal, der flache Hintergrund muss weg. Dafür gibt es zwei Werkzeuge, **in dieser Reihenfolge**:
 
+```bat
+:: 1. Hintergrund entfernen und auf die Figur zuschneiden
+data\_authoring\image-tools\.venv\Scripts\python.exe data\_authoring\image-tools\cutout.py roh.png --out zwischen.png --trim
+
+:: 2. auf die Zielgröße bringen
+data\_authoring\image-tools\.venv\Scripts\python.exe data\_authoring\image-tools\format_assets.py zwischen.png --out data\themes\<welt>\sprites\<character_id>\<character_id>_<emotion>.png
 ```
-data/themes/<welt>/sprites/<character_id>/<character_id>_<emotion>.png
-```
+
+Erst freistellen, dann formatieren — andersherum schneidet die Formatierung an einem Rand herum, der gleich wegfällt. Das Freistellen nutzt ein auf gezeichnete Figuren trainiertes Modell und meldet, wie viel Prozent des Bildes am Ende Figur sind; unter 5 % oder über 95 % ist etwas schiefgelaufen. Details: `data/_authoring/image-tools/README.md`.
 
 Zielgröße rund 1024×1536 (2:3 hoch), Format `.png` mit Transparenz. Vollständige Vorgaben: `data/_authoring/ASSET_REQUIREMENTS.md`.
 

@@ -1,6 +1,8 @@
 # Bilder erzeugen — lokale ComfyUI-Anbindung
 
-Wie aus einem Prompt aus dieser Werkstatt tatsächlich eine Datei wird. Die Prompt-Vorlagen stehen in den Nachbardateien ([README.md](README.md)), die Modellwerte in [MODEL_SETTINGS.md](MODEL_SETTINGS.md) — hier steht die Bedienung.
+Wie aus einem Prompt aus dieser Werkstatt tatsächlich eine Datei wird. Die Prompt-Vorlagen stehen in den Nachbardateien ([README.md](README.md)), die Modellwerte in [MODEL_SETTINGS.md](MODEL_SETTINGS.md), die Nachbearbeitung in [../image-tools/README.md](../image-tools/README.md) — hier steht die Bedienung der Bildmaschine.
+
+**Der Stil ist keine Prompt-Entscheidung.** Er steht als `art_style` in `world_config.json` der jeweiligen Welt und wird wörtlich übernommen (Schema Abschnitt 2, Critical Rule 9 in `AGENTS.md`).
 
 **Ein Agent kann Bilder selbst erzeugen.** Dafür ist ein MCP-Server namens `comfy` eingerichtet, der die lokal laufende ComfyUI-Installation fernsteuert.
 
@@ -19,6 +21,17 @@ Läuft ComfyUI nicht, meldet der Server das sofort — dann Comfy Desktop starte
 Die Werkzeuge des Servers stehen erst **nach einem Neustart der Sitzung** zur Verfügung. Ohne sie geht derselbe Weg über die Kommandozeile: `comfy run --workflow <datei.json> --wait --no-notify`.
 
 Grafikkarte: RTX 3060 mit 12 GB. Ein Hintergrund in 1920×1080 braucht rund **zwei Minuten**. Das ist normal, nicht hängengeblieben.
+
+🟡 **Immer `--timeout 300` mitgeben.** Der Standard sind 120 Sekunden und liegt damit genau auf der Kante — gemessene Läufe brauchen 102 bis 131 Sekunden. Ohne den Wert bricht die Wartezeit mitten im Rendern ab.
+
+🟡 **Die Bildmaschine ist eine geteilte Ressource.** Arbeitet jemand parallel in der ComfyUI-Oberfläche, stehen die Aufträge in einer gemeinsamen Warteschlange und die eigenen warten. Ein scheinbarer Timeout ist deshalb oft nur ein besetzter Platz. Vor der Fehlersuche in die Warteschlange sehen:
+
+```
+GET  http://127.0.0.1:8188/queue                       (läuft / wartet)
+POST http://127.0.0.1:8188/queue  {"delete":["<id>"]}  (eigenen Auftrag zurückziehen)
+```
+
+Ein abgebrochenes Warten **storniert den Auftrag nicht** — er läuft weiter und landet in der Historie. Das Ergebnis lässt sich über `GET /history/<prompt_id>` nachträglich abholen, statt neu zu rendern.
 
 ---
 
@@ -117,6 +130,19 @@ Gültige Präfixe jetzt: `Krea2/Krea2`, `Flux2/Flux2`, `FluxEdit/FluxEdit` — d
 Geprüfte Werte für Krea 2 Turbo: **8 Schritte, Führungsstärke 1.0**, Euler / Simple. Mehr Schritte verbessern nichts, weniger kosten sichtbar Qualität.
 
 ---
+
+## Nach dem Bild: Nachbearbeitung
+
+Die Bildmaschine liefert immer PNG in Generierungsgröße. Zwei lokale Werkzeuge machen daraus die Datei, die die Engine ausliefert — beide unter `data/_authoring/image-tools/`:
+
+| Werkzeug | Wofür |
+|---|---|
+| `cutout.py` | Hintergrund entfernen, echten Alphakanal setzen — Sprites und Erfolgs-Icons |
+| `format_assets.py` | Größe und Dateiformat ins Ziel bringen, Zieltyp wird aus dem Zielpfad abgeleitet |
+
+Bei Sprites und Icons **erst freistellen, dann formatieren**. Einrichtung und alle Aufrufe: [../image-tools/README.md](../image-tools/README.md).
+
+Das passiert bewusst hier und nicht auf dem Server: Die App soll offline laufen, also muss jedes Bild fertig auf der Platte liegen — keine Bildverarbeitung zur Laufzeit, keine Abhängigkeit von PHP-Erweiterungen des Hosters.
 
 ## Bekannte offene Punkte
 
