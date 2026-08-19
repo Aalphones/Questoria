@@ -5,14 +5,6 @@
   },
   "installed_themes": [
     {
-      "id": "dev_fixture",
-      "title": "Entwickler-Testwelt",
-      "cover": "cover.webp",
-      "x": 32,
-      "y": 54,
-      "size": 18
-    },
-    {
       "id": "pokemon_lesen",
       "title": "Pokémon — Die Buchstaben-Route",
       "cover": "cover.webp",

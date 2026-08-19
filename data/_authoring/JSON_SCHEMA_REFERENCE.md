@@ -6,8 +6,9 @@ einhalten — keine zusätzlichen Felder, keine fehlenden Pflichtfelder, keine
 umbenannten Keys.
 
 🟡 = offener Hinweis/Design-Notiz, kein Verifikationsstatus. Das Schema selbst
-ist seit Meilenstein 3 (Testwelt `dev_fixture` spielt alle fünf Eventtypen
-durch) gegen die laufende Engine verifiziert.
+ist seit Meilenstein 3 gegen die laufende Engine verifiziert (Testwelt spielte
+alle fünf Eventtypen durch, die Testwelt ist seit 19.08.2026 entfernt) — die
+Verifikation hält seither auch an echtem Content (`pokemon_lesen`).
 
 **Das Grundprinzip:** Eine Episode ist eine **Eventliste**, sonst nichts. Dialog,
 Rätsel, Erkundung, Kampf und Belohnung sind gleichrangige Events derselben

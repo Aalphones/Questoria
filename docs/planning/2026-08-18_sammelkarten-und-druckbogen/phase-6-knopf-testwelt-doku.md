@@ -1,14 +1,14 @@
-# Phase 6 — Karten-Knopf, Testwelt, Doku
+# Phase 6 — Karten-Knopf, Kartenausbau, Doku
 
-Der Weg in die Halle aus jedem Screen, genug Testkarten, um alles zu sehen,
-und die Doku auf Stand.
+Der Weg in die Halle aus jedem Screen, genug Karten in `pokemon_lesen`, um
+alles zu sehen, und die Doku auf Stand.
 
 ## Kontext (vorher lesen)
 
 - `docs/design/HANDOFF.md` Abschnitt „0. HUD" → Absatz „Karten-Button (neu)"
 - `frontend/src/app/ui/hud/hud.ts|html|scss` — dort steht schon der Kommentar,
   wo der Knopf einhängt
-- `data/themes/dev_fixture/cards.json`, `data/themes/dev_fixture/episodes/`
+- `data/themes/pokemon_lesen/cards.json`, `data/themes/pokemon_lesen/episodes/`
 - `data/_authoring/JSON_SCHEMA_REFERENCE.md` Abschnitt 3,
   `data/_authoring/ASSET_REQUIREMENTS.md` Abschnitt 5,
   `data/_authoring/image-prompts/CARDS.md`
@@ -24,10 +24,13 @@ und die Doku auf Stand.
 4. Ohne aktive Welt (Planetenkarte, Profilauswahl) erscheint er nicht — kein
    Knopf, der ins Leere führt.
 5. „Zurück" aus der Halle führt auf die Planetenkarte, aus dem Bogen in die Halle.
-6. Die Testwelt `dev_fixture` hat mindestens **11 Karten in drei `set`-Gruppen**,
+6. `pokemon_lesen` hat mindestens **11 Karten in drei `set`-Gruppen**,
    mit gemischten Seltenheiten und `hint`-Texten — genug für zwei Druckblätter,
    drei Gruppen und einen sichtbaren Unterschied zwischen den Filtern.
-   Mindestens zwei davon werden über `reward`-Events der Testepisoden vergeben.
+   Mindestens zwei davon werden über `reward`-Events der Episoden vergeben.
+   *(19.08.2026: die frühere Testwelt `dev_fixture` ist entfernt — dieser Plan
+   testet jetzt am echten Content. `pokemon_lesen` hatte beim Entfernen 6
+   Karten in zwei Gruppen, die AK oben verlangt einen Ausbau.)*
 7. Fehlende Kartenbilder brechen nichts: die Halle zeigt die Bildfläche mit
    Platzhalter, der Bogen eine leere weiße Zelle mit Schnittmarken.
 
@@ -40,16 +43,15 @@ und die Doku auf Stand.
       Platzhalter-Kommentar am Ende von `hud.html` entfernen.
 - [ ] Erklärung am Knopf (`title`/`aria-label`): „Deine Sammelkarten dieser Welt".
 
-### Testwelt
+### Kartenausbau `pokemon_lesen`
 
-- [ ] `data/themes/dev_fixture/cards.json` auf ≥ 11 Karten erweitern
-      (drei `set`-Gruppen, alle drei Seltenheiten, je ein `hint`).
-- [ ] In den Testepisoden ein zweites `reward`-Event mit einer weiteren
+- [ ] `data/themes/pokemon_lesen/cards.json` auf ≥ 11 Karten in drei
+      `set`-Gruppen erweitern (alle drei Seltenheiten, je ein `hint`) — 5
+      neue Karten zu den bestehenden 6, dritte Set-Gruppe neu.
+- [ ] Fehlende Kartenbilder dazu bestellen (`data/_authoring/image-prompts/CARDS.md`,
+      630 × 880 px) — die 6 bestehenden Kartenbilder liegen schon vor.
+- [ ] In den drei Episoden ein zweites `reward`-Event mit einer weiteren
       `card_id` ergänzen, damit „zwei Karten besessen" spielbar entsteht.
-- [ ] 🟡 **Sascha-Aufgabe (kein Code):** mindestens ein echtes Kartenbild
-      `karte_<id>.png` in 630 × 880 px nach `data/themes/dev_fixture/cards/`
-      legen — ohne ein echtes Bild lässt sich der Maßstab (Smoke-Punkt 1) nicht
-      messen. Prompt-Vorlage: `data/_authoring/image-prompts/CARDS.md`.
 
 ### Doku
 

@@ -19,7 +19,6 @@ sie im Code, in Docs oder Tickets auftauchen.
 | Ort | Anzeigename für einen Node auf der Ortskarte — der Punkt, an dem die Episode spielt. Kein eigener Bildschirm: Wer den Punkt antippt, landet direkt in der Episode. |
 | Bühnenplatz (`left`/`right`) | Die zwei einzigen festen Positionen für Dialog-Sprites. Keine freien x/y-Koordinaten. |
 | Content-Repository | Die statischen, versionierten JSON-Dateien unter `data/themes/` — Content lebt im Git-Repo, nicht in der Datenbank. |
-| Testwelt | Die schema-vollständige Entwicklerwelt `dev_fixture` unter `data/themes/dev_fixture/` — dient dem Testen von Karten, Routing und Fortschritt, ohne auf echten (Fandom-)Content zu warten. |
 | Authoring-Toolkit | Die Schema-Referenz + LLM-Prompts + Asset-Vorgaben unter `data/_authoring/`, mit denen Content von Hand/per LLM erzeugt wird. |
 | Savegame | Datenbank-Eintrag, der nur Content-IDs referenziert (aktive Episode, aktiver Node, abgeschlossene Events, besessene Sammelkarten) — nie Content selbst. |
 | Account | Der Eltern-Zugang zu einer Installation: E-Mail plus Passwort, Zeile in der Tabelle `users`. Genau ein Account meldet ein Gerät an; die Kinder darunter sind **Spielerprofile**. Angelegt wird ein Account nie in der Oberfläche, sondern vom Betreiber ([ADR-008](decisions/008-zugang-und-sitzung.md)). |

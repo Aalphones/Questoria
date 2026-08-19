@@ -77,4 +77,6 @@ werden können. Selbst verschuldet, vermeidbar, unnötig.
 
 🟡 markiert offene Design-Hinweise, keinen Verifikationsstatus. Das
 Content-Schema selbst ist seit Meilenstein 3 gegen die laufende Engine
-verifiziert — die Testwelt `dev_fixture` spielt alle fünf Eventtypen durch.
+verifiziert (Testwelt spielte alle fünf Eventtypen durch, seit 19.08.2026
+entfernt) — die Verifikation hält seither auch an echtem Content
+(`pokemon_lesen`).

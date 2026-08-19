@@ -15,7 +15,7 @@ Danach ist der MVP spielbar (`docs/PROJECT.md` → Meilensteine).
 | 3 | [Trophäenhalle](phase-3-trophaeenhalle.md) | Route, Kopfbereich, Fortschrittskarte, Filter, Gruppen, Kacheln, Detail-Dialog | standard | pending |
 | 4 | [Druckauswahl](phase-4-druckauswahl.md) | Auswahl-Häkchen, schwebende Auswahlleiste, Auswahl-Dienst, Weg zum Bogen | standard | pending |
 | 5 | [Druckbogen](phase-5-druckbogen.md) | A4-Geometrie nach [Wissensdatei](../../knowledge/druckbogen-geometrie.md), Vorschau, PDF-Ausgabe in Millimetern | heikel | pending |
-| 6 | [Karten-Knopf, Testwelt, Doku](phase-6-knopf-testwelt-doku.md) | Karten-Knopf in der Kopfleiste, Testwelt-Karten, alle Doku-Nachträge | mechanisch | pending |
+| 6 | [Karten-Knopf, Kartenausbau, Doku](phase-6-knopf-testwelt-doku.md) | Karten-Knopf in der Kopfleiste, `pokemon_lesen` auf ≥11 Karten ausbauen, alle Doku-Nachträge | mechanisch | pending |
 
 ## Kontrakt (Frontend ↔ Backend)
 
@@ -26,7 +26,7 @@ antwortet zusätzlich mit den beiden Blöcken aus `cards.json` der Welt:
 
 ```jsonc
 {
-  "theme_id": "dev_fixture",
+  "theme_id": "pokemon_lesen",
   // ... bisheriger Inhalt von world_config.json unverändert ...
   "card_format": { "width_mm": 63, "height_mm": 88, "canvas": [630, 880], "dpi": 300, "sheet": "A4", "grid": [3, 3] },
   "cards": [

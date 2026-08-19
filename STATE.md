@@ -6,7 +6,9 @@
 
 ✅ **Beide Koordinaten-Verdachte sind geprüft (19.08.2026), einer war ein echter Treffer:**
 1. Route-1-Punkte und Etappen-Position auf der Übersichtskarte (Labor 20/62, Wiese 50/38, Wald 79/58, Etappe 44/50) — am Bild geprüft, treffen alle ihre Landmarke. Kein Fix nötig.
-2. `data/main_hub.json`: die Pokémon-Kachel lag bei `x:63, y:36` im leeren Himmel zwischen den Inseln — bildgenau bestätigt, kein Zuschnitt hätte das gerettet. **Behoben auf `x:73, y:78`**, trifft jetzt die Insel unten rechts. 🟡 Nebenbefund offen gelassen: `dev_fixture` (Testwelt, `x:32, y:54`) trifft ebenfalls keine Insel — außerhalb des Plan-Umfangs.
+2. `data/main_hub.json`: die Pokémon-Kachel lag bei `x:63, y:36` im leeren Himmel zwischen den Inseln — bildgenau bestätigt, kein Zuschnitt hätte das gerettet. **Behoben auf `x:73, y:78`**, trifft jetzt die Insel unten rechts.
+
+**Testwelt `dev_fixture` ist komplett entfernt (19.08.2026, Sascha-Wunsch):** Ordner, Hub-Eintrag, Doku-Rolle als Schema-Testbett (`JSON_SCHEMA_REFERENCE.md`, `_authoring/README.md`, `glossary.md`). Der freigegebene Sammelkarten-Plan hing in Phase 6 an ihr als Testbett für den Druckbogen (≥11 Karten, drei Gruppen) — jetzt umgeschrieben auf `pokemon_lesen`, das dafür erst von 6 auf ≥11 Karten in drei Gruppen ausgebaut werden muss. Das passiert erst, wenn dieser Plan dran ist, nicht jetzt.
 
 **Erste Runde ist gelaufen (19.08.2026), Befunde stehen in FINDINGS.md unter „Aus Phase 3".** Zwei Engine-Bugs gefixt und am Bildschirm bestätigt:
 1. Vertonung spielte nirgends ab — doppelter Pfad in `dialog.ts` (`audio/voices` zweimal). ✅ behoben.
