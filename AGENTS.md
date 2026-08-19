@@ -60,9 +60,11 @@ Eine generische Spiel-Engine im Browser plus austauschbare Content-Pakete
 Content (Welten, Episoden mit ihren Eventlisten, ausgelagerte Event-Konfigurationen,
 Sammelkarten) lebt als statische
 JSON unter `data/themes/<theme_id>/`, kein Editor im MVP. **`data/themes/` ist
-lokal eine NTFS-Junction auf Google Drive (`H:\Meine Ablage\U105_Questoria`)** —
+lokal eine NTFS-Junction auf Google Drive (`H:\Meine Ablage\U105_Questoria\themes`)** —
 der Ordner liegt bewusst außerhalb von Git (`.gitignore`), Backup und
-Versionsstand übernimmt Drive. Deploy liest davon unbeeinflusst: `deploy.cmd`
+Versionsstand übernimmt Drive. `themes/` und `avatars/` (siehe unten) sind zwei
+Geschwister-Ordner unter derselben Drive-Ablage, keiner verschachtelt im anderen.
+Deploy liest davon unbeeinflusst: `deploy.cmd`
 synct den lokalen Ordnerinhalt, egal ob Datei oder Junction dahintersteht.
 Das verbindliche Schema + LLM-Copy-Paste-Prompt liegt unter `data/_authoring/`
 (bleibt regulär in Git, ist Werkzeug/Doku, kein generierter Content).
