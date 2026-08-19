@@ -17,6 +17,11 @@
     max-inline-size: 100%;
     min-inline-size: 0;
     min-block-size: 0;
+    // KRITISCH: Ohne diesen Deckel gewinnt auf hohen Fenstern die vom Flex
+    // erzwungene Höhe, die Breite läuft in `max-inline-size` — und das
+    // Seitenverhältnis kippt. Dann sitzen die Ziel-Prozente nicht mehr auf
+    // ihren Motiven. Bezug ist die Körperbreite der Aufgaben-Hülle.
+    max-block-size: calc(100cqw * 9 / 16);
     aspect-ratio: 16 / 9;
     padding: 0;
     border: none;
