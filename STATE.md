@@ -4,9 +4,9 @@
 
 **Vorlauf-Check (19.08.2026) erledigt:** Alle 42 Bild-/Ton-Verweise aus `world_config.json`, `cards.json`, den drei Episodendateien und `main_hub.json` gegen die Platte geprüft — **0 fehlende Dateien**. Das nimmt dir nur die dumme Hälfte von AK 2 ab (Datei existiert); ob sie an der richtigen Stelle im Layout sitzt, sieht nur dein Auge.
 
-🔴 **Zwei Koordinaten-Verdachte vor dem Losspielen zuerst ansehen:**
-1. Bekannt aus FINDINGS.md (Phase 1): alle Punkte auf `map_route_1.webp` und der Etappe auf der Übersichtskarte sind geraten (Labor 20/62, Wiese 50/38, Wald 79/58) — die Kartenbilder gab's beim Setzen noch nicht.
-2. **Neu, gleiche Familie:** `data/main_hub.json` setzt die Pokémon-Welt-Kachel auf `x:63, y:36` der Planetenkarte (`data/hub/map_planetenkarte.webp`) — nach bloßem Hinsehen aufs Bild landet das im offenen Himmel zwischen den Inseln, nicht auf einer Insel. Kann an Objektanpassung/Zuschnitt im echten Layout trotzdem passen — aber als Erstes prüfen, bevor du eine ganze Runde spielst und dich wunderst, wo die Kachel hängt.
+✅ **Beide Koordinaten-Verdachte sind geprüft (19.08.2026), einer war ein echter Treffer:**
+1. Route-1-Punkte und Etappen-Position auf der Übersichtskarte (Labor 20/62, Wiese 50/38, Wald 79/58, Etappe 44/50) — am Bild geprüft, treffen alle ihre Landmarke. Kein Fix nötig.
+2. `data/main_hub.json`: die Pokémon-Kachel lag bei `x:63, y:36` im leeren Himmel zwischen den Inseln — bildgenau bestätigt, kein Zuschnitt hätte das gerettet. **Behoben auf `x:73, y:78`**, trifft jetzt die Insel unten rechts. 🟡 Nebenbefund offen gelassen: `dev_fixture` (Testwelt, `x:32, y:54`) trifft ebenfalls keine Insel — außerhalb des Plan-Umfangs.
 
 **Erste Runde ist gelaufen (19.08.2026), Befunde stehen in FINDINGS.md unter „Aus Phase 3".** Zwei Engine-Bugs gefixt und am Bildschirm bestätigt:
 1. Vertonung spielte nirgends ab — doppelter Pfad in `dialog.ts` (`audio/voices` zweimal). ✅ behoben.

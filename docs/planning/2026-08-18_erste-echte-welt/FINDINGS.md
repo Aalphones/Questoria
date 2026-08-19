@@ -115,3 +115,17 @@ Abgearbeitete Zeilen abhaken, nicht löschen.
   
   Cross-cutting, viele Dateien, kein Fall für einen Ad-hoc-Fix mitten im
   Content-Plan — braucht einen eigenen `mode-planning`-Durchlauf.
+
+- [x] → **jetzt geschlossen, Koordinaten-Fehler bestätigt und behoben.** Die
+  Planetenkarten-Koordinate der Pokémon-Kachel (`data/main_hub.json`,
+  `x: 63, y: 36`) lag im leeren Wolkenhimmel zwischen den Inseln —
+  bildgenau geprüft, kein Objektzuschnitt hätte das gerettet. Neue
+  Koordinate `x: 73, y: 78` trifft die Insel unten rechts auf
+  `map_planetenkarte.webp`. **Nebenbefund, nicht behoben:** `dev_fixture`
+  (`x: 32, y: 54`) trifft ebenfalls keine Insel — bleibt offen, weil es
+  eine Testwelt ohne Sichtbarkeitsanspruch ist und außerhalb des Umfangs
+  dieses Plans liegt.
+  Die drei Route-1-Koordinaten (Labor 20/62, Wiese 50/38, Wald 79/58) und
+  die Etappen-Position auf der Übersichtskarte (44/50) wurden am Bild
+  geprüft und treffen alle plausibel ihre Landmarke — keine Korrektur
+  nötig.
