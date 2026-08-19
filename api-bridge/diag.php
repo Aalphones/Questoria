@@ -9,9 +9,16 @@ use Dotenv\Dotenv;
 // Token abrufbar — ohne verhaelt sich die Datei, als gaebe es sie nicht.
 $backendRoot = __DIR__ . '/../../backend';
 
+// $_SERVER['REQUEST_TIME_FLOAT'] wird von PHP selbst beim Requeststart gesetzt,
+// also noch vor jeder Zeile dieser Datei — einzige Moeglichkeit, Zeit zu messen,
+// die VOR dem ersten eigenen microtime()-Aufruf verstreicht (Autoload, Dotenv).
+$requestStart = (float) ($_SERVER['REQUEST_TIME_FLOAT'] ?? microtime(true));
+
 require $backendRoot . '/vendor/autoload.php';
+$afterAutoloadSeconds = round(microtime(true) - $requestStart, 3);
 
 Dotenv::createImmutable($backendRoot)->safeLoad();
+$afterDotenvSeconds = round(microtime(true) - $requestStart, 3);
 
 $expectedToken = $_ENV['DIAG_TOKEN'] ?? '';
 $providedToken = $_SERVER['HTTP_X_DIAG_TOKEN'] ?? '';
@@ -63,4 +70,7 @@ echo json_encode([
     'db_host_resolved' => $resolved !== null && $resolved !== $dbHost,
     'db_tcp_connect_seconds' => $tcpSeconds,
     'db_tcp_connect_ok' => $socket !== false,
+    'timing_after_autoload_seconds' => $afterAutoloadSeconds,
+    'timing_after_dotenv_seconds' => $afterDotenvSeconds,
+    'timing_total_seconds' => round(microtime(true) - $requestStart, 3),
 ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
