@@ -51,3 +51,41 @@ Abgearbeitete Zeilen abhaken, nicht löschen.
       umgestellt — das sind die freigestellten 512×512-Motive. Die Bildsuche
       bleibt bei `cover`: ihr Bild ist eine volle Szene aus `backgrounds/`,
       kein freigestelltes Motiv, Beschneiden ist dort das Richtige.
+
+## Aus der Abnahme am Bildschirm (19.08.2026)
+
+Drei Befunde von Sascha, alle behoben — zwei davon aus **einer** Ursache.
+
+- [x] **Die Bühne hat nie funktioniert.** `app.html` enthält
+      `<main class="stage"><router-outlet /></main>`, und Angular hängt den Screen
+      als **Geschwister nach** dem Outlet ein — das Outlet-Element bleibt im DOM.
+      Damit hatte das Bühnen-Grid zwei Elemente statt einem: das leere Outlet
+      belegte die einzige `minmax(0, 1fr)`-Zeile, der Screen landete in einer
+      impliziten `auto`-Zeile darunter. Sichtbare Folge: eine leere Fläche oben,
+      die Kopfleiste in der Mitte (Lernstufen) oder ganz unten (Etappenkarte),
+      der Rest aus der Bühne geschoben und von `overflow: clip` abgeschnitten.
+      **Behoben:** `.stage > router-outlet { display: none; }`.
+      **Lehre:** Phase 1 war „Build grün, Lint grün" und trotzdem an der
+      zentralen Annahme vorbei — ein Grid-Elternteil mit `router-outlet` hat
+      immer ein Element mehr, als das Template zu zeigen scheint.
+- [x] **Planetenkarte lief unten rechts aus dem Bild.** Zwei Anteile: die
+      Fehlplatzierung oben, plus die Pokémon-Kachel bei `y: 78` mit Namensschild,
+      die über die Kartenunterkante hinausragt.
+      **Behoben:** `.main-hub` passt die Karte jetzt ein wie Etappen- und
+      Ortskarte (`container-type: size`, Formel aus `map-canvas`), stellt sie
+      mittig und lässt einen Luftring (`padding`), in den Knoten am Rand ragen
+      dürfen.
+- [x] **Der Bildschirmrand blieb leer.** Die eingepasste 16:9-Karte lässt auf
+      breiten Fenstern Bänder frei.
+      **Behoben:** `.main-hub__backdrop` — dieselbe Karte, weichgezeichnet und
+      abgedunkelt, formatfüllend hinter der Kartenfläche. Bewusst eine zweite
+      Ebene statt die Karte selbst zu beschneiden: die Weltkoordinaten im Content
+      hängen am unbeschnittenen 16:9, ein Zuschnitt würde jeden Knoten von seiner
+      Landmarke wegschieben (dieselbe Falle, die am 19.08. schon die Pokémon-
+      Kachel in den leeren Himmel gesetzt hatte).
+- [ ] **Abweichung von Phase 2, AK 6:** Das waagerechte Rollen der Planetenkarte
+      bei mehr Welten ist damit **entfallen** — es widerspricht direkt Saschas
+      Vorgabe „die Planeten dürfen nicht hinauslaufen". Alle Welten sind jetzt
+      immer gleichzeitig im Bild. Wenn die Karte irgendwann mehr Welten trägt,
+      als lesbar nebeneinanderpassen, ist das ein neuer Befund — kein Zurück zum
+      Rollen ohne Entscheidung.

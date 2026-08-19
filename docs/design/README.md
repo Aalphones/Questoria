@@ -123,14 +123,18 @@ weichen in der Umsetzung ab — jeweils mit Grund:
     derselben Änderung, die jeden Screen gleichzeitig betrifft
     ([ADR-017](../decisions/017-vollbild-doktrin.md)).
 
-12. **Die Planetenkarte rollt waagerecht, statt sich einzupassen.** Etappen-
-    und Ortskarte (Phase 3) passen sich in die Bühne ein, weil jeder Punkt
-    darauf erreichbar bleiben muss. Die Planetenkarte behält stattdessen ihre
-    volle Bühnenhöhe und wächst mit jeder neuen Welt in die Breite; wird sie
-    breiter als der Bildschirm, rollt die Fläche als Ganzes — Bild und Knoten
-    bleiben dabei deckungsgleich (Kontrakt Phase 1: eine rollende Fläche pro
-    Screen ist erlaubt). Schon mit der einen installierten Welt kann der Fall
-    auf schmalen Fenstern eintreten, ohne dass das ein Fehler wäre.
+12. **Die Planetenkarte passt sich ein und füllt den Rand mit einer
+    weichgezeichneten Kopie ihrer selbst.** *(Ersetzt die frühere Fassung
+    „rollt waagerecht" — verworfen bei der Abnahme am 19.08.2026, weil Welten
+    aus dem Bild liefen.)* Die Karte wird wie Etappen- und Ortskarte
+    größtmöglich in die Bühne eingepasst und mittig gestellt, mit einem
+    Luftring, in den Knoten am Kartenrand mit ihrem Namensschild ragen dürfen.
+    Der dabei frei bleibende Bildschirmrand trägt dieselbe Karte ein zweites
+    Mal: formatfüllend, weichgezeichnet, abgedunkelt. Bewusst eine zweite Ebene
+    statt die Karte selbst formatfüllend zu beschneiden — die Weltkoordinaten
+    im Content sind Prozentwerte des unbeschnittenen 16:9, ein Zuschnitt würde
+    jeden Knoten von seiner Landmarke wegschieben. Waagerechtes Rollen gibt es
+    damit nicht mehr; alle Welten sind immer gleichzeitig im Bild.
 
 13. **Etappen- und Ortskarte passen sich ein, statt den Rahmen randlos zu
     füllen.** Der Prototyp zeigt die Kartenfläche randlos. Produktiv behält

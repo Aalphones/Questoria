@@ -14,3 +14,12 @@
   grid-template-rows: minmax(0, 1fr);
   block-size: 100%;
 }
+
+// KRITISCH: Angular hängt den Screen als Geschwister NACH dem
+// `<router-outlet>`-Element ein — das Element bleibt im DOM stehen. Ohne diese
+// Zeile ist das leere Outlet selbst das erste Grid-Element und belegt die
+// einzige Zeile; der Screen landet in einer impliziten `auto`-Zeile darunter,
+// schrumpft auf Inhaltshöhe und wird nach unten aus der Bühne geschoben.
+.stage > router-outlet {
+  display: none;
+}

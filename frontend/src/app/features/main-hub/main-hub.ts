@@ -125,6 +125,13 @@ export class MainHub {
     return file === '' ? null : this.content.hubAssetUrl(file);
   });
 
+  /** Dieselbe Karte als weichgezeichnete Randfüllung hinter der Kartenfläche. */
+  protected readonly backdropImage = computed<string | null>(() => {
+    const url = this.backgroundUrl();
+
+    return url === null ? null : `url("${url}")`;
+  });
+
   protected readonly points = computed<readonly MapCanvasPoint[]>(() => {
     const hub = this.hubState();
 

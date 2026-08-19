@@ -11,6 +11,10 @@
   }
   @case ('loaded') {
     <div class="main-hub">
+      @if (backdropImage(); as backdrop) {
+        <div class="main-hub__backdrop" [style.background-image]="backdrop" aria-hidden="true"></div>
+      }
+
       <qst-map-canvas
         class="main-hub__canvas"
         [background]="backgroundUrl()"

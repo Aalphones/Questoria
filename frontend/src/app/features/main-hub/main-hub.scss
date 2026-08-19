@@ -8,22 +8,36 @@
 }
 
 .main-hub {
+  display: grid;
+  place-items: center;
   position: relative;
   block-size: 100%;
-  // Die einzige rollende Fläche dieses Screens (Kontrakt Phase 1): mehr Welten
-  // als Platz lässt die Karte breiter als die Bühne werden, dann rollt sie
-  // waagerecht als Ganzes — Bild und Knoten bleiben deckungsgleich (AK 6).
-  overflow-x: auto;
-  overflow-y: hidden;
+  // Luftring um die eingepasste Karte: Knoten am Kartenrand ragen mit ihrem
+  // Namensschild über die Kartenfläche hinaus und wären sonst abgeschnitten.
+  padding: var(--space-6);
+  // Eigener Stapelkontext, damit die Rand-Füllung (z-index: -1) unter dem
+  // Screen-Inhalt bleibt und nicht unter die ganze Seite rutscht.
+  isolation: isolate;
+  // Bezugsgröße für die Einpass-Formel in map-canvas.scss (cqw/cqh).
+  container-type: size;
+
+  // Randfüllung: dieselbe Karte, weichgezeichnet, füllt den Bildschirm bis an
+  // die Kanten. Bewusst eine zweite Ebene statt die Karte formatfüllend zu
+  // beschneiden — die Weltkoordinaten hängen am unbeschnittenen 16:9.
+  &__backdrop {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-position: center;
+    background-size: cover;
+    filter: blur(1.75rem) brightness(0.75);
+    scale: 1.08;
+  }
 
   &__canvas {
     position: relative;
-    // Höhe kommt von der Bühne, Breite folgt dem festen 16:9 aus map-canvas —
-    // das Gegenteil von dessen Default (inline-size: 100%), absichtlich: die
-    // Etappen-/Ortskarte passt sich ein (Phase 3), die Planetenkarte wächst
-    // stattdessen in die Breite und lässt die Elternfläche rollen.
-    block-size: 100%;
-    inline-size: auto;
+    // Maße kommen aus map-canvas: größtmögliche 16:9-Fläche, die in die Bühne
+    // passt. `place-items: center` oben stellt sie mittig.
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-md);
   }
