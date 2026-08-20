@@ -1,18 +1,18 @@
 # STATE
 
-**Aktiver Plan:** [docs/planning/2026-08-19_curriculum-und-variation/](docs/planning/2026-08-19_curriculum-und-variation/README.md) — Curriculum & Variation, 4 Phasen. **Noch nicht begonnen.**
+**Aktiver Plan:** [docs/planning/2026-08-19_pokeball-fangen/](docs/planning/2026-08-19_pokeball-fangen/README.md) — Pokéball werfen, 3 Phasen. **Noch nicht begonnen.**
 
-**Phase:** 4/4 — Variation im Content der Pokémon-Welt (pending, Rating **mechanisch**)
+**Phase:** 1/3 — noch nicht gelesen.
 
-**Nächster Schritt:** Phase 4 lesen und umsetzen — Aufgaben der Pokémon-Welt auf `pool`/`generated` umstellen. Mechanische Phase: `/model sonnet` reicht, Opus wäre Verschwendung.
+**Nächster Schritt:** README + Phase 1 des Pokéball-Plans lesen und Umsetzung starten.
 
-Phase 3 ist am 20.08.2026 fertig: zwei neue Aufgabentypen, `sorting` (Gegenstände in Körbe einsortieren) und `number_line` (Zahlenstrahl mit sichtbaren Feldern). Bedient werden sie auf zwei Wegen — antippen und antippen, oder mit dem Finger ziehen; beide laufen über das neue gemeinsame Stück `frontend/src/app/ui/pick-place/`, das später auch `ordering` und `fill_gap` tragen soll. Probe-Aufgaben liegen im Vertania-Wald der Pokémon-Welt. Build und Linter grün, **am Bildschirm ist noch nichts geprüft**.
-
-🔴 **Offen aus Phase 3 — gehört in den Smoke am Plan-Ende:** Das Ziehen muss auf dem echten Tablet mit dem Finger geprüft werden, nicht am Entwicklerschirm mit der Maus. Der Tipp-Weg trägt notfalls allein. Dazu zwei 🟡: der Zahlenstrahl hat keine Bild-Beschriftungen für ein Kind, das noch keine Ziffern liest, und bei 0–20 in Einerschritten bekommt er auf schmalem Schirm einen waagerechten Bildlauf. Ausführlich im Report-Back der Phasen-Datei.
-
-🟡 **Die Reihenfolge ist am 20.08.2026 umgestellt worden** (Sascha): Curriculum & Variation und danach Pokéball laufen **vor** Meilenstein 5, nicht dahinter. Das ist eine Prioritäts-Entscheidung, keine technische: geprüft, dass beide Pläne von den Sammelkarten nichts brauchen — der Curriculum-Plan nannte Meilenstein 5 nur in seiner Statuszeile, der Pokéball-Plan erklärt sich ausdrücklich für unabhängig. Beide Statuszeilen sind nachgezogen.
+🔴 **Offen aus Phase 3 (Curriculum & Variation) — gehört in den Smoke am Plan-Ende:** Das Ziehen der neuen Aufgabentypen `sorting`/`number_line` muss auf dem echten Tablet mit dem Finger geprüft werden, nicht am Entwicklerschirm mit der Maus. Der Tipp-Weg trägt notfalls allein. Dazu zwei 🟡: der Zahlenstrahl hat keine Bild-Beschriftungen für ein Kind, das noch keine Ziffern liest, und bei 0–20 in Einerschritten bekommt er auf schmalem Schirm einen waagerechten Bildlauf. Ausführlich im Report-Back der archivierten Phasen-Datei.
 
 ## Was zuletzt fertig wurde
+
+**Curriculum & Variation ist abgeschlossen und archiviert (20.08.2026):** [docs/archive/2026-08/2026-08-19_curriculum-und-variation/](docs/archive/2026-08/2026-08-19_curriculum-und-variation/README.md). Vier Phasen: ein gemeinsamer Variations-Würfel (`pool`/`generated`), ein Welt-Bauprompt vom Lernziel her, zwei neue Mathe-Aufgabentypen (`sorting`, `number_line`), und acht von zehn Aufgaben der Pokémon-Welt jetzt mit echter Pool-Variation (drei Fassungen pro Lernstufe, bis auf die Arenaleiter-Stufe von drei Suchbild-Aufgaben — dafür fehlen vermessene Bild-Koordinaten, Nachbestell-Liste liegt bereit). Phase 4 betraf nur `data/themes/` (außerhalb Git), kein Commit dafür nötig.
+
+🟡 **Plan-Ende-Smoke noch offen (User):** dieselbe Episode der Pokémon-Welt zweimal spielen und die Pool-Abwechslung mit eigenen Augen sehen — finale Abnahmekriterien in der archivierten README.
 
 **Die erste echte Welt ist abgeschlossen und archiviert (20.08.2026):** [docs/archive/2026-08/2026-08-18_erste-echte-welt/](docs/archive/2026-08/2026-08-18_erste-echte-welt/README.md). Pokémon — Die Buchstaben-Route, drei Orte, drei Lernstufen, 52 Bilder, 16 vertonte Dialogzeilen, am Bildschirm abgenommen, auf `questoria.info` deployt, auf dem Gerät des Kindes durchgeklickt.
 
@@ -32,9 +32,8 @@ Stehen dort jeweils unter „Follow-ups", hier nur als Merkposten:
 
 ## Danach in dieser Reihenfolge
 
-1. **Curriculum & Variation** — der aktive Plan. Lernziele als Ausgangspunkt statt Fandom, Aufgaben-Pools statt Einzelaufgaben, neue Eventtypen für Mathematik. Vier Phasen, zwei davon **heikel**.
-2. **Pokéball werfen** — das erste Franchise-Spiel, drei Phasen: [docs/planning/2026-08-19_pokeball-fangen/](docs/planning/2026-08-19_pokeball-fangen/README.md). Eigener Eventtyp `pokemon_catch`, unbewertet, kann nicht schiefgehen. Hängt an nichts.
-3. **Meilenstein 5** — Sammelkarten & Druckbogen, sechs Phasen, freigegeben am 18.08.2026: [docs/planning/2026-08-18_sammelkarten-und-druckbogen/](docs/planning/2026-08-18_sammelkarten-und-druckbogen/README.md). 🟡 Phase 6 baut `pokemon_lesen` von 6 auf ≥11 Karten in drei Gruppen aus — das war früher die Rolle der Testwelt `dev_fixture`, die es nicht mehr gibt.
+1. **Pokéball werfen** — der aktive Plan, das erste Franchise-Spiel, drei Phasen: [docs/planning/2026-08-19_pokeball-fangen/](docs/planning/2026-08-19_pokeball-fangen/README.md). Eigener Eventtyp `pokemon_catch`, unbewertet, kann nicht schiefgehen. Hängt an nichts.
+2. **Meilenstein 5** — Sammelkarten & Druckbogen, sechs Phasen, freigegeben am 18.08.2026: [docs/planning/2026-08-18_sammelkarten-und-druckbogen/](docs/planning/2026-08-18_sammelkarten-und-druckbogen/README.md). 🟡 Phase 6 baut `pokemon_lesen` von 6 auf ≥11 Karten in drei Gruppen aus — das war früher die Rolle der Testwelt `dev_fixture`, die es nicht mehr gibt.
 
 Alle gesammelten Spielideen mit Stand und Bewertung: [docs/knowledge/spielmechaniken-katalog.md](docs/knowledge/spielmechaniken-katalog.md) — Ideenspeicher, kein Fahrplan.
 
