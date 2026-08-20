@@ -66,6 +66,22 @@
     background: var(--color-accent-soft);
   }
 
+  // Ein unbeschriftetes Feld versteckt die Zahl absichtlich (Schwierigkeit,
+  // siehe label_every) — aber es muss trotzdem als eigener Tipp-Punkt zu
+  // erkennen sein, sonst sieht das Kind dort nur leeren Weißraum und weiß
+  // nicht, dass dort überhaupt etwas antippbar ist.
+  &__dot {
+    display: block;
+    inline-size: 0.5rem;
+    block-size: 0.5rem;
+    border-radius: var(--radius-pill);
+    background: var(--color-answer-border);
+  }
+
+  &__field:hover:not(:disabled) &__dot {
+    background: var(--color-accent);
+  }
+
   &__field--correct &__value {
     border-color: var(--color-answer-correct-border);
     background: var(--color-answer-correct-surface);

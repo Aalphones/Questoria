@@ -20,6 +20,8 @@
             <span class="number-line__value" aria-hidden="true">
               @if (field.label; as label) {
                 {{ label }}
+              } @else {
+                <span class="number-line__dot" aria-hidden="true"></span>
               }
             </span>
 
