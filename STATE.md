@@ -6,11 +6,17 @@
 
 **Nächster Schritt:** README + Phase 1 des Pokéball-Plans lesen und Umsetzung starten.
 
-🔴 **Offen aus Phase 3 (Curriculum & Variation) — gehört in den Smoke am Plan-Ende:** Das Ziehen der neuen Aufgabentypen `sorting`/`number_line` muss auf dem echten Tablet mit dem Finger geprüft werden, nicht am Entwicklerschirm mit der Maus. Der Tipp-Weg trägt notfalls allein. Dazu zwei 🟡: der Zahlenstrahl hat keine Bild-Beschriftungen für ein Kind, das noch keine Ziffern liest, und bei 0–20 in Einerschritten bekommt er auf schmalem Schirm einen waagerechten Bildlauf. Ausführlich im Report-Back der archivierten Phasen-Datei.
+**Smoke-Test der Pokémon-Welt (20.08.2026) hat vier Anzeigefehler gefunden — alle noch am selben Tag behoben, gepusht:**
+- `image_search` (`anlaut_b_suche`, `anlaut_m_suche`, `wald_suche`): akzeptierte nur eine fest verdrahtete Teilmenge der im Bild passenden Objekte — ein Kind, das zurecht auf ein drittes, ebenfalls richtiges Objekt tippte, bekam „Da ist nichts". Neues Content-Feld `find_count` behebt das (jedes passende Objekt zählt); die drei betroffenen JSON-Dateien und `JSON_SCHEMA_REFERENCE.md` sind nachgezogen. Damit ist auch die alte Nachbestell-Liste aus dem Phase-4-Report-Back hinfällig — es gibt keine Arenaleiter-Lücke mehr, weil jetzt immer alle bekannten Objekte als Ziel zählen.
+- `number_line`: Feldbreite hing an der Bildschirmhöhe statt an der verfügbaren Breite, dadurch waagerechter Bildlauf bei 0–20. Felder schrumpfen jetzt auf die verfügbare Breite.
+- Ziehen mit der Maus zeigte ein Verboten-Symbol (nativer Bild-Drag des Browsers kollidierte mit dem eigenen Pointer-Drag) — per Finger hat es laut Sascha schon vorher funktioniert. `draggable="false"` auf allen Bildern behoben.
+- Aufgaben-Karten, die nicht in die Bühnenfläche passten, waren oben abgeschnitten (Titel-Tag + Überschriftsanfang unsichtbar) — `align-content: safe end` löst das strukturell für alle Kartentypen, nicht nur den betroffenen Einzelfall.
+
+🟡 **Weiterhin offen, nicht angefasst:** Der Zahlenstrahl hat keine Bild-Beschriftungen für ein Kind, das noch keine Ziffern liest (`label_every` selbst ist Absicht — steuert die Schwierigkeit, keine Anzeige-Macke, siehe `JSON_SCHEMA_REFERENCE.md` § 5.7).
 
 ## Was zuletzt fertig wurde
 
-**Curriculum & Variation ist abgeschlossen und archiviert (20.08.2026):** [docs/archive/2026-08/2026-08-19_curriculum-und-variation/](docs/archive/2026-08/2026-08-19_curriculum-und-variation/README.md). Vier Phasen: ein gemeinsamer Variations-Würfel (`pool`/`generated`), ein Welt-Bauprompt vom Lernziel her, zwei neue Mathe-Aufgabentypen (`sorting`, `number_line`), und acht von zehn Aufgaben der Pokémon-Welt jetzt mit echter Pool-Variation (drei Fassungen pro Lernstufe, bis auf die Arenaleiter-Stufe von drei Suchbild-Aufgaben — dafür fehlen vermessene Bild-Koordinaten, Nachbestell-Liste liegt bereit). Phase 4 betraf nur `data/themes/` (außerhalb Git), kein Commit dafür nötig.
+**Curriculum & Variation ist abgeschlossen und archiviert (20.08.2026):** [docs/archive/2026-08/2026-08-19_curriculum-und-variation/](docs/archive/2026-08/2026-08-19_curriculum-und-variation/README.md). Vier Phasen: ein gemeinsamer Variations-Würfel (`pool`/`generated`), ein Welt-Bauprompt vom Lernziel her, zwei neue Mathe-Aufgabentypen (`sorting`, `number_line`), und acht von zehn Aufgaben der Pokémon-Welt jetzt mit echter Pool-Variation. Phase 4 betraf nur `data/themes/` (außerhalb Git), kein Commit dafür nötig — die im Report-Back dieser Phase genannte Nachbestell-Liste ist inzwischen durch den `find_count`-Fix unten hinfällig, das Report-Back selbst ist nicht mehr nachgezogen (archiviert, kein Schreibzugriff im Alltagsfluss).
 
 🟡 **Plan-Ende-Smoke noch offen (User):** dieselbe Episode der Pokémon-Welt zweimal spielen und die Pool-Abwechslung mit eigenen Augen sehen — finale Abnahmekriterien in der archivierten README.
 
@@ -27,7 +33,7 @@ Stehen dort jeweils unter „Follow-ups", hier nur als Merkposten:
 - 🟡 **`data/hub/` ist nicht in `.gitignore`** — anders als `data/themes/` und `data/avatars/` würde die Planetenkarte im Repo landen. Zu entscheiden: mitversionieren oder ausnehmen. Aufs Deployen hat es keinen Einfluss.
 - 🟡 **`_default` in `voices.json` steht auf Julian**, derselben Stimme wie Professor Eich — jede künftig unbesetzte Figur klingt unbemerkt wie er. Jakob wäre frei und schon geprobt.
 - 🟡 **Der Server-Vorfall vom 19.08.2026 ist nicht aufgeklärt** (30–40 s pro API-Aufruf, Verzögerung vor PHP, am 20.08. von selbst weg). Diagnose-Zeilen liegen in `api-bridge/diag.php` bereit.
-- Aus dem UI-Umbau: das letzte `vh` statt `dvh` in `--size-answer-image`, das zu klein gewordene Größenbudget des Builds, und der Bühnen-Kontrakt ohne automatischen Wächter.
+- Aus dem UI-Umbau: das letzte `vh` statt `dvh` in `--size-answer-image`, das zu klein gewordene Größenbudget des Builds. (Der Bühnen-Kontrakt ohne automatischen Wächter ist am 20.08.2026 behoben — `align-content: safe end` in `episode.scss`.)
 - Aus Meilenstein 4: die Smoke-Checkliste der [archivierten README](docs/archive/2026-08/2026-08-17_nutzerverwaltung-und-spielstand/README.md) ist noch nicht abgearbeitet — sieben Punkte, die drei ersten mit 🔴.
 
 ## Danach in dieser Reihenfolge
