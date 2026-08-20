@@ -8,6 +8,13 @@
 .image-slot {
   &__image {
     object-fit: cover;
+    // `draggable="false"` allein reicht in Safari nicht — ohne das hier
+    // beginnt der Browser bei gehaltener Maus einen nativen Bild-Zug, der
+    // Fläche daneben zeigt der Cursor dann fälschlich das Verboten-Symbol,
+    // weil kein `dragover`/`drop` registriert ist (das eigene Ziehen läuft
+    // vollständig über Pointer-Ereignisse, siehe pick-source.ts).
+    -webkit-user-drag: none;
+    user-select: none;
 
     // Freigestellte Motive (Sprites, Lernstufen-Figuren) dürfen nichts
     // verlieren — sie werden eingepasst, nicht formatfüllend beschnitten.

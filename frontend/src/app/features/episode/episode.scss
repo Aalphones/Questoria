@@ -39,8 +39,15 @@
 
   &__stage {
     display: grid;
-    // Dialoge und Aufgaben sitzen am unteren Rand der Fläche, wie im Design.
-    align-content: end;
+    // Dialoge und Aufgaben sitzen am unteren Rand der Fläche, wie im Design —
+    // aber nur, wenn dafür Platz ist. `safe` ist die eingebaute CSS-Antwort
+    // auf genau dieses Problem: Passt die Karte nicht in die Fläche, weicht
+    // die Ausrichtung auf `start` aus, statt den oberen Rand (Titel-Tag,
+    // Überschrift) über den sichtbaren Bereich hinauszuschieben. Ohne das
+    // sah eine hohe Karte oben abgeschnitten aus, auch mit `overflow: auto` —
+    // eine Karte muss immer vollständig lesbar sein, notfalls mit Bildlauf
+    // nach unten statt Text, der nach oben verschwindet.
+    align-content: safe end;
     min-inline-size: 0;
     // Passt ein Ereignis nicht in die Fläche, rollt die Fläche — nicht die
     // Seite. Phase 5 nimmt der Bildsuche den Grund dafür.

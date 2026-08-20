@@ -5,6 +5,8 @@
 .number-line {
   &__board {
     display: block;
+    // Bleibt als Sicherheitsnetz stehen, greift im Normalfall aber nicht mehr:
+    // Die Felder schrumpfen unten selbst auf die verfügbare Breite.
     overflow-x: auto;
   }
 
