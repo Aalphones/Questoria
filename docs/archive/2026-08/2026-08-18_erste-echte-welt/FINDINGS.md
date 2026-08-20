@@ -14,7 +14,17 @@ Abgearbeitete Zeilen abhaken, nicht löschen.
 
 ## Aus Phase 1 (Weltgerüst)
 
-- [ ] → **Entscheidung Sascha, betrifft Phase 3:** Eine Multiple-Choice-Aufgabe
+- [x] → **jetzt geschlossen, überholt durch `word_match` (20.08.2026):** Die
+  beschriebene Notlösung ist gar nicht im Content gelandet — der eigene
+  Eventtyp `word_match` (Bilder und Wortkarten getrennt, das Kind ordnet zu)
+  löst genau diese Aufgabe, und `wortpaare_1`/`_2` nutzen ihn. Die Plan-Regel
+  „das zu lesende Wort steht nie in der Frage" ist damit **nicht verletzt**;
+  ein Feld `question_image` in der Multiple-Choice-Form braucht diese Welt
+  nicht. Der Befund über die Aufgabenform selbst bleibt richtig und steht
+  unten als Follow-up für [Curriculum & Variation](../../../planning/2026-08-19_curriculum-und-variation/README.md),
+  falls eine spätere Welt ein Bild in der Frage braucht. Ursprünglicher
+  Wortlaut zur Nachvollziehbarkeit:
+  **Entscheidung Sascha, betrifft Phase 3:** Eine Multiple-Choice-Aufgabe
   kann **kein Bild in der Frage** zeigen — die Aufgabenform kennt nur Frage,
   vier Antworten (je mit Bild) und die richtige Nummer
   (`frontend/src/app/models/content.types.ts`, `MultipleChoiceConfig`). Die im
@@ -45,12 +55,14 @@ Abgearbeitete Zeilen abhaken, nicht löschen.
   Die beiden Wortkarten-Aufgaben (`wortkarte_1`/`_2`) sind durch
   `wortpaare_1`/`_2` ersetzt, `antwort_wortkarte.png` entfällt.
 
-- [ ] → **Phase 2:** `ASSET_REQUIREMENTS.md` verlangt für jede Figur alle vier
-  Gefühlsbilder (`neutral`, `happy`, `worried`, `angry`) und nennt das „nicht
-  optional". Bestellt sind nur die acht tatsächlich benutzten — 16 Sprites für
-  eine Welt mit vier Figuren, von denen zwei nur „Pika" sagen, ist Aufwand ohne
-  Gegenwert. Wenn die Vorgabe so gemeint ist, gehört sie entschärft; wenn nicht,
-  fehlen acht Dateien.
+- [x] → **jetzt geschlossen, Vorgabe entschärft (20.08.2026):**
+  `ASSET_REQUIREMENTS.md` verlangte für jede Figur alle vier Gefühlsbilder
+  (`neutral`, `happy`, `worried`, `angry`) und nannte das „nicht optional".
+  Bestellt sind nur die acht tatsächlich benutzten — und die Welt ist damit
+  vollständig durchgespielt. Die Vorgabe war schlicht falsch formuliert:
+  Pflicht ist jedes Sprite, **das eine Dialogzeile nennt**, nicht jedes
+  denkbare Gefühl pro Figur. Abschnitt 2 von `ASSET_REQUIREMENTS.md` sagt das
+  jetzt so.
 
 - [x] → **Phase 2:** Die Welt braucht **52 Bilddateien**, nicht die im Plan
   geschätzten „rund 25" — Liste in [bestellliste.md](bestellliste.md). Treiber
@@ -60,11 +72,13 @@ Abgearbeitete Zeilen abhaken, nicht löschen.
   47, gestiegen durch den `word_match`-Umbau — sechs neue Wortbilder,
   `antwort_wortkarte.png` entfällt.)*
 
-- [ ] → **Phase 3:** Alle Kartenkoordinaten (drei Orte, eine Etappe, die
-  Weltkugel auf der Planetenkarte) sind geraten — die Kartenbilder gibt es noch
-  nicht. Nach Phase 2 einmal im Spiel öffnen und die Punkte auf die echten
-  Landmarken schieben. Dasselbe gilt für die Suchziel-Koordinaten der drei
-  Bildsuchen.
+- [x] → **Phase 3, erledigt (19./20.08.2026):** Alle Kartenkoordinaten (drei
+  Orte, eine Etappe, die Weltkugel auf der Planetenkarte) waren geraten. Am
+  fertigen Bild geprüft: Route-1-Punkte und Etappen-Position treffen ihre
+  Landmarke, die Planetenkarten-Kachel lag im leeren Himmel und ist auf
+  `x: 73, y: 78` korrigiert (eigener Eintrag unten). Die Suchziel-Koordinaten
+  der drei Bildsuchen sind am 20.08.2026 im Spiel bestätigt — jedes Ziel ist
+  triggerbar.
 
 ## Aus Phase 3 (echte Runde, 19.08.2026)
 
@@ -88,7 +102,7 @@ Abgearbeitete Zeilen abhaken, nicht löschen.
   Phase 1 bleibt offen — anderer Screen, andere Baustelle.
 
 - [x] → **aufgeplant am 19.08.2026, umgesetzt und abgenommen am selben Tag:**
-  [docs/archive/2026-08/2026-08-19_ui-umbau-vollbild/](../../archive/2026-08/2026-08-19_ui-umbau-vollbild/README.md),
+  [docs/archive/2026-08/2026-08-19_ui-umbau-vollbild/](../2026-08-19_ui-umbau-vollbild/README.md),
   fünf Phasen. Alle sechs Punkte unten sind dort aufgenommen; die gemeinsame
   Ursache ist belegt — es gibt im Frontend keine einzige Höhenangabe für die
   Bühne, deshalb rollt der Browser die ganze Seite. Sammelnotiz aus der ersten

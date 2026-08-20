@@ -171,6 +171,21 @@ einem Meilenstein fertig statt über zwei verteilt.
   gehen ihr immer vor — die Sprach-Werkstatt unter `data/_authoring/voice-tools/`
   steht bereit, wird aber erst gebraucht, sobald echter Fandom-Content vertont
   werden soll.
+- ~~Taugt das Content-Schema für echten Content, oder nur für die Testwelt?~~ —
+  geklärt am 20.08.2026 mit `pokemon_lesen`: eine vollständige Welt (3 Episoden,
+  8 Aufgaben in je 3 Lernstufen, 52 Bilder, 16 Sprachaufnahmen, 6 Sammelkarten)
+  ist ohne Schema-Änderung baubar und durchgespielt. Zwei Lücken kamen dabei
+  heraus und sind geschlossen: das Schema versprach Auftritts-Felder pro Event,
+  die niemand liest, und die Sprite-Vorgabe verlangte Gefühlsbilder, die kein
+  Dialog nennt. Was **nicht** geht: ein Bild in der Frage einer
+  Multiple-Choice-Aufgabe — dafür gibt es seit dem 18.08.2026 den eigenen
+  Eventtyp `word_match`.
+- ~~Reicht der Vorlesemodus für ein Kind, das noch nicht liest?~~ — geklärt am
+  20.08.2026: eine Runde im Modus „Bilder & Vorlesen" ist ohne Hilfe spielbar.
+  Die Bedingung dafür ist eine Content-Regel, keine Engine-Eigenschaft: **das zu
+  lesende Wort steht immer bei den Antworten, nie in der Frage** — sonst liest
+  der Vorleser die Lösung mit vor. Steht in
+  `data/_authoring/JSON_SCHEMA_REFERENCE.md`.
 - Kein festgelegtes Datum für "Spiel muss laufen" — falls es eins gibt
   (Schuljahr, Geburtstag eines Kindes o.ä.), bitte nachtragen
 

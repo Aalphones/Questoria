@@ -76,14 +76,18 @@ werden als eigene Datei gespeichert, gleicher Präfix:
 | Seitenverhältnis | Hochformat, ca. 2:3 (z. B. 1024×1536) |
 | Anker-Punkt | Charakter mittig im Frame, Füße nahe Bildunterkante |
 | Bühnenplätze | genau zwei feste Positionen: `left`, `right` — keine freie Koordinatenwahl |
-| Emotionsset (MVP) | `neutral`, `happy`, `worried`, `angry` |
+| Emotionsset (MVP) | `neutral`, `happy`, `worried`, `angry` — gebraucht wird, was der Content referenziert |
 
 Die zwei festen Bühnenplätze sind eine Engine-Vorgabe, keine Asset-Vorgabe —
 das Sprite selbst wird unabhängig von links/rechts erstellt, die Engine
 spiegelt/platziert es passend zum gewählten Platz.
 
-Ein Charakter ohne alle vier Emotionsdateien bleibt bei der falschen
-Dialogzeile stumm oder bricht — nicht optional.
+**Pflicht ist jedes Sprite, das eine Dialogzeile nennt** — fehlt die Datei zur
+angegebenen `sprite`-Zeile, bleibt die Bühne an dieser Stelle leer. Die vier
+Gefühle sind der Vorrat, aus dem Dialoge schöpfen, kein Soll pro Figur: Wer
+nur `neutral` und `happy` spielt, bestellt auch nur die beiden. `pokemon_lesen`
+kommt mit acht Sprites für vier Figuren aus (20.08.2026 durchgespielt); alle
+vier Gefühle für jede Nebenfigur wären Aufwand ohne Gegenwert.
 
 ---
 
