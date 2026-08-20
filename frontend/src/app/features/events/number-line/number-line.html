@@ -1,0 +1,41 @@
+<qst-task-card
+  tag="Aufgabe · Zahlenstrahl"
+  [question]="questionText()"
+  [stepDone]="stepDone()"
+  [stepTotal]="stepTotal()"
+>
+  <div class="number-line__board">
+    <ul class="number-line__fields" aria-label="Zahlenstrahl">
+      @for (field of fields(); track field.value) {
+        <li class="number-line__slot">
+          <button
+            type="button"
+            class="number-line__field"
+            [class.number-line__field--correct]="field.state === 'correct'"
+            [class.number-line__field--wrong]="field.state === 'wrong'"
+            [attr.aria-label]="'Zahl ' + field.value"
+            [disabled]="field.locked"
+            (click)="pickField(field.value)"
+          >
+            <span class="number-line__value" aria-hidden="true">
+              @if (field.label; as label) {
+                {{ label }}
+              }
+            </span>
+
+            <span class="number-line__tick" aria-hidden="true"></span>
+          </button>
+        </li>
+      }
+    </ul>
+  </div>
+
+  <div task-card-feedback class="number-line__feedback" role="status" aria-live="polite">
+    @if (feedbackTitle(); as title) {
+      <p class="number-line__feedback-title">{{ title }}</p>
+      <p class="number-line__feedback-text">{{ feedbackText() }}</p>
+
+      <button type="button" class="number-line__next" (click)="finish()">Weiter</button>
+    }
+  </div>
+</qst-task-card>

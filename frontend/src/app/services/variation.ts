@@ -107,6 +107,27 @@ export function resolveTemplate(text: string, values: Readonly<Record<string, nu
 }
 
 /**
+ * Wie `resolveTemplate`, liefert aber eine **Zahl**, wenn der ganze Text aus
+ * genau einem bekannten Platzhalter besteht. Ohne das käme aus
+ * `"target": "{ziel}"` die Zeichenkette `"7"` statt der Zahl `7` — bei einem
+ * Zahlenfeld wie dem Ziel des Zahlenstrahls ist das der Unterschied zwischen
+ * spielbar und Fehlerpfad.
+ */
+export function resolveTemplateValue(
+  text: string,
+  values: Readonly<Record<string, number>>,
+): string | number {
+  const wholePlaceholder = /^\{(\w+)\}$/.exec(text);
+  const single = wholePlaceholder === null ? undefined : values[wholePlaceholder[1]];
+
+  if (single !== undefined) {
+    return single;
+  }
+
+  return resolveTemplate(text, values);
+}
+
+/**
  * Prüft gezogene Werte gegen die Bedingungen einer generierten Fassung.
  * `right` ist entweder eine Zahl oder der Name eines anderen gezogenen Werts.
  */

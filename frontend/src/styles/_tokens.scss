@@ -200,6 +200,16 @@
   --size-word-match-tile: clamp(5.5rem, 15vh, 9.5rem);
   --size-pair-badge: 1.875rem;
 
+  // Sortier-Aufgabe: Gegenstand im Vorrat, derselbe Gegenstand im Korb (kleiner,
+  // weil dort mehrere nebeneinander liegen), Mindestbreite eines Korbs.
+  --size-sorting-item: clamp(3.25rem, 9vh, 5.5rem);
+  --size-sorting-placed: clamp(2.25rem, 6vh, 3.5rem);
+  --size-sorting-basket-min: 11rem;
+
+  // Zahlenstrahl: Kantenlänge eines Felds und Höhe des Strichs darunter.
+  --size-number-field: clamp(2.875rem, 7vh, 4rem);
+  --size-number-tick: 0.75rem;
+
   // ── Interaktion ──────────────────────────────────────────────────────────
   // Mindestgröße für antippbare Ziele (Kinder-Zielgruppe) — Kopfleiste,
   // zukünftig jeder Icon-Knopf.

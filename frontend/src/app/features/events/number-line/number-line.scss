@@ -1,0 +1,126 @@
+:host {
+  display: contents;
+}
+
+.number-line {
+  &__board {
+    display: block;
+    overflow-x: auto;
+  }
+
+  // Die Felder liegen auf einer durchgehenden Linie — die Linie ist der
+  // Hintergrund der Leiste, nicht ein eigenes Element, damit sie unter jedem
+  // Feld gleich weiterläuft.
+  &__fields {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    background-image: linear-gradient(var(--color-answer-border), var(--color-answer-border));
+    background-position: 0 calc(100% - var(--size-number-tick));
+    background-repeat: repeat-x;
+    background-size: 100% 2px;
+  }
+
+  &__slot {
+    display: grid;
+  }
+
+  &__field {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-1);
+    inline-size: var(--size-number-field);
+    padding: var(--space-2) 0 0;
+    border: none;
+    background: none;
+    color: var(--color-text);
+    cursor: pointer;
+
+    &:disabled {
+      cursor: default;
+    }
+  }
+
+  // Die Zahl sitzt in einem eigenen Feld über dem Strich — beim Treffer färbt
+  // sich dieses Feld, nicht der ganze Knopf, sonst verrutschte die Linie.
+  &__value {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 100%;
+    min-block-size: var(--size-number-field);
+    border: 2px solid transparent;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-heading);
+    font-size: var(--font-size-answer);
+    line-height: var(--line-height-heading);
+    transition: background var(--duration-fast) var(--easing-standard);
+  }
+
+  &__field:hover:not(:disabled) &__value {
+    background: var(--color-accent-soft);
+  }
+
+  &__field--correct &__value {
+    border-color: var(--color-answer-correct-border);
+    background: var(--color-answer-correct-surface);
+  }
+
+  &__field--wrong &__value {
+    border-color: var(--color-answer-wrong-border);
+    background: var(--color-answer-wrong-surface);
+  }
+
+  // Der Strich, der jedes Feld mit der Linie verbindet — unbeschriftete Felder
+  // haben sonst nichts, woran das Kind sie erkennt.
+  &__tick {
+    inline-size: 2px;
+    block-size: var(--size-number-tick);
+    background: var(--color-answer-border);
+  }
+
+  &__field--correct &__tick {
+    background: var(--color-answer-correct-border);
+  }
+
+  &__feedback {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-2);
+  }
+
+  &__feedback-title {
+    margin: 0;
+    color: var(--color-text-accent);
+    font-family: var(--font-heading);
+    font-size: var(--font-size-section);
+  }
+
+  &__feedback-text {
+    margin: 0;
+  }
+
+  &__next {
+    min-block-size: var(--size-touch-target);
+    padding-inline: var(--space-6);
+    border: none;
+    border-radius: var(--radius-pill);
+    background: var(--color-accent);
+    color: var(--color-text-on-accent);
+    font-family: var(--font-body);
+    font-size: var(--font-size-body);
+    font-weight: 600;
+    cursor: pointer;
+
+    &:hover {
+      background: var(--color-accent-hover);
+    }
+  }
+}
+
+.number-line__feedback:not(:empty) {
+  animation: eqRise var(--duration-enter) var(--easing-standard);
+}

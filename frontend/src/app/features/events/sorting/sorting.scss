@@ -1,0 +1,215 @@
+@use '../../../../styles/breakpoints' as bp;
+
+:host {
+  display: contents;
+}
+
+.sorting {
+  // Misst die Breite, die der Aufgabe im Karteninneren bleibt — gleiche
+  // Begründung wie bei der Zuordnungs-Aufgabe: eine Container Query erreicht
+  // nur Nachfahren des Containers.
+  &__board {
+    display: grid;
+    gap: var(--space-6);
+    container-type: inline-size;
+  }
+
+  // Der Vorrat läuft in Zeilen um, damit acht Gegenstände nicht in eine
+  // einzige, unerreichbar schmale Spalte gedrängt werden.
+  &__supply {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    min-block-size: var(--size-sorting-item);
+  }
+
+  &__baskets {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(var(--size-sorting-basket-min), 1fr));
+    gap: var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    // Auf schmalem Schirm stehen die Körbe untereinander, sonst wird jeder zu
+    // schmal für einen Kinderfinger.
+    @container (max-width: #{bp.$task-board-narrow}) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__slot {
+    display: grid;
+  }
+
+  &__item {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-2) var(--space-3);
+    border: 2px solid var(--color-answer-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg);
+    color: var(--color-text);
+    cursor: grab;
+    transition: translate var(--duration-fast) var(--easing-standard);
+
+    &:hover:not(:disabled) {
+      translate: 0 -3px;
+    }
+
+    &--selected {
+      border-color: var(--color-accent);
+      background: var(--color-accent-soft);
+    }
+
+    &--wrong {
+      border-color: var(--color-answer-wrong-border);
+      background: var(--color-answer-wrong-surface);
+    }
+
+    // Während des Ziehens klebt der Gegenstand am Finger. Er muss über allem
+    // liegen, sonst verschwindet er hinter dem Korb, auf den er gerade zielt —
+    // und die Übergangs-Animation muss weg, sonst schleppt er hinterher.
+    &.pick-source--dragging {
+      z-index: 2;
+      transition: none;
+      cursor: grabbing;
+      box-shadow: var(--shadow-lg);
+    }
+  }
+
+  &__item-frame {
+    display: block;
+    position: relative;
+    inline-size: var(--size-sorting-item);
+    block-size: var(--size-sorting-item);
+  }
+
+  &__item-label {
+    font-family: var(--font-heading);
+    font-size: var(--font-size-detail);
+  }
+
+  &__basket {
+    display: grid;
+    align-content: start;
+    gap: var(--space-2);
+    min-block-size: var(--size-sorting-basket-min);
+    padding: var(--space-3);
+    border: 2px dashed var(--color-answer-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg);
+    color: var(--color-text);
+    text-align: center;
+    cursor: pointer;
+
+    // Liegt etwas in der Hand, zeigen alle Körbe, dass sie es annehmen — sonst
+    // ist nach dem Antippen nicht zu sehen, wohin es überhaupt gehen kann.
+    &.pick-target--ready {
+      border-style: solid;
+      border-color: var(--color-accent);
+    }
+
+    // Der Korb unter dem ziehenden Finger — die Antwort auf „lasse ich hier los,
+    // landet es hier".
+    &.pick-target--hovered {
+      border-color: var(--color-accent);
+      background: var(--color-accent-soft);
+    }
+  }
+
+  &__basket-head {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+  }
+
+  &__basket-frame {
+    display: block;
+    position: relative;
+    inline-size: var(--size-sorting-item);
+    block-size: var(--size-sorting-item);
+  }
+
+  &__basket-label {
+    font-family: var(--font-heading);
+    font-size: var(--font-size-answer);
+    line-height: var(--line-height-heading);
+  }
+
+  &__basket-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-2);
+  }
+
+  &__placed {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-1) var(--space-2);
+    border: 2px solid var(--color-answer-correct-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-answer-correct-surface);
+    animation: eqRise var(--duration-enter) var(--easing-standard);
+  }
+
+  &__placed-frame {
+    display: block;
+    position: relative;
+    inline-size: var(--size-sorting-placed);
+    block-size: var(--size-sorting-placed);
+  }
+
+  &__placed-label {
+    font-size: var(--font-size-detail);
+  }
+
+  &__feedback {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-2);
+  }
+
+  &__feedback-title {
+    margin: 0;
+    color: var(--color-text-accent);
+    font-family: var(--font-heading);
+    font-size: var(--font-size-section);
+  }
+
+  &__feedback-text {
+    margin: 0;
+  }
+
+  &__next {
+    min-block-size: var(--size-touch-target);
+    padding-inline: var(--space-6);
+    border: none;
+    border-radius: var(--radius-pill);
+    background: var(--color-accent);
+    color: var(--color-text-on-accent);
+    font-family: var(--font-body);
+    font-size: var(--font-size-body);
+    font-weight: 600;
+    cursor: pointer;
+
+    &:hover {
+      background: var(--color-accent-hover);
+    }
+  }
+}
+
+.sorting__feedback:not(:empty) {
+  animation: eqRise var(--duration-enter) var(--easing-standard);
+}

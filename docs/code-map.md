@@ -34,6 +34,7 @@ im Frontend-Ordnernamen, PascalCase in PHP-Klassen):
 | Nutzerverwaltung | `features/auth/`, `features/profile/` | Anmeldebildschirm (`features/auth/login.ts`), Profilauswahl mit Anlegen/Löschen (`features/profile/profile.ts`, nach Prototyp-Screen `login`) |
 | Kartenfläche | `ui/map-canvas/` | Gemeinsames Bauteil von Planeten-, Etappen- und Ortskarte: Fläche im Seitenverhältnis 16:9, Hintergrund, Routenlinien; `map-point/` setzt ein beliebiges Kind auf eine Prozent-Position |
 | Bildfläche | `ui/image-slot/` | Bild mit beschriftetem Platzhalter, wenn die Datei fehlt |
+| Aufheben und Ablegen | `ui/pick-place/` | Gemeinsame Bedienung für Aufgaben, bei denen etwas irgendwohin gehört: Vermittler (`pick-place.ts`) plus zwei Direktiven für Gegenstand und Ziel. Zwei Wege, eine Auswertung — antippen und antippen (trägt, weil tastaturfähig) oder mit dem Finger ziehen (Zugabe, über Pointer-Ereignisse). Genutzt von `sorting/`, vorgesehen für `ordering/` und `fill_gap/` |
 | Aufgaben-Hülle | `ui/task-card/` | Gemeinsame Karte aller Aufgaben-Typen: Aufgaben-Tag, Fortschrittspunkte, Frage mit Vorlese-Knopf (und automatischem Vorlesen), Platz für Aufgabenkörper und Feedback-Leiste. Eingang `fill` (Opt-in, nur Bildsuche): der Körper bekommt die restliche Bühnenhöhe statt sich am Inhalt zu bemessen |
 | Gemeinsame UI | `ui/hud/`, `ui/content-error/`, `ui/speech-bubble/`, `ui/read-aloud-button/` | Kopfleiste auf allen Spiel-Screens (jeder Screen bindet sie selbst ein): Modus-Umschalter, Ton-Knopf, Profil-Chip mit echtem Avatar/Namen und Menü („Profil wechseln", „Abmelden", Plan Phase 9); Meldung bei fehlgeschlagener Welt/Ort-Ladung mit Weg zurück; Sprechblasen; runder Knopf „Nochmal vorlesen" |
 | Routing | `routing/` | `world-config.resolver.ts` lädt die Welt-Konfiguration zentral für jede `theme/:themeId/…`-Route, setzt die aktive Welt und schreibt sie bei echtem Wechsel ins aktive Profil; `difficulty-chosen.guard.ts` schickt ohne gewählte Lernstufe auf die Lernstufen-Auswahl zurück; `profile-chosen.guard.ts` schickt ohne aktives Profil auf `/profiles` zurück (wartet dafür einmal auf `ProfileService.ensureLoaded()`); `auth.guard.ts` schickt ohne Sitzung auf `/login` (wartet dafür einmal auf `AuthService.restoreSession()`); `session-expired.interceptor.ts` fängt ein `401` aus jedem Aufruf ab und schickt ebenfalls auf `/login` |
@@ -54,11 +55,16 @@ Plätzen), `features/events/multiple-choice/` (Quiz mit Weiterraten),
 `features/events/image-search/` (Bildsuche mit Fehlgriff-Zählung, Ziele auch per Tastatur erreichbar),
 `features/events/word-match/` (Wort-Bild-Paare: Bilder links, gemischte Wortkarten
 rechts, Zuordnung per zwei Tipps — die Wörter werden nie vorgelesen),
+`features/events/sorting/` (Gegenstände in zwei bis vier Körbe einsortieren,
+Antippen und Ziehen über `ui/pick-place/`; `show_count` macht die Gegenstandsliste
+zum Vorrat, aus dem pro Durchgang gezogen wird),
+`features/events/number-line/` (Zahlenstrahl mit sichtbaren Feldern — kein freies
+Ziehen, jedes Feld ein eigener Knopf und damit tastaturbedienbar),
 `features/events/reward/` (Belohnungs-Moment mit Sternen; merkt `card_id` für
 Meilenstein 5, vergibt noch keine Sammelkarte), `features/result/` (Sterne,
 drei Statistik-Karten — zwei aus dem laufenden Lauf, eine als über alle
 Läufe gewachsene Weltsumme aus `StatisticsService` —, Erfolgs-Pillen für neu
-freigeschaltete Erfolge — noch kein Karten-Banner), `ui/map-canvas/`, `ui/image-slot/`, `ui/task-card/`,
+freigeschaltete Erfolge — noch kein Karten-Banner), `ui/map-canvas/`, `ui/image-slot/`, `ui/task-card/`, `ui/pick-place/`,
 `ui/hud/` (inkl. Modus-Umschalter, Ton-Knopf und echter Profil-Chip mit Menü), `ui/content-error/`,
 `ui/read-aloud-button/`, `services/narration.service.ts`, `features/auth/`
 (Anmeldebildschirm, `services/auth.service.ts`, `routing/auth.guard.ts`,

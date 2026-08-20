@@ -156,6 +156,8 @@ export const EVENT_TYPES = [
   'text_input',
   'image_search',
   'word_match',
+  'sorting',
+  'number_line',
 ] as const;
 export type EventType = (typeof EVENT_TYPES)[number];
 
@@ -289,6 +291,54 @@ export interface WordMatchConfig {
   question_simple?: string;
   /** drei oder vier Paare — jedes Wort und jedes Bild genau einmal */
   pairs: WordPair[];
+}
+
+/** Ein Korb einer Sortier-Aufgabe (Abschnitt 5.7). */
+export interface SortingCategory {
+  /** Eindeutig innerhalb der Variante — `SortingItem.category` verweist darauf. */
+  id: string;
+  label: string;
+  /** Dateiname unter answers/ — im Vorlesemodus die einzige Information für ein nicht lesendes Kind. */
+  image?: string;
+}
+
+/** Ein Gegenstand, der in genau einen Korb gehört (Abschnitt 5.7). */
+export interface SortingItem {
+  id: string;
+  label: string;
+  image?: string;
+  /** `id` einer `categories[]` — der einzige richtige Korb. */
+  category: string;
+}
+
+/** Die aufgelöste Konfiguration eines `sorting`-Events (Abschnitt 5.7, ausgelagert). */
+export interface SortingConfig {
+  question: string;
+  /** kurze Fassung für den Vorlesemodus, siehe Abschnitt 6 */
+  question_simple?: string;
+  categories: SortingCategory[];
+  items: SortingItem[];
+  /**
+   * optional — stehen mehr Gegenstände in `items`, als gespielt werden sollen,
+   * ist die Liste ein Vorrat und die Engine zieht daraus (Abschnitt 5.7).
+   */
+  show_count?: number;
+}
+
+/** Die aufgelöste Konfiguration eines `number_line`-Events (Abschnitt 5.8, ausgelagert). */
+export interface NumberLineConfig {
+  question: string;
+  /** kurze Fassung für den Vorlesemodus, siehe Abschnitt 6 */
+  question_simple?: string;
+  /** Kleinster und größter Wert des Strahls — beide sichtbar, beide eingeschlossen. */
+  min: number;
+  max: number;
+  /** Abstand zwischen zwei Feldern, Vorgabe 1. */
+  step?: number;
+  /** Die gesuchte Zahl — muss auf einem Feld des Strahls liegen. */
+  target: number;
+  /** Jedes wievielte Feld eine Zahl trägt, Vorgabe 1. Dazwischen stehen Striche. */
+  label_every?: number;
 }
 
 /**

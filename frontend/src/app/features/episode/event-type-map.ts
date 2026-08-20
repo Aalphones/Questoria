@@ -4,7 +4,9 @@ import { EventType } from '../../models/content.types';
 import { isDialogConfig } from '../events/dialog/dialog.types';
 import { isImageSearchConfig } from '../events/image-search/image-search.types';
 import { isMultipleChoiceConfig } from '../events/multiple-choice/multiple-choice.types';
+import { isNumberLineConfig } from '../events/number-line/number-line.types';
 import { isRewardConfig } from '../events/reward/reward.types';
+import { isSortingConfig } from '../events/sorting/sorting.types';
 import { isTextInputConfig } from '../events/text-input/text-input.types';
 import { isWordMatchConfig } from '../events/word-match/word-match.types';
 
@@ -28,6 +30,9 @@ export const EVENT_COMPONENTS: Readonly<Partial<Record<EventType, () => Promise<
       import('../events/image-search/image-search').then((module) => module.ImageSearch),
     reward: () => import('../events/reward/reward').then((module) => module.Reward),
     word_match: () => import('../events/word-match/word-match').then((module) => module.WordMatch),
+    sorting: () => import('../events/sorting/sorting').then((module) => module.Sorting),
+    number_line: () =>
+      import('../events/number-line/number-line').then((module) => module.NumberLine),
   };
 
 /**
@@ -40,6 +45,8 @@ export const SCORED_EVENT_TYPES: ReadonlySet<EventType> = new Set<EventType>([
   'text_input',
   'image_search',
   'word_match',
+  'sorting',
+  'number_line',
 ]);
 
 /**
@@ -64,6 +71,8 @@ const EVENT_CONFIG_GUARDS: Readonly<Partial<Record<EventType, (config: unknown) 
   image_search: isImageSearchConfig,
   reward: isRewardConfig,
   word_match: isWordMatchConfig,
+  sorting: isSortingConfig,
+  number_line: isNumberLineConfig,
 };
 
 /** Lädt die Komponente zu einem Eventtyp — unbekannter Typ wirft, das Gerüst zeigt die Meldung. */

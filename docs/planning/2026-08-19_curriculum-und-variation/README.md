@@ -44,7 +44,7 @@ Bindung an Story und Figuren ist das Produkt, nicht der Overhead."
 |---|---|---|---|
 | 1 | [Variationssystem — ein Würfel für alle](phase-1-variationssystem.md) | heikel | complete |
 | 2 | [Welt-Bauprompt vom Lernziel her](phase-2-bauprompt.md) | standard | complete |
-| 3 | [Neue Eventtypen für Mathematik](phase-3-neue-eventtypen.md) | heikel | pending |
+| 3 | [Neue Eventtypen für Mathematik](phase-3-neue-eventtypen.md) | heikel | complete |
 | 4 | [Variation im Content der Pokémon-Welt](phase-4-content-pools.md) | mechanisch | pending |
 
 Reihenfolge ist bindend. Phase 1 vor Phase 3, weil sonst jeder der fünf neuen
@@ -65,6 +65,12 @@ Verbindlich für Engine und Content, festgelegt **vor** Phase 1.
   innerhalb einer Lernstufen-Variante.
 - **Beide sind optional.** Eine Variante ohne `pool` und ohne `generated` ist
   weiterhin genau eine Aufgabe und bleibt gültig. Kein Bestandscontent bricht.
+- **Ein Platzhalter allein im Feld ergibt eine Zahl** (nachgezogen in Phase 3).
+  `"question": "Wo liegt die {ziel}?"` bleibt Text, `"target": "{ziel}"` wird
+  zur Zahl `14`. Ohne das könnte `generated` keine Zahlenfelder füllen.
+- **`show_count` ist kein dritter Variations-Schlüssel**, sondern ein Feld des
+  Typs `sorting`: Es macht dessen eigene Gegenstandsliste zu einem Vorrat. Der
+  Kontrakt oben bleibt bei genau zwei Schlüsseln.
 
 ```json
 {

@@ -2,9 +2,13 @@
 
 **Aktiver Plan:** [docs/planning/2026-08-19_curriculum-und-variation/](docs/planning/2026-08-19_curriculum-und-variation/README.md) — Curriculum & Variation, 4 Phasen. **Noch nicht begonnen.**
 
-**Phase:** 3/4 — Neue Eventtypen für Mathematik (pending, Rating **heikel**)
+**Phase:** 4/4 — Variation im Content der Pokémon-Welt (pending, Rating **mechanisch**)
 
-**Nächster Schritt:** Phase 3 lesen und umsetzen. Phase 2 (Welt-Bauprompt) ist am 20.08.2026 fertig — `data/_authoring/LLM_WORLD_BUILDER_PROMPT.md` denkt jetzt Lernziel → Aufgabentyp → Story, trägt Variationsbudget-Richtwerte und ordnet Mathe-Lernzielen ohne gebauten Typ „OHNE PASSENDEN TYP" zu. Heikle Phase: `/model opusplan` empfohlen (Opus plant, Sonnet setzt um).
+**Nächster Schritt:** Phase 4 lesen und umsetzen — Aufgaben der Pokémon-Welt auf `pool`/`generated` umstellen. Mechanische Phase: `/model sonnet` reicht, Opus wäre Verschwendung.
+
+Phase 3 ist am 20.08.2026 fertig: zwei neue Aufgabentypen, `sorting` (Gegenstände in Körbe einsortieren) und `number_line` (Zahlenstrahl mit sichtbaren Feldern). Bedient werden sie auf zwei Wegen — antippen und antippen, oder mit dem Finger ziehen; beide laufen über das neue gemeinsame Stück `frontend/src/app/ui/pick-place/`, das später auch `ordering` und `fill_gap` tragen soll. Probe-Aufgaben liegen im Vertania-Wald der Pokémon-Welt. Build und Linter grün, **am Bildschirm ist noch nichts geprüft**.
+
+🔴 **Offen aus Phase 3 — gehört in den Smoke am Plan-Ende:** Das Ziehen muss auf dem echten Tablet mit dem Finger geprüft werden, nicht am Entwicklerschirm mit der Maus. Der Tipp-Weg trägt notfalls allein. Dazu zwei 🟡: der Zahlenstrahl hat keine Bild-Beschriftungen für ein Kind, das noch keine Ziffern liest, und bei 0–20 in Einerschritten bekommt er auf schmalem Schirm einen waagerechten Bildlauf. Ausführlich im Report-Back der Phasen-Datei.
 
 🟡 **Die Reihenfolge ist am 20.08.2026 umgestellt worden** (Sascha): Curriculum & Variation und danach Pokéball laufen **vor** Meilenstein 5, nicht dahinter. Das ist eine Prioritäts-Entscheidung, keine technische: geprüft, dass beide Pläne von den Sammelkarten nichts brauchen — der Curriculum-Plan nannte Meilenstein 5 nur in seiner Statuszeile, der Pokéball-Plan erklärt sich ausdrücklich für unabhängig. Beide Statuszeilen sind nachgezogen.
 

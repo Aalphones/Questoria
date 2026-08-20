@@ -417,6 +417,8 @@ referenzieren generierte Welten Events, die es nicht gibt.
 | `text_input` | `TextInput` | ausgelagert, Abschnitt 5.4 | ja |
 | `image_search` | `ImageSearch` | ausgelagert, Abschnitt 5.5 | ja |
 | `word_match` | `WordMatch` | ausgelagert, Abschnitt 5.6 | ja |
+| `sorting` | `Sorting` | ausgelagert, Abschnitt 5.7 | ja |
+| `number_line` | `NumberLine` | ausgelagert, Abschnitt 5.8 | ja |
 
 **Vorgemerkt, noch nicht gebaut** — nicht im Content verwenden, bis sie oben
 stehen: `cutscene`, `choice`, `exploration`, `investigation`, `search`,
@@ -626,6 +628,124 @@ gelegt wurde — nicht anteilig pro Paar. Ein Fehlgriff ist trotzdem kein Ende,
 beide Karten gehen wieder auf und es geht weiter. Warum das ein eigener Typ ist
 und kein Bildfeld im Quiz: [ADR-014](../../docs/decisions/014-zuordnen-als-eigener-eventtyp.md).
 
+### 5.7 `sorting` (ausgelagert)
+
+Zwei bis vier Körbe, ein Vorrat an Gegenständen — das Kind legt jeden dorthin,
+wo er hingehört. Der Typ, der die meisten Lernziele quer über Deutsch, Mathe und
+Sachkunde bedient: Anlaute, Mengen, Lebensräume, alles was sich in Gruppen
+teilen lässt.
+
+**Bedient wird auf zwei Wegen**, und beide sind immer da: Gegenstand antippen,
+dann den Korb antippen — oder den Gegenstand mit dem Finger hinüberziehen. Der
+Tipp-Weg ist der tragende, weil er mit der Tastatur genauso läuft. Autoren
+müssen dafür nichts konfigurieren.
+
+```json
+{
+  "event_id": "string",
+  "type": "sorting",
+  "variants": {
+    "<difficulty_level_id>": {
+      "question": "string",
+      "question_simple": "string (optional) — kurze Fassung für den Vorlesemodus",
+      "show_count": 4,
+      "categories": [
+        {
+          "id": "string — eindeutig in dieser Variante",
+          "label": "string — die Aufschrift des Korbs",
+          "image": "string (optional) — Dateiname unter answers/"
+        }
+      ],
+      "items": [
+        {
+          "id": "string — eindeutig in dieser Variante",
+          "label": "string — das Wort auf dem Gegenstand",
+          "image": "string (optional) — Dateiname unter answers/",
+          "category": "string — die id des einzigen richtigen Korbs"
+        }
+      ]
+    }
+  }
+}
+```
+
+**Zwei bis vier Körbe, höchstens acht gespielte Gegenstände** — darüber wird auf
+dem Tablet jeder Knopf kleiner als ein Kinderfinger.
+
+**`show_count` macht aus `items` einen Vorrat.** Ohne das Feld werden alle
+Gegenstände gespielt. Mit `show_count: 4` und zehn hinterlegten Gegenständen
+zieht die Engine bei jedem Durchgang vier davon — **jeder Korb bekommt dabei
+zuerst einen**, damit keine Ziehung alles aus einer einzigen Gruppe liefert. Das
+ist die billigste Art, eine Aufgabe variieren zu lassen: ein Vorrat statt eines
+Pools aus ganzen Fassungen. `pool` und `generated` gehen trotzdem zusätzlich.
+
+**Jeder Korb braucht mindestens einen passenden Gegenstand**, und jede
+`category` eines Gegenstands muss auf einen vorhandenen Korb zeigen. Beides
+läuft sonst in den Fehlerpfad — ein Gegenstand ohne gültigen Korb sähe für das
+Kind lösbar aus und wäre es nicht.
+
+**Bilder sind optional, aber im Vorlesemodus der Unterschied.** Ohne `image`
+trägt allein das geschriebene Wort den Gegenstand — für ein noch nicht lesendes
+Kind ist die Aufgabe dann nicht lösbar. Bei Anlaut- und Leseaufgaben gilt
+dieselbe Regel wie beim Zuordnen: Das Motiv darf sein Wort nicht im Bild
+zeigen.
+
+Bewertet wird die ganze Aufgabe: Der Stern fällt, sobald **ein** Gegenstand im
+falschen Korb landete. Ein Fehlgriff ist trotzdem kein Ende — der Gegenstand
+kommt zurück in den Vorrat.
+
+### 5.8 `number_line` (ausgelagert)
+
+Ein Zahlenstrahl mit sichtbaren Feldern, das Kind tippt das gesuchte an. Der
+einzige Typ, den der Zahlenraum-Teil des Lernziel-Katalogs zwingend braucht.
+
+```json
+{
+  "event_id": "string",
+  "type": "number_line",
+  "variants": {
+    "<difficulty_level_id>": {
+      "question": "string",
+      "question_simple": "string (optional) — kurze Fassung für den Vorlesemodus",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "label_every": 5,
+      "target": 14
+    }
+  }
+}
+```
+
+| Feld | Pflicht | Bedeutung |
+|---|---|---|
+| `min` / `max` | ja | Enden des Strahls, beide sichtbar und eingeschlossen |
+| `target` | ja | die gesuchte Zahl — **muss auf einem Feld liegen** |
+| `step` | nein (1) | Abstand zwischen zwei Feldern |
+| `label_every` | nein (1) | jedes wievielte Feld seine Zahl trägt; dazwischen stehen Striche |
+
+**Felder, kein freies Ziehen.** Für Klasse 1 wäre millimetergenaues Ziehen auf
+einer Linie eine Feinmotorik-Prüfung statt einer Rechenaufgabe. Jedes Feld ist
+ein eigener Knopf und damit auch mit der Tastatur erreichbar.
+
+**Höchstens 21 Felder** — `(max - min) / step + 1`. Ein Strahl von 0 bis 20 in
+Einerschritten ist das Maximum; für größere Bereiche `step` erhöhen.
+
+**`target` muss auf dem Raster liegen.** Bei `step: 2` ist die 7 zwischen zwei
+Feldern und nicht antippbar — die Datei läuft in den Fehlerpfad. Das ist
+Absicht: Eine Aufgabe, die kein richtiges Feld hat, sähe vollständig aus und
+wäre nicht lösbar.
+
+**`label_every` steuert die Schwierigkeit**, nicht die Optik. Mit `1` liest das
+Kind die Zahl ab, mit `5` muss es von der nächsten Marke aus weiterzählen. Das
+erste und das letzte Feld tragen immer ihre Zahl — sonst hätte der Strahl keine
+Enden.
+
+`target` eignet sich besonders für `generated` (Abschnitt unten): Steht dort
+`"target": "{ziel}"`, setzt die Engine die gezogene **Zahl** ein, nicht ihre
+Zeichenkette. Damit erzeugt eine einzige Vorlage beliebig viele Fassungen
+derselben Aufgabe.
+
 ### Varianten-Regel (gilt für jede ausgelagerte Datei)
 
 `variants` braucht für **JEDE** `id` aus `world_config.json → difficulty_levels`
@@ -756,10 +876,18 @@ Werte aufgelöst. `constraints` ist optional; jede Bedingung vergleicht einen
 gezogenen Wert (`left`) mit einer Zahl oder einem anderen gezogenen Wert
 (`right`) über `<`, `<=`, `>`, `>=`, `==` oder `!=`.
 
-🟡 `generated` kennt noch keinen abgeleiteten Wert (z. B. die Summe `a+b` als
-eigene Antwort) — nur gezogene Bereichswerte lassen sich einsetzen. Reicht das
-für einen Aufgabentyp nicht, ist das eine Erweiterung für Phase 3, keine
-Lücke, die hier stillschweigend umgangen werden sollte.
+**Steht ein Platzhalter allein im Feld, kommt eine Zahl heraus, kein Text.**
+`"question": "Wo liegt die {ziel}?"` ergibt einen Satz, `"target": "{ziel}"`
+dagegen die Zahl `14`. Das ist der Unterschied zwischen einem spielbaren
+Zahlenfeld und dem Fehlerpfad — Felder wie `target`, `min` oder `correct_index`
+erwarten Zahlen und würden eine Zeichenkette zurückweisen. Für Textfelder
+ändert sich nichts: Dort steht der Platzhalter praktisch nie allein.
+
+🟡 `generated` kennt weiterhin keinen abgeleiteten Wert (z. B. die Summe `a+b`
+als eigene Antwort) — nur gezogene Bereichswerte lassen sich einsetzen. Für
+`sorting` und `number_line` reichte das; ein Rechen-Typ, der Aufgabe **und**
+Ergebnis erzeugen muss, braucht die Erweiterung. Sie ist bewusst offen und
+keine Lücke, die stillschweigend umgangen werden sollte.
 
 **Beide Erweiterungen sind reine Autoren-Werkzeuge.** Eine Event-Komponente
 bekommt in jedem Fall eine fertig aufgelöste, einzelne Aufgabe — sie sieht

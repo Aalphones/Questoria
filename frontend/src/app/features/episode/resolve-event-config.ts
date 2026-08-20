@@ -1,7 +1,7 @@
 import { EventFile, EventType, GeneratedSlot, PoolItem } from '../../models/content.types';
 import {
   drawConstrainedValues,
-  resolveTemplate,
+  resolveTemplateValue,
   selectFromPool,
 } from '../../services/variation';
 
@@ -148,7 +148,7 @@ function resolveGenerated(generated: GeneratedSlot, random: () => number): Recor
 
 function resolveTemplateDeep(value: unknown, values: Readonly<Record<string, number>>): unknown {
   if (typeof value === 'string') {
-    return resolveTemplate(value, values);
+    return resolveTemplateValue(value, values);
   }
 
   if (Array.isArray(value)) {

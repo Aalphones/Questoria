@@ -1,0 +1,85 @@
+<qst-task-card
+  tag="Aufgabe · Einsortieren"
+  [question]="questionText()"
+  [stepDone]="stepDone()"
+  [stepTotal]="stepTotal()"
+>
+  <div class="sorting__board">
+    <ul class="sorting__supply" aria-label="Gegenstände zum Einsortieren">
+      @for (item of openItems(); track item.id) {
+        <li class="sorting__slot">
+          <button
+            type="button"
+            class="sorting__item"
+            [class.sorting__item--selected]="item.state === 'selected'"
+            [class.sorting__item--wrong]="item.state === 'wrong'"
+            [qstPickSource]="item.id"
+          >
+            @if (item.imageUrl; as imageUrl) {
+              <span class="sorting__item-frame">
+                <qst-image-slot [src]="imageUrl" [label]="item.placeholderLabel" [fit]="'contain'" />
+              </span>
+            }
+
+            <span class="sorting__item-label">{{ item.label }}</span>
+          </button>
+        </li>
+      }
+    </ul>
+
+    <ul class="sorting__baskets">
+      @for (category of categoryViews(); track category.id) {
+        <li class="sorting__slot">
+          <button
+            type="button"
+            class="sorting__basket"
+            [attr.aria-label]="category.ariaLabel"
+            [qstPickTarget]="category.id"
+            (placed)="onPlaced(category.id, $event)"
+          >
+            <span class="sorting__basket-head">
+              @if (category.imageUrl; as imageUrl) {
+                <span class="sorting__basket-frame">
+                  <qst-image-slot
+                    [src]="imageUrl"
+                    [label]="category.placeholderLabel"
+                    [fit]="'contain'"
+                  />
+                </span>
+              }
+
+              <span class="sorting__basket-label" aria-hidden="true">{{ category.label }}</span>
+            </span>
+
+            <span class="sorting__basket-content" aria-hidden="true">
+              @for (placed of category.placedItems; track placed.id) {
+                <span class="sorting__placed">
+                  @if (placed.imageUrl; as imageUrl) {
+                    <span class="sorting__placed-frame">
+                      <qst-image-slot
+                        [src]="imageUrl"
+                        [label]="placed.placeholderLabel"
+                        [fit]="'contain'"
+                      />
+                    </span>
+                  }
+
+                  <span class="sorting__placed-label">{{ placed.label }}</span>
+                </span>
+              }
+            </span>
+          </button>
+        </li>
+      }
+    </ul>
+  </div>
+
+  <div task-card-feedback class="sorting__feedback" role="status" aria-live="polite">
+    @if (feedbackTitle(); as title) {
+      <p class="sorting__feedback-title">{{ title }}</p>
+      <p class="sorting__feedback-text">{{ feedbackText() }}</p>
+
+      <button type="button" class="sorting__next" (click)="finish()">Weiter</button>
+    }
+  </div>
+</qst-task-card>
