@@ -582,11 +582,22 @@ verwenden.
       "targets": [
         { "label": "string", "x": "number 0–100 (%)", "y": "number 0–100 (%)", "radius": "number 0–100 (% Toleranzradius)" }
       ],
-      "find_all": "boolean — true = alle targets müssen gefunden werden, false = einer reicht"
+      "find_all": "boolean — true = alle targets müssen gefunden werden, false = einer reicht",
+      "find_count": "number (optional) — wie viele der targets zum Lösen reichen; jedes davon zählt gleichwertig"
     }
   }
 }
 ```
+
+**`find_count` deckt Aufgaben ab, bei denen mehr gültige Objekte im Bild
+stehen, als die Aufgabe verlangt** — z. B. drei Dinge mit demselben Anfangslaut
+im Bild, aber nur zwei sollen gefunden werden. Ohne `find_count` zählte nur
+eine fest verdrahtete Teilmenge der `targets` als richtig; ein Kind, das
+zurecht auf das dritte, ebenfalls passende Objekt tippt, bekäme „Da ist
+nichts" zu sehen. Mit `find_count` listet `targets` **alle** gültigen Objekte,
+und die ersten `find_count` gefundenen lösen die Aufgabe — unabhängig davon,
+welche der Kind zuerst trifft. Fehlt das Feld, gilt wie bisher `find_all`
+(alle oder genau eins).
 
 ### 5.6 `word_match` (ausgelagert)
 

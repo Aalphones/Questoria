@@ -17,7 +17,17 @@ export function isImageSearchConfig(config: unknown): config is ImageSearchConfi
     return false;
   }
 
-  return typeof candidate.find_all === 'boolean';
+  if (typeof candidate.find_all !== 'boolean') {
+    return false;
+  }
+
+  const findCount = candidate.find_count;
+
+  if (findCount === undefined) {
+    return true;
+  }
+
+  return Number.isInteger(findCount) && findCount >= 1 && findCount <= targets.length;
 }
 
 function isSearchTarget(target: unknown): target is SearchTarget {

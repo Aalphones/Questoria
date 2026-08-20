@@ -80,14 +80,23 @@ export class ImageSearch {
   });
 
   protected readonly foundLabel = computed<string>(
-    () => `Gefunden ${this.foundIndexes().length} von ${this.config().targets.length}`,
+    () => `Gefunden ${this.foundIndexes().length} von ${this.requiredFinds()}`,
   );
 
-  protected readonly solved = computed<boolean>(() => {
-    const found = this.foundIndexes().length;
+  /**
+   * Wie viele Treffer zum Lösen reichen — `find_count` deckt Aufgaben ab, bei
+   * denen mehr gültige Objekte im Bild stecken als verlangt werden (jedes
+   * davon zählt, nicht nur eine fest verdrahtete Teilmenge).
+   */
+  private readonly requiredFinds = computed<number>(() => {
+    const config = this.config();
 
-    return this.config().find_all ? found >= this.config().targets.length : found >= 1;
+    return config.find_count ?? (config.find_all ? config.targets.length : 1);
   });
+
+  protected readonly solved = computed<boolean>(
+    () => this.foundIndexes().length >= this.requiredFinds(),
+  );
 
   protected readonly feedbackTitle = computed<string | null>(() =>
     this.solved() ? 'Richtig!' : null,

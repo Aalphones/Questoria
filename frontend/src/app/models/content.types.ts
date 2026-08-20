@@ -225,6 +225,12 @@ export interface ImageSearchConfig {
   question_simple?: string;
   targets: SearchTarget[];
   find_all: boolean;
+  /**
+   * Wie viele der `targets` reichen zum Lösen — für Aufgaben, bei denen mehr
+   * gültige Objekte im Bild stehen, als verlangt werden. Fehlt das Feld, gilt
+   * wie bisher `find_all` (alle oder genau eins).
+   */
+  find_count?: number;
 }
 
 /** Die Konfiguration eines `reward`-Events (Abschnitt 5.2, inline). */
