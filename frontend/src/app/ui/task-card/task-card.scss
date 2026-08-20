@@ -1,5 +1,6 @@
 :host {
   display: grid;
+  position: relative;
   justify-self: center;
   align-content: start;
   gap: var(--space-4);
@@ -90,5 +91,41 @@
     line-height: var(--line-height-heading);
     letter-spacing: var(--letter-spacing-heading);
     text-wrap: pretty;
+  }
+
+  // Leer, solange keine Aufgabe gelöst ist — dann trägt `<ng-content>` keine
+  // Knoten und `:empty` greift, ohne dass sich ein Aufgaben-Typ darum kümmern
+  // müsste. Erst bei Erfolg legt sich das Ergebnis als eigene Ebene über die
+  // ganze Karte, statt sich nur darunterzuschieben: Das Board bleibt sichtbar
+  // (abgedunkelt), aber der Blick geht eindeutig auf „Alles richtig!" statt
+  // auf zwei gleichrangige Blöcke untereinander.
+  &__feedback:empty {
+    display: none;
+  }
+
+  &__feedback:not(:empty) {
+    display: grid;
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    place-content: center;
+    place-items: center;
+    padding: var(--space-6);
+    border-radius: var(--radius-card);
+    background: color-mix(in srgb, var(--palette-ink) 55%, transparent);
+    animation: eqPop var(--duration-enter) var(--easing-standard);
+
+    // Reicht in die projizierte Feedback-Leiste jedes Aufgaben-Typs hinein —
+    // nur für Hintergrund/Rahmen, nichts, was die sechs Aufgaben-Typen selbst
+    // schon setzen (display, Ausrichtung). Ohne ein helles Panel läge deren
+    // dunkler Kartentext unlesbar auf dem abgedunkelten Scrim, und keiner der
+    // sechs soll dafür eigenen Code tragen.
+    ::ng-deep [task-card-feedback] {
+      max-inline-size: 26rem;
+      padding: var(--space-6);
+      border-radius: var(--radius-card);
+      background: var(--color-surface);
+      box-shadow: var(--shadow-lg);
+    }
   }
 }
