@@ -71,6 +71,12 @@ export class PickSource {
   });
 
   protected onPointerDown(event: PointerEvent): void {
+    // Bleibt die Sperre von der vorigen Geste stehen — weil manche Browser nach
+    // einem Ziehen mit eingefangenem Finger gar kein `click` mehr schicken —,
+    // verschluckte sie den nächsten echten Tipp. Der `click` der vorigen Geste
+    // ist zu diesem Zeitpunkt längst durch, das Zurücksetzen ist also sicher.
+    this.suppressNextClick = false;
+
     this.dragStart.set({
       pointerId: event.pointerId,
       clientX: event.clientX,
