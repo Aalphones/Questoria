@@ -2,9 +2,9 @@
 
 **Aktiver Plan:** [docs/planning/2026-08-19_curriculum-und-variation/](docs/planning/2026-08-19_curriculum-und-variation/README.md) — Curriculum & Variation, 4 Phasen. **Noch nicht begonnen.**
 
-**Phase:** 2/4 — Welt-Bauprompt vom Lernziel her (pending, Rating **standard**)
+**Phase:** 3/4 — Neue Eventtypen für Mathematik (pending, Rating **heikel**)
 
-**Nächster Schritt:** Phase 2 lesen und umsetzen. Phase 1 (Variationssystem) ist am 20.08.2026 fertig — `services/variation.ts`, Startwert im Lauf, Pool-/Generator-Auflösung in `resolve-event-config.ts`, ADR-016. Standard-Phase: `/model sonnet` reicht.
+**Nächster Schritt:** Phase 3 lesen und umsetzen. Phase 2 (Welt-Bauprompt) ist am 20.08.2026 fertig — `data/_authoring/LLM_WORLD_BUILDER_PROMPT.md` denkt jetzt Lernziel → Aufgabentyp → Story, trägt Variationsbudget-Richtwerte und ordnet Mathe-Lernzielen ohne gebauten Typ „OHNE PASSENDEN TYP" zu. Heikle Phase: `/model opusplan` empfohlen (Opus plant, Sonnet setzt um).
 
 🟡 **Die Reihenfolge ist am 20.08.2026 umgestellt worden** (Sascha): Curriculum & Variation und danach Pokéball laufen **vor** Meilenstein 5, nicht dahinter. Das ist eine Prioritäts-Entscheidung, keine technische: geprüft, dass beide Pläne von den Sammelkarten nichts brauchen — der Curriculum-Plan nannte Meilenstein 5 nur in seiner Statuszeile, der Pokéball-Plan erklärt sich ausdrücklich für unabhängig. Beide Statuszeilen sind nachgezogen.
 

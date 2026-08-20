@@ -20,24 +20,46 @@ Grundprinzip: Eine Episode ist eine Eventliste. Dialog ist ein Event wie
 jedes andere. Die Erzählung folgt dem Muster Dialog → Handlung → Konsequenz
 → Dialog, nicht Dialog → Quiz → Ende.
 
+**Denkreihenfolge — verbindlich, nicht nur für die Eingabefelder:** Zuerst
+welche Fähigkeiten geübt werden (Lernziele), dann welcher Aufgabentyp dazu
+passt (Abschnitt 5.0 des Schemas), erst danach welche Geschichte das trägt.
+Eine Welt, die mit der Story anfängt und Lernziele nachträglich draufsetzt,
+erfüllt diesen Auftrag nicht — auch wenn am Ende dieselben Felder gefüllt
+sind.
+
+**Vier Ebenen variieren unterschiedlich — verbindlich:**
+- Story, Dialog, Figuren: **gar nicht.** Jede Textvariante kostet eine
+  Sprachaufnahme, sonst ist die Zeile stumm. Dialog-Events bekommen keinen
+  `pool`.
+- Deutsch-Aufgaben (Reime, Anlaute, Silben): **Pool** — mehrere
+  handgeschriebene Fassungen.
+- Mathe-Aufgaben: **Generator** — Vorlage plus Zahlenraum.
+- Anzeigereihenfolge, Bildauswahl: **Mischung**, macht die Engine selbst.
+
 === SCHEMA ===
 [Hier den kompletten Inhalt von JSON_SCHEMA_REFERENCE.md einfügen]
 === ENDE SCHEMA ===
 
 === AUFGABE ===
-Thema der Welt: {THEMA, z. B. "One Piece - Die hohe See des Wissens"}
-Lerninhalt: {FACH, z. B. "Geometrie und Erdkunde"}
 Lernziele: {Liste von Lernziel-IDs aus dem Katalog, eine pro geplanter
   Aufgabe, z. B. "he_gs1_deu_silben_erkennen, he_gs1_mat_formen" — leer
-  lassen nur, wenn die Welt bewusst ohne Curriculum-Bezug entsteht}
+  lassen nur, wenn die Welt bewusst ohne Curriculum-Bezug entsteht. Katalog:
+  docs/knowledge/lerninhalte-hessen-klasse-1.md}
+Aufgabentypen-Zuordnung: {Bevor die Story entsteht: ordne JEDEM Lernziel oben
+  einen Aufgabentyp aus der Typ-Tabelle des Schemas zu (nur gebaute Typen,
+  Abschnitt 5.0). Passt zu einem Lernziel kein gebauter Typ, nenne es unten
+  in der Ausgabe als "OHNE PASSENDEN TYP: <lernziel_id>" statt eine Aufgabe
+  zu erzwingen, die nicht zur Fähigkeit passt.}
 Lernstufen: {z. B. "matrose, navigator, kapitaen"}
+Thema der Welt: {THEMA, z. B. "One Piece - Die hohe See des Wissens"}
+Lerninhalt: {FACH, z. B. "Geometrie und Erdkunde"}
 Story-Arcs / Karten: {z. B. "East Blue, Alabasta, Skypiea" — jeder Arc wird
   eine eigene Map mit eigenen Episoden}
-Episoden pro Arc: {z. B. 3}
 Cast: {z. B. "Shanks, Luffy (Kind), Nami, Ace" — Beschreibung reicht, keine
   separate Stammdatendatei nötig}
 Ton/Stil: {z. B. "abenteuerlich, leicht augenzwinkernd"}
 Zielalter: {z. B. "6-10 Jahre, auch Kinder die noch nicht lesen"}
+Episoden pro Arc: {z. B. 3}
 Bildstil: {optional — wenn leer, schlage einen vor; siehe Vorgabe unten}
 
 Erzeuge folgende Dateien vollständig:
@@ -79,7 +101,25 @@ Erzeuge folgende Dateien vollständig:
    zusätzlich `pool` oder `generated` tragen, damit sich Wiederholungen
    nicht identisch anfühlen — Schema Abschnitt „pool und generated". Dieser
    Durchlauf erzeugt weiterhin nur die einzelne Aufgabe; Pools nachträglich
-   zu befüllen ist eine eigene Content-Runde, kein Pflichtteil hier.) Bei multiple_choice hat jede
+   zu befüllen ist eine eigene Content-Runde, kein Pflichtteil hier.)
+
+   **Variationsbudget pro Aufgabe:** Nenne unter der Ausgabe jeder
+   Event-Datei, mit welchem Budget sie später aufgefüllt werden soll —
+   Richtwert **3 Fassungen** für Nebenaufgaben, **5 oder mehr** für
+   Kernaufgaben einer Episode (die Aufgabe, auf die die Konsequenz-Zeile
+   reagiert), oder bei einer rechenbaren Aufgabe den vorgesehenen
+   Zahlenraum statt einer Fassungszahl. Das Budget ist eine Ansage an die
+   nächste Content-Runde, kein Feld im JSON — dieser Durchlauf befüllt
+   `pool`/`generated` nicht selbst.
+
+   🟡 **Wiederverwendbar ist die Spezifikation, nicht die fertige
+   Aufgabe.** „Zwei Mengen, 1–10 Elemente, Franchise variabel" trägt jede
+   Welt. „Welche Schatzkiste enthält mehr Münzen" trägt nur diese. Wer beim
+   Befüllen des Pools die Franchise-Bindung weglässt, weil die Vorlage
+   generisch war, unterläuft genau die Entscheidung aus der README dieses
+   Plans.
+
+   Bei multiple_choice hat jede
    Option ein image (antwort_<slug>.png). Bei word_match trägt jedes Paar
    ein word und ein image (antwort_<slug>.png), 3-4 Paare pro Variante,
    kein Wort und kein Bild doppelt — und das gesuchte Wort steht NIE in
@@ -113,6 +153,22 @@ Keine Erklärungen zwischen den Dateien. Keine zusammenfassende Antwort danach.
 
 ## Nutzungshinweise
 
+- **Der Lernziel-Katalog bleibt Markdown, wird nicht maschinenlesbar.**
+  Entscheidung vom 20.08.2026: `docs/knowledge/lerninhalte-hessen-klasse-1.md`
+  ist bereits jetzt in Git versioniert (im Gegensatz zu `data/themes/`, das
+  auf Drive liegt) — die Pflicht „Katalog gehört ins Git" ist damit erfüllt,
+  ohne dass eine zweite Datei unter `data/curriculum/*.json` gepflegt werden
+  müsste. Nichts im Code parst den Katalog maschinell; eine JSON-Fassung
+  wäre eine zweite Quelle ohne Abnehmer. Kommt ein Abnehmer (z. B. ein
+  Validierungsskript, das `learning_objectives` gegen den Katalog prüft),
+  wird die Entscheidung an der Stelle neu getroffen — nicht vorab.
+- **Abdeckung sichtbar machen:** Welche Lernziele eine Welt deckt, steht in
+  keiner Extra-Datei — es ist die Menge aller `learning_objectives`-Werte
+  über `events/*.json` der Welt. Grep reicht:
+  `grep -h -A1 '"learning_objectives"' data/themes/<welt>/episodes/../events/*.json`
+  liefert die IDs; Abgleich gegen die oben übergebene Lernziel-Liste zeigt,
+  was fehlt oder zusätzlich passiert ist (z. B. durch ein Mischformen-Event
+  mit zwei IDs).
 - **Ein Durchlauf = eine Welt, alle Arcs.** Bei vielen Arcs/Episoden lieber
   pro Arc einen eigenen Lauf machen (Iterations-Prompt unten) — lange Outputs
   verlieren Schema-Disziplin.

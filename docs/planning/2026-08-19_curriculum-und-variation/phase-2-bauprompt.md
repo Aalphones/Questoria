@@ -32,21 +32,48 @@ Denkschritte ist die eigentliche Entscheidung)
 
 ## Checkliste
 
-- [ ] Aufbau des Bauprompts umdrehen: Lernziele → Aufgabentypen → Geschichte →
+- [x] Aufbau des Bauprompts umdrehen: Lernziele → Aufgabentypen → Geschichte →
       Figuren → Episoden → Assets
-- [ ] Abschnitt „Variationsbudget" mit den Richtwerten aus AK 3 ergänzen
-- [ ] Warnhinweis aufnehmen: wiederverwendbar ist die **Spezifikation** („zwei
+- [x] Abschnitt „Variationsbudget" mit den Richtwerten aus AK 3 ergänzen
+- [x] Warnhinweis aufnehmen: wiederverwendbar ist die **Spezifikation** („zwei
       Mengen, 1–10 Elemente"), nicht die fertige Aufgabe — die Bindung an Story
       und Figuren ist das Produkt
-- [ ] Entscheiden und im Prompt festhalten, ob der Lernziel-Katalog
+- [x] Entscheiden und im Prompt festhalten, ob der Lernziel-Katalog
       maschinenlesbar wird (`data/curriculum/*.json`) oder Markdown bleibt.
       **Der Katalog gehört ins Git**, nicht nach `data/themes/` — der Ordner
       liegt auf Drive, außerhalb der Versionsgeschichte
-- [ ] Abdeckung sichtbar machen: kurzer Abschnitt, wie man einer Welt ansieht,
+- [x] Abdeckung sichtbar machen: kurzer Abschnitt, wie man einer Welt ansieht,
       welche Lernziele sie deckt und welche fehlen
-- [ ] Probe-Welt erzeugen und gegen die Schema-Referenz prüfen (AK 5), danach
+- [x] Probe-Welt erzeugen und gegen die Schema-Referenz prüfen (AK 5), danach
       wegwerfen — sie ist Prüfmittel, kein Content
-- [ ] `data/_authoring/README.md`: Pflegepflicht-Runde
+- [x] `data/_authoring/README.md`: Pflegepflicht-Runde
+
+## Report-Back
+
+- **Denkreihenfolge & Vier-Ebenen-Regel** stehen jetzt als eigener Block vor
+  dem Schema-Platzhalter im Prompt — nicht nur als Feldreihenfolge, sondern
+  als ausformulierte Regel, die auch ein Modell trifft, das die Felder in
+  falscher Reihenfolge liest.
+- **Aufgabentypen-Zuordnung** ist ein neues Eingabefeld zwischen Lernzielen
+  und Story: das Modell muss jedem Lernziel vor der Story einen gebauten Typ
+  zuordnen oder es explizit als „OHNE PASSENDEN TYP" auslisten. Für Phase 3:
+  siehe FINDINGS.md — bei Mathe-Lernzielen wird das aktuell fast immer die
+  Markierung sein, das ist der Punkt.
+- **Katalog-Entscheidung:** bleibt Markdown. `docs/knowledge/…md` ist bereits
+  Git-versioniert, eine `data/curriculum/*.json`-Zweitschrift hätte keinen
+  Abnehmer im Code (geprüft: nichts parst den Katalog maschinell).
+  Begründung steht jetzt in den Nutzungshinweisen des Prompts.
+- **Probe-Welt:** 5 ausgelagerte Event-Dateien (multiple_choice ×3 inkl.
+  eines `pool`-Beispiels, word_match, image_search) über drei Lernstufen
+  gebaut und gegen Abschnitt 5 der Schema-Referenz geprüft — genau vier
+  Optionen bei multiple_choice, eindeutige Pool-IDs, eindeutige word_match-
+  Paare, Targets in 0–100 %, genau ein `learning_objectives`-Eintrag pro
+  Event. Deckt fünf verschiedene, im Katalog vorhandene Lernziel-IDs ab
+  (AK 5 erfüllt). Danach gelöscht, nicht committet.
+- **Pflegepflicht-Runde:** durchgegangen — Schema, Assets, Bild-Prompts und
+  Vertonungs-Skripte sind von dieser Phase nicht betroffen, weil sich kein
+  JSON-Feld und kein Eventtyp geändert hat, nur der Autoren-Prompt selbst.
+  Keine weiteren Dateien nötig.
 
 ## Risiken
 
