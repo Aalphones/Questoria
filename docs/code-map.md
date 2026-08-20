@@ -61,7 +61,9 @@ zum Vorrat, aus dem pro Durchgang gezogen wird),
 `features/events/number-line/` (Zahlenstrahl mit sichtbaren Feldern — kein freies
 Ziehen, jedes Feld ein eigener Knopf und damit tastaturbedienbar),
 `features/events/reward/` (Belohnungs-Moment mit Sternen; merkt `card_id` für
-Meilenstein 5, vergibt noch keine Sammelkarte), `features/result/` (Sterne,
+Meilenstein 5, vergibt noch keine Sammelkarte),
+`features/events/pokemon-catch/` (Pokéball-Wurf, unbewertet — Bühne mit
+gezogenem Ziel und Ball, Wurfmechanik folgt in Phase 2 des Plans), `features/result/` (Sterne,
 drei Statistik-Karten — zwei aus dem laufenden Lauf, eine als über alle
 Läufe gewachsene Weltsumme aus `StatisticsService` —, Erfolgs-Pillen für neu
 freigeschaltete Erfolge — noch kein Karten-Banner), `ui/map-canvas/`, `ui/image-slot/`, `ui/task-card/`, `ui/pick-place/`,

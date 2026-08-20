@@ -1,0 +1,18 @@
+<header class="pokemon-catch__intro">
+  <qst-read-aloud-button [text]="intro()" />
+  <p>{{ intro() }}</p>
+</header>
+
+<div class="pokemon-catch__stage">
+  <div class="pokemon-catch__target">
+    <qst-image-slot [src]="targetSpriteUrl()" [label]="targetName()" fit="contain" />
+  </div>
+
+  <div class="pokemon-catch__ball">
+    <qst-image-slot [src]="ballUrl()" [label]="config().ball" fit="contain" />
+  </div>
+</div>
+
+<footer class="pokemon-catch__footer">
+  <button type="button" class="pokemon-catch__next" (click)="finish()">Weiter</button>
+</footer>

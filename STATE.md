@@ -1,10 +1,12 @@
 # STATE
 
-**Aktiver Plan:** [docs/planning/2026-08-19_pokeball-fangen/](docs/planning/2026-08-19_pokeball-fangen/README.md) — Pokéball werfen, 3 Phasen. **Noch nicht begonnen.**
+**Aktiver Plan:** [docs/planning/2026-08-19_pokeball-fangen/](docs/planning/2026-08-19_pokeball-fangen/README.md) — Pokéball werfen, 3 Phasen.
 
-**Phase:** 1/3 — noch nicht gelesen.
+**Phase:** 2/3 — Die Wurfmechanik (Rating: heikel). Phase 1 (Eventtyp und Bühne) ist fertig: `pokemon_catch` registriert, Bühne mit gezogenem Ziel und ruhendem Ball steht, beide Ballbilder erzeugt und deckungsgleich geprüft, ADR-015 geschrieben.
 
-**Nächster Schritt:** README + Phase 1 des Pokéball-Plans lesen und Umsetzung starten.
+**Nächster Schritt:** `/clear`, dann `/model opusplan` (Phase 2 ist als heikel eingestuft) — danach README + `phase-2-wurfmechanik.md` lesen und umsetzen.
+
+🟡 **Für die Bildmaschine gemerkt:** Die Eingabepfade in den Skills `krea2-bilder`/`flux2-bilder` (`F:\Comfy-Desktop\...`) stimmen auf dieser Maschine nicht — die laufende ComfyUI-Instanz ist die portable Installation `B:\ComfyUI_windows_portable\ComfyUI\`, Referenzbilder für FLUX.2 gehören in deren `input\`. Skills sind dazu noch nicht korrigiert (Details: Phase-1-Report-Back).
 
 **Smoke-Test der Pokémon-Welt (20.08.2026) hat vier Anzeigefehler gefunden — alle noch am selben Tag behoben, gepusht:**
 - `image_search` (`anlaut_b_suche`, `anlaut_m_suche`, `wald_suche`): akzeptierte nur eine fest verdrahtete Teilmenge der im Bild passenden Objekte — ein Kind, das zurecht auf ein drittes, ebenfalls richtiges Objekt tippte, bekam „Da ist nichts". Neues Content-Feld `find_count` behebt das (jedes passende Objekt zählt); die drei betroffenen JSON-Dateien und `JSON_SCHEMA_REFERENCE.md` sind nachgezogen. Damit ist auch die alte Nachbestell-Liste aus dem Phase-4-Report-Back hinfällig — es gibt keine Arenaleiter-Lücke mehr, weil jetzt immer alle bekannten Objekte als Ziel zählen.

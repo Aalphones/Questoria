@@ -32,6 +32,8 @@ Komposition auseinander.
 │   └── <icon>.png                  ← Erfolgs-Icons, 128 × 128 px
 ├── levels/
 │   └── stufe_<level_id>.png        ← Lernstufen-Bilder, 512 × 768 px, optional
+├── props/
+│   └── <slug>.png                  ← Spielgegenstände (Ball, später Netz, Lasso), 512 × 512 px
 ├── audio/
 │   └── voices/
 │       └── <character_id>_<episode_id>_<line_nr>.mp3
@@ -250,6 +252,29 @@ ist deshalb kein Fehler.
 Sprite-Größe (1024 × 1536) und anschließend freigestellt und verkleinert —
 dieselbe Kette wie bei den Sprites, siehe
 [image-prompts/GENERATING.md](image-prompts/GENERATING.md).
+
+## 10. Spielgegenstände (props/)
+
+Gegenstände, die ein Franchise-Spiel braucht — der Pokéball ist der erste
+([`pokemon_catch`](JSON_SCHEMA_REFERENCE.md), 21.08.2026), später z. B. Netz
+oder Lasso für andere Franchises.
+
+| Eigenschaft | Vorgabe |
+|---|---|
+| Format | `.png` mit Alpha-Kanal (echte Transparenz) |
+| Seitenverhältnis | quadratisch, **Ausgabegröße 512 × 512 px** |
+| Dateiname | frei wählbar, steht im jeweiligen Eventtyp-Feld (bei `pokemon_catch`: `ball` / `ball_blink`) |
+| Inhalt | ein einzelner, freigestellter Gegenstand — kein Text im Bild |
+| Stil | `art_style` der Welt, wörtlich wie überall |
+
+**Zustandspaare (z. B. blinkende Taste) sind zwei Dateien, kein CSS-Trick.**
+Ein Leuchtpunkt aus CSS müsste die Position in Pixeln kennen und säße nach
+jeder Bildänderung daneben. Das zweite Bild entsteht mit dem ersten als
+Ankerbild (Anleitung: [image-prompts/GENERATING.md](image-prompts/GENERATING.md)),
+damit beide deckungsgleich sind — nur der Zustand unterscheidet sich.
+
+**512 × 512 ist die Ausgabegröße, nicht die Generierungsgröße** — dieselbe
+Kette wie bei Bildantworten: freistellen, dann einpassen, nicht beschneiden.
 
 ---
 

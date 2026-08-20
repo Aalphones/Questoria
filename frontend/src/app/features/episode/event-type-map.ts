@@ -5,6 +5,7 @@ import { isDialogConfig } from '../events/dialog/dialog.types';
 import { isImageSearchConfig } from '../events/image-search/image-search.types';
 import { isMultipleChoiceConfig } from '../events/multiple-choice/multiple-choice.types';
 import { isNumberLineConfig } from '../events/number-line/number-line.types';
+import { isPokemonCatchConfig } from '../events/pokemon-catch/pokemon-catch.types';
 import { isRewardConfig } from '../events/reward/reward.types';
 import { isSortingConfig } from '../events/sorting/sorting.types';
 import { isTextInputConfig } from '../events/text-input/text-input.types';
@@ -33,6 +34,8 @@ export const EVENT_COMPONENTS: Readonly<Partial<Record<EventType, () => Promise<
     sorting: () => import('../events/sorting/sorting').then((module) => module.Sorting),
     number_line: () =>
       import('../events/number-line/number-line').then((module) => module.NumberLine),
+    pokemon_catch: () =>
+      import('../events/pokemon-catch/pokemon-catch').then((module) => module.PokemonCatch),
   };
 
 /**
@@ -73,6 +76,7 @@ const EVENT_CONFIG_GUARDS: Readonly<Partial<Record<EventType, (config: unknown) 
   word_match: isWordMatchConfig,
   sorting: isSortingConfig,
   number_line: isNumberLineConfig,
+  pokemon_catch: isPokemonCatchConfig,
 };
 
 /** Lädt die Komponente zu einem Eventtyp — unbekannter Typ wirft, das Gerüst zeigt die Meldung. */

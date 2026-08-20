@@ -1,0 +1,71 @@
+:host {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: var(--space-4);
+  min-block-size: 0;
+}
+
+.pokemon-catch {
+  &__intro {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    text-align: center;
+
+    p {
+      margin: 0;
+      max-inline-size: var(--measure-dialog-text);
+      font-size: var(--font-size-section);
+      font-weight: 600;
+      line-height: var(--line-height-body);
+      text-wrap: pretty;
+    }
+  }
+
+  &__stage {
+    display: grid;
+    position: relative;
+    justify-items: center;
+    align-content: center;
+    gap: var(--space-6);
+    min-block-size: 0;
+  }
+
+  &__target {
+    inline-size: var(--size-pokemon-target-inline);
+    block-size: var(--size-pokemon-target-block);
+  }
+
+  &__ball {
+    inline-size: var(--size-pokemon-ball);
+    block-size: var(--size-pokemon-ball);
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: center;
+  }
+
+  &__next {
+    min-block-size: var(--size-touch-target);
+    padding-inline: var(--space-6);
+    border: none;
+    border-radius: var(--radius-pill);
+    background: var(--color-accent);
+    color: var(--color-text-on-accent);
+    font-family: var(--font-body);
+    font-size: var(--font-size-body);
+    font-weight: 600;
+    cursor: pointer;
+
+    &:hover {
+      background: var(--color-accent-hover);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-focus-ring);
+      outline-offset: 2px;
+    }
+  }
+}

@@ -419,6 +419,7 @@ referenzieren generierte Welten Events, die es nicht gibt.
 | `word_match` | `WordMatch` | ausgelagert, Abschnitt 5.6 | ja |
 | `sorting` | `Sorting` | ausgelagert, Abschnitt 5.7 | ja |
 | `number_line` | `NumberLine` | ausgelagert, Abschnitt 5.8 | ja |
+| `pokemon_catch` | `PokemonCatch` | inline, Abschnitt 5.9 | nein |
 
 **Vorgemerkt, noch nicht gebaut** — nicht im Content verwenden, bis sie oben
 stehen: `cutscene`, `choice`, `exploration`, `investigation`, `search`,
@@ -756,6 +757,43 @@ Enden.
 `"target": "{ziel}"`, setzt die Engine die gezogene **Zahl** ein, nicht ihre
 Zeichenkette. Damit erzeugt eine einzige Vorlage beliebig viele Fassungen
 derselben Aufgabe.
+
+### 5.9 `pokemon_catch` (inline)
+
+Der Pokéball-Wurf — ein reiner Belohnungsmoment, kein Lerninhalt. Meldet
+`kind: 'story'`, steht nicht in `SCORED_EVENT_TYPES` und beeinflusst die
+Sterne nicht ([ADR-015](../../docs/decisions/015-eigener-eventtyp-statt-franchise-game.md)).
+
+```json
+{
+  "type": "pokemon_catch",
+  "config": {
+    "targets": [
+      { "sprite": "pikachu/pikachu_neutral.png", "name": "Pikachu" },
+      { "sprite": "rattfratz/rattfratz_neutral.png", "name": "Rattfratz" }
+    ],
+    "ball": "pokeball.png",
+    "ball_blink": "pokeball_blink.png",
+    "speed": "normal",
+    "intro": "Wirf den Ball, wenn Pikachu vor dir steht!"
+  }
+}
+```
+
+| Feld | Pflicht | Bedeutung |
+|---|---|---|
+| `targets` | ja, mind. 1 | mögliche Ziele — eines wird beim Öffnen gezogen; `sprite` wie bei Dialog-Sprites relativ zu `sprites/` |
+| `ball` | ja | Dateiname unter `props/`, Taste dunkel |
+| `ball_blink` | nein | Dateiname unter `props/`, Taste rot leuchtend — fehlt sie, blinkt es nicht, alles andere läuft weiter |
+| `speed` | ja | `langsam` \| `normal` \| `schnell` — kein freier Zahlenwert im Content |
+| `intro` | ja | Ansagetext über der Bühne, im Vorlesemodus über die Gerätestimme gesprochen — **keine Sprachaufnahme nötig** |
+
+**Kein `ball_blink`-Ableiten aus `ball`.** Ein stillschweigendes `_blink` am
+Dateinamen ist die Sorte Regel, die niemand findet, wenn das Bild mal anders
+heißt.
+
+**Keine Lernstufen-Varianten.** Ein Belohnungsmoment skaliert nicht mit der
+Lesefähigkeit — die Konfiguration ist inline wie bei `dialog` und `reward`.
 
 ### Varianten-Regel (gilt für jede ausgelagerte Datei)
 

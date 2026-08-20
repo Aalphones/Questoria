@@ -158,6 +158,7 @@ export const EVENT_TYPES = [
   'word_match',
   'sorting',
   'number_line',
+  'pokemon_catch',
 ] as const;
 export type EventType = (typeof EVENT_TYPES)[number];
 
@@ -345,6 +346,33 @@ export interface NumberLineConfig {
   target: number;
   /** Jedes wievielte Feld eine Zahl trägt, Vorgabe 1. Dazwischen stehen Striche. */
   label_every?: number;
+}
+
+/** Ein mögliches Fangziel eines `pokemon_catch`-Events (Abschnitt 5.9). */
+export interface PokemonCatchTarget {
+  /** Dateiname unter sprites/<character>/, wie bei Dialog-Sprites */
+  sprite: string;
+  name: string;
+}
+
+/** Wie schnell das Ziel läuft — kein freier Zahlenwert im Content (Abschnitt 5.9). */
+export type PokemonCatchSpeed = 'langsam' | 'normal' | 'schnell';
+
+/**
+ * Die Konfiguration eines `pokemon_catch`-Events (Abschnitt 5.9, inline). Ein
+ * reiner Belohnungsmoment — meldet `kind: 'story'`, beeinflusst die Sterne
+ * nicht (README „Entschieden vor dem Bauen" Punkt 2).
+ */
+export interface PokemonCatchConfig {
+  /** eines wird beim Öffnen gezogen */
+  targets: readonly PokemonCatchTarget[];
+  /** Dateiname unter props/, Taste dunkel */
+  ball: string;
+  /** Dateiname unter props/, Taste rot leuchtend — fehlt sie, blinkt es nicht */
+  ball_blink?: string;
+  speed: PokemonCatchSpeed;
+  /** Ansagetext über der Bühne — wird im Vorlesemodus über die Gerätestimme gesprochen, keine Aufnahme */
+  intro: string;
 }
 
 /**

@@ -210,6 +210,11 @@
   --size-number-field: clamp(2.875rem, 7vh, 4rem);
   --size-number-tick: 0.75rem;
 
+  // Pokéball-Wurf: Ziel-Sprite wie eine Dialogfigur, Ball deutlich kleiner darunter.
+  --size-pokemon-target-inline: min(30vw, 19rem);
+  --size-pokemon-target-block: min(42dvh, 22rem);
+  --size-pokemon-ball: clamp(4.5rem, 12vh, 7rem);
+
   // ── Interaktion ──────────────────────────────────────────────────────────
   // Mindestgröße für antippbare Ziele (Kinder-Zielgruppe) — Kopfleiste,
   // zukünftig jeder Icon-Knopf.
