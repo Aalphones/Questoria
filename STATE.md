@@ -1,10 +1,12 @@
 # STATE
 
-**Aktiver Plan:** [docs/planning/2026-08-18_sammelkarten-und-druckbogen/](docs/planning/2026-08-18_sammelkarten-und-druckbogen/README.md) — Meilenstein 5, 6 Phasen, freigegeben am 18.08.2026. **Noch nicht begonnen.**
+**Aktiver Plan:** [docs/planning/2026-08-19_curriculum-und-variation/](docs/planning/2026-08-19_curriculum-und-variation/README.md) — Curriculum & Variation, 4 Phasen. **Noch nicht begonnen.**
 
-**Phase:** 1/6 — Kartenbesitz-Fundament (pending, Rating **heikel**)
+**Phase:** 1/4 — Variationssystem (pending, Rating **heikel**)
 
-**Nächster Schritt:** Phase 1 lesen und umsetzen — Karten über den Welt-Aufruf ausliefern, Spielstand-Format v2, `CardService`, zwei ADRs. Heikle Phase: `/model opusplan` empfohlen.
+**Nächster Schritt:** Phase 1 lesen und umsetzen — ein Würfel für alle Variationsarten. Heikle Phase: `/model opusplan` empfohlen.
+
+🟡 **Die Reihenfolge ist am 20.08.2026 umgestellt worden** (Sascha): Curriculum & Variation und danach Pokéball laufen **vor** Meilenstein 5, nicht dahinter. Das ist eine Prioritäts-Entscheidung, keine technische: geprüft, dass beide Pläne von den Sammelkarten nichts brauchen — der Curriculum-Plan nannte Meilenstein 5 nur in seiner Statuszeile, der Pokéball-Plan erklärt sich ausdrücklich für unabhängig. Beide Statuszeilen sind nachgezogen.
 
 ## Was zuletzt fertig wurde
 
@@ -26,9 +28,9 @@ Stehen dort jeweils unter „Follow-ups", hier nur als Merkposten:
 
 ## Danach in dieser Reihenfolge
 
-1. **Meilenstein 5** — Sammelkarten & Druckbogen (der aktive Plan). 🟡 Phase 6 baut `pokemon_lesen` von 6 auf ≥11 Karten in drei Gruppen aus — das war früher die Rolle der Testwelt `dev_fixture`, die es nicht mehr gibt.
-2. **Curriculum & Variation** — Lernziele als Ausgangspunkt, Aufgaben-Pools statt Einzelaufgaben, neue Eventtypen für Mathematik: [docs/planning/2026-08-19_curriculum-und-variation/](docs/planning/2026-08-19_curriculum-und-variation/README.md).
-3. **Pokéball werfen** — das erste Franchise-Spiel, drei Phasen: [docs/planning/2026-08-19_pokeball-fangen/](docs/planning/2026-08-19_pokeball-fangen/README.md). Hängt an nichts und kann jederzeit dazwischen.
+1. **Curriculum & Variation** — der aktive Plan. Lernziele als Ausgangspunkt statt Fandom, Aufgaben-Pools statt Einzelaufgaben, neue Eventtypen für Mathematik. Vier Phasen, zwei davon **heikel**.
+2. **Pokéball werfen** — das erste Franchise-Spiel, drei Phasen: [docs/planning/2026-08-19_pokeball-fangen/](docs/planning/2026-08-19_pokeball-fangen/README.md). Eigener Eventtyp `pokemon_catch`, unbewertet, kann nicht schiefgehen. Hängt an nichts.
+3. **Meilenstein 5** — Sammelkarten & Druckbogen, sechs Phasen, freigegeben am 18.08.2026: [docs/planning/2026-08-18_sammelkarten-und-druckbogen/](docs/planning/2026-08-18_sammelkarten-und-druckbogen/README.md). 🟡 Phase 6 baut `pokemon_lesen` von 6 auf ≥11 Karten in drei Gruppen aus — das war früher die Rolle der Testwelt `dev_fixture`, die es nicht mehr gibt.
 
 Alle gesammelten Spielideen mit Stand und Bewertung: [docs/knowledge/spielmechaniken-katalog.md](docs/knowledge/spielmechaniken-katalog.md) — Ideenspeicher, kein Fahrplan.
 

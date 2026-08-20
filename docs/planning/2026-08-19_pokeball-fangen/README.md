@@ -1,8 +1,10 @@
 # Pokéball werfen — das erste Franchise-Spiel
 
-**Status:** freigegeben am 19.08.2026, geparkt. Umsetzung nach Abschluss von
-Phase 3 der ersten echten Welt; unabhängig von Meilenstein 5 und vom
-Variationssystem.
+**Status:** freigegeben am 19.08.2026. Die Bedingung ist erfüllt — die erste
+echte Welt ist am 20.08.2026 abgeschlossen. Eingereiht als **nächster Plan nach
+Curriculum & Variation**, vor Meilenstein 5 (Sascha, 20.08.2026). Bleibt
+unabhängig von beiden: weder die Sammelkarten noch das Variationssystem werden
+gebraucht.
 
 ## Warum genau dieses Spiel
 

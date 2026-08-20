@@ -1,6 +1,8 @@
 # Curriculum & Variation — Lernziele vor Fandom, Aufgabenraum statt Aufgabe
 
-**Status:** geparkt. Startet **nach Meilenstein 5** (Sammelkarten & Druckbogen).
+**Status:** **aktiv** — vorgezogen am 20.08.2026 (Sascha) und läuft jetzt **vor**
+Meilenstein 5 statt danach. Das war eine reine Reihenfolge-Entscheidung, keine
+Abhängigkeit: dieser Plan braucht von den Sammelkarten nichts.
 Löst den Einzelplan `2026-08-19_curriculum-layer.md` ab (dessen Phasen A und B
 sind hier Phase 2 und 3).
 
