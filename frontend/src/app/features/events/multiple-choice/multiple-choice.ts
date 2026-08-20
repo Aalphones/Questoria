@@ -12,10 +12,10 @@ import { AnswerOption, MultipleChoiceConfig } from '../../../models/content.type
 import { EventContext } from '../../../models/event-runtime.types';
 import { ContentService } from '../../../services/content.service';
 import { NarrationService, ReadingMode } from '../../../services/narration.service';
+import { seededRandom, shuffle } from '../../../services/variation';
 import { ImageSlot } from '../../../ui/image-slot/image-slot';
 import { TaskCard } from '../../../ui/task-card/task-card';
 import { EpisodeRun } from '../../episode/episode-run';
-import { shuffledIndexes } from '../shuffled-indexes';
 import { AnswerState, AnswerView } from './multiple-choice.types';
 
 const LETTER_KEYS = ['A', 'B', 'C', 'D'] as const;
@@ -60,10 +60,20 @@ export class MultipleChoice {
    * Kind lernt dann die Kachel statt der Aufgabe. Bewusst kein `computed`: die
    * Mischung wird einmal beim Öffnen gezogen, sonst sprängen die Antworten bei
    * jedem Neuzeichnen.
+   *
+   * Der Startwert kommt aus dem Lauf, nicht aus der Komponente (Plan Phase 1,
+   * AK 3) — derselbe Lauf zeigt dieselbe Mischung wieder.
    */
-  private readonly answerOrder = linkedSignal<MultipleChoiceConfig, readonly number[]>({
-    source: this.config,
-    computation: (config: MultipleChoiceConfig) => shuffledIndexes(config.options.length),
+  private readonly answerOrder = linkedSignal<
+    { readonly config: MultipleChoiceConfig; readonly seed: number },
+    readonly number[]
+  >({
+    source: () => ({ config: this.config(), seed: this.run.eventSeed() ?? 0 }),
+    computation: ({ config, seed }) => {
+      const indexes = Array.from({ length: config.options.length }, (_unused: unknown, index: number) => index);
+
+      return shuffle(indexes, seededRandom(seed));
+    },
   });
 
   /** Alle bereits angetippten Antworten — jede bleibt sichtbar ausgewertet. */

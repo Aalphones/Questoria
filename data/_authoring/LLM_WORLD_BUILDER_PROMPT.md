@@ -75,7 +75,11 @@ Erzeuge folgende Dateien vollständig:
      d) ein reward-Event mit einer card_id aus cards.json
 4. Pro Episode genau ein events/<event_id>.json mit EINER Variante pro
    übergebener Lernstufe — Inhalt muss sich nach Schwierigkeit
-   unterscheiden, nicht nur im Wortlaut. Bei multiple_choice hat jede
+   unterscheiden, nicht nur im Wortlaut. (Eine Lernstufen-Variante kann
+   zusätzlich `pool` oder `generated` tragen, damit sich Wiederholungen
+   nicht identisch anfühlen — Schema Abschnitt „pool und generated". Dieser
+   Durchlauf erzeugt weiterhin nur die einzelne Aufgabe; Pools nachträglich
+   zu befüllen ist eine eigene Content-Runde, kein Pflichtteil hier.) Bei multiple_choice hat jede
    Option ein image (antwort_<slug>.png). Bei word_match trägt jedes Paar
    ein word und ein image (antwort_<slug>.png), 3-4 Paare pro Variante,
    kein Wort und kein Bild doppelt — und das gesuchte Wort steht NIE in

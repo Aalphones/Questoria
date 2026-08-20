@@ -40,26 +40,33 @@ hängen daran)
 
 ## Checkliste
 
-- [ ] `services/variation.ts` anlegen (Funktionen aus AK 1, jede mit
+- [x] `services/variation.ts` anlegen (Funktionen aus AK 1, jede mit
       Kurzkommentar zum Zweck, nicht zur Mechanik)
-- [ ] Startwert-Erzeugung: kleine Streuwertfunktion über
+- [x] Startwert-Erzeugung: kleine Streuwertfunktion über
       `profileId + episodeId + attempt`, im selben Modul
-- [ ] `shuffled-indexes.ts` auflösen — Aufrufer auf `shuffle` aus
+- [x] `shuffled-indexes.ts` auflösen — Aufrufer auf `shuffle` aus
       `variation.ts` umstellen, Datei löschen
-- [ ] `word-match.ts` und `multiple-choice.ts` auf die geseedete Mischung
+- [x] `word-match.ts` und `multiple-choice.ts` auf die geseedete Mischung
       umstellen (Startwert aus dem Lauf, nicht aus der Komponente)
-- [ ] Startwert in `run-store.service.ts` und im Spielstand-Schema mitführen
+- [x] Startwert in `run-store.service.ts` und im Spielstand-Schema mitführen
       (zusammen mit den zuletzt benutzten Fassungs-IDs)
-- [ ] `resolve-event-config.ts` um die Fassungsauswahl erweitern
-- [ ] Typen in `models/content.types.ts`: `pool`, `generated`, Bedingungen
-- [ ] Prüffunktionen der betroffenen Eventtypen (`*.types.ts`) so erweitern,
-      dass eine Variante mit Pool ebenfalls als gültig durchgeht
-- [ ] **ADR-016** schreiben: warum die Auswahl im Ablauf-Gerüst sitzt und nicht
+- [x] `resolve-event-config.ts` um die Fassungsauswahl erweitern
+- [x] Typen in `models/content.types.ts`: `pool`, `generated`, Bedingungen
+- [x] Prüffunktionen der betroffenen Eventtypen (`*.types.ts`) so erweitern,
+      dass eine Variante mit Pool ebenfalls als gültig durchgeht — geprüft:
+      alle vier Guards (`isMultipleChoiceConfig`, `isTextInputConfig`,
+      `isImageSearchConfig`, `isWordMatchConfig`) prüfen nur Pflichtfelder,
+      keine Zusatzfeld-Ablehnung. Ein Pool-Element (Aufgabe + `id`) läuft nach
+      der Auswahl als reine Aufgabe durch dieselbe Prüfung wie bisher — keine
+      Änderung nötig.
+- [x] **ADR-016** schreiben: warum die Auswahl im Ablauf-Gerüst sitzt und nicht
       in den Komponenten, und warum `variants` die Lernstufe bleibt
-- [ ] Schema-Referenz: neuer Abschnitt zu `pool`/`generated` samt Beispiel,
+- [x] Schema-Referenz: neuer Abschnitt zu `pool`/`generated` samt Beispiel,
       Verweis in der Varianten-Regel
-- [ ] `docs/code-map.md`: Zeile für `services/variation.ts`
-- [ ] `data/_authoring/README.md`: Pflegepflicht-Runde
+- [x] `docs/code-map.md`: Zeile für `services/variation.ts`
+- [x] `data/_authoring/README.md`: Pflegepflicht-Runde — Schema-Referenz und
+      Bauprompt aktualisiert; ASSET_REQUIREMENTS/image-prompts/voice-tools/
+      design-README nicht betroffen (kein neuer Asset- oder Feldtyp)
 
 ## Risiken
 
@@ -74,3 +81,57 @@ Meidungsliste ist Teil der Eingabe der Auswahl, nicht ein nachträglicher Filter
 — sonst ist die Reproduzierbarkeit nur scheinbar gegeben.
 
 ## Report-Back
+
+**Status: complete (20.08.2026).**
+
+- `services/variation.ts` (neu): `deriveRunSeed`, `deriveEventSeed`,
+  `seededRandom` (mulberry32), `shuffle`, `selectFromPool`, `generateInteger`,
+  `resolveTemplate`, `satisfiesConstraints`, `drawConstrainedValues`.
+- `resolve-event-config.ts`: löst `pool`/`generated` innerhalb der
+  Lernstufen-Variante auf, liefert zusätzlich `usedPoolItemId` fürs Gerüst
+  (nicht für die Komponente).
+- `episode-run.ts`: trägt `seed` + abgeleiteten `eventSeed` je Position in der
+  Eventliste.
+- `episode.ts`: zieht bei jedem frischen Start (kein Wiedereinstieg gewählt)
+  über `RunStoreService.startSeedFor()` einen neuen Startwert, übernimmt beim
+  Wiedereinstieg den gespeicherten (Fallback: frisch ziehen, Risiko 1); merkt
+  benutzte Pool-Fassungen über `VariantHistoryService`.
+- `run-store.service.ts`: `startSeedFor()` zählt den Versuch im Spielstand
+  hoch und leitet daraus den Startwert ab; `isCompleteRun` verlangt keinen
+  Startwert (Risiko 1).
+- `variant-history.service.ts` (neu, per `ng generate`): letzte drei
+  Pool-Fassungs-IDs je `event_id`, in `SavegameState.recentVariants` — überlebt
+  App-Neustarts, anders als der angefangene Lauf.
+- `word-match.ts`/`multiple-choice.ts`: Mischung über `shuffle(indexes,
+  seededRandom(run.eventSeed()))` statt `shuffledIndexes()`;
+  `features/events/shuffled-indexes.ts` gelöscht.
+- `content.types.ts`: `PoolItem`, `NumberRange`, `ComparisonOperator`,
+  `ValueConstraint`, `GeneratedSlot`.
+- `game-state.types.ts` (`StoredRun.seed?`), `savegame.types.ts`
+  (`SavegameState.attempts`, `.recentVariants`, beide im `EMPTY_SAVEGAME_STATE`).
+- Doku: ADR-016, Schema-Referenz-Abschnitt „pool und generated" +
+  Varianten-Regel-Verweis, `LLM_WORLD_BUILDER_PROMPT.md`-Hinweis,
+  `docs/code-map.md`.
+- Backend geprüft (`SavegameController.php`, `SavegameValidator.php`): der
+  Zustand ist ein geprüfter Blob (nur `version`, 256-KB-Deckel) — die neuen
+  Felder brauchen keine Backend-Änderung, bestätigt ADR-009.
+- `ng build` (development), `tsc --noEmit`, `ng lint`: alle drei sauber.
+
+**Bewusst nicht umgesetzt / verschoben:**
+
+- `generated` kennt noch keinen abgeleiteten Wert (z. B. `a+b` als eigene
+  Antwort) — nur gezogene Bereichswerte lassen sich in die Vorlage einsetzen.
+  Als 🟡 in der Schema-Referenz vermerkt; Phase 3 entscheidet, ob das reicht.
+- Kein Content nutzt `pool`/`generated` bisher — das ist Phase 4.
+
+**Manuelle Abnahme (Smoke-Prüfpunkte für die finalen AK, private Profil):**
+
+1. Eine Aufgabe mit `pool` in eine bestehende Event-Datei eintragen (oder
+   Test-Event anlegen), Episode zweimal hintereinander spielen — andere
+   Fassung, andere Antwortreihenfolge (finale AK 1).
+2. Mitten in einer Episode den Tab schließen/neu laden, „Weiterspielen"
+   wählen — dieselben Aufgaben in derselben Reihenfolge (finale AK 2).
+3. Eine Episode ohne `pool`/`generated` spielen — unverändertes Verhalten
+   (finale AK 3).
+4. `frontend/src` nach `Math.random(` durchsuchen — kein Treffer außerhalb von
+   `variation.ts` (finale AK 4, bereits automatisiert geprüft).

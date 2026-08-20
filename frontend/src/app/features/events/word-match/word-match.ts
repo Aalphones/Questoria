@@ -13,10 +13,10 @@ import { WordMatchConfig, WordPair } from '../../../models/content.types';
 import { EventContext } from '../../../models/event-runtime.types';
 import { ContentService } from '../../../services/content.service';
 import { NarrationService } from '../../../services/narration.service';
+import { seededRandom, shuffle } from '../../../services/variation';
 import { ImageSlot } from '../../../ui/image-slot/image-slot';
 import { TaskCard } from '../../../ui/task-card/task-card';
 import { EpisodeRun } from '../../episode/episode-run';
-import { shuffledIndexes } from '../shuffled-indexes';
 import { ImageTileView, SlotState, WordCardView } from './word-match.types';
 
 /** Wie lange ein falsch gelegtes Paar rot stehen bleibt, bevor beides wieder aufgeht. */
@@ -56,10 +56,20 @@ export class WordMatch {
    * Aufgabe löste sich von selbst. Bewusst kein `computed`: Die Mischung wird
    * einmal beim Öffnen der Aufgabe gezogen und bleibt dann stehen, sonst
    * sprängen die Karten bei jedem Neuzeichnen.
+   *
+   * Der Startwert kommt aus dem Lauf, nicht aus der Komponente (Plan Phase 1,
+   * AK 3) — derselbe Lauf zeigt dieselbe Mischung wieder.
    */
-  private readonly wordOrder = linkedSignal<WordMatchConfig, readonly number[]>({
-    source: this.config,
-    computation: (config: WordMatchConfig) => shuffledIndexes(config.pairs.length),
+  private readonly wordOrder = linkedSignal<
+    { readonly config: WordMatchConfig; readonly seed: number },
+    readonly number[]
+  >({
+    source: () => ({ config: this.config(), seed: this.run.eventSeed() ?? 0 }),
+    computation: ({ config, seed }) => {
+      const indexes = Array.from({ length: config.pairs.length }, (_unused: unknown, index: number) => index);
+
+      return shuffle(indexes, seededRandom(seed));
+    },
   });
 
   /** Gelegte Paare in der Reihenfolge des Legens — daraus kommt die Paarnummer. */

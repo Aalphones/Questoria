@@ -33,6 +33,8 @@ import { GameStateService } from '../../services/game-state.service';
 import { ProgressService } from '../../services/progress.service';
 import { RunStoreService } from '../../services/run-store.service';
 import { StatisticsService } from '../../services/statistics.service';
+import { VariantHistoryService } from '../../services/variant-history.service';
+import { seededRandom } from '../../services/variation';
 import { ContentError } from '../../ui/content-error/content-error';
 import { Hud } from '../../ui/hud/hud';
 import { ImageSlot } from '../../ui/image-slot/image-slot';
@@ -69,6 +71,7 @@ export class EpisodeScreen {
   private readonly achievementService = inject(AchievementService);
   private readonly statisticsService = inject(StatisticsService);
   private readonly runStore = inject(RunStoreService);
+  private readonly variantHistory = inject(VariantHistoryService);
   private readonly run = inject(EpisodeRun);
 
   readonly themeId = input.required<string>();
@@ -147,20 +150,47 @@ export class EpisodeScreen {
     event: this.currentEvent(),
     themeId: this.themeId(),
     difficultyLevelId: this.gameState.activeDifficultyLevel() ?? '',
+    // `null`, solange der Startwert dieses Laufs noch nicht feststeht (frisch
+    // gezogen oder aus einem angefangenen Lauf zurückgeholt) — die Auflösung
+    // wartet dann, statt mit einem geratenen Wert loszulegen (Plan Phase 1, AK 3).
+    eventSeed: this.run.eventSeed(),
   }));
 
   /**
    * Die fertige Konfiguration des laufenden Events: inline direkt aus der
-   * Episode, ausgelagert über `config.ref` nachgeladen und auf die aktive
-   * Lernstufe aufgelöst. Solange geladen wird, zeigt die Bühne denselben
+   * Episode, ausgelagert über `config.ref` nachgeladen, auf die aktive
+   * Lernstufe aufgelöst und — seit dem Variationssystem (Plan Phase 1) — bei
+   * Pool oder generierter Fassung auf eine konkrete Aufgabe reduziert. Solange
+   * geladen wird oder der Startwert fehlt, zeigt die Bühne denselben
    * Zwischenzustand wie beim Episodenladen.
    */
-  protected readonly eventConfigState = toSignal(
+  private readonly resolvedEventState = toSignal(
     toObservable(this.eventConfigRequest).pipe(
       switchMap((request: EventConfigRequest) => this.loadEventConfig(request)),
     ),
-    { initialValue: { status: 'loading' } as LoadState<unknown> },
+    { initialValue: { status: 'loading' } as LoadState<ResolvedEventState> },
   );
+
+  /** Die reine Konfiguration für die Event-Komponente — sie sieht `usedPoolItemId` nie. */
+  protected readonly eventConfigState = computed<LoadState<unknown>>(() => {
+    const state = this.resolvedEventState();
+
+    return state.status === 'loaded' ? { status: 'loaded', data: state.data.config } : state;
+  });
+
+  /** Merkt eine aus einem Pool gezogene Fassung vor — sie soll nicht gleich wieder gezogen werden. */
+  private readonly recordVariantUse = effect(() => {
+    const state = this.resolvedEventState();
+
+    if (state.status !== 'loaded' || state.data.usedPoolItemId === null || state.data.eventId === null) {
+      return;
+    }
+
+    const eventId = state.data.eventId;
+    const usedPoolItemId = state.data.usedPoolItemId;
+
+    untracked(() => this.variantHistory.recordUse(eventId, usedPoolItemId));
+  });
 
   /** Ein Wechsel des Events erzeugt eine neue Bühne — sonst spielt die alte Komponente mit neuen Daten weiter. */
   protected readonly eventSlot = computed<readonly number[]>(() => [this.run.eventIndex()]);
@@ -241,21 +271,28 @@ export class EpisodeScreen {
     untracked(() => {
       const stored = this.runStore.load();
 
-      if (stored === null || stored.themeId !== themeId || stored.episodeId !== episodeId) {
-        return;
+      if (stored !== null && stored.themeId === themeId && stored.episodeId === episodeId) {
+        const isResumable = stored.eventIndex > 0 && stored.eventIndex < episode.events.length;
+
+        if (isResumable) {
+          this.pendingResume.set(stored);
+          return;
+        }
+
+        // Beschädigt oder veraltet (Episode leer/schon durch) — still verwerfen (Plan AK 7).
+        this.runStore.clear();
       }
 
-      const isResumable = stored.eventIndex > 0 && stored.eventIndex < episode.events.length;
-
-      if (isResumable) {
-        this.pendingResume.set(stored);
-        return;
-      }
-
-      // Beschädigt oder veraltet (Episode leer/schon durch) — still verwerfen (Plan AK 7).
-      this.runStore.clear();
+      // Kein Wiedereinstieg zu entscheiden — der Lauf startet frisch, braucht
+      // also gleich seinen eigenen Startwert (Plan Phase 1, AK 3).
+      this.drawFreshSeed(episodeId);
     });
   });
+
+  /** Zieht einen neuen Startwert und zählt damit den Versuch dieser Episode hoch. */
+  private drawFreshSeed(episodeId: string): void {
+    this.run.setSeed(this.runStore.startSeedFor(episodeId));
+  }
 
   /** Die Eventliste ist durch — der Episoden-Screen zeigt ab hier den Ergebnis-Screen statt der Bühne. */
   protected readonly isEpisodeFinished = computed<boolean>(() => {
@@ -350,16 +387,22 @@ export class EpisodeScreen {
     });
   }
 
-  /** „Weiterspielen": Lauf auf den gemerkten Stand setzen, Eintrag ist damit verbraucht. */
+  /**
+   * „Weiterspielen": Lauf auf den gemerkten Stand setzen, Eintrag ist damit
+   * verbraucht. Fehlt dem gemerkten Lauf der Startwert (gespeichert vor Plan
+   * Phase 1), wird stattdessen frisch gezogen — kein Fehler, siehe Risiko 1.
+   */
   protected resumeStoredRun(stored: StoredRun): void {
+    this.run.setSeed(stored.seed ?? this.runStore.startSeedFor(this.episodeId()));
     this.run.startAt(stored.eventIndex, stored.scoredCount, stored.correctFirstTryCount);
     this.runStore.clear();
     this.pendingResume.set(null);
   }
 
-  /** „Von vorn anfangen": Der Lauf steht bereits bei Event 0 (`resetOnEpisodeChange`), nur der Eintrag muss weg. */
+  /** „Von vorn anfangen": Der Lauf steht bereits bei Event 0 (`resetOnEpisodeChange`), braucht aber noch einen eigenen Startwert. */
   protected discardStoredRun(): void {
     this.runStore.clear();
+    this.drawFreshSeed(this.episodeId());
     this.pendingResume.set(null);
   }
 
@@ -368,23 +411,31 @@ export class EpisodeScreen {
    * Content-Schnittstelle. Beide Wege enden in derselben Prüfung: passt die
    * Konfiguration nicht zum Eventtyp, landet das Event im Fehlerpfad statt als
    * leere Aufgabe auf der Bühne.
+   *
+   * Ohne Startwert bleibt die Auflösung im Ladezustand stehen — die
+   * Pool-/Generator-Auswahl braucht ihn (Plan Phase 1, AK 3).
    */
-  private loadEventConfig(request: EventConfigRequest): Observable<LoadState<unknown>> {
+  private loadEventConfig(request: EventConfigRequest): Observable<LoadState<ResolvedEventState>> {
     const event = request.event;
 
     if (event === null) {
-      return of({ status: 'loaded', data: null });
+      return of({ status: 'loaded', data: { config: null, usedPoolItemId: null, eventId: null } });
     }
 
+    if (request.eventSeed === null) {
+      return of({ status: 'loading' });
+    }
+
+    const random = seededRandom(request.eventSeed);
     const ref = eventRefOf(event.config);
 
     if (ref === null) {
       return asLoadState(
         of(event.config).pipe(
-          map((config: unknown): unknown => {
+          map((config: unknown): ResolvedEventState => {
             assertPlayableConfig(event.type, config);
 
-            return config;
+            return { config, usedPoolItemId: null, eventId: null };
           }),
         ),
       );
@@ -392,16 +443,23 @@ export class EpisodeScreen {
 
     return asLoadState(
       this.content.getEvent(request.themeId, ref).pipe(
-        map((eventFile: EventFile): unknown => {
-          const config = resolveEventConfig(
+        map((eventFile: EventFile): ResolvedEventState => {
+          const recentPoolItemIds = this.variantHistory.recentIdsFor(eventFile.event_id);
+          const resolved = resolveEventConfig(
             event.config,
             eventFile,
             event.type,
             request.difficultyLevelId,
+            random,
+            recentPoolItemIds,
           );
-          assertPlayableConfig(event.type, config);
+          assertPlayableConfig(event.type, resolved.config);
 
-          return config;
+          return {
+            config: resolved.config,
+            usedPoolItemId: resolved.usedPoolItemId,
+            eventId: eventFile.event_id,
+          };
         }),
       ),
     );
@@ -454,6 +512,18 @@ interface EventConfigRequest {
   readonly event: EpisodeEvent | null;
   readonly themeId: string;
   readonly difficultyLevelId: string;
+  readonly eventSeed: number | null;
+}
+
+/**
+ * Ergebnis der Event-Auflösung vor dem letzten Schnitt: `config` geht an die
+ * Komponente, `usedPoolItemId`/`eventId` bleiben im Gerüst — sie füttern nur
+ * die Meidungsliste (Plan Phase 1, AK 5/6).
+ */
+interface ResolvedEventState {
+  readonly config: unknown;
+  readonly usedPoolItemId: string | null;
+  readonly eventId: string | null;
 }
 
 /** Verpackt einen HTTP-Aufruf in den Ladezustand, den die Templates lesen. */

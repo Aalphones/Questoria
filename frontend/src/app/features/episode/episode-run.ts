@@ -1,7 +1,8 @@
-import { Service, inject, signal } from '@angular/core';
+import { Service, computed, inject, signal } from '@angular/core';
 
 import { EventOutcome } from '../../models/event-runtime.types';
 import { RunStoreService } from '../../services/run-store.service';
+import { deriveEventSeed } from '../../services/variation';
 
 /**
  * Der Stand des laufenden Durchgangs durch eine Episode: an welchem Event er
@@ -29,6 +30,24 @@ export class EpisodeRun {
    * erneut auf die Reise geht.
    */
   readonly runId = crypto.randomUUID();
+
+  /**
+   * Startwert des Variationssystems (Plan Phase 1) — `null`, bis das Gerüst
+   * ihn setzt (frisch gezogen oder aus einem angefangenen Lauf zurückgeholt).
+   * Solange er fehlt, bleibt die Event-Konfiguration im Ladezustand stehen.
+   */
+  readonly seed = signal<number | null>(null);
+
+  /**
+   * Startwert je Event, abgeleitet aus `seed` und der Position in der
+   * Eventliste — dieselbe Aufgabe zieht sonst bei jedem Event denselben
+   * ersten Zufallswert.
+   */
+  readonly eventSeed = computed<number | null>(() => {
+    const runSeed = this.seed();
+
+    return runSeed === null ? null : deriveEventSeed(runSeed, this.eventIndex());
+  });
 
   /** Position in `Episode.events` — steht der Index hinter dem letzten Event, ist die Episode durch. */
   readonly eventIndex = signal(0);
@@ -79,6 +98,16 @@ export class EpisodeRun {
     this.pendingCardId.set(null);
     this.lastEventAt = null;
     this.playtimeMs.set(0);
+    this.seed.set(null);
+  }
+
+  /**
+   * Setzt den Startwert dieses Laufs — frisch gezogen oder aus einem
+   * angefangenen Lauf zurückgeholt (`EpisodeScreen` entscheidet, welcher Fall
+   * vorliegt, Plan Phase 1, AK 3).
+   */
+  setSeed(seed: number): void {
+    this.seed.set(seed);
   }
 
   /**
@@ -120,7 +149,9 @@ export class EpisodeRun {
 
   /** Nach jedem abgeschlossenen Event — ein geschlossener Tab meldet sich nicht ab (Plan AK 2). */
   private persist(): void {
-    if (this.themeId === '' || this.episodeId === '') {
+    const seed = this.seed();
+
+    if (this.themeId === '' || this.episodeId === '' || seed === null) {
       return;
     }
 
@@ -130,6 +161,7 @@ export class EpisodeRun {
       eventIndex: this.eventIndex(),
       scoredCount: this.scoredCount(),
       correctFirstTryCount: this.correctFirstTryCount(),
+      seed,
     });
   }
 }

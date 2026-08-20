@@ -633,6 +633,10 @@ einen Eintrag. Die Engine lädt zur Laufzeit nur die Variante der aktiven
 Lernstufe. Story und Figuren bleiben über alle Stufen gleich — nur die Aufgabe
 skaliert.
 
+Innerhalb einer Lernstufen-Variante darf zusätzlich `pool` oder `generated`
+stehen — Abschnitt „`pool` und `generated`" unten. `variants` bleibt dabei die
+Lernstufe; die beiden neuen Schlüssel deuten sie nicht um.
+
 **Beispiel — vollständige ausgelagerte Event-Datei:**
 
 ```json
@@ -675,6 +679,91 @@ skaliert.
   }
 }
 ```
+
+### `pool` und `generated` — Variation innerhalb einer Lernstufe
+
+Damit die zweite Runde derselben Episode nicht Zeichen für Zeichen die erste
+ist, kann eine Lernstufen-Variante statt einer einzelnen Aufgabe einen der
+beiden folgenden Schlüssel tragen. **Beide sind optional** — eine Variante
+ohne `pool` und ohne `generated` ist weiterhin genau eine Aufgabe, wie oben.
+Details und Begründung: [ADR-016](../../docs/decisions/016-variationssystem-im-ablauf-geruest.md).
+
+**`pool`** — mehrere handgeschriebene Fassungen. Frage und Antworten sind
+immer ein Paket, nie einzeln gemischt. Jedes Element trägt zusätzlich zu den
+sonst üblichen Feldern eine `id`, eindeutig innerhalb des Pools:
+
+```json
+{
+  "event_id": "reim_001",
+  "type": "multiple_choice",
+  "learning_objectives": ["he_gs1_deu_reime_erkennen"],
+  "variants": {
+    "jungtrainer": {
+      "pool": [
+        {
+          "id": "haus_maus",
+          "question": "Was reimt sich auf „Haus"?",
+          "options": [
+            { "label": "Maus" },
+            { "label": "Baum" },
+            { "label": "Tisch" },
+            { "label": "Ball" }
+          ],
+          "correct_index": 0
+        },
+        {
+          "id": "baum_traum",
+          "question": "Was reimt sich auf „Baum"?",
+          "options": [
+            { "label": "Traum" },
+            { "label": "Haus" },
+            { "label": "Stuhl" },
+            { "label": "Buch" }
+          ],
+          "correct_index": 0
+        }
+      ]
+    }
+  }
+}
+```
+
+Die Engine wählt pro Durchlauf eine Fassung, meidet dabei die zuletzt
+benutzten (bis zu drei, solange der Pool größer ist) und zeigt bei
+wiederholtem Spielen erkennbar eine andere Fassung — auch die
+Antwortreihenfolge steht dann nicht mehr an derselben Stelle.
+
+**`generated`** — Vorlage plus Zahlenbereiche plus Bedingungen, für
+Aufgaben, die sich rechnen statt schreiben lassen (Mathematik, Phase 3):
+
+```json
+"generated": {
+  "template": {
+    "question": "{a} + {b} = ?"
+  },
+  "ranges": {
+    "a": { "min": 1, "max": 10 },
+    "b": { "min": 1, "max": 10 }
+  },
+  "constraints": [
+    { "left": "a", "operator": "<=", "right": "b" }
+  ]
+}
+```
+
+`{name}`-Platzhalter in jedem Textfeld der Vorlage werden gegen die gezogenen
+Werte aufgelöst. `constraints` ist optional; jede Bedingung vergleicht einen
+gezogenen Wert (`left`) mit einer Zahl oder einem anderen gezogenen Wert
+(`right`) über `<`, `<=`, `>`, `>=`, `==` oder `!=`.
+
+🟡 `generated` kennt noch keinen abgeleiteten Wert (z. B. die Summe `a+b` als
+eigene Antwort) — nur gezogene Bereichswerte lassen sich einsetzen. Reicht das
+für einen Aufgabentyp nicht, ist das eine Erweiterung für Phase 3, keine
+Lücke, die hier stillschweigend umgangen werden sollte.
+
+**Beide Erweiterungen sind reine Autoren-Werkzeuge.** Eine Event-Komponente
+bekommt in jedem Fall eine fertig aufgelöste, einzelne Aufgabe — sie sieht
+weder `pool` noch `generated` noch eine Fassungs-`id`.
 
 ---
 

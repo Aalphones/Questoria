@@ -290,3 +290,41 @@ export interface WordMatchConfig {
   /** drei oder vier Paare — jedes Wort und jedes Bild genau einmal */
   pairs: WordPair[];
 }
+
+/**
+ * Variationssystem (Plan Phase 1, README Kontrakt) — `pool` und `generated`
+ * sind optionale Erweiterungen einer Lernstufen-Variante. Fehlen beide, ist
+ * die Variante weiterhin genau eine Aufgabe.
+ */
+
+/** Eine Fassung innerhalb eines Pools — trägt zusätzlich zur Aufgabe ihre eigene id. */
+export type PoolItem = Record<string, unknown> & { readonly id: string };
+
+/** Numerischer Bereich für eine generierte Fassung — beide Grenzen eingeschlossen. */
+export interface NumberRange {
+  readonly min: number;
+  readonly max: number;
+}
+
+export type ComparisonOperator = '<' | '<=' | '>' | '>=' | '==' | '!=';
+
+/**
+ * Eine Bedingung, die ein Satz gezogener Werte erfüllen muss — `right` ist
+ * entweder eine Zahl oder der Name eines anderen gezogenen Werts.
+ */
+export interface ValueConstraint {
+  readonly left: string;
+  readonly operator: ComparisonOperator;
+  readonly right: number | string;
+}
+
+/**
+ * Eine generierte Fassung: Vorlage plus Zahlenbereiche plus Bedingungen.
+ * `template` trägt dieselben Felder wie die Aufgabe selbst — `{name}` in
+ * Textfeldern wird gegen die gezogenen Werte aufgelöst.
+ */
+export interface GeneratedSlot {
+  readonly template: Record<string, unknown>;
+  readonly ranges: Readonly<Record<string, NumberRange>>;
+  readonly constraints?: readonly ValueConstraint[];
+}

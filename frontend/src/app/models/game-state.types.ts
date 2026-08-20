@@ -33,4 +33,10 @@ export interface StoredRun {
   readonly eventIndex: number;
   readonly scoredCount: number;
   readonly correctFirstTryCount: number;
+  /**
+   * Startwert des Variationssystems (Plan Phase 1, AK 3). Fehlt bei Läufen,
+   * die vor Phase 1 gespeichert wurden — dann wird beim Wiedereinstieg neu
+   * gezogen statt eines Fehlers (Plan Phase 1, Risiko 1).
+   */
+  readonly seed?: number;
 }

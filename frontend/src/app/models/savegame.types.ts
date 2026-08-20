@@ -11,6 +11,18 @@ export interface SavegameState {
   /** Der angefangene Lauf ohne die Welt-Kennung — die steckt schon im Eintrag. */
   readonly run: SavegameRun | null;
   readonly settings: SavegameSettings;
+  /**
+   * Wie oft jede Episode neu gestartet wurde, Schlüssel = `episode_id` —
+   * Grundlage des Startwerts (Plan Phase 1, AK 3). Fehlt bei älteren
+   * Spielständen; wird dann wie `{}` behandelt.
+   */
+  readonly attempts: Readonly<Record<string, number>>;
+  /**
+   * Die letzten benutzten Pool-Fassungs-IDs je Aufgabe, Schlüssel =
+   * `event_id` — überlebt das Beenden der App (Plan Phase 1, AK 5). Fehlt bei
+   * älteren Spielständen; wird dann wie `{}` behandelt.
+   */
+  readonly recentVariants: Readonly<Record<string, readonly string[]>>;
 }
 
 export type SavegameRun = Omit<StoredRun, 'themeId'>;
@@ -59,4 +71,6 @@ export const EMPTY_SAVEGAME_STATE: SavegameState = {
   progress: {},
   run: null,
   settings: { difficultyLevel: null },
+  attempts: {},
+  recentVariants: {},
 };

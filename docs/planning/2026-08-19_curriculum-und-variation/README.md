@@ -42,7 +42,7 @@ Bindung an Story und Figuren ist das Produkt, nicht der Overhead."
 
 | # | Phase | Rating | Status |
 |---|---|---|---|
-| 1 | [Variationssystem — ein Würfel für alle](phase-1-variationssystem.md) | heikel | pending |
+| 1 | [Variationssystem — ein Würfel für alle](phase-1-variationssystem.md) | heikel | complete |
 | 2 | [Welt-Bauprompt vom Lernziel her](phase-2-bauprompt.md) | standard | pending |
 | 3 | [Neue Eventtypen für Mathematik](phase-3-neue-eventtypen.md) | heikel | pending |
 | 4 | [Variation im Content der Pokémon-Welt](phase-4-content-pools.md) | mechanisch | pending |

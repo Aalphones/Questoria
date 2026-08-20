@@ -4,6 +4,7 @@ import { StoredRun } from '../models/game-state.types';
 import { SavegameRun } from '../models/savegame.types';
 import { GameStateService } from './game-state.service';
 import { SavegameService } from './savegame.service';
+import { deriveRunSeed } from './variation';
 
 /**
  * Der eine angefangene Lauf — seit Meilenstein 4 im Spielstand der aktiven
@@ -46,7 +47,40 @@ export class RunStoreService {
       eventIndex: run.eventIndex,
       scoredCount: run.scoredCount,
       correctFirstTryCount: run.correctFirstTryCount,
+      seed: run.seed,
     });
+  }
+
+  /**
+   * Zählt den Versuch dieser Episode hoch, persistiert ihn und liefert daraus
+   * den Startwert für den neuen Lauf (Plan Phase 1, AK 3). Der Zähler lebt im
+   * Spielstand, nicht im angefangenen Lauf — er muss auch überleben, wenn
+   * dieser Lauf durchgespielt und danach gelöscht wird.
+   */
+  startSeedFor(episodeId: string): number {
+    const themeId = this.gameState.activeThemeId();
+    const profileId = this.gameState.activeProfileId();
+
+    if (themeId === null || profileId === null) {
+      // Kann nur passieren, wenn eine Episode außerhalb der Profil-/Weltwahl
+      // zu spielen anfängt — kein Absturz, aber auch keine Reproduzierbarkeit
+      // über Sitzungen hinweg.
+      console.warn('Startwert ohne aktives Profil oder aktive Welt gezogen.');
+      return deriveRunSeed(0, episodeId, 0);
+    }
+
+    const state = this.savegame.stateFor(themeId);
+    // `?? {}`: ältere Spielstände kennen `attempts` noch nicht (Plan Phase 1, Risiko 1).
+    const attempts = state.attempts ?? {};
+    const attempt = (attempts[episodeId] ?? 0) + 1;
+
+    this.savegame.save(
+      themeId,
+      { ...state, attempts: { ...attempts, [episodeId]: attempt } },
+      this.savegame.positionFor(themeId) ?? { episodeId: null, nodeId: null },
+    );
+
+    return deriveRunSeed(profileId, episodeId, attempt);
   }
 
   clear(): void {
