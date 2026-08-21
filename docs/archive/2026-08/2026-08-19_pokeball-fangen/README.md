@@ -1,6 +1,34 @@
 # Pokéball werfen — das erste Franchise-Spiel
 
-**Status:** freigegeben am 19.08.2026. Die Bedingung ist erfüllt — die erste
+**Abgeschlossen am 21.08.2026.**
+
+## Nachtrag: Entscheidung 4 hat nicht getragen
+
+„Timing statt Zielen" (unten, Punkt 4) klang beim Planen richtig und war beim
+Spielen falsch. Der Knopf löste einen Wurf aus, aber es fühlte sich nach
+Knopfdruck an und nicht nach Werfen — genau der Moment, für den das ganze Spiel
+gebaut wurde, fehlte. Umgebaut am 21.08.2026 nach dem Vorbild von Pokémon GO
+und Let's Go: Der Ball wird angefasst und weggewischt, Richtung und Schwung des
+Wischers bestimmen Ziel und Weite; das Pokémon läuft nicht mehr hin und her,
+sondern steht auf einem von drei Plätzen und springt alle paar Sekunden.
+
+Die Sorge hinter Entscheidung 4 war berechtigt und ist eingelöst, nur anders:
+Über die Tastatur wirft weiterhin der beschriftete Knopf, mit Zielhilfe auf die
+aktuelle Position. Das Wischen ist der Weg für Finger und Maus, nicht der
+einzige Weg.
+
+💡 **Was das lehrt:** Wie sich eine Bedienung anfühlt, ist am Schreibtisch nicht
+entscheidbar. Die Entscheidung war sauber begründet, gegen die richtigen
+Kriterien geprüft — und trotzdem erst am Bildschirm widerlegbar. Ein
+Belohnungsmoment gehört früher in die Hand als eine Aufgabe, bei der Richtigkeit
+zählt.
+
+Ein zweiter Anlauf mit **Kurvenball** (Finger kreist auf dem Ball, der Wurf
+schert zur Seite aus) wurde am selben Tag gebaut und wieder entfernt: Für ein
+Kind im Lesealter zu fummelig, und der Gewinn hätte in nichts bestanden, das
+diese Bühne braucht.
+
+**Ursprünglicher Status:** freigegeben am 19.08.2026. Die Bedingung ist erfüllt — die erste
 echte Welt ist am 20.08.2026 abgeschlossen. Eingereiht als **nächster Plan nach
 Curriculum & Variation**, vor Meilenstein 5 (Sascha, 20.08.2026). Bleibt
 unabhängig von beiden: weder die Sammelkarten noch das Variationssystem werden
@@ -48,7 +76,7 @@ Lernziel, kein Scheitern.
 |---|---|---|---|
 | 1 | [Eventtyp und Bühne](phase-1-eventtyp-und-buehne.md) | standard | complete |
 | 2 | [Die Wurfmechanik](phase-2-wurfmechanik.md) | heikel | complete |
-| 3 | [Einbau in die Pokémon-Welt](phase-3-einbau.md) | mechanisch | pending |
+| 3 | [Einbau in die Pokémon-Welt](phase-3-einbau.md) | mechanisch | complete |
 
 ## Kontrakt — die Konfiguration
 

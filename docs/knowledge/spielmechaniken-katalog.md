@@ -66,7 +66,7 @@ Bewertung aus der Quelldatei übernommen (Lernwert / Spaß, je 1–5).
 
 | Mechanik | Lern | Spaß | Anmerkung |
 |---|---|---|---|
-| Pokémon fangen | ★★ | ★★★★★ | **aufgeplant** → [docs/planning/2026-08-19_pokeball-fangen/](../planning/2026-08-19_pokeball-fangen/README.md) |
+| Pokémon fangen | ★★ | ★★★★★ | **gebaut** als Eventtyp `pokemon_catch` → [docs/archive/2026-08/2026-08-19_pokeball-fangen/](../archive/2026-08/2026-08-19_pokeball-fangen/README.md) |
 | Pokémon-Kampf | ★★★★ | ★★★★★ | rundenbasiert, fünf Typen, Stärken-Dreieck. Trägt Ursache/Wirkung und Vergleiche |
 | Pokédex | ★★★★★ | ★★★ | Steckbrief lesen oder hören, danach Frage dazu. Sehr gut für Lesen und Sachkunde |
 | Pokémon-Ei | ★★★ | ★★★★ | Pflegesequenz in fester Reihenfolge |

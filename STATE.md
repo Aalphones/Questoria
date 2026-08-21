@@ -1,12 +1,31 @@
 # STATE
 
-**Aktiver Plan:** [docs/planning/2026-08-19_pokeball-fangen/](docs/planning/2026-08-19_pokeball-fangen/README.md) — Pokéball werfen, 3 Phasen.
+**Aktiver Plan:** (kein aktiver Plan)
 
-**Phase:** 3/3 — Einbau in die Pokémon-Welt (Rating: mechanisch). Event steht in `ep_route_1_wiese.json` (letztes Event, Ziele Pikachu/Rattfratz, `speed: normal`). Beide offenen FINDINGS geprüft und abgehakt — Sprite-Füllgrad identisch (77 %/77 %), `speed`-Token existiert bereits. Phase-2-Commit gepusht.
+**Zwei geparkte Pläne warten** — welcher als nächstes läuft, ist noch nicht entschieden:
+- [Sammelkarten und Druckbogen](docs/planning/2026-08-18_sammelkarten-und-druckbogen/README.md)
+- [Vollbild-Karten mit Pan und Zoom](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/README.md)
 
-**Nächster Schritt:** User-Runde nötig (kann ich nicht am Bildschirm sehen) — Checkliste in `phase-3-einbau.md`: Runde im Browser (Treffer, Fehlwurf, garantierter fünfter Fang, Weiterlauf zur Ergebnisseite), Runde auf dem Gerät des Kindes, `deploy.cmd content` + Runde auf dem Server, dazu die noch offene Vor-Phase-3-Prüfung der Wurfmechanik (Bewegungsreduktion, siehe unten). Danach zurückmelden — ich trage die Entscheidung „andere Episoden auch?" nach, setze den Katalog-Haken und archiviere den Plan.
+**Nächster Schritt:** Entscheiden, welcher Plan dran ist — und vorher die offene Abnahme unten abarbeiten.
 
-🟡 **Noch nicht bestätigt** (steht beim User, Details im Report-Back von Phase 2): Wurf mit Finger, Maus und Leertaste; fünfter Wurf fängt garantiert; und der eine Punkt, den ich nicht sehen kann — mit eingeschalteter Bewegungsreduktion einmal werfen und schauen, ob der Name nach gut drei Sekunden erscheint.
+## Zuletzt fertig: Pokéball werfen (archiviert 21.08.2026)
+
+[docs/archive/2026-08/2026-08-19_pokeball-fangen/](docs/archive/2026-08/2026-08-19_pokeball-fangen/README.md) — drei Phasen. Das Event steht als letztes in `ep_route_1_wiese.json` (Ziele Pikachu/Rattfratz, `speed: normal`).
+
+Die geplante Mechanik hat am Bildschirm nicht getragen und wurde am 21.08.2026 ersetzt — Begründung und Lehre stehen im Nachtrag der archivierten README. Kurzfassung des Endstands:
+- **Wisch-Wurf** nach dem Vorbild von Pokémon GO: Ball anfassen, wegwischen; Richtung und Schwung bestimmen Ziel und Weite. Der beschriftete Knopf bleibt der Tastaturweg mit Zielhilfe.
+- **Das Pokémon steht** auf einem von drei Plätzen und springt alle paar Sekunden zufällig auf einen anderen (Let's Go). `speed` steuert die Standzeit, nicht die Laufgeschwindigkeit, und trägt einen Zufallsanteil.
+- **Die Ansage** liegt oben rechts über der Bühne, hat einen Kasten unter sich und blendet nach sieben Sekunden aus. Sie ist mit Orpheus vertont (Stimme Sophie über den Besetzungseintrag `erzaehler`) — dafür sammelt `voice-tools/` jetzt auch Ansagetexte von Spiel-Events ein, neues Content-Feld `intro_audio_path`.
+- **Ein Kurvenball wurde gebaut und wieder entfernt** — zu fummelig fürs Lesealter.
+- **Aufgabenkarten sitzen mittig** auf der Bühne statt am unteren Rand; das Fangspiel ist davon ausgenommen und streckt sich über die volle Höhe.
+
+🔴 **Abnahme steht komplett aus** — nichts davon ist am Bildschirm bestätigt:
+- Eine Runde spielen: Treffer, Fehlwurf, garantierter fünfter Fang, Weiterlauf zur Ergebnisseite. Mit Finger, Maus und Tastatur.
+- **Die Aufnahme anhören** (`erzaehler_ep_route_1_wiese_001.mp3`) — deutsche Modelle raten bei Eigennamen, „Pokémon" ist der Prüfstein. Klingt es falsch: Wort lautschriftlich in den `intro`-Text und einmal mit `--force` durchlaufen.
+- Mit eingeschalteter Bewegungsreduktion einmal werfen und schauen, ob der Name nach gut drei Sekunden erscheint.
+- Alle sechs Aufgabenarten ansehen, ob das Zentrieren keine hohe Karte oben anstößt.
+- Runde auf dem Gerät des Kindes, dann `deploy.cmd content` und Runde auf dem Server.
+- Offen geblieben: die Entscheidung, ob weitere Episoden ein Fangspiel bekommen, und der Haken im Spielmechaniken-Katalog.
 
 **Nachbar-Bug gefunden und gefixt (21.08.2026, `a63c052`):** Das Erfolgs-Overlay aus `fcf36c0` lag bei **jeder** der sechs Aufgabenarten von Anfang an über der Karte (abgedunkelter Scrim, leeres Panel), nicht erst nach einem Treffer — `&__feedback:empty` prüfte den falschen Knoten, alle sechs Aufgaben-Typen projizieren ihren Feedback-Container immer, nur dessen Inhalt ist bedingt. Mit `:has()` gefixt, Build + Lint grün, gepusht. Betrifft auch die neue `word_match`-Anzeige aus dem Screenshot — sollte jetzt wieder normal spielbar sein.
 
@@ -16,7 +35,7 @@
 - `image_search` (`anlaut_b_suche`, `anlaut_m_suche`, `wald_suche`): akzeptierte nur eine fest verdrahtete Teilmenge der im Bild passenden Objekte — ein Kind, das zurecht auf ein drittes, ebenfalls richtiges Objekt tippte, bekam „Da ist nichts". Neues Content-Feld `find_count` behebt das (jedes passende Objekt zählt); die drei betroffenen JSON-Dateien und `JSON_SCHEMA_REFERENCE.md` sind nachgezogen. Damit ist auch die alte Nachbestell-Liste aus dem Phase-4-Report-Back hinfällig — es gibt keine Arenaleiter-Lücke mehr, weil jetzt immer alle bekannten Objekte als Ziel zählen.
 - `number_line`: Feldbreite hing an der Bildschirmhöhe statt an der verfügbaren Breite, dadurch waagerechter Bildlauf bei 0–20. Felder schrumpfen jetzt auf die verfügbare Breite.
 - Ziehen mit der Maus zeigte ein Verboten-Symbol (nativer Bild-Drag des Browsers kollidierte mit dem eigenen Pointer-Drag) — per Finger hat es laut Sascha schon vorher funktioniert. `draggable="false"` auf allen Bildern behoben.
-- Aufgaben-Karten, die nicht in die Bühnenfläche passten, waren oben abgeschnitten (Titel-Tag + Überschriftsanfang unsichtbar) — `align-content: safe end` löst das strukturell für alle Kartentypen, nicht nur den betroffenen Einzelfall.
+- Aufgaben-Karten, die nicht in die Bühnenfläche passten, waren oben abgeschnitten (Titel-Tag + Überschriftsanfang unsichtbar) — das `safe` in der Ausrichtung der Bühne löst das strukturell für alle Kartentypen, nicht nur den betroffenen Einzelfall. (Die Ausrichtung selbst steht seit 21.08.2026 auf mittig statt unten.)
 
 🟡 **Weiterhin offen, nicht angefasst:** Der Zahlenstrahl hat keine Bild-Beschriftungen für ein Kind, das noch keine Ziffern liest (`label_every` selbst ist Absicht — steuert die Schwierigkeit, keine Anzeige-Macke, siehe `JSON_SCHEMA_REFERENCE.md` § 5.7).
 
