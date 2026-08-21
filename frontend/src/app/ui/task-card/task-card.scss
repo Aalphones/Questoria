@@ -93,17 +93,20 @@
     text-wrap: pretty;
   }
 
-  // Leer, solange keine Aufgabe gelöst ist — dann trägt `<ng-content>` keine
-  // Knoten und `:empty` greift, ohne dass sich ein Aufgaben-Typ darum kümmern
-  // müsste. Erst bei Erfolg legt sich das Ergebnis als eigene Ebene über die
-  // ganze Karte, statt sich nur darunterzuschieben: Das Board bleibt sichtbar
-  // (abgedunkelt), aber der Blick geht eindeutig auf „Alles richtig!" statt
-  // auf zwei gleichrangige Blöcke untereinander.
-  &__feedback:empty {
+  // Der projizierte `[task-card-feedback]`-Knoten selbst steht in jedem der
+  // sechs Aufgaben-Typen fest im Template — nur SEIN Inhalt ist `@if`-gated.
+  // `&__feedback` (dieser Wrapper) hat also immer genau ein Kind-Element und
+  // wäre nie `:empty`. Geprüft wird deshalb, ob der projizierte Knoten selbst
+  // leer ist (`:has()` reicht durch die Projektion). Erst bei Erfolg legt
+  // sich das Ergebnis als eigene Ebene über die ganze Karte, statt sich nur
+  // darunterzuschieben: Das Board bleibt sichtbar (abgedunkelt), aber der
+  // Blick geht eindeutig auf „Alles richtig!" statt auf zwei gleichrangige
+  // Blöcke untereinander.
+  &__feedback:not(:has([task-card-feedback]:not(:empty))) {
     display: none;
   }
 
-  &__feedback:not(:empty) {
+  &__feedback:has([task-card-feedback]:not(:empty)) {
     display: grid;
     position: absolute;
     inset: 0;
