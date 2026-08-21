@@ -3,6 +3,21 @@ import { PokemonCatchConfig, PokemonCatchTarget } from '../../../models/content.
 const SPEEDS = ['langsam', 'normal', 'schnell'] as const;
 
 /**
+ * Wo der Wurf gerade steht. `fliegt` sperrt jeden weiteren Auslöser (Phase-2-AK
+ * 2), `gefangen` läuft die Fangsequenz und lässt sich nicht mehr verlassen.
+ */
+export type ThrowState = 'bereit' | 'fliegt' | 'gefangen';
+
+/** Ab diesem Wurf wird es leichter: Ziel halb so schnell, Trefferbreite doppelt. */
+export const EASY_FROM_THROW = 4;
+
+/** Ab diesem Wurf trifft jeder Ball, egal wie das Timing war. */
+export const GUARANTEED_FROM_THROW = 5;
+
+/** Trefferbreite als Anteil der Ziel-Breite — eine halbe Sprite-Breite je Seite. */
+export const HIT_TOLERANCE_SHARE = 0.5;
+
+/**
  * Taugt die aufgelöste Konfiguration überhaupt als Fangspiel? Ohne mindestens
  * ein Ziel stünde eine leere Bühne da (Phase-1-AK 3) — das gehört in den
  * Fehlerpfad des Gerüsts, nicht auf den Bildschirm.

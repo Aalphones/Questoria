@@ -2,9 +2,11 @@
 
 **Aktiver Plan:** [docs/planning/2026-08-19_pokeball-fangen/](docs/planning/2026-08-19_pokeball-fangen/README.md) — Pokéball werfen, 3 Phasen.
 
-**Phase:** 2/3 — Die Wurfmechanik (Rating: heikel). Phase 1 (Eventtyp und Bühne) ist fertig: `pokemon_catch` registriert, Bühne mit gezogenem Ziel und ruhendem Ball steht, beide Ballbilder erzeugt und deckungsgleich geprüft, ADR-015 geschrieben.
+**Phase:** 3/3 — Einbau in die Pokémon-Welt (Rating: mechanisch). Phase 2 (Die Wurfmechanik) ist fertig: Ziel läuft als CSS-Bildfolge, Wurf über Tippfläche, Knopf und Leertaste, Trefferentscheidung durch Messen beider Kästen am Ende der Flugbahn, vollständige Fangsequenz mit drei Wacklern und blinkender Taste, eigener Zweig für Bewegungsreduktion. Kein einziger Zeitgeber im Spiel — alles hängt an `animationend`.
 
-**Nächster Schritt:** `/clear`, dann `/model opusplan` (Phase 2 ist als heikel eingestuft) — danach README + `phase-2-wurfmechanik.md` lesen und umsetzen.
+**Nächster Schritt:** `/clear`, dann `/model sonnet` (Phase 3 ist mechanisch) — danach README + `phase-3-einbau.md` + die zwei Einträge in `FINDINGS.md` lesen und umsetzen.
+
+🟡 **Vor Phase 3 einmal am Bildschirm prüfen** (steht beim User, Details im Report-Back von Phase 2): Wurf mit Finger, Maus und Leertaste; fünfter Wurf fängt garantiert; und der eine Punkt, den ich nicht sehen kann — mit eingeschalteter Bewegungsreduktion einmal werfen und schauen, ob der Name nach gut drei Sekunden erscheint.
 
 🟡 **Für die Bildmaschine gemerkt:** Die Eingabepfade in den Skills `krea2-bilder`/`flux2-bilder` (`F:\Comfy-Desktop\...`) stimmen auf dieser Maschine nicht — die laufende ComfyUI-Instanz ist die portable Installation `B:\ComfyUI_windows_portable\ComfyUI\`, Referenzbilder für FLUX.2 gehören in deren `input\`. Skills sind dazu noch nicht korrigiert (Details: Phase-1-Report-Back).
 

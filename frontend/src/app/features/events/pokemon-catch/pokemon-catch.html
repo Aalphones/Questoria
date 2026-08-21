@@ -4,15 +4,84 @@
 </header>
 
 <div class="pokemon-catch__stage">
-  <div class="pokemon-catch__target">
-    <qst-image-slot [src]="targetSpriteUrl()" [label]="targetName()" fit="contain" />
+  <div class="pokemon-catch__lane">
+    @if (!caught()) {
+      <div
+        #target
+        class="pokemon-catch__target"
+        [class.pokemon-catch__target--wartet]="targetWaiting()"
+      >
+        <qst-image-slot [src]="targetSpriteUrl()" [label]="targetName()" fit="contain" />
+      </div>
+    }
   </div>
 
-  <div class="pokemon-catch__ball">
-    <qst-image-slot [src]="ballUrl()" [label]="config().ball" fit="contain" />
+  <div
+    #ball
+    class="pokemon-catch__ball"
+    [class.pokemon-catch__ball--geworfen]="flying() || caught()"
+    (animationend)="onFlightEnd($event)"
+  >
+    <div
+      class="pokemon-catch__ball-body"
+      [class.pokemon-catch__ball-body--faengt]="caught()"
+      (animationend)="onCatchEnd($event)"
+    >
+      <qst-image-slot [src]="ballUrl()" [label]="config().ball" fit="contain" />
+
+      <!--
+        Bewusst ein schlichtes Bild statt qst-image-slot: Diese Ebene ist reine
+        Deko und liegt über dem Ball — ein beschrifteter Platzhalter würde beim
+        Blinken den Ball verdecken. Fehlt die Datei, verschwindet die Ebene und
+        alles andere läuft weiter (README-Kontrakt). Sie steht von Anfang an im
+        Rahmen, damit sie geladen ist, bevor die Fangsequenz startet.
+      -->
+      @if (blinkUrl(); as url) {
+        <img
+          class="pokemon-catch__ball-blink"
+          [src]="url"
+          alt=""
+          aria-hidden="true"
+          draggable="false"
+          (error)="markBlinkFailed()"
+        />
+      }
+    </div>
   </div>
+
+  <!--
+    Die Tippfläche für Finger und Maus. Kein Tabstopp und für Vorleseprogramme
+    unsichtbar — über die Tastatur läuft derselbe Wurf über den beschrifteten
+    Knopf darunter, ein zweiter Tabstopp auf dieselbe Handlung wäre nur Lärm.
+  -->
+  @if (!caught()) {
+    <button
+      type="button"
+      class="pokemon-catch__tap-area"
+      tabindex="-1"
+      aria-hidden="true"
+      (click)="throwBall()"
+    ></button>
+  }
 </div>
 
 <footer class="pokemon-catch__footer">
-  <button type="button" class="pokemon-catch__next" (click)="finish()">Weiter</button>
+  <p class="pokemon-catch__message" role="status" aria-live="polite">
+    @if (celebrated()) {
+      {{ targetName() }} gefangen!
+    } @else if (missed()) {
+      Knapp daneben — noch einen Ball?
+    }
+  </p>
+
+  @if (celebrated()) {
+    <button type="button" class="pokemon-catch__next" (click)="finish()">Weiter</button>
+  } @else if (!caught()) {
+    <!--
+      Bewusst nicht gesperrt, solange ein Ball fliegt: ein gesperrter Knopf
+      verliert den Tastatur-Fokus, und das Kind käme nach dem ersten Wurf mit
+      der Leertaste nicht mehr weiter. Den zweiten Wurf hält der Zustand ab.
+    -->
+    <button type="button" class="pokemon-catch__throw" (click)="throwBall()">Ball werfen</button>
+  }
 </footer>

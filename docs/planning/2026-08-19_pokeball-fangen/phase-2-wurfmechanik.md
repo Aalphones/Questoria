@@ -82,26 +82,30 @@ Trefferbreite verdoppelt sich; ab dem fünften Wurf trifft jeder Ball.
 
 ## Checkliste
 
-- [ ] Ziel-Bewegung als CSS-Bildfolge, Dauer aus `speed` als
+- [x] Ziel-Bewegung als CSS-Bildfolge, Dauer aus `speed` als
       benutzerdefinierte Eigenschaft gesetzt
-- [ ] Position des Ziels im Moment des Abwurfs auslesen — über
+- [x] Position des Ziels im Moment des Abwurfs auslesen — über
       `getBoundingClientRect()` des Sprites, nicht über nachgerechnete Zeit
-- [ ] Wurf-Zustand als Signal (`bereit` | `fliegt` | `gefangen`), Auslöser
+- [x] Wurf-Zustand als Signal (`bereit` | `fliegt` | `gefangen`), Auslöser
       sperren solange `fliegt`
-- [ ] Flugbahn des Balls als eigene Bildfolge, Ziel-x als Eigenschaft
-- [ ] Trefferentscheidung nach Ende der Flugbahn, Toleranz aus der Wurfnummer
-- [ ] Fehlwurf-Zähler; ab dem vierten Wurf Erleichterung, ab dem fünften
+- [x] Flugbahn des Balls als eigene Bildfolge, Ziel-x als Eigenschaft
+- [x] Trefferentscheidung nach Ende der Flugbahn, Toleranz aus der Wurfnummer
+- [x] Fehlwurf-Zähler; ab dem vierten Wurf Erleichterung, ab dem fünften
       garantierter Fang
-- [ ] Fangsequenz als eine zusammenhängende CSS-Bildfolge nach dem Zeitplan
+- [x] Fangsequenz als eine zusammenhängende CSS-Bildfolge nach dem Zeitplan
       oben — Fallen, drei Wackler, Blinken der Taste, Aufblitzen
-- [ ] Beide Ballbilder übereinander im selben Rahmen, Blinken über die
+- [x] Beide Ballbilder übereinander im selben Rahmen, Blinken über die
       Deckkraft; beide vor dem Start der Sequenz geladen
-- [ ] Name des gefangenen Pokémon erscheint zum Abschluss, „Weiter" schließt das
+- [x] Name des gefangenen Pokémon erscheint zum Abschluss, „Weiter" schließt das
       Event mit `kind: 'story'` ab
-- [ ] Bewegungsreduktion: eigener Zweig ohne Flugbahn und ohne Wackeln, aber
+- [x] Bewegungsreduktion: eigener Zweig ohne Flugbahn und ohne Wackeln, aber
       **mit** Blinken (AK 5)
-- [ ] Aufräumen im `DestroyRef`
+- [x] Aufräumen im `DestroyRef` — **entfällt ersatzlos:** es gibt keinen
+      einzigen Zeitgeber. Beide Übergänge (Landung, Ende der Fangsequenz)
+      hängen am `animationend` der jeweiligen Bildfolge, und die stirbt mit
+      ihrem Element. AK 7 ist damit strukturell erfüllt statt aufgeräumt.
 - [ ] Am echten Tablet des Kindes prüfen, nicht nur am Entwicklungsrechner
+      (steht beim User, siehe Report-Back)
 
 ## Risiken
 
@@ -117,3 +121,48 @@ Bildschirm entscheidet — wenn drei Fehlwürfe die Regel sind, ist `langsam` de
 neue Standard. Das ist eine Content-Änderung, kein Code-Fehler.
 
 ## Report-Back
+
+**Status: complete (21.08.2026).** Build grün, Lint grün, Prettier grün.
+
+### Wie es gebaut ist
+
+Kein einziger Zeitgeber. Der ganze Ablauf hängt an drei CSS-Bildfolgen und zwei
+`animationend`-Meldungen: Flugbahn → Landung, Fangsequenz → Name. Das war nicht
+Sparsamkeit, sondern die Antwort auf das Phase-2-Risiko — ein Zeitgeber, der auf
+einem ausgelasteten Gerät spät feuert, entscheidet über eine Lage, die auf dem
+Bildschirm längst vorbei ist.
+
+**Die Trefferentscheidung misst beide Kästen im selben Augenblick** — den des
+Ziels und den des Balls, beide über `getBoundingClientRect()`. Damit ist der
+Vergleich immun gegen Verzögerung: was gemessen wird, ist genau das, was in
+diesem Moment auf dem Bildschirm steht. Selbst wenn die Meldung 300 ms zu spät
+kommt, sieht das Kind dasselbe Ergebnis, das gezählt wird.
+
+### Abweichungen vom Plan
+
+1. **Das Ziel bleibt beim garantierten Wurf stehen** (ab dem fünften Wurf, sobald
+   der Ball fliegt). Nicht geplant. Ohne das landet der Ball auf einer leeren
+   Stelle, das Pokémon verschwindet zwei Handbreit daneben und der geschenkte
+   Fang sieht aus wie ein Fehler. Eine Klasse, ein `animation-play-state`.
+2. **Die Trefferbreite misst den Ziel-Kasten, nicht das Motiv darin.** Ein
+   freigestelltes Sprite mit viel Luft im Rahmen macht das Spiel großzügiger als
+   die Zahl im Plan verspricht. Bewusst so: der Kasten ist die Fläche, die ein
+   Kind als „das Pokémon" sieht.
+3. **`DestroyRef` entfällt** (siehe Checkliste).
+4. **Die Blink-Ebene ist ein schlichtes `<img>`, kein `qst-image-slot`.** Ein
+   beschrifteter Platzhalter würde beim Blinken den Ball verdecken statt zu
+   helfen; fehlt die Datei, verschwindet die Ebene ganz.
+5. **Der Wurfknopf wird während des Flugs nicht gesperrt.** Ein gesperrter Knopf
+   verliert den Tastatur-Fokus — das Kind käme nach dem ersten Wurf mit der
+   Leertaste nicht mehr weiter. Den zweiten Wurf hält der Zustand ab, nicht das
+   `disabled`.
+
+### Unsicherste Stelle
+
+`pokemon-catch.scss` — die Bewegungsreduktions-Sektion am Dateiende. Sie ist der
+einzige Teil, den ich hier nicht sehen kann: dass die Ersatz-Bildfolge
+`eqPokeballCatchStill` wirklich dieselbe Dauer läuft und ihr `animationend`
+meldet, steht auf dem Papier richtig, aber geprüft ist es nicht. Klärender
+Check: im Browser die Bewegungsreduktion einschalten, einmal werfen — kommt der
+Name nach gut drei Sekunden, stimmt es; bleibt der Bildschirm nach dem Blinken
+stehen, feuert die Meldung nicht.

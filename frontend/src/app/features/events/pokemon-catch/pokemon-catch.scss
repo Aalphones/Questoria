@@ -1,3 +1,184 @@
+// Alle Bildfolgen dieses Spiels stehen hier, nicht in `_motion.scss` — sie
+// werden nirgends sonst gebraucht. Das `eq`-Präfix bleibt trotzdem: Angular
+// vergibt Keyframe-Namen global, ein knapper Name träfe irgendwann auf einen
+// zweiten.
+
+// Das Ziel läuft die Bahn ab und wieder zurück. `alternate` macht aus einer
+// Strecke den Hin- und Rückweg, deshalb die halbe Dauer.
+@keyframes eqPokemonPatrol {
+  from {
+    translate: 0 0;
+  }
+
+  to {
+    translate: calc(100cqi - 100%) 0;
+  }
+}
+
+// Bogen von der Ballmitte zu der Stelle, an der das Ziel beim Abwurf stand.
+@keyframes eqPokeballThrow {
+  from {
+    translate: 0 0;
+  }
+
+  50% {
+    translate: calc(var(--pokemon-catch-throw-x, 0px) / 2)
+      calc(var(--pokemon-catch-throw-y, 0px) / 2 - var(--size-pokemon-arc));
+  }
+
+  to {
+    translate: var(--pokemon-catch-throw-x, 0px) var(--pokemon-catch-throw-y, 0px);
+  }
+}
+
+// Die Fangsequenz nach dem Zeitplan aus Phase 2: fallen, aufsetzen, dreimal
+// wackeln mit Pausen dazwischen, zum Schluss aufblitzen. Eine zusammenhängende
+// Bildfolge — kein Zeitgeber, der die Schritte einzeln nachstellt.
+@keyframes eqPokeballCatch {
+  0% {
+    translate: 0 0;
+    rotate: 0deg;
+    scale: 1;
+  }
+
+  6.25% {
+    translate: 0 0;
+  }
+
+  15% {
+    translate: 0 var(--size-pokemon-fall);
+  }
+
+  17% {
+    translate: 0 calc(var(--size-pokemon-fall) - var(--size-pokemon-bounce));
+  }
+
+  18.75% {
+    translate: 0 var(--size-pokemon-fall);
+    rotate: 0deg;
+  }
+
+  25% {
+    rotate: -12deg;
+  }
+
+  31.25% {
+    rotate: 12deg;
+  }
+
+  37.5% {
+    rotate: 0deg;
+  }
+
+  43.75% {
+    rotate: 0deg;
+  }
+
+  50% {
+    rotate: -12deg;
+  }
+
+  56.25% {
+    rotate: 12deg;
+  }
+
+  62.5% {
+    rotate: 0deg;
+  }
+
+  68.75% {
+    rotate: 0deg;
+  }
+
+  75% {
+    rotate: -12deg;
+  }
+
+  81.25% {
+    rotate: 12deg;
+  }
+
+  87.5% {
+    rotate: 0deg;
+    scale: 1;
+  }
+
+  93.75% {
+    scale: 1.18;
+  }
+
+  100% {
+    translate: 0 var(--size-pokemon-fall);
+    rotate: 0deg;
+    scale: 1;
+  }
+}
+
+// Bewegungsreduktion: gleiche Dauer, gleicher Abschluss, nur ohne Fallen und
+// Wackeln. Bewusst eine eigene Bildfolge statt `animation: none` — sonst bliebe
+// das Ende der Sequenz ohne Meldung und der Name erschiene nie.
+@keyframes eqPokeballCatchStill {
+  0%,
+  87.5% {
+    scale: 1;
+  }
+
+  93.75% {
+    scale: 1.18;
+  }
+
+  100% {
+    scale: 1;
+  }
+}
+
+// Die Taste leuchtet in jedem Wackler und einmal zur Bestätigung. Die Zeiten
+// liegen genau in den Fenstern von `eqPokeballCatch` — deshalb blinkt es auch
+// bei Bewegungsreduktion an derselben Stelle.
+@keyframes eqPokeballBlink {
+  0%,
+  18.75% {
+    opacity: 0;
+  }
+
+  25%,
+  31.25% {
+    opacity: 1;
+  }
+
+  37.5%,
+  43.75% {
+    opacity: 0;
+  }
+
+  50%,
+  56.25% {
+    opacity: 1;
+  }
+
+  62.5%,
+  68.75% {
+    opacity: 0;
+  }
+
+  75%,
+  81.25% {
+    opacity: 1;
+  }
+
+  87.5% {
+    opacity: 0;
+  }
+
+  93.75% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
 :host {
   display: grid;
   grid-template-rows: auto 1fr auto;
@@ -25,6 +206,7 @@
 
   &__stage {
     display: grid;
+    grid-template-rows: 1fr auto;
     position: relative;
     justify-items: center;
     align-content: center;
@@ -32,21 +214,88 @@
     min-block-size: 0;
   }
 
-  &__target {
-    inline-size: var(--size-pokemon-target-inline);
+  // Die Laufbahn des Ziels. `container-type` macht ihre Breite als `cqi`
+  // messbar — dadurch kennt die Bildfolge die Strecke, ohne dass jemand sie
+  // in Pixeln ausrechnet.
+  &__lane {
+    container-type: inline-size;
+    position: relative;
+    inline-size: 100%;
     block-size: var(--size-pokemon-target-block);
   }
 
+  &__target {
+    position: absolute;
+    inset-block-end: 0;
+    inset-inline-start: 0;
+    inline-size: var(--size-pokemon-target-inline);
+    block-size: 100%;
+    animation: eqPokemonPatrol calc(var(--pokemon-catch-walk, 8s) / 2) linear infinite alternate;
+
+    &--wartet {
+      animation-play-state: paused;
+    }
+  }
+
   &__ball {
+    position: relative;
     inline-size: var(--size-pokemon-ball);
     block-size: var(--size-pokemon-ball);
+
+    &--geworfen {
+      animation: eqPokeballThrow var(--duration-pokemon-throw) var(--easing-standard) forwards;
+    }
+  }
+
+  &__ball-body {
+    position: relative;
+    inline-size: 100%;
+    block-size: 100%;
+
+    &--faengt {
+      animation: eqPokeballCatch var(--duration-pokemon-catch) linear forwards;
+    }
+  }
+
+  // Liegt deckungsgleich über dem Ball; es wechselt nur die Deckkraft, nie die
+  // Bildquelle — sonst flackert der erste Wackler, während die Datei noch lädt.
+  &__ball-blink {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: contain;
+    opacity: 0;
+    pointer-events: none;
+
+    .pokemon-catch__ball-body--faengt & {
+      animation: eqPokeballBlink var(--duration-pokemon-catch) linear forwards;
+    }
+  }
+
+  &__tap-area {
+    position: absolute;
+    inset: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
   }
 
   &__footer {
     display: flex;
+    align-items: center;
     justify-content: center;
+    gap: var(--space-4);
   }
 
+  &__message {
+    margin: 0;
+    font-size: var(--font-size-body);
+    font-weight: 600;
+    text-wrap: pretty;
+  }
+
+  &__throw,
   &__next {
     min-block-size: var(--size-touch-target);
     padding-inline: var(--space-6);
@@ -66,6 +315,27 @@
     &:focus-visible {
       outline: 2px solid var(--color-focus-ring);
       outline-offset: 2px;
+    }
+  }
+}
+
+// Bewegungsreduktion: Das Ziel steht still, der Ball erscheint ohne Flugbahn an
+// seiner Stelle. Die Fangsequenz bleibt — sie blinkt nur, statt zu wackeln.
+@media (prefers-reduced-motion: reduce) {
+  .pokemon-catch {
+    &__target {
+      animation: none;
+      inset-inline-start: 50%;
+      translate: -50% 0;
+    }
+
+    &__ball--geworfen {
+      animation: none;
+      translate: var(--pokemon-catch-throw-x, 0px) var(--pokemon-catch-throw-y, 0px);
+    }
+
+    &__ball-body--faengt {
+      animation-name: eqPokeballCatchStill;
     }
   }
 }

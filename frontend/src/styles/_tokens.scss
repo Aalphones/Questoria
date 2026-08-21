@@ -214,6 +214,11 @@
   --size-pokemon-target-inline: min(30vw, 19rem);
   --size-pokemon-target-block: min(42dvh, 22rem);
   --size-pokemon-ball: clamp(4.5rem, 12vh, 7rem);
+  // Scheitelhöhe der Wurfbahn, Fallstrecke nach dem Treffer und die Höhe des
+  // einen Aufsetzers am Boden.
+  --size-pokemon-arc: 4rem;
+  --size-pokemon-fall: 2.5rem;
+  --size-pokemon-bounce: 0.75rem;
 
   // ── Interaktion ──────────────────────────────────────────────────────────
   // Mindestgröße für antippbare Ziele (Kinder-Zielgruppe) — Kopfleiste,
@@ -232,9 +237,20 @@
   // Dauerbewegungen der Karten (siehe _motion.scss).
   --duration-ambient: 5s;
   --duration-pulse: 2s;
+  // Pokéball-Wurf: eine volle Hin- und Rückstrecke des Ziels je `speed`, die
+  // Flugzeit des Balls und die Fangsequenz danach.
+  --duration-pokemon-walk-langsam: 12s;
+  --duration-pokemon-walk-normal: 8s;
+  --duration-pokemon-walk-schnell: 5s;
+  --duration-pokemon-throw: 600ms;
+  --duration-pokemon-catch: 3200ms;
   --easing-standard: cubic-bezier(0.2, 0, 0.2, 1);
 }
 
+// Die Pokéball-Dauern stehen bewusst NICHT hier drin: Bewegungsreduktion heißt
+// weniger Bewegung, nicht weniger Belohnung — die Fangsequenz blinkt auch dort
+// in voller Länge zu Ende (Plan `2026-08-19_pokeball-fangen`, Phase 2, AK 5).
+// Was dort entfällt, schaltet die Komponente selbst ab.
 @media (prefers-reduced-motion: reduce) {
   :root {
     --duration-fast: 0ms;

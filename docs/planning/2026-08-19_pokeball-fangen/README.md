@@ -47,7 +47,7 @@ Lernziel, kein Scheitern.
 | # | Phase | Rating | Status |
 |---|---|---|---|
 | 1 | [Eventtyp und Bühne](phase-1-eventtyp-und-buehne.md) | standard | complete |
-| 2 | [Die Wurfmechanik](phase-2-wurfmechanik.md) | heikel | pending |
+| 2 | [Die Wurfmechanik](phase-2-wurfmechanik.md) | heikel | complete |
 | 3 | [Einbau in die Pokémon-Welt](phase-3-einbau.md) | mechanisch | pending |
 
 ## Kontrakt — die Konfiguration
