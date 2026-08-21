@@ -7,6 +7,8 @@ description: Dialogzeilen einer Questoria-Welt lokal vertonen — besetzen, Stim
 
 Die Skripte unter `data/_authoring/voice-tools/` lesen die Episodendateien einer Welt, erzeugen pro Dialogzeile eine Audiodatei am richtigen Ort mit dem richtigen Namen und tragen den Verweis `audio_path` zurück ins Content-JSON. Kein Copy-Paste von Text, keine Handbenennung.
 
+**Ansagen zählen mit.** Neben den Dialogzeilen sammelt das Werkzeug auch die gesprochenen Ansagen der Spiel-Events ein — aktuell der `intro`-Text von `pokemon_catch`. Sie kommen aus dem Off, laufen deshalb immer über den Besetzungseintrag `erzaehler` und schreiben ihren Verweis nach `intro_audio_path` statt nach `audio_path`. Welche Eventtypen eine Ansage tragen, steht in `voice_lines.py` unter `ANNOUNCEMENT_EVENT_FIELDS`; ein neuer Typ mit Ansage braucht dort eine Zeile und sonst nichts. Im Trockenlauf stehen sie als Sprecher „Ansage" mit eigener Nummerierung.
+
 **Deutsch heißt Orpheus.** Kokoro kann offiziell kein Deutsch — es bleibt für fremdsprachige Zeilen und schnelle Rohfassungen. Die ganze Herleitung steht in `data/_authoring/voice-tools/README.md`.
 
 Fehlt eine Aufnahme, bricht nichts: die Engine liest die Zeile über die Sprachausgabe des Geräts vor. Vertonung ist Kür, nicht Pflicht — das ist der Grund, warum ein abgebrochener Lauf kein Drama ist.

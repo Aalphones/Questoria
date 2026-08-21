@@ -33,6 +33,19 @@ DEFAULT_CASTING_KEY = "_default"
 AUDIO_SUBFOLDER = "audio/voices"
 MP3_BITRATE = "96k"
 
+# Ansagen gehoeren keiner Figur — sie kommen aus dem Off und werden ueber den
+# Besetzungseintrag `erzaehler` gesprochen, der dafuer schon in voices.json
+# steht. Keine Figur traegt diese id als Sprite, also kann der Dateiname nicht
+# mit einer Dialogzeile kollidieren.
+ANNOUNCER_CHARACTER_ID = "erzaehler"
+ANNOUNCER_SPEAKER_NAME = "Ansage"
+
+# Eventtypen, die eine gesprochene Ansage tragen: Feld mit dem Text, Feld fuer
+# den Rueckverweis auf die Aufnahme.
+ANNOUNCEMENT_EVENT_FIELDS: dict[str, tuple[str, str]] = {
+    "pokemon_catch": ("intro", "intro_audio_path"),
+}
+
 # Alles unter diesem Bruchteil des Spitzenpegels gilt als Stille. Danach bleiben
 # 80 ms Luft stehen, damit kein Anlaut abgeschnitten wird.
 SILENCE_THRESHOLD = 0.02
@@ -41,7 +54,7 @@ TRIM_PADDING_SECONDS = 0.08
 
 @dataclass(frozen=True)
 class VoiceLine:
-    """Eine einzelne Dialogzeile, fertig zum Vertonen."""
+    """Eine einzelne zu vertonende Zeile — Dialog oder Ansage."""
 
     theme_id: str
     episode_id: str
@@ -50,10 +63,22 @@ class VoiceLine:
     character_id: str
     speaker_name: str
     text: str
+    # "dialog" = eine Zeile in einem dialog-Event, "ansage" = ein Ansagetext
+    # eines Spiel-Events. Beide werden getrennt durchnummeriert.
+    kind: str = "dialog"
 
     @property
     def file_stem(self) -> str:
         return f"{self.character_id}_{self.episode_id}_{self.line_index:03d}"
+
+    @property
+    def slot_key(self) -> str:
+        """Eindeutiger Platz innerhalb einer Episode — Art plus laufende Nummer.
+
+        Dialog und Ansage zaehlen jeweils bei 1 los; ohne die Art davor wuerden
+        sich beim Rueckschreiben Zeile 1 und Ansage 1 gegenseitig ueberschreiben.
+        """
+        return f"{self.kind}:{self.line_index}"
 
     @property
     def label(self) -> str:
@@ -104,6 +129,31 @@ def iter_dialogue_lines(episode: dict[str, Any]) -> Iterator[tuple[int, dict[str
         for dialogue_line in lines:
             line_index += 1
             yield line_index, dialogue_line
+
+
+def iter_announcement_lines(episode: dict[str, Any]) -> Iterator[tuple[int, dict[str, Any], str, str]]:
+    """Alle Ansagetexte einer Episode, eigene Nummerierung ab 1.
+
+    Ansagen sind die gesprochenen Saetze, die ein Spiel-Event ueber seine Buehne
+    setzt — kein Dialog, keine Figur, kein Sprite. Welche Events eine tragen,
+    steht in ANNOUNCEMENT_EVENT_FIELDS.
+
+    Geliefert werden Nummer, das Original-`config`-Dict, der Text und der Name
+    des Feldes, in das der Rueckverweis gehoert.
+    """
+    line_index = 0
+    events: list[dict[str, Any]] = episode.get("events") or []
+    for event in events:
+        fields = ANNOUNCEMENT_EVENT_FIELDS.get(str(event.get("type")))
+        if fields is None:
+            continue
+        text_field, audio_field = fields
+        config: dict[str, Any] = event.get("config") or {}
+        text = str(config.get(text_field) or "").strip()
+        if not text:
+            continue
+        line_index += 1
+        yield line_index, config, text, audio_field
 
 
 def choose_text(dialogue_line: dict[str, Any], prefer_simple: bool) -> str:
@@ -158,6 +208,20 @@ def collect_voice_lines(
                         character_id=derive_character_id(str(dialogue_line.get("sprite") or "unbekannt")),
                         speaker_name=str(dialogue_line.get("name") or "?"),
                         text=text,
+                    )
+                )
+
+            for position, _config, text, _audio_field in iter_announcement_lines(episode):
+                collected.append(
+                    VoiceLine(
+                        theme_id=theme_folder.name,
+                        episode_id=current_episode_id,
+                        episode_file=episode_file,
+                        line_index=position,
+                        character_id=ANNOUNCER_CHARACTER_ID,
+                        speaker_name=ANNOUNCER_SPEAKER_NAME,
+                        text=text,
+                        kind="ansage",
                     )
                 )
 
@@ -271,21 +335,31 @@ def convert_to_mp3(wav_file: Path) -> Path:
     return mp3_file
 
 
-def write_audio_paths(produced: dict[Path, dict[int, str]]) -> int:
-    """`audio_path` in die Episodendateien zurueckschreiben.
+def write_audio_paths(produced: dict[Path, dict[str, str]]) -> int:
+    """Den Rueckverweis auf die Aufnahme in die Episodendateien zurueckschreiben.
 
-    produced: Episodendatei -> {Zeilennummer (1-basiert): relativer Audiopfad}
+    produced: Episodendatei -> {VoiceLine.slot_key: relativer Audiopfad}
+
+    Dialogzeilen bekommen `audio_path`, Ansagen das Feld, das ihr Eventtyp dafuer
+    vorsieht (bei `pokemon_catch` ist das `intro_audio_path`).
     """
     changed_files = 0
-    for episode_file, paths_per_line in produced.items():
+    for episode_file, paths_per_slot in produced.items():
         episode = json.loads(episode_file.read_text(encoding="utf-8"))
-        lines_by_index = dict(iter_dialogue_lines(episode))
+        # Platz -> (Dict, das den Verweis traegt, Feldname darin)
+        targets_by_slot: dict[str, tuple[dict[str, Any], str]] = {
+            f"dialog:{index}": (dialogue_line, "audio_path")
+            for index, dialogue_line in iter_dialogue_lines(episode)
+        }
+        for index, config, _text, audio_field in iter_announcement_lines(episode):
+            targets_by_slot[f"ansage:{index}"] = (config, audio_field)
+
         file_changed = False
 
-        for line_index, audio_path in paths_per_line.items():
-            dialogue_line = lines_by_index[line_index]
-            if dialogue_line.get("audio_path") != audio_path:
-                dialogue_line["audio_path"] = audio_path
+        for slot_key, audio_path in paths_per_slot.items():
+            holder, audio_field = targets_by_slot[slot_key]
+            if holder.get(audio_field) != audio_path:
+                holder[audio_field] = audio_path
                 file_changed = True
 
         if file_changed:

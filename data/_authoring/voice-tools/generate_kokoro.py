@@ -175,7 +175,7 @@ def main() -> int:
     produced_count = 0
     skipped_count = 0
     failed: list[str] = []
-    produced_paths: dict[Path, dict[int, str]] = {}
+    produced_paths: dict[Path, dict[str, str]] = {}
 
     for line in lines:
         entry = casting_for(casting, line.character_id)
@@ -183,7 +183,7 @@ def main() -> int:
 
         if target.exists() and not arguments.force:
             skipped_count += 1
-            produced_paths.setdefault(line.episode_file, {})[line.line_index] = relative_audio_path(line, extension)
+            produced_paths.setdefault(line.episode_file, {})[line.slot_key] = relative_audio_path(line, extension)
             continue
 
         print(f"{line.label} [{entry.voice}] {line.text[:60]}")
@@ -203,7 +203,7 @@ def main() -> int:
             continue
 
         produced_count += 1
-        produced_paths.setdefault(line.episode_file, {})[line.line_index] = relative_audio_path(line, extension)
+        produced_paths.setdefault(line.episode_file, {})[line.slot_key] = relative_audio_path(line, extension)
 
     changed_files = 0
     if not arguments.dry_run and not arguments.no_write_json:

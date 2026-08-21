@@ -371,8 +371,10 @@ export interface PokemonCatchConfig {
   /** Dateiname unter props/, Taste rot leuchtend — fehlt sie, blinkt es nicht */
   ball_blink?: string;
   speed: PokemonCatchSpeed;
-  /** Ansagetext über der Bühne — wird im Vorlesemodus über die Gerätestimme gesprochen, keine Aufnahme */
+  /** Ansagetext über der Bühne — im Vorlesemodus gesprochen, ohne Aufnahme über die Gerätestimme */
   intro: string;
+  /** relativer Pfad unter audio/voices/ für die Ansage; fehlt er, spricht die Gerätestimme */
+  intro_audio_path?: string;
 }
 
 /**
