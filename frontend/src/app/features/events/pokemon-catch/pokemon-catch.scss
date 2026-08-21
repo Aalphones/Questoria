@@ -3,31 +3,27 @@
 // vergibt Keyframe-Namen global, ein knapper Name träfe irgendwann auf einen
 // zweiten.
 
-// Das Ziel läuft die Bahn ab und wieder zurück. `alternate` macht aus einer
-// Strecke den Hin- und Rückweg, deshalb die halbe Dauer.
-@keyframes eqPokemonPatrol {
-  from {
-    translate: 0 0;
-  }
-
-  to {
-    translate: calc(100cqi - 100%) 0;
-  }
-}
-
-// Bogen von der Ballmitte zu der Stelle, an der das Ziel beim Abwurf stand.
+// Die Wurfbahn: vom Platz, an dem der Finger den Ball losgelassen hat, zu der
+// Stelle, die Richtung und Schwung des Wischers ergeben haben. Auf halbem Weg
+// liegt der Scheitel des Bogens. Der Ball wird dabei kleiner: er fliegt in die
+// Szene hinein, sonst sähe der Wurf flach aus.
 @keyframes eqPokeballThrow {
   from {
-    translate: 0 0;
+    translate: var(--pokemon-catch-drag-x, 0px) var(--pokemon-catch-drag-y, 0px);
+    scale: 1;
   }
 
   50% {
-    translate: calc(var(--pokemon-catch-throw-x, 0px) / 2)
-      calc(var(--pokemon-catch-throw-y, 0px) / 2 - var(--size-pokemon-arc));
+    translate: calc((var(--pokemon-catch-drag-x, 0px) + var(--pokemon-catch-throw-x, 0px)) / 2)
+      calc(
+        (var(--pokemon-catch-drag-y, 0px) + var(--pokemon-catch-throw-y, 0px)) /
+          2 - var(--pokemon-catch-arc, 4rem)
+      );
   }
 
   to {
     translate: var(--pokemon-catch-throw-x, 0px) var(--pokemon-catch-throw-y, 0px);
+    scale: var(--scale-pokemon-landing);
   }
 }
 
@@ -179,19 +175,55 @@
   }
 }
 
+// `overflow: clip` ist Pflicht, nicht Kosmetik: Beim Ziehen wandert der Ball
+// mit dem Finger und kann über den Rand hinausragen — ohne die Zeile wächst
+// die Seite und der Browser wirft mitten im Wurf eine Bildlaufleiste ein.
 :host {
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  position: relative;
+  grid-template-rows: 1fr auto;
   gap: var(--space-4);
   min-block-size: 0;
+  overflow: clip;
 }
 
 .pokemon-catch {
+  // Liegt über der Bühne statt darüber im Fluss — die Wiese soll ganz zu sehen
+  // sein, die Ansage ist nur ein Gast.
+  // Abstand zu den Kanten, nicht bündig: bündig sieht die Fläche aus wie
+  // abgeschnitten, und `overflow: clip` am Wirt macht daraus wirklich einen
+  // Schnitt.
   &__intro {
     display: flex;
+    position: absolute;
+    z-index: 1;
+    inset-block-start: var(--space-4);
+    inset-inline-end: var(--space-4);
+    justify-content: flex-end;
+    max-inline-size: min(28rem, 55%);
+    transition:
+      opacity var(--duration-pokemon-intro-fade) var(--easing-standard),
+      translate var(--duration-pokemon-intro-fade) var(--easing-standard);
+
+    &--verblasst {
+      opacity: 0;
+      translate: 0 calc(var(--space-4) * -1);
+      pointer-events: none;
+    }
+  }
+
+  // Eigene Fläche hinter dem Text. Die Bühne ist ein gemaltes Bild; ohne Kasten
+  // steht der Satz je nach Stelle auf hellem Himmel oder dunklem Gebüsch und
+  // ist stellenweise nicht zu lesen. Gleicher Kasten wie im Dialog.
+  &__intro-box {
+    display: flex;
     align-items: center;
-    justify-content: center;
-    gap: var(--space-3);
+    gap: var(--space-4);
+    padding: var(--space-5) var(--space-6);
+    border-radius: var(--radius-card);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-lg);
+    color: var(--color-text);
     text-align: center;
 
     p {
@@ -214,9 +246,9 @@
     min-block-size: 0;
   }
 
-  // Die Laufbahn des Ziels. `container-type` macht ihre Breite als `cqi`
-  // messbar — dadurch kennt die Bildfolge die Strecke, ohne dass jemand sie
-  // in Pixeln ausrechnet.
+  // Die Fläche, auf der das Ziel steht. `container-type` macht ihre Breite als
+  // `cqi` messbar — dadurch kennen die drei Plätze ihren Abstand, ohne dass
+  // jemand sie in Pixeln ausrechnet.
   &__lane {
     container-type: inline-size;
     position: relative;
@@ -224,26 +256,52 @@
     block-size: var(--size-pokemon-target-block);
   }
 
+  // Drei feste Plätze statt einer Dauerbewegung: Das Ziel steht, springt nach
+  // ein paar Sekunden woandershin und steht wieder. Der Wechsel ist ein
+  // Übergang, keine Bildfolge — deshalb kann er jederzeit unterbrochen werden.
   &__target {
     position: absolute;
     inset-block-end: 0;
     inset-inline-start: 0;
     inline-size: var(--size-pokemon-target-inline);
     block-size: 100%;
-    animation: eqPokemonPatrol calc(var(--pokemon-catch-walk, 8s) / 2) linear infinite alternate;
+    transition: translate var(--duration-pokemon-hop) var(--easing-standard);
 
-    &--wartet {
-      animation-play-state: paused;
+    &--links {
+      translate: 0 0;
+    }
+
+    &--mitte {
+      translate: calc((100cqi - 100%) / 2) 0;
+    }
+
+    &--rechts {
+      translate: calc(100cqi - 100%) 0;
     }
   }
 
+  // `touch-action: none` ist hier kein Feinschliff, sondern Bedingung: sonst
+  // deutet der Browser den Wischer als Scrollen und der Ball bleibt liegen.
+  // Der Übergang auf `translate` gilt nur für den Rückweg nach einem Fehlwurf —
+  // beim Ziehen ist er abgeschaltet, sonst hinkt der Ball dem Finger nach.
   &__ball {
     position: relative;
     inline-size: var(--size-pokemon-ball);
     block-size: var(--size-pokemon-ball);
+    touch-action: none;
+    cursor: grab;
+    transition: translate var(--duration-pokemon-return) var(--easing-standard);
+
+    &--haelt {
+      translate: var(--pokemon-catch-drag-x, 0px) var(--pokemon-catch-drag-y, 0px);
+      scale: var(--scale-pokemon-hold);
+      transition: none;
+      cursor: grabbing;
+    }
 
     &--geworfen {
-      animation: eqPokeballThrow var(--duration-pokemon-throw) var(--easing-standard) forwards;
+      animation: eqPokeballThrow var(--pokemon-catch-flight, var(--duration-pokemon-throw))
+        var(--easing-standard) forwards;
     }
   }
 
@@ -273,14 +331,6 @@
     }
   }
 
-  &__tap-area {
-    position: absolute;
-    inset: 0;
-    border: none;
-    background: none;
-    cursor: pointer;
-  }
-
   &__footer {
     display: flex;
     align-items: center;
@@ -290,6 +340,17 @@
 
   &__message {
     margin: 0;
+  }
+
+  // Derselbe Kasten wie oben, nur kleiner — auch dieser Text steht auf dem
+  // gemalten Hintergrund und braucht eine Fläche unter sich.
+  &__message-box {
+    display: inline-block;
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-md);
+    color: var(--color-text);
     font-size: var(--font-size-body);
     font-weight: 600;
     text-wrap: pretty;
@@ -319,19 +380,32 @@
   }
 }
 
-// Bewegungsreduktion: Das Ziel steht still, der Ball erscheint ohne Flugbahn an
-// seiner Stelle. Die Fangsequenz bleibt — sie blinkt nur, statt zu wackeln.
+// Bewegungsreduktion: Das Ziel wechselt seinen Platz ohne Gleiten, der Ball
+// erscheint ohne Flugbahn an seiner Stelle, die Ansage verschwindet ohne
+// Überblendung. Die Fangsequenz bleibt — sie blinkt nur, statt zu wackeln.
 @media (prefers-reduced-motion: reduce) {
   .pokemon-catch {
-    &__target {
-      animation: none;
-      inset-inline-start: 50%;
-      translate: -50% 0;
+    &__intro {
+      transition: none;
+
+      &--verblasst {
+        // Ohne Überblendung ist Wegnehmen ehrlicher als eine Fläche mit 0 %
+        // Deckkraft, die weiter Platz beansprucht.
+        display: none;
+      }
     }
 
-    &__ball--geworfen {
-      animation: none;
-      translate: var(--pokemon-catch-throw-x, 0px) var(--pokemon-catch-throw-y, 0px);
+    &__target {
+      transition: none;
+    }
+
+    &__ball {
+      transition: none;
+
+      &--geworfen {
+        animation: none;
+        translate: var(--pokemon-catch-throw-x, 0px) var(--pokemon-catch-throw-y, 0px);
+      }
     }
 
     &__ball-body--faengt {

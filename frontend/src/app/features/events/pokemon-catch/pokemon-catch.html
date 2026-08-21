@@ -1,25 +1,50 @@
-<header class="pokemon-catch__intro">
-  <qst-read-aloud-button [text]="intro()" />
-  <p>{{ intro() }}</p>
+<!--
+  Die Ansage liegt über der Bühne in der oberen rechten Ecke und blendet nach
+  ein paar Sekunden aus: Sie steht mitten im Bild, und wer sie gelesen oder
+  gehört hat, will danach die Wiese sehen und nicht den Kasten.
+-->
+<header
+  class="pokemon-catch__intro"
+  [class.pokemon-catch__intro--verblasst]="!introVisible()"
+  [attr.aria-hidden]="introVisible() ? null : 'true'"
+>
+  <div class="pokemon-catch__intro-box">
+    <qst-read-aloud-button [text]="intro()" [audioUrl]="introAudioUrl()" />
+    <p>{{ intro() }}</p>
+  </div>
 </header>
 
-<div class="pokemon-catch__stage">
+<div #stage class="pokemon-catch__stage">
   <div class="pokemon-catch__lane">
     @if (!caught()) {
+      <!--
+        Das Ziel steht auf einem von drei Plätzen und springt alle paar Sekunden
+        auf einen anderen — es läuft nicht durch. Welcher Platz gilt, entscheidet
+        die Komponente; das Stylesheet weiß nur, wo links, Mitte und rechts liegen.
+      -->
       <div
         #target
         class="pokemon-catch__target"
-        [class.pokemon-catch__target--wartet]="targetWaiting()"
+        [class.pokemon-catch__target--links]="targetSlot() === 'links'"
+        [class.pokemon-catch__target--mitte]="targetSlot() === 'mitte'"
+        [class.pokemon-catch__target--rechts]="targetSlot() === 'rechts'"
       >
         <qst-image-slot [src]="targetSpriteUrl()" [label]="targetName()" fit="contain" />
       </div>
     }
   </div>
 
+  <!--
+    Der Ball selbst ist die Spielfläche: anfassen, zurückziehen, wegwischen.
+    `touch-action` liegt im Stylesheet — ohne das scrollt der Browser die Seite,
+    statt den Ball mitzunehmen.
+  -->
   <div
     #ball
     class="pokemon-catch__ball"
+    [class.pokemon-catch__ball--haelt]="holding()"
     [class.pokemon-catch__ball--geworfen]="flying() || caught()"
+    (pointerdown)="onBallPointerDown($event)"
     (animationend)="onFlightEnd($event)"
   >
     <div
@@ -48,29 +73,17 @@
       }
     </div>
   </div>
-
-  <!--
-    Die Tippfläche für Finger und Maus. Kein Tabstopp und für Vorleseprogramme
-    unsichtbar — über die Tastatur läuft derselbe Wurf über den beschrifteten
-    Knopf darunter, ein zweiter Tabstopp auf dieselbe Handlung wäre nur Lärm.
-  -->
-  @if (!caught()) {
-    <button
-      type="button"
-      class="pokemon-catch__tap-area"
-      tabindex="-1"
-      aria-hidden="true"
-      (click)="throwBall()"
-    ></button>
-  }
 </div>
 
 <footer class="pokemon-catch__footer">
+  <!--
+    Der Bereich bleibt immer im Rahmen — ein Vorleseprogramm meldet Änderungen
+    nur an einer Stelle, die es schon kennt. Der Kasten drumherum kommt und geht
+    mit dem Text, sonst steht während der Fangsequenz eine leere Fläche da.
+  -->
   <p class="pokemon-catch__message" role="status" aria-live="polite">
-    @if (celebrated()) {
-      {{ targetName() }} gefangen!
-    } @else if (missed()) {
-      Knapp daneben — noch einen Ball?
+    @if (message(); as text) {
+      <span class="pokemon-catch__message-box">{{ text }}</span>
     }
   </p>
 

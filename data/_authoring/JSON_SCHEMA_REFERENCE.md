@@ -764,6 +764,15 @@ Der Pokéball-Wurf — ein reiner Belohnungsmoment, kein Lerninhalt. Meldet
 `kind: 'story'`, steht nicht in `SCORED_EVENT_TYPES` und beeinflusst die
 Sterne nicht ([ADR-015](../../docs/decisions/015-eigener-eventtyp-statt-franchise-game.md)).
 
+Gespielt wird mit dem Finger wie im Vorbild: Der Ball wird angefasst und
+weggewischt — die **Richtung** des Wischers bestimmt, wohin er fliegt, sein
+**Schwung** wie weit. Über die Tastatur wirft der Knopf unter der Bühne mit
+Zielhilfe. Der `intro`-Text sollte das Wischen benennen, nicht das Antippen.
+
+Das Ziel läuft nicht durch, es steht auf einem von **drei Plätzen** (links,
+Mitte, rechts) und springt alle paar Sekunden auf einen anderen. `speed` steuert,
+wie lange es jeweils stehen bleibt — nicht, wie schnell es läuft.
+
 ```json
 {
   "type": "pokemon_catch",
@@ -775,7 +784,7 @@ Sterne nicht ([ADR-015](../../docs/decisions/015-eigener-eventtyp-statt-franchis
     "ball": "pokeball.png",
     "ball_blink": "pokeball_blink.png",
     "speed": "normal",
-    "intro": "Wirf den Ball, wenn Pikachu vor dir steht!"
+    "intro": "Wisch den Ball mit dem Finger zu Pikachu!"
   }
 }
 ```
@@ -785,8 +794,14 @@ Sterne nicht ([ADR-015](../../docs/decisions/015-eigener-eventtyp-statt-franchis
 | `targets` | ja, mind. 1 | mögliche Ziele — eines wird beim Öffnen gezogen; `sprite` wie bei Dialog-Sprites relativ zu `sprites/` |
 | `ball` | ja | Dateiname unter `props/`, Taste dunkel |
 | `ball_blink` | nein | Dateiname unter `props/`, Taste rot leuchtend — fehlt sie, blinkt es nicht, alles andere läuft weiter |
-| `speed` | ja | `langsam` \| `normal` \| `schnell` — kein freier Zahlenwert im Content |
-| `intro` | ja | Ansagetext über der Bühne, im Vorlesemodus über die Gerätestimme gesprochen — **keine Sprachaufnahme nötig** |
+| `speed` | ja | `langsam` \| `normal` \| `schnell` — Standzeit auf einem Platz, kein freier Zahlenwert im Content |
+| `intro` | ja | Ansagetext über der Bühne; er blendet nach ein paar Sekunden aus |
+| `intro_audio_path` | nein | Aufnahme zur Ansage, relativ zum Welt-Ordner (`audio/voices/…`) — **setzt das Vertonungswerkzeug selbst**, siehe unten. Fehlt sie, spricht die Gerätestimme |
+
+**Die Ansage wird mitvertont.** Das Werkzeug unter `voice-tools/` sammelt neben
+den Dialogzeilen auch diesen `intro`-Text ein — gesprochen vom Besetzungseintrag
+`erzaehler`, geschrieben nach `intro_audio_path`. Von Hand einzutragen ist da
+nichts.
 
 **Kein `ball_blink`-Ableiten aus `ball`.** Ein stillschweigendes `_blink` am
 Dateinamen ist die Sorte Regel, die niemand findet, wenn das Bild mal anders
