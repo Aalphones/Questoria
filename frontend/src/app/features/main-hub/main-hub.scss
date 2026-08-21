@@ -8,38 +8,14 @@
 }
 
 .main-hub {
-  display: grid;
-  place-items: center;
   position: relative;
   block-size: 100%;
-  // Luftring um die eingepasste Karte: Knoten am Kartenrand ragen mit ihrem
-  // Namensschild über die Kartenfläche hinaus und wären sonst abgeschnitten.
-  padding: var(--space-6);
-  // Eigener Stapelkontext, damit die Rand-Füllung (z-index: -1) unter dem
-  // Screen-Inhalt bleibt und nicht unter die ganze Seite rutscht.
-  isolation: isolate;
-  // Bezugsgröße für die Einpass-Formel in map-canvas.scss (cqw/cqh).
-  container-type: size;
-
-  // Randfüllung: dieselbe Karte, weichgezeichnet, füllt den Bildschirm bis an
-  // die Kanten. Bewusst eine zweite Ebene statt die Karte formatfüllend zu
-  // beschneiden — die Weltkoordinaten hängen am unbeschnittenen 16:9.
-  &__backdrop {
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background-position: center;
-    background-size: cover;
-    filter: blur(1.75rem) brightness(0.75);
-    scale: 1.08;
-  }
 
   &__canvas {
     position: relative;
-    // Maße kommen aus map-canvas: größtmögliche 16:9-Fläche, die in die Bühne
-    // passt. `place-items: center` oben stellt sie mittig.
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-md);
+    // Füllt die Bühne randlos (AK 1) — map-canvas übernimmt die Cover-Skalierung.
+    inline-size: 100%;
+    block-size: 100%;
   }
 
   &__note {

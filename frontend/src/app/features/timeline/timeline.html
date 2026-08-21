@@ -8,9 +8,9 @@
 
 @if (world(); as loadedWorld) {
   <div class="timeline">
-    <qst-map-canvas class="timeline__canvas" [background]="backgroundUrl()" [points]="points()" [routes]="loadedWorld.arc_overview.routes" [dimmedPointIds]="lockedStageIds()">
+    <qst-map-canvas class="timeline__canvas" [tiles]="tiles()" [unlockedTileIds]="unlockedTileIds()" [points]="points()" [routes]="loadedWorld.arc_overview.routes" [dimmedPointIds]="lockedStageIds()">
     @for (stage of loadedWorld.arc_overview.stages; track stage.map_id; let stageIndex = $index) {
-      <qst-map-point [x]="stage.x" [y]="stage.y" [size]="stage.size">
+      <qst-map-point [x]="pointX(stage.tile_id, stage.x)" [y]="pointY(stage.tile_id, stage.y)" [size]="stage.size">
         <div class="timeline__stage-wrapper">
           @if (isReachable(stage.map_id)) {
             <a

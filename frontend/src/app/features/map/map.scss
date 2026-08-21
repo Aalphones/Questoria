@@ -9,21 +9,13 @@
 }
 
 .map {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   block-size: 100%;
-  padding: var(--space-6) var(--space-4);
-  // Rahmenfläche der eingepassten Karte (AK 3) — kein Grau, sondern ein
-  // Token, damit sie als Passepartout liest statt als fehlender Inhalt.
-  background: var(--color-map-frame-bg);
-  // Bezugsgröße für die Einpass-Formel in map-canvas.scss (cqw/cqh).
-  container-type: size;
 
   &__canvas {
     position: relative;
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-md);
+    // Füllt die Bühne randlos (AK 1) — map-canvas übernimmt die Cover-Skalierung.
+    inline-size: 100%;
+    block-size: 100%;
   }
 
   &__node-wrapper {
@@ -132,12 +124,5 @@
   .map__label {
     padding-inline: var(--space-2);
     font-size: var(--font-size-kicker);
-  }
-}
-
-// Schmales Fenster: Außenabstand runter, damit die Karte die Breite bekommt.
-@media (max-width: #{bp.$screen-narrow}) {
-  .map {
-    padding: var(--space-3) var(--space-2);
   }
 }

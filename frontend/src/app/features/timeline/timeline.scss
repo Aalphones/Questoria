@@ -8,22 +8,16 @@
 }
 
 .timeline {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   block-size: 100%;
-  padding: var(--space-6) var(--space-4);
-  // Rahmenfläche der eingepassten Karte (AK 3) — kein Grau, sondern ein
-  // Token, damit sie als Passepartout liest statt als fehlender Inhalt.
-  background: var(--color-map-frame-bg);
-  // Bezugsgröße für die Einpass-Formel in map-canvas.scss (cqw/cqh).
-  container-type: size;
 
   // Zielt auf den Host der Kartenfläche (`qst-map-canvas`) — Seekarten-Optik
   // ist bewusst hier und nicht in `map-canvas` selbst, weil nur die
   // Etappenkarte kein Hintergrundbild, sondern Moos + Gitternetz zeigt.
+  // Füllt die Bühne randlos (AK 1) — map-canvas übernimmt die Cover-Skalierung.
   &__canvas {
-    border-radius: var(--radius-lg);
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
     background-color: var(--color-map-chart-bg);
     background-image: repeating-linear-gradient(
         to right,
@@ -335,12 +329,5 @@
 
   .timeline__label-name {
     font-size: var(--font-size-kicker);
-  }
-}
-
-// Schmales Fenster: Außenabstand runter, damit die Karte die Breite bekommt.
-@media (max-width: #{bp.$screen-narrow}) {
-  .timeline {
-    padding: var(--space-3) var(--space-2);
   }
 }

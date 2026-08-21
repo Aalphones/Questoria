@@ -1,6 +1,6 @@
 {
   "hub_map": {
-    "background": "map_planetenkarte.webp",
+    "tiles": [{ "id": "hub_0_0", "row": 0, "col": 0, "background": "map_planetenkarte.webp" }],
     "routes": []
   },
   "installed_themes": [
@@ -8,6 +8,7 @@
       "id": "pokemon_lesen",
       "title": "Pokémon — Die Buchstaben-Route",
       "cover": "cover.webp",
+      "tile_id": "hub_0_0",
       "x": 73,
       "y": 78,
       "size": 20

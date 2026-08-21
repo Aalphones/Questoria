@@ -9,8 +9,8 @@ import { stageStars, stageStates, worldProgress } from '../../services/progress.
 import { ProgressService } from '../../services/progress.service';
 import { ContentError } from '../../ui/content-error/content-error';
 import { Hud } from '../../ui/hud/hud';
-import { MapCanvas } from '../../ui/map-canvas/map-canvas';
-import { MapCanvasPoint } from '../../ui/map-canvas/map-canvas.types';
+import { MapCanvas, TILE_SIZE, resolveTileOrigin } from '../../ui/map-canvas/map-canvas';
+import { MapCanvasPoint, MapCanvasTile } from '../../ui/map-canvas/map-canvas.types';
 import { MapPoint } from '../../ui/map-canvas/map-point/map-point';
 
 /**
@@ -33,13 +33,37 @@ export class Timeline {
   readonly themeId = input.required<string>();
   readonly world = input<WorldConfig | null>(null);
 
-  protected readonly backgroundUrl = computed<string | null>(() => {
-    const background = this.world()?.arc_overview.background;
+  protected readonly tiles = computed<readonly MapCanvasTile[]>(() => {
+    const world = this.world();
 
-    return background === undefined
-      ? null
-      : this.content.assetUrl(this.themeId(), 'maps', background);
+    if (world === null) {
+      return [];
+    }
+
+    return world.arc_overview.tiles.map((tile) => ({
+      id: tile.id,
+      row: tile.row,
+      col: tile.col,
+      url: this.content.assetUrl(this.themeId(), 'maps', tile.background),
+    }));
   });
+
+  /** Phase 1: noch keine Fortschritts-Berechnung — alle Kacheln offen (Phase 3 ersetzt das). */
+  protected readonly unlockedTileIds = computed<readonly string[]>(() =>
+    this.tiles().map((tile: MapCanvasTile) => tile.id),
+  );
+
+  protected pointX(tileId: string, percentX: number): number {
+    const origin = resolveTileOrigin(this.tiles(), tileId);
+
+    return origin === null ? 0 : origin.x + (percentX / 100) * TILE_SIZE;
+  }
+
+  protected pointY(tileId: string, percentY: number): number {
+    const origin = resolveTileOrigin(this.tiles(), tileId);
+
+    return origin === null ? 0 : origin.y + (percentY / 100) * TILE_SIZE;
+  }
 
   protected readonly starIndexes = [0, 1, 2] as const;
 
@@ -65,6 +89,7 @@ export class Timeline {
   protected readonly points = computed<readonly MapCanvasPoint[]>(() =>
     (this.world()?.arc_overview.stages ?? []).map((stage) => ({
       id: stage.map_id,
+      tileId: stage.tile_id,
       x: stage.x,
       y: stage.y,
     })),

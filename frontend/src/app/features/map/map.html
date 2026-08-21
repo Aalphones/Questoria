@@ -5,14 +5,14 @@
     <div class="map">
       <qst-map-canvas
         class="map__canvas"
-        [background]="backgroundUrl()"
-        [backgroundLabel]="backgroundLabel()"
+        [tiles]="tiles()"
+        [unlockedTileIds]="unlockedTileIds()"
         [points]="points()"
         [routes]="loadedMap.routes"
         [dimmedPointIds]="lockedNodeIds()"
       >
         @for (node of loadedMap.nodes; track node.id) {
-          <qst-map-point [x]="node.x" [y]="node.y">
+          <qst-map-point [x]="pointX(node.tile_id, node.x)" [y]="pointY(node.tile_id, node.y)">
             @if (isReachable(node.id)) {
               <a
                 class="map__node-wrapper"

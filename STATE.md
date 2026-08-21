@@ -1,12 +1,16 @@
 # STATE
 
-**Aktiver Plan:** (kein aktiver Plan)
+**Aktiver Plan:** [docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/README.md)
 
-**Zwei geparkte Pläne warten** — welcher als nächstes läuft, ist noch nicht entschieden:
-- [Sammelkarten und Druckbogen](docs/planning/2026-08-18_sammelkarten-und-druckbogen/README.md)
-- [Vollbild-Karten mit Pan und Zoom](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/README.md)
+**Phase:** 1/6 — Kachel-Fundament (complete)
 
-**Nächster Schritt:** Entscheiden, welcher Plan dran ist — und vorher die offene Abnahme unten abarbeiten.
+**Nächster Schritt:** `/clear`, dann `/model sonnet` (Phase 2 ist heikel — `opusplan` empfohlen), Phase 2 „Pan- und Zoom-Interaktion" starten.
+
+🔴 **Zwischenzustand seit Phase 1 (Details: Report-Back der Phasendatei):** `pokemon_lesen` (echte, deployte Welt) crasht auf Etappen-/Ortskarte, weil `world_config.json` noch das alte Schema trägt (`background`/`file` statt `tiles`) — Phase 5 räumt das auf. **Nicht deployen, solange Phase 5 nicht fertig ist.** Die Planetenkarte (`data/main_hub.json`, migriert) bleibt funktionsfähig.
+
+**Sammelkarten-Plan liegt weiter geparkt:** [docs/planning/2026-08-18_sammelkarten-und-druckbogen/README.md](docs/planning/2026-08-18_sammelkarten-und-druckbogen/README.md).
+
+**Davor offene Abnahme (Pokéball werfen) noch unbearbeitet — steht unten.**
 
 ## Zuletzt fertig: Pokéball werfen (archiviert 21.08.2026)
 
@@ -61,10 +65,9 @@ Stehen dort jeweils unter „Follow-ups", hier nur als Merkposten:
 - Aus dem UI-Umbau: das letzte `vh` statt `dvh` in `--size-answer-image`, das zu klein gewordene Größenbudget des Builds. (Der Bühnen-Kontrakt ohne automatischen Wächter ist am 20.08.2026 behoben — `align-content: safe end` in `episode.scss`.)
 - Aus Meilenstein 4: die Smoke-Checkliste der [archivierten README](docs/archive/2026-08/2026-08-17_nutzerverwaltung-und-spielstand/README.md) ist noch nicht abgearbeitet — sieben Punkte, die drei ersten mit 🔴.
 
-## Danach in dieser Reihenfolge
+## Danach
 
-1. **Pokéball werfen** — der aktive Plan, das erste Franchise-Spiel, drei Phasen: [docs/planning/2026-08-19_pokeball-fangen/](docs/planning/2026-08-19_pokeball-fangen/README.md). Eigener Eventtyp `pokemon_catch`, unbewertet, kann nicht schiefgehen. Hängt an nichts.
-2. **Meilenstein 5** — Sammelkarten & Druckbogen, sechs Phasen, freigegeben am 18.08.2026: [docs/planning/2026-08-18_sammelkarten-und-druckbogen/](docs/planning/2026-08-18_sammelkarten-und-druckbogen/README.md). 🟡 Phase 6 baut `pokemon_lesen` von 6 auf ≥11 Karten in drei Gruppen aus — das war früher die Rolle der Testwelt `dev_fixture`, die es nicht mehr gibt.
+**Sammelkarten & Druckbogen** — sechs Phasen, freigegeben am 18.08.2026: [docs/planning/2026-08-18_sammelkarten-und-druckbogen/](docs/planning/2026-08-18_sammelkarten-und-druckbogen/README.md). 🟡 Phase 6 baut `pokemon_lesen` von 6 auf ≥11 Karten in drei Gruppen aus — das war früher die Rolle der Testwelt `dev_fixture`, die es nicht mehr gibt.
 
 Alle gesammelten Spielideen mit Stand und Bewertung: [docs/knowledge/spielmechaniken-katalog.md](docs/knowledge/spielmechaniken-katalog.md) — Ideenspeicher, kein Fahrplan.
 

@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, ElementRef, effect, inject, input } from '@angular/core';
 
 /**
- * Setzt ein beliebiges Kind auf eine Prozent-Position der Kartenfläche.
+ * Setzt ein beliebiges Kind auf eine Weltposition (Pixel) der Kartenfläche.
  *
- * Die Größe kommt als Anteil der Kartenbreite (`cqw`) heraus, nicht in Pixeln —
- * dadurch behalten die Knoten auf schmalen Fenstern ihre Abstände zueinander.
+ * Die Größe kommt als Anteil der sichtbaren Bildschirmbreite (`cqw`) heraus,
+ * nicht der Weltbreite — ein Punkt bleibt dadurch bei jedem Zoomstand gleich
+ * gut antippbar, statt mit der Karte mitzuschrumpfen/-wachsen.
  */
 @Component({
   selector: 'qst-map-point',
@@ -13,18 +14,18 @@ import { ChangeDetectionStrategy, Component, ElementRef, effect, inject, input }
   styleUrl: './map-point.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    '[style.left.%]': 'x()',
-    '[style.top.%]': 'y()',
+    '[style.left.px]': 'x()',
+    '[style.top.px]': 'y()',
   },
 })
 export class MapPoint {
   private readonly hostElement = inject<ElementRef<HTMLElement>>(ElementRef);
 
-  /** horizontale Position, in % der Kartenbreite */
+  /** horizontale Weltposition, in Pixeln (Kachel-Ursprung + Anteil, siehe `resolveTileOrigin`) */
   readonly x = input.required<number>();
-  /** vertikale Position, in % der Kartenhöhe */
+  /** vertikale Weltposition, in Pixeln */
   readonly y = input.required<number>();
-  /** Durchmesser des Knotens, in % der Kartenbreite */
+  /** Durchmesser des Knotens, in % der sichtbaren Bildschirmbreite */
   readonly size = input<number | null>(null);
 
   /**

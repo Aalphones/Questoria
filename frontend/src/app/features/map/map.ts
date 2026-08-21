@@ -9,8 +9,8 @@ import { nodeStates, stageStates } from '../../services/progress.rules';
 import { ProgressService } from '../../services/progress.service';
 import { ContentError } from '../../ui/content-error/content-error';
 import { Hud } from '../../ui/hud/hud';
-import { MapCanvas } from '../../ui/map-canvas/map-canvas';
-import { MapCanvasPoint } from '../../ui/map-canvas/map-canvas.types';
+import { MapCanvas, TILE_SIZE, resolveTileOrigin } from '../../ui/map-canvas/map-canvas';
+import { MapCanvasPoint, MapCanvasTile } from '../../ui/map-canvas/map-canvas.types';
 import { MapPoint } from '../../ui/map-canvas/map-point/map-point';
 
 /**
@@ -63,7 +63,12 @@ export class MapScreen {
   });
 
   protected readonly points = computed<readonly MapCanvasPoint[]>(() =>
-    (this.mapEntry()?.nodes ?? []).map((node: MapNode) => ({ id: node.id, x: node.x, y: node.y })),
+    (this.mapEntry()?.nodes ?? []).map((node: MapNode) => ({
+      id: node.id,
+      tileId: node.tile_id,
+      x: node.x,
+      y: node.y,
+    })),
   );
 
   protected readonly lockedNodeIds = computed<readonly string[]>(() =>
@@ -72,13 +77,37 @@ export class MapScreen {
       .map(([nodeId]: [string, ProgressState]) => nodeId),
   );
 
-  protected readonly backgroundUrl = computed<string | null>(() => {
+  protected readonly tiles = computed<readonly MapCanvasTile[]>(() => {
     const map = this.mapEntry();
 
-    return map === null ? null : this.content.assetUrl(this.themeId(), 'maps', map.file);
+    if (map === null) {
+      return [];
+    }
+
+    return map.tiles.map((tile) => ({
+      id: tile.id,
+      row: tile.row,
+      col: tile.col,
+      url: this.content.assetUrl(this.themeId(), 'maps', tile.background),
+    }));
   });
 
-  protected readonly backgroundLabel = computed<string>(() => this.mapEntry()?.file ?? '');
+  /** Phase 1: noch keine Fortschritts-Berechnung — alle Kacheln offen (Phase 3 ersetzt das). */
+  protected readonly unlockedTileIds = computed<readonly string[]>(() =>
+    this.tiles().map((tile: MapCanvasTile) => tile.id),
+  );
+
+  protected pointX(tileId: string, percentX: number): number {
+    const origin = resolveTileOrigin(this.tiles(), tileId);
+
+    return origin === null ? 0 : origin.x + (percentX / 100) * TILE_SIZE;
+  }
+
+  protected pointY(tileId: string, percentY: number): number {
+    const origin = resolveTileOrigin(this.tiles(), tileId);
+
+    return origin === null ? 0 : origin.y + (percentY / 100) * TILE_SIZE;
+  }
 
   protected stateOf(nodeId: string): ProgressState {
     return this.nodeStateMap().get(nodeId) ?? 'locked';

@@ -393,4 +393,47 @@ verteilt) — Wegwerf-Material, kein Teil der Umsetzung.
 
 ## Report-Back
 
-*(nach Umsetzung ausfüllen)*
+**Umgesetzt wie geplant.** Alle Dateien aus dem Kontext-Abschnitt geändert:
+`content.types.ts` (Kachel-Datenmodell, `tile_id`-Felder), `map-canvas.types.ts`
+(`MapCanvasTile`), `map-canvas.ts` (komplett neu: Weltkoordinaten, Bounding-Box,
+ResizeObserver + Cover-Skalierung, `resolveTileOrigin` exportiert), `map-canvas.html`/
+`.scss` (zwei Ebenen: transformierte `__world` mit Kacheln/Routen/`qst-map-point`,
+feste Overlay-Ebene über den Default-Slot), `map-point.ts` (Bedeutung von `x`/`y`
+von % auf Weltpixel geändert). Alle drei Screens (`main-hub`, `map`, `timeline`)
+bauen jetzt ein `tiles`-Computed, binden `[unlockedTileIds]` vorübergehend auf
+„alles offen" (Phase 3 ersetzt das), und rechnen Punktpositionen über
+`pointX`/`pointY` + `resolveTileOrigin`. Padding/Hintergrund/Zentrierung/
+`container-type: size` aus den drei Screen-Wrappern entfernt — der Query-Bezug
+für `cqw` an `qst-map-point` läuft jetzt über `:host` von `map-canvas` selbst.
+`main-hub__backdrop` (weichgezeichnete Randfüllung) entfernt — mit randloser
+Füllung überflüssig (Chesterton's-Fence-Hinweis wie geplant).
+
+**Zusätzlich (nicht im Phasentext, aber zur Vermeidung von drei Kopien einer
+Zahl):** `TILE_SIZE` aus `map-canvas.ts` exportiert und in den drei Screens statt
+der im Phasentext vorgeschlagenen literalen `1024` verwendet.
+
+**`data/main_hub.json` migriert** (einzige Hub-Content-Datei, im Repo, kein
+Drive-Content): `background` → `tiles: [{ id: "hub_0_0", row: 0, col: 0,
+background: "map_planetenkarte.webp" }]`, `installed_themes[0]` bekommt
+`tile_id: "hub_0_0"`. Das Bild selbst ist weiterhin 16:9 (Phase 6 erzeugt die
+echte quadratische Fassung) — für die Übergangszeit wird es cover-skaliert
+beschnitten dargestellt, keine Verzerrung.
+
+**`data/themes/pokemon_lesen/world_config.json` bewusst NICHT angefasst** —
+exakt der im Phasentext beschriebene „Erwarteter Zwischenzustand vor Phase
+5/6". Diese Datei liegt außerhalb von Git (Drive), trägt aber echten, auf
+`questoria.info` deployten Content.
+
+🔴 **Praktische Konsequenz, die der Plantext nicht ausspricht:** Solange
+Phase 5 nicht gelandet ist, wirft `pokemon_lesen` beim Aufruf der Etappen-
+oder Ortskarte einen Laufzeitfehler (`arc_overview.tiles`/`maps[].tiles` sind
+`undefined`, `.map()` darauf crasht den Screen) — TypeScript prüft die JSON-
+Form nicht zur Laufzeit. Die Planetenkarte (`main_hub.json`, migriert) bleibt
+funktionsfähig. **Nicht deployen, bevor Phase 5 fertig ist** — sonst ist die
+einzige echte Welt für den Nutzer unspielbar. `JSON_SCHEMA_REFERENCE.md` ist
+ebenfalls noch nicht nachgezogen — das gehört inhaltlich zu Phase 5 (dort wird
+das Schema für Autoren ohnehin neu dokumentiert), nicht zu dieser Phase.
+
+**Build + Lint grün**, keine neuen Fehler. Manuelle Bildschirmprüfung (AK 1–5)
+nicht durchgeführt — private-Profil-Regel: Smoke-Test läuft gebündelt am
+Plan-Ende durch den User, nicht pro Phase.

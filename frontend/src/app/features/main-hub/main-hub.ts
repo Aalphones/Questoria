@@ -11,8 +11,8 @@ import { ContentService } from '../../services/content.service';
 import { stageStates } from '../../services/progress.rules';
 import { ProgressService } from '../../services/progress.service';
 import { ImageSlot } from '../../ui/image-slot/image-slot';
-import { MapCanvas } from '../../ui/map-canvas/map-canvas';
-import { MapCanvasPoint } from '../../ui/map-canvas/map-canvas.types';
+import { MapCanvas, TILE_SIZE, resolveTileOrigin } from '../../ui/map-canvas/map-canvas';
+import { MapCanvasPoint, MapCanvasTile } from '../../ui/map-canvas/map-canvas.types';
 import { MapPoint } from '../../ui/map-canvas/map-point/map-point';
 import { ThemeCard } from './theme-card/theme-card';
 
@@ -113,24 +113,25 @@ export class MainHub {
     return entries;
   });
 
-  protected readonly backgroundFile = computed<string>(() => {
+  protected readonly tiles = computed<readonly MapCanvasTile[]>(() => {
     const hub = this.hubState();
 
-    return hub.status === 'loaded' ? hub.data.hub_map.background : '';
+    if (hub.status !== 'loaded') {
+      return [];
+    }
+
+    return hub.data.hub_map.tiles.map((tile) => ({
+      id: tile.id,
+      row: tile.row,
+      col: tile.col,
+      url: this.content.hubAssetUrl(tile.background),
+    }));
   });
 
-  protected readonly backgroundUrl = computed<string | null>(() => {
-    const file = this.backgroundFile();
-
-    return file === '' ? null : this.content.hubAssetUrl(file);
-  });
-
-  /** Dieselbe Karte als weichgezeichnete Randfüllung hinter der Kartenfläche. */
-  protected readonly backdropImage = computed<string | null>(() => {
-    const url = this.backgroundUrl();
-
-    return url === null ? null : `url("${url}")`;
-  });
+  /** Phase 1: noch keine Fortschritts-Berechnung — alle Kacheln offen (Phase 3 ersetzt das). */
+  protected readonly unlockedTileIds = computed<readonly string[]>(() =>
+    this.tiles().map((tile: MapCanvasTile) => tile.id),
+  );
 
   protected readonly points = computed<readonly MapCanvasPoint[]>(() => {
     const hub = this.hubState();
@@ -141,10 +142,24 @@ export class MainHub {
 
     return hub.data.installed_themes.map((theme: InstalledTheme) => ({
       id: theme.id,
+      tileId: theme.tile_id,
       x: theme.x,
       y: theme.y,
     }));
   });
+
+  /** Pixel-Weltposition eines Welt-Knotens, für die direkte `qst-map-point`-Bindung im Template. */
+  protected pointX(tileId: string, percentX: number): number {
+    const origin = resolveTileOrigin(this.tiles(), tileId);
+
+    return origin === null ? 0 : origin.x + (percentX / 100) * TILE_SIZE;
+  }
+
+  protected pointY(tileId: string, percentY: number): number {
+    const origin = resolveTileOrigin(this.tiles(), tileId);
+
+    return origin === null ? 0 : origin.y + (percentY / 100) * TILE_SIZE;
+  }
 
   /**
    * Welt des zuletzt geschafften Orts — Ziel von „Weiterspielen" und der Knoten,

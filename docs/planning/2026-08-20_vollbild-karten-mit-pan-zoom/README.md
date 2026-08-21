@@ -21,7 +21,7 @@ neu geplant und um neue Stationen verdichtet.
 
 | # | Phase | Rating | Status |
 |---|---|---|---|
-| 1 | [Kachel-Fundament](phase-1-kachel-fundament.md) | standard | pending |
+| 1 | [Kachel-Fundament](phase-1-kachel-fundament.md) | standard | complete |
 | 2 | [Pan- und Zoom-Interaktion](phase-2-pan-und-zoom.md) | heikel | pending |
 | 3 | [Fortschritts-Freischaltung und Savegame](phase-3-fortschritts-freischaltung.md) | heikel | pending |
 | 4 | [Automatischer Fokus](phase-4-auto-fokus.md) | standard | pending |

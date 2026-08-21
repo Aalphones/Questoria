@@ -1,19 +1,34 @@
-@if (background(); as backgroundUrl) {
-  <qst-image-slot
-    class="map-canvas__background"
-    [src]="backgroundUrl"
-    [label]="backgroundLabel()"
-  />
-}
-
-<svg class="map-canvas__routes" [attr.viewBox]="viewBox" aria-hidden="true">
-  @for (route of routePaths(); track route.id) {
-    <path
-      class="map-canvas__route"
-      [class.map-canvas__route--dimmed]="route.dimmed"
-      [attr.d]="route.path"
-    />
+<div class="map-canvas__world" [style.transform]="worldTransform()">
+  @for (tile of tiles(); track tile.id) {
+    @if (unlockedTileSet().has(tile.id)) {
+      <qst-image-slot
+        class="map-canvas__background-tile"
+        [src]="tile.url"
+        [label]="tile.id"
+        [style.left.px]="tile.col * tileSize"
+        [style.top.px]="tile.row * tileSize"
+      />
+    } @else {
+      <div
+        class="map-canvas__background-tile map-canvas__background-tile--fog"
+        [style.left.px]="tile.col * tileSize"
+        [style.top.px]="tile.row * tileSize"
+        aria-hidden="true"
+      ></div>
+    }
   }
-</svg>
+
+  <svg class="map-canvas__routes" aria-hidden="true">
+    @for (route of routePaths(); track route.id) {
+      <path
+        class="map-canvas__route"
+        [class.map-canvas__route--dimmed]="route.dimmed"
+        [attr.d]="route.path"
+      />
+    }
+  </svg>
+
+  <ng-content select="qst-map-point" />
+</div>
 
 <ng-content />

@@ -7,9 +7,17 @@
 /** Ein Paar aus zwei ids derselben Ebene — zeichnet eine Verbindungslinie. */
 export type RoutePair = readonly [string, string];
 
-export interface HubMap {
-  /** Dateiname unter assets/hub/, 16:9 */
+/** Eine Kachel im offenen Koordinatensystem der Karte, siehe `map-canvas.ts`. */
+export interface MapTileDef {
+  id: string;
+  row: number;
+  col: number;
+  /** Dateiname unter maps/ bzw. dem Welt-Ordner, quadratisch, 1024×1024 */
   background: string;
+}
+
+export interface HubMap {
+  tiles: MapTileDef[];
   routes: RoutePair[];
 }
 
@@ -18,9 +26,11 @@ export interface InstalledTheme {
   title: string;
   /** Dateiname unter dem Welt-Ordner */
   cover: string;
-  /** horizontale Position auf der Planetenkarte, in % der Kartenbreite */
+  /** welche Kachel der Planetenkarte diesen Knoten trägt */
+  tile_id: string;
+  /** horizontale Position, in % der Kachelbreite (bezogen auf `tile_id`) */
   x: number;
-  /** vertikale Position auf der Planetenkarte, in % der Kartenhöhe */
+  /** vertikale Position, in % der Kachelhöhe (bezogen auf `tile_id`) */
   y: number;
   /** Durchmesser des Weltknotens, in % der Kartenbreite */
   size: number;
@@ -46,7 +56,11 @@ export interface ArcStage {
   /** verweist auf MapEntry.id */
   map_id: string;
   name: string;
+  /** welche Kachel der Etappenkarte diese Etappe trägt */
+  tile_id: string;
+  /** horizontale Position, in % der Kachelbreite (bezogen auf `tile_id`) */
   x: number;
+  /** vertikale Position, in % der Kachelhöhe (bezogen auf `tile_id`) */
   y: number;
   /** Breite der Etappeninsel, in % der Kartenbreite */
   size: number;
@@ -60,7 +74,7 @@ export interface ArcStage {
 
 export interface ArcOverview {
   title: string;
-  background: string;
+  tiles: MapTileDef[];
   stages: ArcStage[];
   routes: RoutePair[];
 }
@@ -68,7 +82,11 @@ export interface ArcOverview {
 export interface MapNode {
   id: string;
   name: string;
+  /** welche Kachel der Ortskarte dieser Knoten trägt */
+  tile_id: string;
+  /** horizontale Position, in % der Kachelbreite (bezogen auf `tile_id`) */
   x: number;
+  /** vertikale Position, in % der Kachelhöhe (bezogen auf `tile_id`) */
   y: number;
   /** episode_id, die dieser Kartenpunkt startet */
   episode_ref: string;
@@ -77,8 +95,7 @@ export interface MapNode {
 export interface MapEntry {
   id: string;
   name: string;
-  /** Dateiname unter maps/ */
-  file: string;
+  tiles: MapTileDef[];
   nodes: MapNode[];
   routes: RoutePair[];
 }
