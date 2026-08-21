@@ -42,8 +42,11 @@ auftaucht, ist keine Belohnung mehr, sondern eine Station.
 
 ## Checkliste
 
-- [ ] `pokemon_catch`-Event ans Ende von `ep_route_1_wiese.json` setzen
-- [ ] Ansagetext schreiben, kurze Fassung für den Vorlesemodus dazu
+- [x] `pokemon_catch`-Event ans Ende von `ep_route_1_wiese.json` setzen
+- [x] Ansagetext schreiben, kurze Fassung für den Vorlesemodus dazu — ein
+      einziges `intro`-Feld pro Schema (Abschnitt 5.9), kein separates
+      `intro_simple`; der Satz ist kurz genug, um über die Gerätestimme zu
+      funktionieren
 - [ ] Runde am Bildschirm: Treffer, Fehlwurf, garantierter Fang, Weiterlauf zur
       Ergebnisseite
 - [ ] Runde auf dem Gerät des Kindes
