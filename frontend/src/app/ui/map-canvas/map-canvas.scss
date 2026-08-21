@@ -5,6 +5,7 @@
   block-size: 100%;
   overflow: clip; // ADR-017: niemals `hidden`
   container-type: inline-size; // Bezugsgröße für Panel-Breakpoints der Screens
+  touch-action: none; // sonst scrollt der Browser statt die Karte zu ziehen
 }
 
 .map-canvas {
@@ -13,6 +14,14 @@
     inset-block-start: 0;
     inset-inline-start: 0;
     transform-origin: 0 0;
+    user-select: none; // kein Textmarkieren beim Ziehen
+
+    // Nur außerhalb einer laufenden Geste: beim Ziehen soll die Karte am
+    // Finger kleben, nicht hinterherlaufen. Bewegungsreduktion setzt die
+    // Dauer über das Token auf 0.
+    &--animated {
+      transition: transform var(--duration-map-view) var(--easing-standard);
+    }
   }
 
   &__background-tile {
@@ -43,6 +52,40 @@
 
     &--dimmed {
       stroke: var(--color-map-route-locked);
+    }
+  }
+
+  &__zoom-controls {
+    position: absolute;
+    inset-block-end: var(--space-4);
+    inset-inline-end: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    z-index: 2;
+  }
+
+  &__zoom-button {
+    display: grid;
+    place-items: center;
+    inline-size: var(--size-touch-target);
+    block-size: var(--size-touch-target);
+    border: none;
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--color-map-label-bg) 90%, transparent);
+    box-shadow: var(--shadow-md);
+    color: var(--color-accent);
+    font-size: var(--font-size-label);
+    line-height: 1;
+    cursor: pointer;
+
+    &:hover {
+      background: var(--color-map-label-bg);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-focus-ring);
+      outline-offset: 2px;
     }
   }
 }

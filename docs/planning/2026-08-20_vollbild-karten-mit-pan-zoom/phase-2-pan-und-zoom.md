@@ -187,4 +187,46 @@ der Pan-Position, Zoom läuft über die drei sichtbaren Buttons.
 
 ## Report-Back
 
-*(nach Umsetzung ausfüllen)*
+**Status: complete** (21.08.2026). Build und Lint grün, am Bildschirm noch
+nicht abgenommen.
+
+**Gebaut wie geplant:** drei Signale (`zoom`, `panX`, `panY`), abgeleitete
+Position mit Klemmung gegen `unlockedBounds()`, Zurückschreiben der geklemmten
+Werte nach jeder Bewegung, Ziehen ab 6 px, Zwei-Finger-Zoom, Mausrad-Zoom auf
+den Cursor, Zoombereich 1×–2,5×, drei Bedienknöpfe unten rechts, Doppelklick
+setzt zurück. ADR-019 liegt.
+
+**Abweichungen und Zusätze:**
+
+1. **Die Klemmung rechnet in der Kante, nicht im Verschiebewert.** Der Plan
+   ließ offen, worauf `clamp` genau angewendet wird. Umgesetzt ist: die
+   Bildschirmposition der linken/oberen Kante der freigeschalteten Fläche wird
+   geklemmt, der Verschiebewert des Transforms fällt daraus ab. Das macht die
+   Rückrechnung (`setWorldEdge`) zur exakten Umkehrung und hält die Formel
+   frei vom wandernden Nullpunkt.
+2. **`touch-action: none` auf der Kartenfläche** — im Plan nicht erwähnt, ohne
+   das scrollt der Browser statt zu ziehen und die Zeigerereignisse brechen
+   mittendrin ab. Konsequenz für später: ein Screen, der in der Kartenfläche
+   etwas Rollbares unterbringen will, muss das für sein Element zurücknehmen
+   (steht auch im ADR).
+3. **Zeiger wird erst ab der Ziehschwelle eingefangen**, nicht schon beim
+   Aufsetzen. Fängt man ihn sofort ein, landet der Klick eines reinen Tipps
+   beim Elternelement statt beim Kartenpunkt — AK 3 wäre gerissen.
+4. **Klick-Unterdrückung nach einem Ziehen** (Listener in der Capture-Phase):
+   ohne sie öffnet ein Ziehen, das zufällig auf einem Kartenpunkt endet,
+   dessen Ort. Im Plan nicht vorgesehen.
+5. **Neues Token `--duration-map-view: 300ms`** statt eines rohen Werts im
+   Komponenten-Stylesheet; die Bewegungsreduktion setzt es wie die anderen
+   Bewegungs-Token auf 0 — deshalb steht die Medienabfrage nicht mehr in der
+   Komponente.
+
+**Nicht prüfbar in dieser Phase:** AK 1 (Anschlag an einer gesperrten Kachel)
+und AK 7 (wachsender Spielraum ohne Springen) — bis Phase 3 melden alle drei
+Screens jede Kachel als freigeschaltet. Als Finding an Phase 3 getaggt.
+
+**Unsicherste Stelle:** `map-canvas.ts` → `updatePinch()`. Die Reihenfolge
+„erst um die Mittelpunkt-Verschiebung schieben, dann um den Mittelpunkt
+zoomen" ist rechnerisch stimmig, aber echtes Zwei-Finger-Verhalten hat noch
+kein Mensch angefasst. Prüfen: mit zwei Fingern gleichzeitig zoomen **und**
+schieben — wandert die Karte dabei unter den Fingern weg, sitzt der Fehler
+hier.

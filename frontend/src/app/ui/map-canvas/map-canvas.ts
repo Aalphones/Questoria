@@ -20,6 +20,16 @@ export const TILE_SIZE = 1024;
 const BOW_RATIO = 0.18;
 const MAX_BOW = 110;
 
+/** Zoomstufen: 1 = ganze freigeschaltete Fläche eingepasst, darüber wird hineingezoomt. */
+const MIN_ZOOM = 1;
+const MAX_ZOOM = 2.5;
+
+/** Erst ab dieser Bewegung gilt eine Berührung als Ziehen statt als Tipp. */
+const DRAG_THRESHOLD_PX = 6;
+
+/** Zoomänderung pro Mausrad-Rastung. */
+const WHEEL_STEP = 0.15;
+
 /**
  * Gemeinsame Kartenfläche von Planeten-, Etappen- und Ortskarte: eine Liste
  * quadratischer Kacheln in einem offenen Koordinatensystem, Routenlinien
@@ -30,6 +40,10 @@ const MAX_BOW = 110;
  * — nicht freigeschaltete zeigen einen Nebel-Platzhalter ohne Bild-Request.
  * Die Fläche zentriert sich per Cover-Skalierung auf die Bounding-Box der
  * freigeschalteten Kacheln.
+ *
+ * Ziehen und Zoomen laufen ohne Fremdbibliothek (ADR-019) und sind exakt auf
+ * diese Bounding-Box geklemmt: über die freigeschaltete Fläche hinaus lässt
+ * sich nicht schieben.
  */
 @Component({
   selector: 'qst-map-canvas',
@@ -37,6 +51,13 @@ const MAX_BOW = 110;
   templateUrl: './map-canvas.html',
   styleUrl: './map-canvas.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '(pointerdown)': 'onPointerDown($event)',
+    '(pointermove)': 'onPointerMove($event)',
+    '(pointerup)': 'onPointerEnd($event)',
+    '(pointercancel)': 'onPointerEnd($event)',
+    '(dblclick)': 'resetView()',
+  },
 })
 export class MapCanvas {
   private readonly hostElement = inject<ElementRef<HTMLElement>>(ElementRef);
@@ -137,28 +158,63 @@ export class MapCanvas {
     this.viewportHeight.set(blockSize);
   });
 
+  private readonly zoom = signal<number>(MIN_ZOOM);
+  /** Zusätzlicher Versatz zur eingepassten Position, in Bildschirmpixeln. */
+  private readonly panX = signal<number>(0);
+  private readonly panY = signal<number>(0);
+
+  /** Läuft gerade eine Geste? Dann darf die Karte nicht zusätzlich nachanimieren. */
+  protected readonly isInteracting = signal<boolean>(false);
+
+  private readonly activePointers = new Map<number, PointerPosition>();
+  private dragOrigin: PointerPosition | null = null;
+  private isDragging = false;
+  private suppressNextClick = false;
+  private pinchDistance: number | null = null;
+  private pinchCenter: PointerPosition | null = null;
+
   constructor() {
-    this.measureViewport.observe(this.hostElement.nativeElement);
-    inject(DestroyRef).onDestroy(() => this.measureViewport.disconnect());
+    const host = this.hostElement.nativeElement;
+
+    this.measureViewport.observe(host);
+    // Beide Listener von Hand: `wheel` braucht `passive: false` (sonst kein
+    // preventDefault), `click` die Capture-Phase, um den Kartenpunkt zu erreichen,
+    // bevor dessen eigener Handler feuert.
+    host.addEventListener('wheel', this.onWheel, { passive: false });
+    host.addEventListener('click', this.onClickCapture, { capture: true });
+
+    inject(DestroyRef).onDestroy(() => {
+      this.measureViewport.disconnect();
+      host.removeEventListener('wheel', this.onWheel);
+      host.removeEventListener('click', this.onClickCapture, { capture: true });
+    });
   }
 
   protected readonly coverScale = computed<number>(() =>
     Math.max(this.viewportWidth() / this.worldWidth(), this.viewportHeight() / this.worldHeight()),
   );
 
-  /** Phase 2 macht daraus eine zoomfähige Version. */
-  protected readonly scale = computed<number>(() => this.coverScale());
+  protected readonly scale = computed<number>(() => this.coverScale() * this.zoom());
+
+  /** Bildschirmposition der linken Kante der freigeschalteten Fläche, ungeklemmt. */
+  private readonly rawWorldLeft = computed<number>(
+    () => (this.viewportWidth() - this.worldWidth() * this.scale()) / 2 + this.panX(),
+  );
+
+  private readonly rawWorldTop = computed<number>(
+    () => (this.viewportHeight() - this.worldHeight() * this.scale()) / 2 + this.panY(),
+  );
 
   private readonly translateX = computed<number>(
     () =>
-      -this.worldOriginOffset().x * this.scale() +
-      (this.viewportWidth() - this.worldWidth() * this.scale()) / 2,
+      clampWorldEdge(this.rawWorldLeft(), this.viewportWidth(), this.worldWidth() * this.scale()) -
+      this.worldOriginOffset().x * this.scale(),
   );
 
   private readonly translateY = computed<number>(
     () =>
-      -this.worldOriginOffset().y * this.scale() +
-      (this.viewportHeight() - this.worldHeight() * this.scale()) / 2,
+      clampWorldEdge(this.rawWorldTop(), this.viewportHeight(), this.worldHeight() * this.scale()) -
+      this.worldOriginOffset().y * this.scale(),
   );
 
   protected readonly worldTransform = computed<string>(
@@ -166,6 +222,210 @@ export class MapCanvas {
   );
 
   protected readonly tileSize = TILE_SIZE;
+
+  protected onPointerDown(event: PointerEvent): void {
+    this.suppressNextClick = false;
+    this.activePointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+
+    if (this.activePointers.size === 1) {
+      this.dragOrigin = { x: event.clientX, y: event.clientY };
+      this.isDragging = false;
+      return;
+    }
+
+    this.beginPinch();
+  }
+
+  protected onPointerMove(event: PointerEvent): void {
+    const tracked = this.activePointers.get(event.pointerId);
+
+    if (tracked === undefined) {
+      return;
+    }
+
+    const previous: PointerPosition = tracked;
+    this.activePointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+
+    if (this.activePointers.size >= 2) {
+      this.updatePinch(event);
+      return;
+    }
+
+    this.updateDrag(event, previous);
+  }
+
+  protected onPointerEnd(event: PointerEvent): void {
+    const host = this.hostElement.nativeElement;
+    this.activePointers.delete(event.pointerId);
+
+    if (host.hasPointerCapture(event.pointerId)) {
+      host.releasePointerCapture(event.pointerId);
+    }
+
+    if (this.isDragging) {
+      // Der Klick, der auf ein Ziehen folgt, darf keinen Kartenpunkt öffnen.
+      this.suppressNextClick = true;
+    }
+
+    if (this.activePointers.size < 2) {
+      this.pinchDistance = null;
+      this.pinchCenter = null;
+    }
+
+    if (this.activePointers.size === 0) {
+      this.isDragging = false;
+      this.dragOrigin = null;
+      this.isInteracting.set(false);
+      this.settlePan();
+    }
+  }
+
+  protected zoomBy(delta: number): void {
+    const rect = this.hostElement.nativeElement.getBoundingClientRect();
+
+    this.zoomAround(this.zoom() + delta, rect.left + rect.width / 2, rect.top + rect.height / 2);
+  }
+
+  protected resetView(): void {
+    this.zoom.set(MIN_ZOOM);
+    this.panX.set(0);
+    this.panY.set(0);
+  }
+
+  private updateDrag(event: PointerEvent, previous: PointerPosition): void {
+    const origin = this.dragOrigin;
+
+    if (origin === null) {
+      return;
+    }
+
+    if (!this.isDragging) {
+      const travelled = Math.hypot(event.clientX - origin.x, event.clientY - origin.y);
+
+      if (travelled < DRAG_THRESHOLD_PX) {
+        return; // noch ein Tipp — der Kartenpunkt darunter bleibt anklickbar
+      }
+
+      this.isDragging = true;
+      this.isInteracting.set(true);
+      // Zeiger erst jetzt einfangen: früher würde der Klick eines reinen Tipps
+      // beim Host landen statt beim Kartenpunkt.
+      this.hostElement.nativeElement.setPointerCapture(event.pointerId);
+    }
+
+    event.preventDefault();
+    this.panX.update((offset: number) => offset + (event.clientX - previous.x));
+    this.panY.update((offset: number) => offset + (event.clientY - previous.y));
+    this.settlePan();
+  }
+
+  private beginPinch(): void {
+    this.isDragging = false;
+    this.isInteracting.set(true);
+    this.pinchDistance = null;
+    this.pinchCenter = null;
+  }
+
+  private updatePinch(event: PointerEvent): void {
+    const [first, second] = [...this.activePointers.values()];
+
+    if (first === undefined || second === undefined) {
+      return;
+    }
+
+    event.preventDefault();
+
+    const distance = Math.hypot(second.x - first.x, second.y - first.y);
+    const center: PointerPosition = {
+      x: (first.x + second.x) / 2,
+      y: (first.y + second.y) / 2,
+    };
+    const previousDistance = this.pinchDistance;
+    const previousCenter = this.pinchCenter;
+
+    if (previousDistance !== null && previousCenter !== null && previousDistance > 0) {
+      this.panX.update((offset: number) => offset + (center.x - previousCenter.x));
+      this.panY.update((offset: number) => offset + (center.y - previousCenter.y));
+      this.zoomAround(this.zoom() * (distance / previousDistance), center.x, center.y);
+    }
+
+    this.pinchDistance = distance;
+    this.pinchCenter = center;
+  }
+
+  /** Zoomt so, dass der Weltpunkt unter (`clientX`, `clientY`) dort liegen bleibt. */
+  private zoomAround(nextZoom: number, clientX: number, clientY: number): void {
+    const rect = this.hostElement.nativeElement.getBoundingClientRect();
+    const focusX = clientX - rect.left;
+    const focusY = clientY - rect.top;
+    const previousScale = this.scale();
+    const worldX = (focusX - this.translateX()) / previousScale;
+    const worldY = (focusY - this.translateY()) / previousScale;
+
+    this.zoom.set(Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, nextZoom)));
+
+    const nextScale = this.scale();
+    const origin = this.worldOriginOffset();
+
+    this.setWorldEdge(
+      focusX - worldX * nextScale + origin.x * nextScale,
+      focusY - worldY * nextScale + origin.y * nextScale,
+    );
+    this.settlePan();
+  }
+
+  /** Rechnet aus einer gewünschten Kantenposition den Versatz zurück. */
+  private setWorldEdge(left: number, top: number): void {
+    const scale = this.scale();
+
+    this.panX.set(left - (this.viewportWidth() - this.worldWidth() * scale) / 2);
+    this.panY.set(top - (this.viewportHeight() - this.worldHeight() * scale) / 2);
+  }
+
+  /**
+   * Schreibt die tatsächlich geklemmte Position in `panX`/`panY` zurück. Ohne
+   * das würde ein Ziehen über die Kante hinaus einen unsichtbaren Überhang
+   * ansammeln, den man beim Zurückziehen erst wieder abbauen müsste.
+   */
+  private settlePan(): void {
+    const scale = this.scale();
+    const origin = this.worldOriginOffset();
+
+    this.setWorldEdge(this.translateX() + origin.x * scale, this.translateY() + origin.y * scale);
+  }
+
+  private readonly onWheel = (event: WheelEvent): void => {
+    event.preventDefault();
+
+    const direction = event.deltaY > 0 ? -1 : 1;
+
+    this.zoomAround(this.zoom() + direction * WHEEL_STEP, event.clientX, event.clientY);
+  };
+
+  private readonly onClickCapture = (event: MouseEvent): void => {
+    if (!this.suppressNextClick) {
+      return;
+    }
+
+    this.suppressNextClick = false;
+    event.stopPropagation();
+    event.preventDefault();
+  };
+}
+
+interface PointerPosition {
+  readonly x: number;
+  readonly y: number;
+}
+
+/**
+ * Klemmt die Bildschirmposition der linken/oberen Kante so, dass der sichtbare
+ * Ausschnitt die freigeschaltete Fläche nie verlässt.
+ */
+function clampWorldEdge(rawEdge: number, viewportSize: number, worldPxSize: number): number {
+  const lowerBound = Math.min(0, viewportSize - worldPxSize);
+
+  return Math.min(0, Math.max(lowerBound, rawEdge));
 }
 
 interface WorldRect {

@@ -1,4 +1,8 @@
-<div class="map-canvas__world" [style.transform]="worldTransform()">
+<div
+  class="map-canvas__world"
+  [class.map-canvas__world--animated]="!isInteracting()"
+  [style.transform]="worldTransform()"
+>
   @for (tile of tiles(); track tile.id) {
     @if (unlockedTileSet().has(tile.id)) {
       <qst-image-slot
@@ -32,3 +36,30 @@
 </div>
 
 <ng-content />
+
+<div class="map-canvas__zoom-controls">
+  <button
+    type="button"
+    class="map-canvas__zoom-button"
+    (click)="zoomBy(-0.4)"
+    aria-label="Karte verkleinern"
+  >
+    −
+  </button>
+  <button
+    type="button"
+    class="map-canvas__zoom-button"
+    (click)="resetView()"
+    aria-label="Kartenansicht zurücksetzen"
+  >
+    ⤾
+  </button>
+  <button
+    type="button"
+    class="map-canvas__zoom-button"
+    (click)="zoomBy(0.4)"
+    aria-label="Karte vergrößern"
+  >
+    +
+  </button>
+</div>

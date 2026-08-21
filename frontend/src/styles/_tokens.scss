@@ -241,6 +241,8 @@
   --duration-fast: 120ms;
   // Auftritt von Karte und Feedback-Leiste (Design: eqPop / eqRise).
   --duration-enter: 220ms;
+  // Nachführen der Kartenansicht beim Zoomen und Zurücksetzen.
+  --duration-map-view: 300ms;
   // Dauerbewegungen der Karten (siehe _motion.scss).
   --duration-ambient: 5s;
   --duration-pulse: 2s;
@@ -265,6 +267,7 @@
   :root {
     --duration-fast: 0ms;
     --duration-enter: 0ms;
+    --duration-map-view: 0ms;
     --duration-ambient: 0s;
     --duration-pulse: 0s;
   }

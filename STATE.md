@@ -2,9 +2,11 @@
 
 **Aktiver Plan:** [docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/README.md)
 
-**Phase:** 1/6 — Kachel-Fundament (complete)
+**Phase:** 2/6 — Pan- und Zoom-Interaktion (complete)
 
-**Nächster Schritt:** `/clear`, dann `/model sonnet` (Phase 2 ist heikel — `opusplan` empfohlen), Phase 2 „Pan- und Zoom-Interaktion" starten.
+**Nächster Schritt:** `/clear`, dann `/model opusplan` (Phase 3 ist heikel und fasst zusätzlich das PHP-Backend an), Phase 3 „Fortschritts-Freischaltung und Savegame" starten. Zwei Findings sind dieser Phase zugetagt — die Abnahme der Klemmung an einer gesperrten Kachel gehört mit dazu.
+
+🟡 **Ziehen und Zoomen ist gebaut, aber am Bildschirm noch nicht abgenommen.** Unsicherste Stelle: Zwei-Finger-Zoom gleichzeitig mit Schieben (Details im Report-Back der Phasendatei).
 
 🔴 **Zwischenzustand seit Phase 1 (Details: Report-Back der Phasendatei):** `pokemon_lesen` (echte, deployte Welt) crasht auf Etappen-/Ortskarte, weil `world_config.json` noch das alte Schema trägt (`background`/`file` statt `tiles`) — Phase 5 räumt das auf. **Nicht deployen, solange Phase 5 nicht fertig ist.** Die Planetenkarte (`data/main_hub.json`, migriert) bleibt funktionsfähig.
 
