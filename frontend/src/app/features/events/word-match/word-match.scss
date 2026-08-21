@@ -13,27 +13,32 @@
     container-type: inline-size;
   }
 
-  // Zwei Spalten: links die Bilder, rechts die Wörter. Der Umbruch hängt an der
-  // Breite des Aufgabenkörpers, nicht am Fenster — deshalb Container Query.
-  &__columns {
+  // Zwei Reihen übereinander: oben die Bilder, unten die Wörter. Nebeneinander
+  // in zwei Spalten wurde die Aufgabe bei vier Paaren höher als die Karte und
+  // musste gescrollt werden — quer passt alles auf einen Blick.
+  &__rows {
     display: grid;
-    grid-template-columns: 1fr 1fr;
     gap: var(--space-4);
-
-    // Auf schmalem Schirm (Tablet hochkant) stehen Bilder und Wörter
-    // untereinander, sonst wird beides zu schmal für Kinderfinger.
-    @container (max-width: #{bp.$task-board-narrow}) {
-      grid-template-columns: 1fr;
-    }
   }
 
-  &__column {
+  // `grid-auto-flow: column` legt die drei oder vier Einträge nebeneinander,
+  // ohne dass jemand ihre Anzahl kennen muss — bei drei Paaren werden es drei
+  // gleich breite Spalten, bei vier eben vier.
+  &__row {
     display: grid;
-    align-content: start;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
     gap: var(--space-3);
     margin: 0;
     padding: 0;
     list-style: none;
+
+    // Auf schmalem Schirm (Tablet hochkant) wird eine Viererreihe zu schmal für
+    // Kinderfinger — dann bricht jede Reihe auf zwei mal zwei um.
+    @container (max-width: #{bp.$task-board-narrow}) {
+      grid-auto-flow: row;
+      grid-template-columns: 1fr 1fr;
+    }
   }
 
   &__slot {
@@ -78,17 +83,22 @@
 
   // Quadratisch wie die Bilddateien (512 × 512) — der Bildplatz braucht eine
   // feste Fläche, sonst hat `qst-image-slot` nichts, worin es füllen kann.
+  // In einer Viererreihe kann die Spalte schmaler sein als die Wunschgröße;
+  // dann gibt das Feld nach, statt die Reihe breiter zu machen als die Karte.
   &__frame {
     display: block;
     position: relative;
-    inline-size: var(--size-word-match-tile);
-    block-size: var(--size-word-match-tile);
+    inline-size: min(var(--size-word-match-tile), 100%);
+    aspect-ratio: 1;
   }
 
+  // Nebeneinander stehende Karten werden mittig gesetzt — linksbündig sähe in
+  // einer Reihe aus wie versehentlich verrutscht.
   &__word {
     display: flex;
     position: relative;
     align-items: center;
+    justify-content: center;
     gap: var(--space-3);
     min-block-size: var(--size-answer-min-block);
     padding: var(--space-3) var(--space-4);
@@ -96,7 +106,7 @@
     border-radius: var(--radius-md);
     background: var(--color-bg);
     color: var(--color-text);
-    text-align: start;
+    text-align: center;
     cursor: pointer;
     transition: translate var(--duration-fast) var(--easing-standard);
 

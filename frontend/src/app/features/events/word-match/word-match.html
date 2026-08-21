@@ -5,8 +5,8 @@
   [stepTotal]="stepTotal()"
 >
   <div class="word-match__board">
-    <div class="word-match__columns">
-      <ul class="word-match__column">
+    <div class="word-match__rows">
+      <ul class="word-match__row">
         @for (tile of imageTiles(); track tile.pairIndex; let position = $index) {
           <li class="word-match__slot">
             <button
@@ -20,7 +20,11 @@
               (click)="pickImage(tile.pairIndex)"
             >
               <span class="word-match__frame">
-                <qst-image-slot [src]="tile.imageUrl" [label]="tile.placeholderLabel" [fit]="'contain'" />
+                <qst-image-slot
+                  [src]="tile.imageUrl"
+                  [label]="tile.placeholderLabel"
+                  [fit]="'contain'"
+                />
               </span>
 
               <span class="visually-hidden">Bild {{ position + 1 }}</span>
@@ -37,7 +41,7 @@
         }
       </ul>
 
-      <ul class="word-match__column">
+      <ul class="word-match__row">
         @for (card of wordCards(); track card.pairIndex) {
           <li class="word-match__slot">
             <button

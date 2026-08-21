@@ -66,7 +66,10 @@ export class WordMatch {
   >({
     source: () => ({ config: this.config(), seed: this.run.eventSeed() ?? 0 }),
     computation: ({ config, seed }) => {
-      const indexes = Array.from({ length: config.pairs.length }, (_unused: unknown, index: number) => index);
+      const indexes = Array.from(
+        { length: config.pairs.length },
+        (_unused: unknown, index: number) => index,
+      );
 
       return shuffle(indexes, seededRandom(seed));
     },
