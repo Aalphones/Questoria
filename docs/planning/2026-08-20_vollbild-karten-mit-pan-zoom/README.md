@@ -29,6 +29,7 @@ neu geplant und um neue Stationen verdichtet.
 | 5 | [Level-Neuplanung Alabastia](phase-5-level-neuplanung.md) | standard | complete |
 | 6 | [Assets erzeugen](phase-6-assets-erzeugen.md) | standard | pending |
 | 7 | [Figuren- und Aufgabenbilder neu](phase-7-figuren-und-aufgabenbilder.md) | standard | pending |
+| 8 | [Vertonung, vollständig statt nur Dialog](phase-8-vertonung.md) | heikel | pending |
 
 **Nachtrag 23.08.2026 (Sascha):** Vier Wünsche sind dazugekommen und in
 Phase 5–7 eingearbeitet — Figurenbilder neu (und der rembg-Fehler, der Bisasam
@@ -108,6 +109,8 @@ Zustand, Phase 3).
     Anlaut das verhindern, ist die Ausnahme benannt und begründet.
 14. Silben werden mit Pokébällen gezählt, nicht mit Sternen — und die Anzahl ist
     am Gerät des Kindes auf einen Blick abzählbar.
+15. Im Vorlesemodus läuft jede Frage und jede Engine-Ansage über eine echte
+    Aufnahme, nirgends mehr über die Sprachausgabe des Geräts (Phase 8).
 
 ## 🟡 Risiken & Annahmen
 
