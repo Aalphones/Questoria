@@ -9,12 +9,6 @@ echte Aufnahme statt Browser-Sprachausgabe bekommen. Rating heikel — echte
 Schema- und Komponenten-Arbeit, keine reine Content-Phase. Startet mit einer
 eigenen 🔴-Entscheidung (siehe Phasendatei).
 
-🟡 **Parallele Session aktiv (23.08.2026 bemerkt):** `frontend/src/app/features/map/map.html`
-und `frontend/src/app/features/episode/episode.{html,ts}` haben unversionierte
-Änderungen, die nicht aus dieser Session stammen (u. a. `levelLink` am
-Map-Hud). Nicht angefasst, nicht committet von hier aus — vor dem nächsten
-eigenen Write in diese Dateien erst klären, ob die Session noch läuft.
-
 🟡 **Welt umbenannt (23.08.2026, Sascha):** `pokemon_lesen` → `pokemon`, Fach
 erweitert auf Deutsch/Mathe/Sachkunde. Ordner, `theme_id`, `main_hub.json`
 und alle load-bearing Doku-Verweise sind nachgezogen (Details: Report-Back

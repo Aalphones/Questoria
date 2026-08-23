@@ -1,4 +1,9 @@
-<qst-hud [backLink]="['/theme', themeId(), 'timeline']" [worldTitle]="world()?.title ?? null" [levelLabel]="levelLabel()" />
+<qst-hud
+  [backLink]="['/theme', themeId(), 'timeline']"
+  [worldTitle]="world()?.title ?? null"
+  [levelLabel]="levelLabel()"
+  [levelLink]="['/theme', themeId(), 'level']"
+/>
 
 @if (world(); as loadedWorld) {
   @if (mapEntry(); as loadedMap) {

@@ -1,4 +1,9 @@
-<qst-hud [backLink]="mapBackLink()" [worldTitle]="world()?.title ?? null" />
+<qst-hud
+  [backLink]="mapBackLink()"
+  [worldTitle]="world()?.title ?? null"
+  [levelLabel]="levelLabel()"
+  [levelLink]="['/theme', themeId(), 'level']"
+/>
 
 @let episode = episodeState();
 

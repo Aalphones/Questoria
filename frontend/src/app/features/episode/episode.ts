@@ -89,6 +89,13 @@ export class EpisodeScreen {
     return ['/theme', this.themeId(), 'map', mapId];
   });
 
+  protected readonly levelLabel = computed<string | null>(() => {
+    const world = this.world();
+    const levelId = this.gameState.activeDifficultyLevel();
+
+    return world?.difficulty_levels.find((level) => level.id === levelId)?.label ?? null;
+  });
+
   /** Anzeigename des Orts — der Node-Name, nicht die Episode (die kennt keinen eigenen Namen). */
   protected readonly locationName = computed<string | null>(() => {
     for (const map of this.world()?.maps ?? []) {
