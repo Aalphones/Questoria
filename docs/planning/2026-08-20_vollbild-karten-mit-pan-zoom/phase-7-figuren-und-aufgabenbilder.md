@@ -1,0 +1,151 @@
+# Phase 7 — Figuren- und Aufgabenbilder neu
+
+**Rating:** standard (ein kleiner Code-Block im Freistell-Werkzeug, sonst
+Bildarbeit)
+
+Diese Phase ist am 23.08.2026 dazugekommen (Sascha). Sie hängt inhaltlich an
+Phase 5 (welche Aufgaben es überhaupt gibt) und ist von Phase 6 getrennt, weil
+Kartenkacheln und Figurenbilder nichts miteinander zu tun haben außer dem
+Zeitpunkt.
+
+## Kontext (lesen, bevor du anfängst)
+
+- `data/_authoring/image-tools/cutout.py` — das Freistell-Werkzeug, das den
+  Fehler verursacht hat.
+- `data/_authoring/image-prompts/SPRITES.md` — Vorlage und Nachbearbeitung,
+  wird hier ergänzt.
+- `data/_authoring/image-prompts/ANSWER_IMAGES.md` — Regeln für Bildantworten,
+  wird hier ergänzt.
+- Skill `flux2-bilder` (Figuren mit Emotionsset), Skill `krea2-bilder`
+  (Einzelmotive ohne Referenzbild).
+- 🟡 Die Eingabepfade in beiden Skills stimmen auf dieser Maschine nicht — die
+  laufende ComfyUI ist `B:\ComfyUI_windows_portable\ComfyUI\` (STATE.md).
+
+## Teil A — Der Loch-Fresser im Freistell-Werkzeug
+
+**Belegter Befund:** In `bisasam_neutral.png` ist das linke Auge vollständig
+durchsichtig, im rechten fehlt ein Teil des Weißen. Ursache ist nicht der
+Prompt, sondern `rembg`: das Modell hält eine helle, vom Rest der Figur
+**umschlossene** Fläche für Hintergrund und stanzt sie heraus. Bei jeder
+gezeichneten Figur mit weißem Augapfel, Zähnen oder Glanzlicht passiert das
+wieder — die heutige Anleitung („Backdrop-Farbe wählen, die nicht in der Figur
+vorkommt") hilft dagegen nicht, weil Augenweiß in *jeder* Figur vorkommt.
+
+**Fix in `cutout.py`, nach `remove()` und vor dem Zuschneiden:** Alle
+durchsichtigen Flächen, die **keine** Verbindung zum Bildrand haben, sind
+Löcher in der Figur und werden wieder deckend gemacht.
+
+- Umsetzung ohne neue Abhängigkeit: Alphakanal auf eine Schwarz-Weiß-Maske
+  schwellen, in eine um ein Pixel größere Leinwand einsetzen, mit
+  `PIL.ImageDraw.floodfill` von der Ecke `(0, 0)` aus füllen. Was danach noch
+  ungefüllt und gleichzeitig durchsichtig ist, ist ein Innenloch.
+- Die Farbwerte für gefüllte Löcher kommen aus dem **Originalbild** — rembg
+  liefert an diesen Stellen keine brauchbaren Farben zurück.
+- 🟡 **Ein Loch kann auch richtig sein** (der Ring eines Henkels, ein Spalt
+  zwischen Arm und Körper, der nicht bis zum Rand durchläuft). Deshalb nur
+  Löcher unterhalb eines Flächenanteils füllen (Vorschlag: 2 % der Figur) und
+  einen Schalter `--keep-holes` anbieten, der die Füllung ganz abschaltet.
+- **Ausgabe erweitern:** Anzahl und Gesamtfläche der gefüllten Löcher in die
+  bestehende Erfolgszeile aufnehmen. Ein stiller Fix, der irgendwann nicht
+  mehr greift, ist kein Fix — man muss sehen, dass er gearbeitet hat.
+
+**`SPRITES.md` nachziehen:** Der Abschnitt „Nachbearbeitung — Pflichtschritt"
+verweist heute auf den nackten `rembg`-Aufruf. Er muss auf `cutout.py`
+verweisen, und die Prüfliste bekommt eine Zeile: *„Augen, Zähne und Glanzlichter
+angesehen — auf dunklem Grund, nicht auf weißem."* Die alte Prüfzeile „keine
+Löcher in Kleidung" hat den Fehler nicht gefangen, weil niemand das Bild vor
+dunklem Hintergrund angesehen hat.
+
+## Teil B — Figuren neu
+
+Bestand heute: `bisasam`, `pikachu`, `prof_eich`, `rattfratz` — **je zwei von
+vier Emotionen.** `SPRITES.md` verlangt alle vier, sonst bleibt die Figur bei
+der falschen Dialogzeile stumm. Die Neuerstellung schließt diese Lücke mit,
+sonst wird sie zweimal angefasst.
+
+| Figur | Heute vorhanden | Fehlt |
+|---|---|---|
+| `bisasam` | `neutral`, `happy` | `worried`, `angry` |
+| `pikachu` | `neutral`, `happy` | `worried`, `angry` |
+| `prof_eich` | `neutral`, `happy` | `worried`, `angry` |
+| `rattfratz` | `neutral`, `worried` | `happy`, `angry` |
+
+Dazu kommen die Figuren, die Phase 5 neu einführt (Rivale, Käfersammler,
+Markt-/Center-Personal) — wie viele es werden, steht erst nach Phase 5 fest,
+deshalb hier keine Zahl.
+
+**Vorgehen je Figur:** vier Läufe hintereinander mit `flux2-bilder`, gleicher
+Seed, das erste gelungene Bild als Referenz in die drei weiteren, nur der
+Ausdruckssatz wird getauscht (`SPRITES.md`). Danach `cutout.py` mit dem
+reparierten Loch-Füller.
+
+**Backdrop:** `mid grey` bleibt. Für Bisasam ausdrücklich **kein** Grün.
+
+## Teil C — Zählbilder: Pokébälle statt Sterne
+
+`antwort_ziffer_1..4.png` zeigen heute weiße Sterne auf weißem Grund — auf dem
+hellen Antwortfeld praktisch unsichtbar, unabhängig vom Thema. Sie werden
+ersetzt durch **ein bis vier Pokébälle**, Bildsprache passend zum bereits
+vorhandenen `props/pokeball.png`.
+
+- Neue Dateien: `answers/antwort_pokeball_1.png` … `_4.png`, 512×512 mit Alpha.
+- Anordnung: 1 = mittig, 2 = nebeneinander, 3 = Dreieck, 4 = 2×2. Auf einen
+  Blick abzählbar, nicht in einer Reihe zusammengedrängt.
+- Kräftiger Kontrast (roter Deckel, weißer Boden, dunkler Ring) — genau der
+  Punkt, an dem die Sterne versagt haben.
+- Die alten `antwort_ziffer_*.png` werden gelöscht, nicht liegen gelassen.
+  Umgestellt wird der Verweis in `events/silben_klatschen.json` (Phase 5).
+
+## Teil D — Bildantworten aus dem Pokémon-Universum
+
+Phase 5 legt fest, **welche** Wörter die Aufgaben künftig benutzen. Diese Phase
+erzeugt die zugehörigen Bilder. Der Bestand `answers/` enthält heute 21
+allgemeine Motive (Auto, Boot, Vase, Ofen, Hose, Dose, Milch, Mais, Laus …);
+was davon in der neuen Wortliste nicht mehr vorkommt, wird gelöscht.
+
+**Regel für die neuen Motive** (in `ANSWER_IMAGES.md` ergänzen): Ein Bild in
+dieser Welt zeigt einen Gegenstand, wie er im Pokémon-Universum vorkommt —
+Pokéball, Beere, Trank, Angel, Kescher, Lagerfeuer, Fahrrad, Baumstumpf — statt
+eines beliebigen Alltagsgegenstands. Die Eindeutigkeitsregel aus
+`ANSWER_IMAGES.md` bleibt darüber stehen: **im Zweifel gewinnt das erkennbarere
+Bild, nicht das thematisch passendere.** Ein Kind, das rät, hat nichts gelernt,
+egal wie hübsch das Motiv zum Thema passt.
+
+Erzeugung wie bisher: `krea2-bilder`, 1024×1024, danach auf 512 verkleinert,
+freigestellt mit `cutout.py --trim`.
+
+## Umsetzung
+
+1. `cutout.py` reparieren (Teil A), `--keep-holes` und die erweiterte
+   Ausgabezeile ergänzen.
+2. Gegenprobe am kaputten Bestand: das heutige `bisasam_neutral.png` ist kein
+   gültiger Testfall (es ist bereits freigestellt) — stattdessen ein neu
+   erzeugtes Rohbild durchlaufen lassen und die Augen auf dunklem Grund prüfen.
+3. `SPRITES.md` und `ANSWER_IMAGES.md` nachziehen (Teile A und D).
+4. Figuren neu erzeugen, vier Emotionen je Figur (Teil B).
+5. Pokéball-Zählbilder erzeugen, alte Ziffernbilder löschen (Teil C).
+6. Bildantworten zur neuen Wortliste aus Phase 5 erzeugen, nicht mehr genutzte
+   löschen (Teil D).
+7. `ASSET_REQUIREMENTS.md` Abschnitt zu Sprites/Bildantworten auf den neuen
+   Stand bringen.
+8. `deploy.cmd content`.
+
+## Akzeptanzkriterien
+
+1. `cutout.py` füllt Innenlöcher und meldet in seiner Ausgabe, wie viele es
+   waren. `--keep-holes` schaltet das ab.
+2. Alle vier bestehenden Figuren liegen in **vier** Emotionen vor, alle
+   identisch zugeschnitten (kein Springen beim Emotionswechsel im Dialog).
+3. Jede neue Sprite-Datei einmal vor dunklem Hintergrund angesehen: Augen,
+   Zähne und Glanzlichter sind da.
+4. `antwort_pokeball_1..4.png` liegen vor, die Anzahl ist am Handy auf einen
+   Blick abzählbar (Prüfung am Gerät, nicht am Monitor).
+5. Kein `antwort_ziffer_*.png` mehr im Bestand, kein Verweis darauf im Content.
+6. Jedes in den Aufgaben genutzte `image` existiert als Datei, und keine Datei
+   in `answers/` ist verwaist.
+7. `SPRITES.md`, `ANSWER_IMAGES.md` und `ASSET_REQUIREMENTS.md` beschreiben den
+   tatsächlichen Stand.
+
+## Report-Back
+
+*(nach Umsetzung ausfüllen)*

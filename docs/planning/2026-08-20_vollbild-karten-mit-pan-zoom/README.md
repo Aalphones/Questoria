@@ -27,6 +27,16 @@ neu geplant und um neue Stationen verdichtet.
 | 4 | [Automatischer Fokus](phase-4-auto-fokus.md) | standard | pending |
 | 5 | [Level-Neuplanung Alabastia](phase-5-level-neuplanung.md) | standard | pending |
 | 6 | [Assets erzeugen](phase-6-assets-erzeugen.md) | standard | pending |
+| 7 | [Figuren- und Aufgabenbilder neu](phase-7-figuren-und-aufgabenbilder.md) | standard | pending |
+
+**Nachtrag 23.08.2026 (Sascha):** Vier Wünsche sind dazugekommen und in
+Phase 5–7 eingearbeitet — Figurenbilder neu (und der rembg-Fehler, der Bisasam
+die Augen ausgestanzt hat, im Werkzeug abgestellt), Aufgaben aufs
+Pokémon-Universum umgestellt statt Ball/Boot/Vase, Silben zählen mit Pokébällen
+statt Sternen, und das Kartenverfahren (ChatGPT-Entwurf + Tiled Upscale) wird zu
+Beginn von Phase 6 gemeinsam entschieden. Phase 7 ist neu und wurde von Phase 6
+abgetrennt, weil Kartenkacheln und Figurenbilder außer dem Zeitpunkt nichts
+gemeinsam haben.
 
 ## Kontrakt — `MapCanvas` (`ui/map-canvas/map-canvas.ts`)
 
@@ -90,6 +100,13 @@ Zustand, Phase 3).
    sofort sichtbar, sobald sie existieren (kein Warten auf Freischaltung).
 10. Alle Kartenpunkte bleiben per Tab erreichbar, Zoom-Steuerung ist
     tastaturbedienbar, `prefers-reduced-motion` wird respektiert.
+11. Kein Figurenbild hat Löcher an Augen, Zähnen oder Glanzlichtern, und das
+    Freistell-Werkzeug kann sie gar nicht mehr erzeugen (Phase 7).
+12. Alle vier Figuren liegen in vier Emotionen vor statt in zwei.
+13. Die Aufgaben der Welt nennen Wörter aus dem Pokémon-Universum; wo Reim oder
+    Anlaut das verhindern, ist die Ausnahme benannt und begründet.
+14. Silben werden mit Pokébällen gezählt, nicht mit Sternen — und die Anzahl ist
+    am Gerät des Kindes auf einen Blick abzählbar.
 
 ## 🟡 Risiken & Annahmen
 
@@ -106,6 +123,15 @@ Zustand, Phase 3).
 - **Content-Aufwand ist real, nicht kosmetisch:** ~10–12 neue Stationen
   brauchen je eine neue Leseepisode plus ein PNG-Sprite — das ist die
   aufwendigste Einzelphase (Phase 5+6 zusammen), nicht Fleißarbeit nebenbei.
+- **Lernziel schlägt Thema** (23.08.2026): Reim- und Anlaut-Aufgaben sind über
+  den Klang gebunden. Wo sich Pokémon-Wortmaterial und Lautvorgabe nicht
+  vereinbaren lassen, bleibt ein neutrales Wort stehen. Ein Reimpaar, das sich
+  nicht reimt, wäre keine Themenanpassung, sondern eine kaputte Aufgabe.
+- **Der Bildbestand wächst hinter dem Content her:** Phase 5 trägt Dateinamen
+  ein, die es erst nach Phase 7 gibt. Zwischen den beiden Phasen ist
+  `pokemon_lesen` nicht abnahmefähig — nicht deployen, bis Phase 7 durch ist.
+  Das legt sich auf den bestehenden Nicht-Deployen-Vorbehalt aus Phase 1 (altes
+  `world_config.json`-Schema) oben drauf.
 - **Abgeleitet vs. persistiert bewusst zugunsten „persistiert" entschieden**
   (Sascha, 20.08.2026) — technisch wäre der lineare Freischalt-Zustand aus
   dem bestehenden Fortschritt herleitbar; persistiert erlaubt spätere

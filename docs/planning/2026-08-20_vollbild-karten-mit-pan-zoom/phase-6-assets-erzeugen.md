@@ -54,6 +54,46 @@ von Alabastia und Route 1, das im Spiel nie als eigene Kachel auftaucht) und
 nach dem Zuschneiden verworfen — sie sind reiner Kontext für eine stimmige
 Komposition, kein Ausliefer-Asset.
 
+## 🔴 Vor dem ersten Bild: Kartenverfahren gemeinsam festlegen
+
+Sascha am 23.08.2026: *„Speziell bei der Karte können wir uns ja auch überlegen
+eine detailliertere Karte mit ChatGPT zu erstellen und dann mit Tiled Upscale
+und Flux 2 oder Krea 2 hochskalieren und mehr Details ergänzen. Lass uns das in
+Phase 6 gemeinsam ausloten."*
+
+Das ist **keine Umsetzungsanweisung, sondern ein offener Punkt** — er wird am
+Anfang dieser Phase mit Sascha entschieden, nicht vom Umsetzer allein. Zur
+Entscheidung stehen mindestens drei Wege:
+
+| Weg | Grundlage | Wofür er spricht | Wogegen |
+|---|---|---|---|
+| **A — komplett lokal** | Krea 2 Turbo erzeugt die Leinwand, Tiled Upscale schärft sie | eine Kette, ein Stil, keine Handarbeit dazwischen | Krea 2 hält eine 3×2-Kachel-Komposition mit vier benannten Orten kaum zusammen |
+| **B — ChatGPT als Entwurf, lokal veredelt** | ChatGPT/GPT Image zeichnet die Gesamtkomposition, Tiled Upscale + Flux 2 oder Krea 2 bringen Auflösung und Details | GPT Image plant Bildaufbau über eine große Fläche deutlich verlässlicher | Stilbruch zum Rest der Welt; GPT Image lehnt geschützte Figuren unvorhersehbar ab (`SPRITES.md`) — bei einer reinen Landschaftskarte ohne Pokémon aber unkritisch |
+| **C — Entwurf grob, Details als eigene Ebene** | Karte bleibt schlichter Untergrund, die Detailfülle kommt aus den Stations-Sprites obendrauf | Details lassen sich einzeln ändern, ohne die Karte neu zu erzeugen; ein Ort verrutscht → nur ein PNG wandert | die Karte selbst bleibt vergleichsweise leer |
+
+**Vor der Entscheidung zu klären** (billig, macht sie erst beantwortbar):
+
+1. Liegt der Tiled-Upscale-Workflow inzwischen vor? Ohne ihn ist die
+   6144×2048-Leinwand aus dem Batch-Prinzip unten sowieso nicht erreichbar, und
+   alle drei Wege stehen still.
+2. Läuft er auf dieser Maschine — `B:\ComfyUI_windows_portable\ComfyUI\`, nicht
+   der Pfad aus den Skills (STATE.md).
+3. **Ein Probelauf auf einer einzigen Kachel, bevor die große Leinwand
+   angefasst wird.** Erst das Ergebnis dieser einen Kachel entscheidet, ob der
+   Weg trägt — nicht die Überlegung vorher. Der teure Teil ist die
+   6144er-Leinwand, geprüft wird an 1024.
+
+Ergebnis der Entscheidung als ADR festhalten, wenn sie auf B oder C fällt (A ist
+der bereits dokumentierte Standardweg).
+
+## 🟡 Reihenfolge: Freistell-Werkzeug zuerst
+
+Die 14 Stations-Sprites laufen durch dasselbe `cutout.py`, das in
+[Phase 7](phase-7-figuren-und-aufgabenbilder.md) Teil A repariert wird — heute
+stanzt es helle, umschlossene Flächen aus der Figur heraus (belegt an
+`bisasam_neutral.png`). **Teil A von Phase 7 vorziehen und vor dem ersten
+Stations-Sprite erledigen**, sonst wird dieselbe Arbeit zweimal gemacht.
+
 ## Auflösungsvorgaben
 
 | Asset | Format | Größe |
@@ -64,6 +104,8 @@ Komposition, kein Ausliefer-Asset.
 
 ## Umsetzung
 
+0. Kartenverfahren mit Sascha entscheiden (Abschnitt oben), Probelauf auf einer
+   Kachel, `cutout.py`-Fix aus Phase 7 Teil A vorziehen.
 1. Pro Batch: **einen** Prompt für die gesamte Szene formulieren (welche
    Kacheln/Stationen liegen wo in der Leinwand, welcher Übergang zwischen
    ihnen — z. B. Weg, der von `alabastia` nach `route_1` hinüberläuft, Wald,
@@ -91,8 +133,12 @@ Komposition, kein Ausliefer-Asset.
    Vegetation/Licht.
 3. Alle 14 Stations-Sprites liegen vor, freigestellt, an der von Phase 5
    vergebenen Datei-Adresse.
-4. `ASSET_REQUIREMENTS.md` beschreibt das Batch-Prinzip.
-5. `deploy.cmd content` einmal durchgeführt.
+4. `ASSET_REQUIREMENTS.md` beschreibt das Batch-Prinzip **und** das
+   entschiedene Kartenverfahren.
+5. Die Karte hält beim Hineinzoomen bis auf Kachel-Nativgröße stand — beim
+   maximalen Zoom sind noch Details zu sehen, kein Weichzeichner-Matsch. Das
+   war der Anlass für den Tiled-Upscale-Umweg.
+6. `deploy.cmd content` einmal durchgeführt.
 
 ## Report-Back
 

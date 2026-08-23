@@ -72,6 +72,60 @@ Hinweis-Knoten ohne Episode) — der Arena-Hinweis-Knoten ist bewusst die
 einzige Ausnahme, damit nicht jede einzelne Station zwingend eine volle
 Leseepisode braucht (Auflockerung, kein Etikettenschwindel).
 
+## Aufgaben aufs Pokémon-Universum umstellen
+
+Dazugekommen am 23.08.2026 (Sascha): *„Die Aufgaben in der Pokémonwelt sind mir
+zu generisch (Ball, Boot, etc.)."* Betrifft **nicht nur** die neuen Episoden,
+sondern die zehn bestehenden Aufgabendateien unter
+`data/themes/pokemon_lesen/events/` gleich mit.
+
+**Was heute generisch ist** — Bestandsaufnahme, damit beim Umsetzen nichts
+übersehen wird:
+
+| Datei | Typ | Wortmaterial heute |
+|---|---|---|
+| `reim_1.json` | `multiple_choice` | Haus/Maus, Ball, Igel, Ofen, Katze, Laus, Blume, Auto, Nase, Vase, Boot |
+| `reim_2.json` | `multiple_choice` | Hose/Rose, Dose, Auto, Katze, Ball, Igel, Ofen, Nase, Vase, Boot |
+| `wortpaare_1.json` | `word_match` | Ball, Maus, Igel, Hase, Katze, Mond, Auto, Boot, Ofen |
+| `wortpaare_2.json` | `word_match` | Katze, Auto, Mond, Ball, Baum, Boot, Hase, Igel, Vase |
+| `sortieren_anlaute.json` | `sorting` | Ball, Baum, Blume, Boot / Maus, Mais, Milch, Mond |
+| `silben_klatschen.json` | `multiple_choice` | teils schon thematisch (Bisasam, Pikachu, Rattfratz), teils nicht (Ball, Gras, Wiese) |
+| `anlaut_b_suche.json` | `image_search` | Ball, Blatt, Beere — im Suchbild, geht schon in Ordnung |
+| `anlaut_m_suche.json` | `image_search` | Mütze, Malstift, Muschel — passt nicht zum Labor |
+| `wald_suche.json` | `image_search` | Sonne, Stein, Specht — passt zum Wald, bleibt |
+| `zahlenstrahl_wald.json` | `number_line` | reine Zahlen, thematisch neutral, bleibt |
+
+**Die Regel, nach der ersetzt wird:** Das Wortmaterial kommt aus dem
+Pokémon-Universum — Pokémon-Namen, Gegenstände (Pokéball, Trank, Beere, Angel,
+Kescher, Fahrrad), Orte (Arena, Center, Wald, Höhle, Route) und Figuren
+(Trainer, Käfersammler, Professor). Für `image_search` gilt dasselbe für die
+gesuchten Objekte **im Suchbild**, nicht nur für den Fragetext.
+
+🔴 **Grenze, die nicht verhandelbar ist:** `reim_*` und `sortieren_anlaute` sind
+über den **Klang** gebunden, nicht über das Thema. Ein Reimpaar braucht einen
+echten Reim, ein Anlaut-Korb braucht Wörter mit genau diesem Anlaut. Wo sich
+beides nicht vereinbaren lässt, gewinnt **das Lernziel**, nicht das Thema — dann
+steht dort ein neutrales Wort. Ein Reimpaar, das sich nicht reimt, ist keine
+Themenanpassung, sondern eine kaputte Aufgabe. Beim Umsetzen die Fälle, in denen
+das Thema nachgeben musste, im Report-Back aufzählen.
+
+Brauchbare Ansatzpunkte, an denen Klang und Thema zusammengehen (nicht
+erschöpfend, beim Umsetzen erweitern): Anlaut B → Bisasam, Ball (Pokéball),
+Beere, Baum, Blatt · Anlaut M → Mauzi, Menki, Machollo, Mond · Reim → Ball/Fall,
+Stein/Bein, Beere/Schere, Maus/Haus (Rattfratz ist eine Maus, das Motiv trägt).
+
+**Silben zählen: Pokébälle statt Sterne.** `silben_klatschen.json` verweist
+heute auf `antwort_ziffer_1..4.png` — drei weiße Sterne auf weißem Grund, auf
+dem hellen Antwortfeld kaum zu sehen. Die Verweise wechseln auf
+`antwort_pokeball_1..4.png`; die Bilder erzeugt Phase 7. Die Beschriftungen
+`"1".."4"` bleiben — das Bild zeigt die Menge, der Text nennt die Zahl.
+
+**Bilddateien:** Jedes neue Wort braucht ein `antwort_<slug>.png`. Diese Phase
+legt die **Wortliste** fest und trägt die Dateinamen ein; erzeugt werden die
+Bilder in Phase 7. Bis dahin fehlen die Dateien — die Welt ist in diesem
+Zwischenzustand nicht abnahmefähig, und das ist in Ordnung, solange Phase 7
+direkt folgt.
+
 ## 🟡 Aufwands-Hinweis (keine Kleinigkeit)
 
 Elf neue Episoden sind **echte Content-Arbeit** — jede braucht Dialog/
@@ -102,7 +156,14 @@ Realistisch mehrere Sitzungen, nicht eine.
    Phase 6) — jede der 14 Stationen bekommt ein eigenes PNG-Sprite statt
    eines reinen Punkts (das war der ursprüngliche Anstoß: „echte PNGs für
    die Elemente").
-6. `data/_authoring/JSON_SCHEMA_REFERENCE.md` Abschnitt 1+2 aktualisieren:
+6. Die zehn bestehenden Aufgabendateien unter `events/` auf das
+   Pokémon-Wortmaterial umstellen (Tabelle und Regel oben), die Verweise in
+   `silben_klatschen.json` von `antwort_ziffer_*` auf `antwort_pokeball_*`
+   wechseln. Die Aufgaben der elf neuen Episoden folgen derselben Regel von
+   Anfang an.
+7. Die vollständige Liste der gebrauchten `antwort_<slug>.png` zusammenstellen
+   und ins Report-Back schreiben — sie ist die Bestellliste für Phase 7.
+8. `data/_authoring/JSON_SCHEMA_REFERENCE.md` Abschnitt 1+2 aktualisieren:
    `background: string` → `tiles: MapTileDef[]` in allen drei betroffenen
    Strukturen (`main_hub.json`, `arc_overview`, `MapEntry`), neues
    `tile_id`-Feld bei `ArcStage`/`MapNode`/`InstalledTheme` dokumentieren,
@@ -122,6 +183,14 @@ Realistisch mehrere Sitzungen, nicht eine.
 5. Der Arena-Knoten zeigt seinen Hinweistext, ohne eine Episode zu starten.
 6. `JSON_SCHEMA_REFERENCE.md` ist aktualisiert und beschreibt exakt das
    Schema, das der Content tatsächlich nutzt.
+7. Keine Aufgabe nennt mehr ein Wort ohne Bezug zum Pokémon-Universum — außer
+   dort, wo Reim oder Anlaut es erzwingen; diese Fälle sind im Report-Back
+   einzeln aufgezählt und begründet.
+8. Jedes Reimpaar reimt sich tatsächlich, jeder Anlaut-Korb enthält nur Wörter
+   mit diesem Anlaut. Laut vorlesen, nicht nur ansehen.
+9. `silben_klatschen.json` verweist auf `antwort_pokeball_1..4.png`, nirgends
+   steht mehr `antwort_ziffer_`.
+10. Die Bestellliste der gebrauchten Bildantworten steht im Report-Back.
 
 ## Report-Back
 

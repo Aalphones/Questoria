@@ -2,7 +2,15 @@
 
 **Aktiver Plan:** [docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/README.md)
 
-**Phase:** 2/6 — Pan- und Zoom-Interaktion (complete)
+**Phase:** 2/7 — Pan- und Zoom-Interaktion (complete)
+
+🟡 **Plan am 23.08.2026 erweitert (Sascha):** Phase 5 stellt zusätzlich die
+Aufgaben der Welt aufs Pokémon-Universum um (statt Ball/Boot/Vase) und wechselt
+das Silbenzählen von Sternen auf Pokébälle. Phase 6 entscheidet zu Beginn
+gemeinsam über das Kartenverfahren (ChatGPT-Entwurf + Tiled Upscale). Neue
+Phase 7 erneuert die Figurenbilder, schließt die Lücke von zwei auf vier
+Emotionen je Figur und repariert das Freistell-Werkzeug, das Bisasam die Augen
+ausgestanzt hat.
 
 **Nächster Schritt:** `/clear`, dann `/model opusplan` (Phase 3 ist heikel und fasst zusätzlich das PHP-Backend an), Phase 3 „Fortschritts-Freischaltung und Savegame" starten. Zwei Findings sind dieser Phase zugetagt — die Abnahme der Klemmung an einer gesperrten Kachel gehört mit dazu.
 
