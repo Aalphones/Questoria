@@ -13,7 +13,8 @@ Raster.
 
 Zusätzlich: Karteneinträge (Etappen, Orte, installierte Welten) werden als
 echte PNG-Sprites auf den Kacheln platziert statt als bloße Punkte, und der
-bestehende Content der Welt `pokemon_lesen` wird im Zuge dessen entlang der
+bestehende Content der Welt `pokemon` (bis 23.08.2026 `pokemon_lesen`, seither
+auf Sachkunde/Mathe erweitert statt reiner Lese-Welt) wird im Zuge dessen entlang der
 echten Kanto-Geografie (Alabastia → Route 1 → Vertania City → Vertania-Wald)
 neu geplant und um neue Stationen verdichtet.
 
@@ -25,7 +26,7 @@ neu geplant und um neue Stationen verdichtet.
 | 2 | [Pan- und Zoom-Interaktion](phase-2-pan-und-zoom.md) | heikel | complete |
 | 3 | [Fortschritts-Freischaltung und Savegame](phase-3-fortschritts-freischaltung.md) | heikel | complete |
 | 4 | [Automatischer Fokus](phase-4-auto-fokus.md) | standard | complete |
-| 5 | [Level-Neuplanung Alabastia](phase-5-level-neuplanung.md) | standard | pending |
+| 5 | [Level-Neuplanung Alabastia](phase-5-level-neuplanung.md) | standard | complete |
 | 6 | [Assets erzeugen](phase-6-assets-erzeugen.md) | standard | pending |
 | 7 | [Figuren- und Aufgabenbilder neu](phase-7-figuren-und-aufgabenbilder.md) | standard | pending |
 
@@ -93,7 +94,7 @@ Zustand, Phase 3).
 5. Panel, Legende, Erfolge, Kompass bleiben beim Ziehen/Zoomen fest am
    Bildschirmrand.
 6. Beim Öffnen zentriert sich die Ansicht animiert auf die aktuelle Station.
-7. `pokemon_lesen` zeigt die neu geplante Alabastia-Route (4 Kacheln,
+7. `pokemon` zeigt die neu geplante Alabastia-Route (4 Kacheln,
    ~13–15 Stationen) mit echten PNG-Sprites statt Punkten.
 8. Freischalt-Zustand übersteht einen Tab-Neustart (Savegame, Phase 3).
 9. MainHub hat **keinen** Fortschritts-Gatekeeper — installierte Welten sind
@@ -129,7 +130,7 @@ Zustand, Phase 3).
   nicht reimt, wäre keine Themenanpassung, sondern eine kaputte Aufgabe.
 - **Der Bildbestand wächst hinter dem Content her:** Phase 5 trägt Dateinamen
   ein, die es erst nach Phase 7 gibt. Zwischen den beiden Phasen ist
-  `pokemon_lesen` nicht abnahmefähig — nicht deployen, bis Phase 7 durch ist.
+  `pokemon` nicht abnahmefähig — nicht deployen, bis Phase 7 durch ist.
   Das legt sich auf den bestehenden Nicht-Deployen-Vorbehalt aus Phase 1 (altes
   `world_config.json`-Schema) oben drauf.
 - **Abgeleitet vs. persistiert bewusst zugunsten „persistiert" entschieden**

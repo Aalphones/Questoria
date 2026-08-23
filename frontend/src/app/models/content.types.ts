@@ -88,8 +88,18 @@ export interface MapNode {
   x: number;
   /** vertikale Position, in % der Kachelhöhe (bezogen auf `tile_id`) */
   y: number;
-  /** episode_id, die dieser Kartenpunkt startet */
-  episode_ref: string;
+  /** Dateiname unter maps/ der Welt — echtes PNG-Sprite statt eines reinen Punkts */
+  illustration: string;
+  /** Pflicht: Vorlesetext und Ersatztext, wenn die Datei fehlt */
+  illustration_label: string;
+  /**
+   * episode_id, die dieser Kartenpunkt startet. Fehlt bei einem reinen
+   * Hinweis-Knoten ohne Lerninhalt (z. B. eine verschlossene Arena) — dieser
+   * zeigt stattdessen `hint_text` und zählt nie zum Fortschritt (progress.rules.ts).
+   */
+  episode_ref?: string;
+  /** Pflicht, sobald `episode_ref` fehlt — Text, den ein Hinweis-Knoten beim Antippen zeigt */
+  hint_text?: string;
 }
 
 export interface MapEntry {

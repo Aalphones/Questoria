@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { MapEntry, MapNode, WorldConfig } from '../../models/content.types';
@@ -154,5 +154,17 @@ export class MapScreen {
     const state = this.stateOf(nodeId);
 
     return state === 'done' || state === 'current';
+  }
+
+  protected nodeImageUrl(illustration: string): string {
+    return this.content.assetUrl(this.themeId(), 'maps', illustration);
+  }
+
+  /** Text im Hinweis-Dialog eines Knotens ohne `episode_ref` (z. B. die Arena). */
+  protected readonly hintText = signal<string>('');
+
+  protected openHint(hintText: string | undefined, dialog: HTMLDialogElement): void {
+    this.hintText.set(hintText ?? '');
+    dialog.showModal();
   }
 }

@@ -5,8 +5,8 @@
   },
   "installed_themes": [
     {
-      "id": "pokemon_lesen",
-      "title": "Pokémon — Die Buchstaben-Route",
+      "id": "pokemon",
+      "title": "Pokémon",
       "cover": "cover.webp",
       "tile_id": "hub_0_0",
       "x": 73,

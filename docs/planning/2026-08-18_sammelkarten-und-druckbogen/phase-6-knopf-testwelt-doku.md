@@ -1,6 +1,6 @@
 # Phase 6 — Karten-Knopf, Kartenausbau, Doku
 
-Der Weg in die Halle aus jedem Screen, genug Karten in `pokemon_lesen`, um
+Der Weg in die Halle aus jedem Screen, genug Karten in `pokemon`, um
 alles zu sehen, und die Doku auf Stand.
 
 ## Kontext (vorher lesen)
@@ -8,7 +8,7 @@ alles zu sehen, und die Doku auf Stand.
 - `docs/design/HANDOFF.md` Abschnitt „0. HUD" → Absatz „Karten-Button (neu)"
 - `frontend/src/app/ui/hud/hud.ts|html|scss` — dort steht schon der Kommentar,
   wo der Knopf einhängt
-- `data/themes/pokemon_lesen/cards.json`, `data/themes/pokemon_lesen/episodes/`
+- `data/themes/pokemon/cards.json`, `data/themes/pokemon/episodes/`
 - `data/_authoring/JSON_SCHEMA_REFERENCE.md` Abschnitt 3,
   `data/_authoring/ASSET_REQUIREMENTS.md` Abschnitt 5,
   `data/_authoring/image-prompts/CARDS.md`
@@ -24,7 +24,7 @@ alles zu sehen, und die Doku auf Stand.
 4. Ohne aktive Welt (Planetenkarte, Profilauswahl) erscheint er nicht — kein
    Knopf, der ins Leere führt.
 5. „Zurück" aus der Halle führt auf die Planetenkarte, aus dem Bogen in die Halle.
-6. `pokemon_lesen` hat mindestens **11 Karten in drei `set`-Gruppen**,
+6. `pokemon` hat mindestens **11 Karten in drei `set`-Gruppen**,
    mit gemischten Seltenheiten und `hint`-Texten — genug für zwei Druckblätter,
    drei Gruppen und einen sichtbaren Unterschied zwischen den Filtern.
    Mindestens zwei davon werden über `reward`-Events der Episoden vergeben.
@@ -43,9 +43,9 @@ alles zu sehen, und die Doku auf Stand.
       Platzhalter-Kommentar am Ende von `hud.html` entfernen.
 - [ ] Erklärung am Knopf (`title`/`aria-label`): „Deine Sammelkarten dieser Welt".
 
-### Kartenausbau `pokemon_lesen`
+### Kartenausbau `pokemon`
 
-- [ ] `data/themes/pokemon_lesen/cards.json` auf ≥ 11 Karten in drei
+- [ ] `data/themes/pokemon/cards.json` auf ≥ 11 Karten in drei
       `set`-Gruppen erweitern (alle drei Seltenheiten, je ein `hint`) — 5
       neue Karten zu den bestehenden 6, dritte Set-Gruppe neu.
 - [ ] Fehlende Kartenbilder dazu bestellen (`data/_authoring/image-prompts/CARDS.md`,

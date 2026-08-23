@@ -2,28 +2,35 @@
 
 **Aktiver Plan:** [docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/README.md)
 
-**Phase:** 4/7 — Automatischer Fokus (complete)
+**Phase:** 5/7 — Level-Neuplanung Alabastia (complete)
 
-🟡 **Plan am 23.08.2026 erweitert (Sascha):** Phase 5 stellt zusätzlich die
-Aufgaben der Welt aufs Pokémon-Universum um (statt Ball/Boot/Vase) und wechselt
-das Silbenzählen von Sternen auf Pokébälle. Phase 6 entscheidet zu Beginn
-gemeinsam über das Kartenverfahren (ChatGPT-Entwurf + Tiled Upscale). Neue
-Phase 7 erneuert die Figurenbilder, schließt die Lücke von zwei auf vier
-Emotionen je Figur und repariert das Freistell-Werkzeug, das Bisasam die Augen
-ausgestanzt hat.
+🟡 **Welt umbenannt (23.08.2026, Sascha):** `pokemon_lesen` → `pokemon`, Fach
+erweitert auf Deutsch/Mathe/Sachkunde. Ordner, `theme_id`, `main_hub.json`
+und alle load-bearing Doku-Verweise sind nachgezogen (Details: Report-Back
+Phase 5). Weiter unten in dieser Datei stehen noch alte Verweise auf
+`pokemon_lesen` in älteren, nicht mehr aktiven Abschnitten — die sind
+historisch korrekt und bleiben so stehen.
 
 🟡 **Phase-4-Smoke steht noch aus** (Report-Back der Phasendatei): Timeline/
 MapScreen/MainHub am Bildschirm öffnen, manuelles Zoomen/Ziehen nach dem
 Fokus prüfen, `prefers-reduced-motion` durchspielen — Details und Priorität
 in [phase-4](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/phase-4-auto-fokus.md).
 
-**Nächster Schritt:** `/clear`, dann `/model sonnet` (Phase 5 „Level-Neuplanung Alabastia" ist standard), Phase 5 starten.
+**Nächster Schritt:** `/clear`, dann `/model sonnet` (Phase 6 „Assets erzeugen"
+ist standard). Phase 6 startet mit einer 🔴-Entscheidung zum Kartenverfahren
+(ChatGPT-Entwurf + Tiled Upscale vs. lokal) — die zuerst mit Sascha klären,
+bevor Bilder erzeugt werden.
 
-🟡 **Ziehen, Zoomen und die Kachel-Freischaltung sind gebaut, aber am Bildschirm noch nicht abgenommen.** Die Abnahme von Phase 2 und 3 hängt zusammen und steht als eine Liste im Report-Back von [phase-3](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/phase-3-fortschritts-freischaltung.md). Unsicherste Stellen: Zwei-Finger-Zoom gleichzeitig mit Schieben (Phase 2) und der Spielstand-Schreibkreis beim Öffnen einer Karte — höchstens ein `PUT` beim ersten Öffnen, keins beim zweiten (Phase 3).
+🔴 **`pokemon` ist bis Phase 7 nicht abnahmefähig/deploybar:** Phase 5 hat
+Content und Datenmodell fertig (Build+Lint grün, alle Referenzen
+konsistenzgeprüft), aber es fehlen noch alle Bilddateien — 4 Kachel-
+Hintergründe, 14 Stations-Sprites, 10 Episoden-Hintergründe, 18 neue
+Bildantworten, plus Sprites für 6 neue Figuren. Vollständige Bestellliste im
+Report-Back von [phase-5](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/phase-5-level-neuplanung.md).
+**Nicht deployen, solange Phase 7 nicht fertig ist.** Die Planetenkarte
+(`data/main_hub.json`, migriert) bleibt separat funktionsfähig.
 
-🟡 **Voll prüfbar ist die Freischaltung erst mit der neuen Route** (Phase 5): `pokemon_lesen` trägt noch das alte Schema, und eine Route mit Knick gibt es noch nicht.
-
-🔴 **Zwischenzustand seit Phase 1 (Details: Report-Back der Phasendatei):** `pokemon_lesen` (echte, deployte Welt) crasht auf Etappen-/Ortskarte, weil `world_config.json` noch das alte Schema trägt (`background`/`file` statt `tiles`) — Phase 5 räumt das auf. **Nicht deployen, solange Phase 5 nicht fertig ist.** Die Planetenkarte (`data/main_hub.json`, migriert) bleibt funktionsfähig.
+🟡 **Ziehen, Zoomen und die Kachel-Freischaltung sind gebaut, aber am Bildschirm noch nicht abgenommen.** Die Abnahme von Phase 2 und 3 hängt zusammen und steht als eine Liste im Report-Back von [phase-3](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/phase-3-fortschritts-freischaltung.md). Unsicherste Stellen: Zwei-Finger-Zoom gleichzeitig mit Schieben (Phase 2) und der Spielstand-Schreibkreis beim Öffnen einer Karte — höchstens ein `PUT` beim ersten Öffnen, keins beim zweiten (Phase 3). **Jetzt zusätzlich prüfbar** (FINDINGS.md → Phase 5, noch offen): `vertania_wald` liegt bewusst im Knick (`{row:-1,col:2}`) — sobald Phase 6 die Bilder liefert, am Bildschirm prüfen, ob sich in die leere Ecke neben `vertania_wald` pannen lässt, obwohl dort keine Kachel liegt.
 
 **Sammelkarten-Plan liegt weiter geparkt:** [docs/planning/2026-08-18_sammelkarten-und-druckbogen/README.md](docs/planning/2026-08-18_sammelkarten-und-druckbogen/README.md).
 

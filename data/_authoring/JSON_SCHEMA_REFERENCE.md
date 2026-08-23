@@ -8,7 +8,7 @@ umbenannten Keys.
 🟡 = offener Hinweis/Design-Notiz, kein Verifikationsstatus. Das Schema selbst
 ist seit Meilenstein 3 gegen die laufende Engine verifiziert (Testwelt spielte
 alle fünf Eventtypen durch, die Testwelt ist seit 19.08.2026 entfernt) — die
-Verifikation hält seither auch an echtem Content (`pokemon_lesen`).
+Verifikation hält seither auch an echtem Content (`pokemon`, bis 23.08.2026 `pokemon_lesen`).
 
 **Das Grundprinzip:** Eine Episode ist eine **Eventliste**, sonst nichts. Dialog,
 Rätsel, Erkundung, Kampf und Belohnung sind gleichrangige Events derselben
@@ -42,7 +42,14 @@ auf der sie angeordnet sind.
 ```json
 {
   "hub_map": {
-    "background": "string — Dateiname, ausgeliefert unter /content/hub/<datei>",
+    "tiles": [
+      {
+        "id": "string — eindeutig innerhalb der Karte",
+        "row": "integer ≥ 0 — Kachel-Zeile im offenen Koordinatensystem",
+        "col": "integer ≥ 0 — Kachel-Spalte",
+        "background": "string — Dateiname, ausgeliefert unter /content/hub/<datei>, quadratisch, exakt 1024×1024"
+      }
+    ],
     "routes": [["string — theme id", "string — theme id"]]
   },
   "installed_themes": [
@@ -50,8 +57,9 @@ auf der sie angeordnet sind.
       "id": "string — eindeutig, snake_case, identisch zu theme_id in world_config.json",
       "title": "string — Anzeigename",
       "cover": "string — Dateiname, liegt direkt im Welt-Ordner (nicht unter cover/)",
-      "x": "number 0–100 — horizontale Position auf der Planetenkarte, in % der Kartenbreite",
-      "y": "number 0–100 — vertikale Position, in % der Kartenhöhe",
+      "tile_id": "string — welche hub_map.tiles[].id diesen Weltknoten trägt",
+      "x": "number 0–100 — horizontale Position innerhalb der Kachel, in % der Kachelbreite",
+      "y": "number 0–100 — vertikale Position, in % der Kachelhöhe",
       "size": "number 0–100 — Durchmesser des Weltknotens, in % der Kartenbreite"
     }
   ]
@@ -61,18 +69,26 @@ auf der sie angeordnet sind.
 **Adressierung (Kontrakt ab Meilenstein 2):** Die Content-Schnittstelle liest
 diese Datei über die Welt-ID, nicht über einen Dateipfad — deshalb kein
 `config_path` mehr. Bilder werden getrennt vom Webserver ausgeliefert:
-`cover` über `GET /content/themes/<id>/<cover>`, `hub_map.background` über
-`GET /content/hub/<datei>`. Das Frontend baut diese Adressen ausschließlich
+`cover` über `GET /content/themes/<id>/<cover>`, jede `hub_map.tiles[].background`
+über `GET /content/hub/<datei>`. Das Frontend baut diese Adressen ausschließlich
 über `ContentService` (`themeAssetUrl`, `hubAssetUrl`) zusammen.
 
 `routes` zeichnet gestrichelte Verbindungslinien zwischen zwei Welten. Beide
 Enden müssen `installed_themes[].id` sein. Leeres Array = keine Linien.
 
-**Warum Prozent und keine Pixel:** Die Kartenbilder sind 16:9 und werden je nach
-Gerät unterschiedlich groß dargestellt. Prozentwerte beziehen sich auf das
-Kartenbild selbst — ein Knoten sitzt damit auf jedem Bildschirm auf demselben
-Punkt der Illustration. Das gilt auch für `size`: eine Pixelgröße würde auf dem
-Handy im Verhältnis zur Karte riesig wirken und Knoten überlappen lassen.
+**Kacheln statt einem Kartenbild (ab Plan „Vollbild-Karten mit Pan/Zoom",
+20.08.2026):** Eine Karte besteht aus einzelnen 1024×1024-Kacheln in einem
+offenen Koordinatensystem (`row`/`col`, keine Obergrenze) statt aus einem
+einzigen Hintergrundbild — neue Kacheln kommen einfach mit neuen `row`/`col`-
+Werten dazu, ohne bestehende Kacheln neu zuzuschneiden. Punkte referenzieren
+über `tile_id`, welche Kachel sie trägt; `x`/`y` sind Prozent **dieser Kachel**,
+nicht mehr der ganzen Karte.
+
+**Warum Prozent und keine Pixel:** Kacheln werden je nach Gerät unterschiedlich
+groß dargestellt. Prozentwerte beziehen sich auf die Kachel selbst — ein Knoten
+sitzt damit auf jedem Bildschirm auf demselben Punkt der Illustration. Das gilt
+auch für `size`: eine Pixelgröße würde auf dem Handy im Verhältnis zur Karte
+riesig wirken und Knoten überlappen lassen.
 
 ---
 
@@ -101,13 +117,16 @@ Enthält die Lernstufen und **zwei Kartenebenen**: die Etappenkarte (Übersicht
 
   "arc_overview": {
     "title": "string — Überschrift der Etappenkarte, z. B. Die Reise der Windmühlen-Crew",
-    "background": "string — Dateiname unter maps/, 16:9",
+    "tiles": [
+      { "id": "string — eindeutig", "row": "integer ≥ 0", "col": "integer ≥ 0", "background": "string — Dateiname unter maps/, 1024×1024" }
+    ],
     "stages": [
       {
         "map_id": "string — muss eine maps[].id sein",
         "name": "string — Anzeigename der Etappe",
-        "x": "number 0–100 (%)",
-        "y": "number 0–100 (%)",
+        "tile_id": "string — welche arc_overview.tiles[].id diese Etappe trägt",
+        "x": "number 0–100 — % der Kachelbreite",
+        "y": "number 0–100 — % der Kachelhöhe",
         "size": "number 0–100 — Breite der Etappeninsel in % der Kartenbreite",
         "aspect": "number — Höhe/Breite der Insel, z. B. 0.72",
         "shape": "string — CSS border-radius-Wert für die Inselform, z. B. 46% 56% 40% 60%",
@@ -121,14 +140,20 @@ Enthält die Lernstufen und **zwei Kartenebenen**: die Etappenkarte (Übersicht
     {
       "id": "string — snake_case",
       "name": "string — Anzeigename",
-      "file": "string — Dateiname unter maps/",
+      "tiles": [
+        { "id": "string — eindeutig innerhalb der Map", "row": "integer ≥ 0", "col": "integer ≥ 0", "background": "string — Dateiname unter maps/, 1024×1024" }
+      ],
       "nodes": [
         {
           "id": "string — eindeutig innerhalb der Map",
           "name": "string — Anzeigename am Kartenpunkt",
-          "x": "number 0–100 (%)",
-          "y": "number 0–100 (%)",
-          "episode_ref": "string — episode_id, die dieser Punkt startet"
+          "tile_id": "string — welche maps[].tiles[].id dieser Knoten trägt",
+          "x": "number 0–100 — % der Kachelbreite",
+          "y": "number 0–100 — % der Kachelhöhe",
+          "illustration": "string — Dateiname unter maps/, echtes PNG-Sprite statt eines reinen Punkts, 512×512 mit Alpha",
+          "illustration_label": "string — PFLICHT: Vorlesetext und Ersatztext, wenn die Datei fehlt",
+          "episode_ref": "string — OPTIONAL, episode_id, die dieser Punkt startet",
+          "hint_text": "string — PFLICHT, sobald episode_ref fehlt: Text für einen reinen Hinweis-Knoten ohne Lerninhalt"
         }
       ],
       "routes": [["string — node id", "string — node id"]]
@@ -176,7 +201,7 @@ Regeln für den Satz selbst:
 - **Nur Stil, kein Inhalt.** Kein Motiv, kein Licht einer bestimmten Szene, keine Kameraeinstellung — das kommt aus der jeweiligen Vorlage.
 - **Ein Satz, 15–35 Wörter.** Kürzer trägt nicht, länger drängt das eigentliche Motiv aus dem Prompt.
 
-Beispiel aus `pokemon_lesen`:
+Beispiel aus `pokemon`:
 
 ```json
 "art_style": "Bright anime illustration in the style of a children's television series: clean confident linework with a slightly heavier outline around each subject, soft cel-shading in two tones, warm saturated colours, gentle rounded shapes, even friendly lighting without harsh shadows, and no photographic texture."
@@ -232,10 +257,12 @@ Beispiel One Piece:
     {
       "id": "east_blue",
       "name": "East Blue",
-      "file": "map_east_blue.webp",
+      "tiles": [
+        { "id": "east_blue_0_0", "row": 0, "col": 0, "background": "map_east_blue.webp" }
+      ],
       "nodes": [
-        { "id": "dorf", "name": "Windmühlen-Dorf", "x": 23, "y": 64, "episode_ref": "arc_01_foosha" },
-        { "id": "hafen", "name": "Alter Hafen", "x": 50, "y": 30, "episode_ref": "arc_01_hafen" }
+        { "id": "dorf", "name": "Windmühlen-Dorf", "tile_id": "east_blue_0_0", "x": 23, "y": 64, "illustration": "sprite_dorf.png", "illustration_label": "Ein kleines Dorf mit Windmühle", "episode_ref": "arc_01_foosha" },
+        { "id": "hafen", "name": "Alter Hafen", "tile_id": "east_blue_0_0", "x": 50, "y": 30, "illustration": "sprite_hafen.png", "illustration_label": "Ein alter Holzsteg mit angelegten Booten", "episode_ref": "arc_01_hafen" }
       ],
       "routes": [["dorf", "hafen"]]
     }
@@ -253,7 +280,13 @@ kein Designziel — neuer Arc heißt: neuer `maps[]`-Eintrag, neuer
 - Jede `id` in `difficulty_levels` muss in jeder ausgelagerten
   Event-Konfiguration der Welt als Variante existieren (siehe Abschnitt 5).
 - Jede `stages[].map_id` muss eine `maps[].id` sein.
-- Jede `nodes[].episode_ref` muss eine existierende Episodendatei treffen.
+- Jede `nodes[].tile_id`/`stages[].tile_id` muss eine `id` aus den `tiles[]`
+  derselben Ebene sein.
+- Ist `nodes[].episode_ref` gesetzt, muss es eine existierende Episodendatei
+  treffen. Fehlt es, ist der Knoten ein reiner Hinweis-Knoten ohne Lerninhalt
+  (z. B. eine verschlossene Arena) — er trägt dann `hint_text` und zählt nie
+  zum Fortschritt einer Karte (`progress.rules.ts`), blockiert also nie die
+  nächste Kachel oder den nächsten Erfolg.
 - `routes` verbindet nur Punkte derselben Ebene — Etappen mit Etappen, Nodes
   mit Nodes derselben Map.
 

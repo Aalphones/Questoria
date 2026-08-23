@@ -41,7 +41,7 @@ PYTHONIOENCODING=utf-8 ./.venv-orpheus/Scripts/python.exe generate_orpheus.py --
 PYTHONIOENCODING=utf-8 ./.venv-orpheus/Scripts/python.exe generate_orpheus.py --theme <welt> --dry-run
 ```
 
-Die Ausgabe zeigt jede Dialogzeile mit Episode, laufender Nummer, Sprechername und **der Stimme in eckigen Klammern**. Das ist der eigentliche Befund: Steht überall dieselbe Stimme, ist keine Figur besetzt und alles fällt auf `_default`. Genau so sieht es aktuell für `pokemon_lesen` aus — 16 Zeilen, viermal Julian, weil Professor Eich, Bisasam, Pikachu und Rattfratz keinen Eintrag haben.
+Die Ausgabe zeigt jede Dialogzeile mit Episode, laufender Nummer, Sprechername und **der Stimme in eckigen Klammern**. Das ist der eigentliche Befund: Steht überall dieselbe Stimme, ist keine Figur besetzt und alles fällt auf `_default`. Genau so sah es zuletzt für `pokemon` (bis 23.08.2026 `pokemon_lesen`) aus — 16 Zeilen, viermal Julian, weil Professor Eich, Bisasam, Pikachu und Rattfratz keinen Eintrag haben.
 
 ### 2. Besetzen
 

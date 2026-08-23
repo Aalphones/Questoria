@@ -23,7 +23,12 @@
     flex-direction: column;
     align-items: center;
     gap: var(--space-1);
+    border: none;
+    background: none;
+    padding: 0;
     text-decoration: none;
+    font: inherit;
+    cursor: pointer;
 
     &:focus-visible {
       outline: 2px solid var(--color-focus-ring);
@@ -31,29 +36,29 @@
     }
   }
 
-  &__node {
+  // Echtes PNG-Sprite statt eines reinen Punkts (AK 7 Gesamtplan) — Zustände
+  // bleiben dieselben drei wie beim vorherigen CSS-Kreis.
+  &__node-image {
     display: block;
     inline-size: var(--size-map-point);
-    aspect-ratio: 1;
-    border-radius: var(--radius-pill);
-    box-shadow:
-      0 0 0 var(--ring-map-point) var(--color-map-ring),
-      var(--shadow-md);
-    background: var(--color-progress-locked-strong);
+    block-size: var(--size-map-point);
+    object-fit: contain;
+    filter: drop-shadow(var(--shadow-md));
 
     &--done {
-      background: var(--color-progress-done-strong);
+      filter: drop-shadow(var(--shadow-md)) drop-shadow(0 0 0 var(--color-progress-done-strong));
     }
 
     &--current {
       // Wächst über den Standard-Durchmesser, siehe AK: aktuell größer als geschafft/gesperrt.
       inline-size: var(--size-map-point-current);
-      background: var(--color-progress-current-strong);
+      block-size: var(--size-map-point-current);
       animation: eqPulse var(--duration-pulse) var(--easing-standard) infinite;
     }
 
     &--locked {
       opacity: 0.72;
+      filter: grayscale(1);
     }
   }
 
@@ -111,6 +116,40 @@
     inline-size: var(--size-map-compass-needle-inline);
     block-size: var(--size-map-compass-needle-block);
     background: linear-gradient(180deg, var(--color-accent-hover) 50%, var(--color-progress-locked) 50%);
+  }
+
+  &__hint-dialog {
+    max-inline-size: 26rem;
+    padding: var(--space-6);
+    border: none;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+
+    &::backdrop {
+      background: color-mix(in srgb, var(--palette-ink) 55%, transparent);
+    }
+  }
+
+  &__hint-text {
+    margin: 0 0 var(--space-4);
+    color: var(--color-text);
+  }
+
+  &__hint-close {
+    min-block-size: var(--size-touch-target);
+    padding-inline: var(--space-4);
+    border: none;
+    border-radius: var(--radius-pill);
+    background: var(--color-accent-soft);
+    color: var(--color-accent-soft-text);
+    font-family: var(--font-body);
+    font-weight: 600;
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 2px solid var(--color-focus-ring);
+      outline-offset: 2px;
+    }
   }
 }
 

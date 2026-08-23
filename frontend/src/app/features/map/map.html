@@ -14,23 +14,37 @@
       >
         @for (node of loadedMap.nodes; track node.id) {
           <qst-map-point [x]="pointX(node.tile_id, node.x)" [y]="pointY(node.tile_id, node.y)">
-            @if (isReachable(node.id)) {
-              <a
-                class="map__node-wrapper"
-                [routerLink]="['/theme', themeId(), 'episode', node.episode_ref]"
-              >
-                <span
-                  class="map__node"
-                  [class.map__node--done]="stateOf(node.id) === 'done'"
-                  [class.map__node--current]="stateOf(node.id) === 'current'"
-                ></span>
-                <span class="map__label">{{ node.name }}</span>
-              </a>
+            @if (node.episode_ref; as episodeRef) {
+              @if (isReachable(node.id)) {
+                <a class="map__node-wrapper" [routerLink]="['/theme', themeId(), 'episode', episodeRef]">
+                  <img
+                    class="map__node-image"
+                    [class.map__node-image--done]="stateOf(node.id) === 'done'"
+                    [class.map__node-image--current]="stateOf(node.id) === 'current'"
+                    [src]="nodeImageUrl(node.illustration)"
+                    [alt]="node.illustration_label"
+                  />
+                  <span class="map__label">{{ node.name }}</span>
+                </a>
+              } @else {
+                <div class="map__node-wrapper">
+                  <img
+                    class="map__node-image map__node-image--locked"
+                    [src]="nodeImageUrl(node.illustration)"
+                    [alt]="node.illustration_label"
+                  />
+                  <span class="map__label">{{ node.name }}</span>
+                </div>
+              }
             } @else {
-              <div class="map__node-wrapper">
-                <span class="map__node map__node--locked"></span>
+              <button
+                type="button"
+                class="map__node-wrapper map__node-wrapper--hint"
+                (click)="openHint(node.hint_text, hintDialog)"
+              >
+                <img class="map__node-image" [src]="nodeImageUrl(node.illustration)" [alt]="node.illustration_label" />
                 <span class="map__label">{{ node.name }}</span>
-              </div>
+              </button>
             }
           </qst-map-point>
         }
@@ -44,6 +58,11 @@
         </div>
       </qst-map-canvas>
     </div>
+
+    <dialog #hintDialog class="map__hint-dialog">
+      <p class="map__hint-text">{{ hintText() }}</p>
+      <button type="button" class="map__hint-close" (click)="hintDialog.close()">Schließen</button>
+    </dialog>
   } @else {
     <qst-content-error message="Diese Karte konnte nicht gefunden werden." />
   }

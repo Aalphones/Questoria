@@ -26,10 +26,10 @@ Die Umgebung liegt außerhalb von Git — auf einer neuen Maschine die zwei Befe
 
 ```bat
 :: eine Datei
-.venv\Scripts\python.exe format_assets.py roh.png --out ..\..\themes\pokemon_lesen\backgrounds\alabastia_labor.webp
+.venv\Scripts\python.exe format_assets.py roh.png --out ..\..\themes\pokemon\backgrounds\alabastia_labor.webp
 
 :: ein Stapel in denselben Ordner
-.venv\Scripts\python.exe format_assets.py roh\*.png --out-dir ..\..\themes\pokemon_lesen\answers\
+.venv\Scripts\python.exe format_assets.py roh\*.png --out-dir ..\..\themes\pokemon\answers\
 ```
 
 Den Zieltyp leitet das Werkzeug **aus dem Zielpfad** ab — `backgrounds/` heißt 1920×1080 webp, `answers/` heißt 512×512 PNG, und so weiter. Passt der Pfad nicht ins Schema, `--kind` explizit angeben.
@@ -75,7 +75,7 @@ Bei Sprites und Icons erst freistellen, dann formatieren — sonst schneidet die
 
 ```bat
 .venv\Scripts\python.exe cutout.py roh.png --out zwischen.png --trim
-.venv\Scripts\python.exe format_assets.py zwischen.png --out ..\..\themes\pokemon_lesen\sprites\pikachu\pikachu_neutral.png
+.venv\Scripts\python.exe format_assets.py zwischen.png --out ..\..\themes\pokemon\sprites\pikachu\pikachu_neutral.png
 ```
 
 Bei Szenen, Karten und Antwortbildern reicht der Formatierungsschritt allein.

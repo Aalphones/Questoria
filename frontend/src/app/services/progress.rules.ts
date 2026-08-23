@@ -7,11 +7,16 @@ import { MapEntry, WorldConfig } from '../models/content.types';
  * Schnittstelle tauscht (ADR-006).
  */
 
+/**
+ * Ein reiner Hinweis-Knoten ohne `episode_ref` (z. B. eine verschlossene
+ * Arena) hat nichts, was man "schaffen" könnte — er gilt immer als erledigt,
+ * blockiert also nie den nächsten Ort oder die nächste Kachel.
+ */
 function nodeCompletedStates(
   map: MapEntry,
   isCompleted: (episodeId: string) => boolean,
 ): boolean[] {
-  return map.nodes.map((node) => isCompleted(node.episode_ref));
+  return map.nodes.map((node) => node.episode_ref === undefined || isCompleted(node.episode_ref));
 }
 
 /** Zustand jeder Etappe, Schlüssel = `map_id`. */
@@ -68,6 +73,12 @@ export function nodeStates(
   let currentAssigned = false;
 
   for (const node of map.nodes) {
+    if (node.episode_ref === undefined) {
+      // Hinweis-Knoten: immer erreichbar, blockiert nie die Reihenfolge dahinter.
+      states.set(node.id, 'done');
+      continue;
+    }
+
     if (isCompleted(node.episode_ref)) {
       states.set(node.id, 'done');
       continue;
@@ -120,6 +131,7 @@ export function stageStars(
   starsFor: (episodeId: string) => number | null,
 ): number {
   const completedStars = map.nodes
+    .filter((node): node is MapEntry['nodes'][number] & { episode_ref: string } => node.episode_ref !== undefined)
     .map((node) => starsFor(node.episode_ref))
     .filter((stars): stars is number => stars !== null);
 
@@ -136,7 +148,9 @@ export function worldProgress(
   world: WorldConfig,
   isCompleted: (episodeId: string) => boolean,
 ): { done: number; total: number } {
-  const allNodes = world.maps.flatMap((map: MapEntry) => map.nodes);
+  const allNodes = world.maps
+    .flatMap((map: MapEntry) => map.nodes)
+    .filter((node): node is MapEntry['nodes'][number] & { episode_ref: string } => node.episode_ref !== undefined);
   const done = allNodes.filter((node) => isCompleted(node.episode_ref)).length;
 
   return { done, total: allNodes.length };

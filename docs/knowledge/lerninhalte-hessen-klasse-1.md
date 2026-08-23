@@ -402,7 +402,7 @@ später nachvollziehbar bleibt, was Quelle ist und was Questoria dazugelegt hat.
 
 | ID | Lernziel | Warum nachgetragen |
 |---|---|---|
-| `he_gs1_deu_reime_erkennen` | Reimwörter erkennen und zuordnen | Reimen fehlt in Abschnitt 4.2 vollständig, ist aber Standard-Baustein der phonologischen Bewusstheit und in `pokemon_lesen` bereits zweimal gebaut (`reim_1`, `reim_2`) |
+| `he_gs1_deu_reime_erkennen` | Reimwörter erkennen und zuordnen | Reimen fehlt in Abschnitt 4.2 vollständig, ist aber Standard-Baustein der phonologischen Bewusstheit und in `pokemon` (bis 23.08.2026 `pokemon_lesen`) bereits zweimal gebaut (`reim_1`, `reim_2`) |
 
 Nachgetragene IDs folgen demselben Namensschema und sind ab Vergabe genauso
 stabil zu halten wie die Original-IDs (Qualitätsregel 7).

@@ -21,7 +21,9 @@ function isStageCompleted(world: WorldConfig, stageId: string, progress: ThemePr
     return false;
   }
 
-  return map.nodes.every((node) => progress[node.episode_ref] !== undefined);
+  // Ein Hinweis-Knoten ohne episode_ref (z. B. eine verschlossene Arena) hat
+  // nichts zu schaffen und zählt für die Etappe immer als erledigt.
+  return map.nodes.every((node) => node.episode_ref === undefined || progress[node.episode_ref] !== undefined);
 }
 
 function isConditionMet(condition: AchievementCondition, world: WorldConfig, progress: ThemeProgress): boolean {

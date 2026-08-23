@@ -117,7 +117,7 @@ Stations-Sprite erledigen**, sonst wird dieselbe Arbeit zweimal gemacht.
 3. Für jede der 14 Stationen: eigenes freigestelltes Sprite,
    `krea2-bilder`-Skill (oder `flux2-bilder` nur bei wiederkehrender Figur).
 4. Dateien unter den in Phase 5 vergebenen Namen ablegen
-   (`data/hub/`, `data/themes/pokemon_lesen/maps/`).
+   (`data/hub/`, `data/themes/pokemon/maps/`).
 5. `ASSET_REQUIREMENTS.md` Abschnitt 4 aktualisieren: Batch-Prinzip
    dokumentieren („Kacheln, die aneinandergrenzen, gemeinsam als eine
    Leinwand erzeugen und zerschneiden — nie eine Kachel isoliert generieren,

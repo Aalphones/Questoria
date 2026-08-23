@@ -79,5 +79,5 @@ werden können. Selbst verschuldet, vermeidbar, unnötig.
 Content-Schema selbst ist seit Meilenstein 3 gegen die laufende Engine
 verifiziert (Testwelt spielte alle fünf damaligen Eventtypen durch, seit
 19.08.2026 entfernt) — die Verifikation hält seither auch an echtem Content
-(`pokemon_lesen`). Die seither hinzugekommenen Typen `sorting` und
+(`pokemon`, bis 23.08.2026 `pokemon_lesen`). Die seither hinzugekommenen Typen `sorting` und
 `number_line` tragen dort je eine Probe-Aufgabe im Vertania-Wald.
