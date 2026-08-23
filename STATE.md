@@ -2,7 +2,18 @@
 
 **Aktiver Plan:** [docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/README.md)
 
-**Phase:** 5/7 — Level-Neuplanung Alabastia (complete)
+**Phase:** 5/8 — Level-Neuplanung Alabastia (complete). Plan jetzt 8 statt 7
+Phasen — neue **Phase 8 „Vertonung, vollständig statt nur Dialog"** angehängt
+(23.08.2026, Sascha): jede Frage und zwei feste Engine-Ansagen sollen eine
+echte Aufnahme statt Browser-Sprachausgabe bekommen. Rating heikel — echte
+Schema- und Komponenten-Arbeit, keine reine Content-Phase. Startet mit einer
+eigenen 🔴-Entscheidung (siehe Phasendatei).
+
+🟡 **Parallele Session aktiv (23.08.2026 bemerkt):** `frontend/src/app/features/map/map.html`
+und `frontend/src/app/features/episode/episode.{html,ts}` haben unversionierte
+Änderungen, die nicht aus dieser Session stammen (u. a. `levelLink` am
+Map-Hud). Nicht angefasst, nicht committet von hier aus — vor dem nächsten
+eigenen Write in diese Dateien erst klären, ob die Session noch läuft.
 
 🟡 **Welt umbenannt (23.08.2026, Sascha):** `pokemon_lesen` → `pokemon`, Fach
 erweitert auf Deutsch/Mathe/Sachkunde. Ordner, `theme_id`, `main_hub.json`
