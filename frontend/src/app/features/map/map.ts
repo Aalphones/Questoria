@@ -71,6 +71,15 @@ export class MapScreen {
     })),
   );
 
+  /** Ort, auf den `MapCanvas` beim Öffnen zentriert — der aktuelle, sonst der letzte. */
+  protected readonly focusNodeId = computed<string | null>(() => {
+    const states = this.nodeStateMap();
+    const nodes = this.mapEntry()?.nodes ?? [];
+    const current = nodes.find((node: MapNode) => states.get(node.id) === 'current');
+
+    return current?.id ?? nodes.at(-1)?.id ?? null;
+  });
+
   protected readonly lockedNodeIds = computed<readonly string[]>(() =>
     [...this.nodeStateMap().entries()]
       .filter(([, state]: [string, ProgressState]) => state === 'locked')

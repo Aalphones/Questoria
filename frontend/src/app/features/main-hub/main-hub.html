@@ -17,6 +17,7 @@
         [unlockedTileIds]="unlockedTileIds()"
         [points]="points()"
         [routes]="hub.data.hub_map.routes"
+        [focusPointId]="continueThemeId()"
       >
         @for (theme of hub.data.installed_themes; track theme.id) {
           <qst-map-point

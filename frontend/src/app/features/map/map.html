@@ -10,6 +10,7 @@
         [points]="points()"
         [routes]="loadedMap.routes"
         [dimmedPointIds]="lockedNodeIds()"
+        [focusPointId]="focusNodeId()"
       >
         @for (node of loadedMap.nodes; track node.id) {
           <qst-map-point [x]="pointX(node.tile_id, node.x)" [y]="pointY(node.tile_id, node.y)">

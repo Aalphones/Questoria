@@ -4,6 +4,7 @@ import {
   DestroyRef,
   ElementRef,
   computed,
+  effect,
   inject,
   input,
   signal,
@@ -70,6 +71,9 @@ export class MapCanvas {
   readonly dimmedPointIds = input<readonly string[]>([]);
   /** Welche `MapCanvasTile.id` gerade freigeschaltet sind. Fortschritt/Savegame kennt `MapCanvas` selbst nicht. */
   readonly unlockedTileIds = input<readonly string[]>([]);
+  /** Punkt, auf den beim Laden/Wechsel animiert zentriert wird — `null` heißt keine Zentrierung. */
+  readonly focusPointId = input<string | null>(null);
+  readonly focusZoom = input<number>(1.6);
 
   protected readonly tilesById = computed<ReadonlyMap<string, MapCanvasTile>>(
     () => new Map(this.tiles().map((tile: MapCanvasTile) => [tile.id, tile])),
@@ -141,6 +145,8 @@ export class MapCanvas {
   /** Startwert `TILE_SIZE` verhindert Sprung/NaN vor der ersten Messung. */
   private readonly viewportWidth = signal<number>(TILE_SIZE);
   private readonly viewportHeight = signal<number>(TILE_SIZE);
+  /** Erst wahr, sobald der `ResizeObserver` einmal echte Maße geliefert hat — vorher wäre jede Fokus-Zentrierung auf den Platzhalterwert verkehrt. */
+  private readonly hasMeasured = signal<boolean>(false);
 
   private readonly measureViewport = new ResizeObserver((entries: ResizeObserverEntry[]) => {
     const entry = entries[0];
@@ -156,6 +162,7 @@ export class MapCanvas {
 
     this.viewportWidth.set(inlineSize);
     this.viewportHeight.set(blockSize);
+    this.hasMeasured.set(true);
   });
 
   private readonly zoom = signal<number>(MIN_ZOOM);
@@ -290,6 +297,79 @@ export class MapCanvas {
     this.zoom.set(MIN_ZOOM);
     this.panX.set(0);
     this.panY.set(0);
+  }
+
+  private readonly focusPoint = computed<MapCanvasPoint | null>(
+    () => this.points().find((point: MapCanvasPoint) => point.id === this.focusPointId()) ?? null,
+  );
+
+  private readonly focusWorldPosition = computed<{ x: number; y: number } | null>(() => {
+    const point = this.focusPoint();
+
+    if (point === null) {
+      return null;
+    }
+
+    const origin = resolveTileOrigin(this.tiles(), point.tileId);
+
+    if (origin === null) {
+      return null; // Content-Tippfehler: Fokuspunkt zeigt auf unbekannte Kachel
+    }
+
+    return { x: origin.x + (point.x / 100) * TILE_SIZE, y: origin.y + (point.y / 100) * TILE_SIZE };
+  });
+
+  private readonly lastAppliedFocusId = signal<string | null>(null);
+
+  /**
+   * Zentriert automatisch auf den aktuellen Fokuspunkt, sobald er sich ändert
+   * — aber nur einmal pro Punkt, damit ein manueller Zoom/Pan danach nicht
+   * ungefragt zurückgesetzt wird (Phase-4-AK 3). Wartet auf die erste echte
+   * Viewport-Messung, sonst würde mit dem `TILE_SIZE`-Platzhalter zentriert.
+   */
+  private readonly applyFocusEffect = effect(() => {
+    const point = this.focusPoint();
+
+    if (point === null || point.id === this.lastAppliedFocusId()) {
+      return;
+    }
+
+    if (!this.hasMeasured()) {
+      return;
+    }
+
+    const worldPosition = this.focusWorldPosition();
+
+    if (worldPosition === null) {
+      return;
+    }
+
+    // Sicherheitsnetz: die aktuelle Station sollte laut Phase 3 immer auf
+    // einer freigeschalteten Kachel liegen — als Sonnet-Phase trotzdem
+    // geprüft statt stillschweigend vorausgesetzt.
+    if (!this.unlockedTileSet().has(point.tileId)) {
+      console.warn(
+        `qst-map-canvas: Fokuspunkt "${point.id}" liegt auf der gesperrten Kachel "${point.tileId}" — Zentrierung übersprungen.`,
+      );
+      this.lastAppliedFocusId.set(point.id);
+      return;
+    }
+
+    this.lastAppliedFocusId.set(point.id);
+    this.applyFocus(worldPosition);
+  });
+
+  private applyFocus(worldPosition: { x: number; y: number }): void {
+    this.zoom.set(Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, this.focusZoom())));
+
+    const scale = this.scale();
+    const origin = this.worldOriginOffset();
+
+    this.setWorldEdge(
+      this.viewportWidth() / 2 - worldPosition.x * scale + origin.x * scale,
+      this.viewportHeight() / 2 - worldPosition.y * scale + origin.y * scale,
+    );
+    this.settlePan();
   }
 
   private updateDrag(event: PointerEvent, previous: PointerPosition): void {

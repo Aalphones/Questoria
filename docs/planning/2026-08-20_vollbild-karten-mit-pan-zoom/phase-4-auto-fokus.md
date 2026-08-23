@@ -93,4 +93,42 @@ bleibt stehen.
 
 ## Report-Back
 
-*(nach Umsetzung ausfüllen)*
+Umgesetzt wie geplant: `focusPointId`/`focusZoom` als neue Inputs auf
+`MapCanvas`, `focusPoint`/`focusWorldPosition` als Computeds (nutzen die
+bestehende `resolveTileOrigin`, keine Duplikation), `applyFocusEffect` mit
+`lastAppliedFocusId`-Wächter gegen wiederholtes Zentrieren, `applyFocus()`
+spiegelt die Umkehr-Formel aus `zoomAround`/`setWorldEdge` mit der
+Viewport-Mitte statt dem Cursor als Zentrum. `timeline.ts` und `map.ts`
+bekamen je einen `focusStageId`/`focusNodeId`-Computed (aktuelle Station,
+sonst die letzte), `main-hub.html` bindet direkt `continueThemeId()` — dessen
+Rückgabewert ist bereits die `theme.id`, die auch als `MapCanvasPoint.id`
+dient, kein Adapter nötig. `prefers-reduced-motion` brauchte keine eigene
+Behandlung: die Animation läuft über den bestehenden Token
+`--duration-map-view`, der bei reduzierter Bewegung schon global auf `0ms`
+steht.
+
+**Abweichung vom Plantext:** Das erwähnte `hasMeasured`-Signal aus „Phase 1/2"
+existierte nicht — nur `viewportWidth`/`viewportHeight` mit `TILE_SIZE`-
+Platzhalter als Startwert. Neu angelegt (`hasMeasured`, vom `ResizeObserver`
+beim ersten echten Messwert gesetzt), sonst hätte der Fokus-Effekt beim ersten
+Lauf mit dem Platzhalterwert statt der echten Viewportgröße zentriert.
+
+Build und Lint grün.
+
+**Smoke (User, priorisiert nach Konfidenz):**
+1. Timeline/MapScreen öffnen — zentriert die Ansicht animiert auf die
+   aktuelle Station? (AK 1)
+2. MainHub öffnen, nachdem etwas gespielt wurde — zentriert auf die zuletzt
+   gespielte Welt? Frisches Savegame ohne Fortschritt — bleibt die
+   Standardansicht stehen, kein Sprung? (AK 2)
+3. Nach dem automatischen Fokus manuell zoomen/ziehen, Screen nicht
+   verlassen — bleibt die eigene Ansicht stehen (kein ungefragtes
+   Zurückspringen)? (AK 3)
+4. Mit `prefers-reduced-motion: reduce` (Betriebssystem-Einstellung) öffnen —
+   springt die Ansicht ohne Animation? (AK 4)
+5. 🟡 **AK 5 (Sicherheitsnetz) ist nicht praktisch nachstellbar ohne
+   absichtlich kaputten Content** — verifiziert durch Code-Lesen
+   (`applyFocusEffect` bricht ab und loggt `console.warn`, wenn
+   `point.tileId` nicht in `unlockedTileSet()` steht), nicht durch einen
+   Live-Repro. Bei Bedarf mit einem Test-Datensatz nachstellbar, in dem eine
+   Etappe auf eine noch gesperrte Kachel zeigt.

@@ -24,7 +24,7 @@ neu geplant und um neue Stationen verdichtet.
 | 1 | [Kachel-Fundament](phase-1-kachel-fundament.md) | standard | complete |
 | 2 | [Pan- und Zoom-Interaktion](phase-2-pan-und-zoom.md) | heikel | complete |
 | 3 | [Fortschritts-Freischaltung und Savegame](phase-3-fortschritts-freischaltung.md) | heikel | complete |
-| 4 | [Automatischer Fokus](phase-4-auto-fokus.md) | standard | pending |
+| 4 | [Automatischer Fokus](phase-4-auto-fokus.md) | standard | complete |
 | 5 | [Level-Neuplanung Alabastia](phase-5-level-neuplanung.md) | standard | pending |
 | 6 | [Assets erzeugen](phase-6-assets-erzeugen.md) | standard | pending |
 | 7 | [Figuren- und Aufgabenbilder neu](phase-7-figuren-und-aufgabenbilder.md) | standard | pending |

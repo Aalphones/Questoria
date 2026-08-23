@@ -2,7 +2,7 @@
 
 **Aktiver Plan:** [docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/README.md)
 
-**Phase:** 3/7 — Fortschritts-Freischaltung und Savegame (complete)
+**Phase:** 4/7 — Automatischer Fokus (complete)
 
 🟡 **Plan am 23.08.2026 erweitert (Sascha):** Phase 5 stellt zusätzlich die
 Aufgaben der Welt aufs Pokémon-Universum um (statt Ball/Boot/Vase) und wechselt
@@ -12,7 +12,12 @@ Phase 7 erneuert die Figurenbilder, schließt die Lücke von zwei auf vier
 Emotionen je Figur und repariert das Freistell-Werkzeug, das Bisasam die Augen
 ausgestanzt hat.
 
-**Nächster Schritt:** `/clear`, dann `/model sonnet` (Phase 4 „Automatischer Fokus" ist standard), Phase 4 starten.
+🟡 **Phase-4-Smoke steht noch aus** (Report-Back der Phasendatei): Timeline/
+MapScreen/MainHub am Bildschirm öffnen, manuelles Zoomen/Ziehen nach dem
+Fokus prüfen, `prefers-reduced-motion` durchspielen — Details und Priorität
+in [phase-4](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/phase-4-auto-fokus.md).
+
+**Nächster Schritt:** `/clear`, dann `/model sonnet` (Phase 5 „Level-Neuplanung Alabastia" ist standard), Phase 5 starten.
 
 🟡 **Ziehen, Zoomen und die Kachel-Freischaltung sind gebaut, aber am Bildschirm noch nicht abgenommen.** Die Abnahme von Phase 2 und 3 hängt zusammen und steht als eine Liste im Report-Back von [phase-3](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/phase-3-fortschritts-freischaltung.md). Unsicherste Stellen: Zwei-Finger-Zoom gleichzeitig mit Schieben (Phase 2) und der Spielstand-Schreibkreis beim Öffnen einer Karte — höchstens ein `PUT` beim ersten Öffnen, keins beim zweiten (Phase 3).
 

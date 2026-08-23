@@ -106,6 +106,15 @@ export class Timeline {
     })),
   );
 
+  /** Station, auf die `MapCanvas` beim Öffnen zentriert — die aktuelle, sonst die letzte. */
+  protected readonly focusStageId = computed<string | null>(() => {
+    const states = this.stageStateMap();
+    const stages = this.world()?.arc_overview.stages ?? [];
+    const current = stages.find((stage) => states.get(stage.map_id) === 'current');
+
+    return current?.map_id ?? stages.at(-1)?.map_id ?? null;
+  });
+
   protected readonly lockedStageIds = computed<readonly string[]>(() =>
     [...this.stageStateMap().entries()]
       .filter(([, state]: [string, ProgressState]) => state === 'locked')
