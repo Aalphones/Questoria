@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { MapEntry, MapNode, WorldConfig } from '../../models/content.types';
 import { ProgressState } from '../../models/game-state.types';
 import { ContentService } from '../../services/content.service';
 import { GameStateService } from '../../services/game-state.service';
-import { nodeStates, stageStates } from '../../services/progress.rules';
+import { derivedUnlockedTileIds, nodeStates, stageStates } from '../../services/progress.rules';
 import { ProgressService } from '../../services/progress.service';
 import { ContentError } from '../../ui/content-error/content-error';
 import { Hud } from '../../ui/hud/hud';
@@ -92,10 +92,38 @@ export class MapScreen {
     }));
   });
 
-  /** Phase 1: noch keine Fortschritts-Berechnung — alle Kacheln offen (Phase 3 ersetzt das). */
-  protected readonly unlockedTileIds = computed<readonly string[]>(() =>
-    this.tiles().map((tile: MapCanvasTile) => tile.id),
+  private readonly orderedTileIds = computed<readonly string[]>(
+    () => this.mapEntry()?.tiles.map((tile) => tile.id) ?? [],
   );
+
+  /** Die Orts-Zustände nach Kachel gruppiert — Eingabe der Freischalt-Regel. */
+  private readonly nodeStatesByTile = computed<ReadonlyMap<string, readonly ProgressState[]>>(
+    () => {
+      const nodes = this.mapEntry()?.nodes ?? [];
+      const states = this.nodeStateMap();
+      const byTile = new Map<string, ProgressState[]>();
+
+      for (const node of nodes) {
+        const list = byTile.get(node.tile_id) ?? [];
+        list.push(states.get(node.id) ?? 'locked');
+        byTile.set(node.tile_id, list);
+      }
+
+      return byTile;
+    },
+  );
+
+  /** Abgeleiteter Stand vereinigt mit der gespeicherten Hochwassermarke (ADR-020). */
+  protected readonly unlockedTileIds = computed<readonly string[]>(() => {
+    const derived = derivedUnlockedTileIds(this.orderedTileIds(), this.nodeStatesByTile());
+    const persisted = this.progressService.revealedTileIds(this.themeId(), this.mapId());
+
+    return [...new Set([...derived, ...persisted])];
+  });
+
+  private readonly persistUnlockedTiles = effect(() => {
+    this.progressService.syncRevealedTiles(this.themeId(), this.mapId(), this.unlockedTileIds());
+  });
 
   protected pointX(tileId: string, percentX: number): number {
     const origin = resolveTileOrigin(this.tiles(), tileId);

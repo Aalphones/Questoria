@@ -2,7 +2,7 @@
 
 **Aktiver Plan:** [docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/README.md)
 
-**Phase:** 2/7 — Pan- und Zoom-Interaktion (complete)
+**Phase:** 3/7 — Fortschritts-Freischaltung und Savegame (complete)
 
 🟡 **Plan am 23.08.2026 erweitert (Sascha):** Phase 5 stellt zusätzlich die
 Aufgaben der Welt aufs Pokémon-Universum um (statt Ball/Boot/Vase) und wechselt
@@ -12,9 +12,11 @@ Phase 7 erneuert die Figurenbilder, schließt die Lücke von zwei auf vier
 Emotionen je Figur und repariert das Freistell-Werkzeug, das Bisasam die Augen
 ausgestanzt hat.
 
-**Nächster Schritt:** `/clear`, dann `/model opusplan` (Phase 3 ist heikel und fasst zusätzlich das PHP-Backend an), Phase 3 „Fortschritts-Freischaltung und Savegame" starten. Zwei Findings sind dieser Phase zugetagt — die Abnahme der Klemmung an einer gesperrten Kachel gehört mit dazu.
+**Nächster Schritt:** `/clear`, dann `/model sonnet` (Phase 4 „Automatischer Fokus" ist standard), Phase 4 starten.
 
-🟡 **Ziehen und Zoomen ist gebaut, aber am Bildschirm noch nicht abgenommen.** Unsicherste Stelle: Zwei-Finger-Zoom gleichzeitig mit Schieben (Details im Report-Back der Phasendatei).
+🟡 **Ziehen, Zoomen und die Kachel-Freischaltung sind gebaut, aber am Bildschirm noch nicht abgenommen.** Die Abnahme von Phase 2 und 3 hängt zusammen und steht als eine Liste im Report-Back von [phase-3](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/phase-3-fortschritts-freischaltung.md). Unsicherste Stellen: Zwei-Finger-Zoom gleichzeitig mit Schieben (Phase 2) und der Spielstand-Schreibkreis beim Öffnen einer Karte — höchstens ein `PUT` beim ersten Öffnen, keins beim zweiten (Phase 3).
+
+🟡 **Voll prüfbar ist die Freischaltung erst mit der neuen Route** (Phase 5): `pokemon_lesen` trägt noch das alte Schema, und eine Route mit Knick gibt es noch nicht.
 
 🔴 **Zwischenzustand seit Phase 1 (Details: Report-Back der Phasendatei):** `pokemon_lesen` (echte, deployte Welt) crasht auf Etappen-/Ortskarte, weil `world_config.json` noch das alte Schema trägt (`background`/`file` statt `tiles`) — Phase 5 räumt das auf. **Nicht deployen, solange Phase 5 nicht fertig ist.** Die Planetenkarte (`data/main_hub.json`, migriert) bleibt funktionsfähig.
 

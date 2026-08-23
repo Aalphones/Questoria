@@ -85,6 +85,35 @@ export function nodeStates(
   return states;
 }
 
+/**
+ * Welche Kachel-Ids laut aktuellem Fortschritt freigeschaltet sein SOLLTEN —
+ * die erste immer, jede weitere erst, wenn alle Punkte der vorherigen fertig
+ * sind. `pointsByTile` gruppiert die schon bekannten Punkt-Zustände nach
+ * Kachel; der Aufrufer baut sie, diese Funktion kennt kein Content-Schema.
+ *
+ * Eine Kachel ohne Punkte (reine Landschaft) gilt als durchgespielt und hält
+ * die nächste nicht auf.
+ */
+export function derivedUnlockedTileIds(
+  orderedTileIds: readonly string[],
+  pointsByTile: ReadonlyMap<string, readonly ProgressState[]>,
+): readonly string[] {
+  const unlocked: string[] = [];
+
+  for (const tileId of orderedTileIds) {
+    unlocked.push(tileId);
+
+    const states = pointsByTile.get(tileId) ?? [];
+    const tileDone = states.every((state: ProgressState) => state === 'done');
+
+    if (!tileDone) {
+      break;
+    }
+  }
+
+  return unlocked;
+}
+
 /** Abgerundeter Durchschnitt der Sterne der geschafften Orte einer Karte. */
 export function stageStars(
   map: MapEntry,

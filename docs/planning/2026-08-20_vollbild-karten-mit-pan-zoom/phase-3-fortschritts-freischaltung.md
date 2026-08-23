@@ -1,6 +1,7 @@
 # Phase 3 — Fortschritts-Freischaltung und Savegame
 
 **Rating:** heikel (neuer persistenter Zustand, Synchronisationslogik)
+**Status:** complete (23.08.2026) — Abnahme am Bildschirm steht aus
 
 ## Kontext (lesen, bevor du anfängst)
 
@@ -221,4 +222,62 @@ kompletten `SavegameState` überschreibt (dann automatisch erledigt) oder nur
 
 ## Report-Back
 
-*(nach Umsetzung ausfüllen)*
+**Umgesetzt wie geplant, mit drei kleinen Abweichungen:**
+
+1. `resetTheme()` überschrieb nur `progress` — `revealedTiles` wird jetzt
+   ausdrücklich mitgeleert. Dafür sind `writeProgress`/`resetTheme` auf einen
+   gemeinsamen privaten `write(themeId, state)` gezogen, damit es nur eine
+   Stelle gibt, die den Spielstand rausschreibt.
+2. Der Geltungsbereich-Schlüssel der Ortskarte ist `this.mapId()` statt
+   `mapEntry()!.id` — derselbe Wert ohne Ausrufezeichen (Konvention: keine
+   Nicht-Null-Behauptungen).
+3. Die Kachel-Gruppierung trägt den **echten** `ProgressState` je Punkt statt
+   „done oder locked". Die Regel prüft ohnehin nur auf `done`; so steht in der
+   Map aber, was tatsächlich gilt, und ein späterer Leser wird nicht
+   fehlgeleitet.
+
+**Gebaut:**
+
+- `savegame.types.ts`: Feld `revealedTiles`, in `EMPTY_SAVEGAME_STATE` auf `{}`.
+  Alte Spielstände kennen es nicht → überall mit `?.`/`?? {}` gelesen, wie es
+  `recentVariants` und `attempts` schon vormachen.
+- `progress.rules.ts`: `derivedUnlockedTileIds()` — reine Funktion, kennt kein
+  Content-Schema.
+- `progress.service.ts`: `revealedTileIds()` / `syncRevealedTiles()` mit
+  frühem Ausstieg, wenn nichts dazukommt.
+- `timeline.ts` / `map.ts`: `unlockedTileIds` = Ableitung ∪ Gespeichertes, dazu
+  ein `effect`, der die Hochwassermarke fortschreibt. `main-hub.ts` behält
+  „alles offen", der Kommentar sagt jetzt, dass das Absicht ist und nicht
+  Phase-1-Rest.
+- ADR-020 angelegt, `docs/code-map.md` nachgezogen.
+
+**Backend unberührt** — wie in der Kontext-Sektion vorab geprüft: der Validator
+liest `state` nicht strukturiert.
+
+**Build und Lint grün.** (Die SCSS-Budget-Warnungen sind Bestand, unverändert.)
+
+🟡 **Unsicherste Stelle:** der `effect` in beiden Screens
+(`timeline.ts` / `map.ts`) schreibt einen Spielstand, während er ein Signal
+liest, das denselben Spielstand liest. Der Kreis schließt sich nur, weil
+`syncRevealedTiles` beim zweiten Durchlauf nichts Neues mehr findet und
+aussteigt. Prüfbar am Netzwerk-Reiter: beim Öffnen einer Karte darf **höchstens
+ein** `PUT` fliegen, beim erneuten Öffnen derselben Karte **keins**.
+
+🟡 **Findings dieser Phase abgehakt:** Die Klemmung gegen eine gesperrte Kachel
+ist jetzt überhaupt erst prüfbar — AK 1 und AK 7 aus Phase 2 gehören mit in
+diese Abnahme (siehe unten).
+
+## Abnahme am Bildschirm (offen)
+
+1. Frischer Spielstand: nur die erste Kachel sichtbar, der Rest schwarz — auf
+   der Etappenkarte **und** auf jeder Ortskarte getrennt.
+2. Alle Stationen der ersten Kachel schaffen → die nächste taucht **sofort**
+   auf, ohne Neuladen.
+3. Seite neu laden → derselbe Stand. Gegenprobe in den Entwicklerwerkzeugen:
+   `questoria.savegame.v1` enthält `revealedTiles`.
+4. „Fortschritt zurücksetzen" → die Karte ist wieder auf einer Kachel.
+5. Planetenkarte zeigt weiter alle Welten (Regressionsprobe).
+6. Netzwerk-Reiter: zweites Öffnen derselben Karte schickt keinen Spielstand.
+7. **Aus Phase 2 mitgezogen:** an der Grenze der freigeschalteten Fläche ist
+   Schluss (kein Weiterschieben), und wenn eine Kachel dazukommt, wächst der
+   Spielraum ohne Sprung der Ansicht.

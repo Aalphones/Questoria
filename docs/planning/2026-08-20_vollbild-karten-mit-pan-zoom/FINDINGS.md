@@ -3,7 +3,7 @@
 Format: `- [ ] → Phase N: <Erkenntnis>` — während der Umsetzung ergänzen, beim
 Abarbeiten der jeweiligen Phase abhaken.
 
-- [ ] → Phase 3: Die Klemmung gegen eine **gesperrte** Kachel konnte in Phase 2
+- [x] → Phase 3: Die Klemmung gegen eine **gesperrte** Kachel konnte in Phase 2
   nicht am Bildschirm geprüft werden — alle drei Screens melden bis Phase 3
   pauschal jede Kachel als freigeschaltet (`unlockedTileIds` = alle Kacheln).
   AK 1 und AK 7 der Phase 2 (Anschlag an der Grenze, wachsender Spielraum ohne

@@ -1,6 +1,7 @@
 import { Service, computed, inject } from '@angular/core';
 
 import { ProgressStore, ThemeProgress } from '../models/game-state.types';
+import { SavegameState } from '../models/savegame.types';
 import { SavegameService } from './savegame.service';
 
 /**
@@ -54,18 +55,52 @@ export class ProgressService {
     });
   }
 
+  /**
+   * Setzt die Welt auf Anfang — inklusive der freigeschalteten Kacheln. Blieben
+   * die stehen, zeigte die Karte nach dem Zurücksetzen weiter die ganze Route,
+   * obwohl kein Ort mehr geschafft ist.
+   */
   resetTheme(themeId: string): void {
-    this.writeProgress(themeId, {});
+    const state = this.savegame.stateFor(themeId);
+
+    this.write(themeId, { ...state, progress: {}, revealedTiles: {} });
+  }
+
+  /** Die schon aufgedeckten Kacheln eines Karten-Geltungsbereichs (ADR-020). */
+  revealedTileIds(themeId: string, scope: string): readonly string[] {
+    // `?? {}`: ältere Spielstände kennen `revealedTiles` noch nicht.
+    return this.savegame.stateFor(themeId).revealedTiles?.[scope] ?? [];
+  }
+
+  /**
+   * Vereinigt `tileIds` mit dem bisherigen Stand — die Hochwassermarke wird nie
+   * ersetzt und nie kleiner (ADR-020). Bringt der Aufruf nichts Neues, wird
+   * auch nicht geschrieben: sonst schickte jeder Kartenaufruf einen Spielstand
+   * an den Server.
+   */
+  syncRevealedTiles(themeId: string, scope: string, tileIds: readonly string[]): void {
+    const state = this.savegame.stateFor(themeId);
+    const revealedTiles = state.revealedTiles ?? {};
+    const existing = new Set(revealedTiles[scope] ?? []);
+    const merged = new Set([...existing, ...tileIds]);
+
+    if (merged.size === existing.size) {
+      return;
+    }
+
+    this.write(themeId, {
+      ...state,
+      revealedTiles: { ...revealedTiles, [scope]: [...merged] },
+    });
   }
 
   private writeProgress(themeId: string, progress: ThemeProgress): void {
-    const state = this.savegame.stateFor(themeId);
+    this.write(themeId, { ...this.savegame.stateFor(themeId), progress });
+  }
+
+  private write(themeId: string, state: SavegameState): void {
     const position = this.savegame.positionFor(themeId);
 
-    this.savegame.save(
-      themeId,
-      { ...state, progress },
-      position ?? { episodeId: null, nodeId: null },
-    );
+    this.savegame.save(themeId, state, position ?? { episodeId: null, nodeId: null });
   }
 }

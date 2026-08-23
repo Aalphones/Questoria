@@ -128,7 +128,11 @@ export class MainHub {
     }));
   });
 
-  /** Phase 1: noch keine Fortschritts-Berechnung — alle Kacheln offen (Phase 3 ersetzt das). */
+  /**
+   * Die Planetenkarte kennt keine Freischaltung: eine installierte Welt ist
+   * sofort sichtbar, ohne dass man sich vorher irgendwo durchspielen muss
+   * (Plan AK 9). Deshalb hier kein Fortschritts- und kein Spielstand-Bezug.
+   */
   protected readonly unlockedTileIds = computed<readonly string[]>(() =>
     this.tiles().map((tile: MapCanvasTile) => tile.id),
   );

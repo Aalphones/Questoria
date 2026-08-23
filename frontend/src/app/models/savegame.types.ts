@@ -23,6 +23,13 @@ export interface SavegameState {
    * älteren Spielständen; wird dann wie `{}` behandelt.
    */
   readonly recentVariants: Readonly<Record<string, readonly string[]>>;
+  /**
+   * Freigeschaltete Kachel-Ids je Karten-Geltungsbereich: `'arc_overview'` für
+   * die Etappenkarte, die `MapEntry.id` für eine Ortskarte. Wächst nur
+   * (Hochwassermarke, ADR-020) und wird beim Zurücksetzen der Welt geleert.
+   * Fehlt bei älteren Spielständen; wird dann wie `{}` behandelt.
+   */
+  readonly revealedTiles: Readonly<Record<string, readonly string[]>>;
 }
 
 export type SavegameRun = Omit<StoredRun, 'themeId'>;
@@ -73,4 +80,5 @@ export const EMPTY_SAVEGAME_STATE: SavegameState = {
   settings: { difficultyLevel: null },
   attempts: {},
   recentVariants: {},
+  revealedTiles: {},
 };

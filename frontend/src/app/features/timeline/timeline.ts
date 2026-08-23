@@ -1,17 +1,33 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { MapEntry, WorldConfig } from '../../models/content.types';
 import { ProgressState } from '../../models/game-state.types';
 import { ContentService } from '../../services/content.service';
 import { GameStateService } from '../../services/game-state.service';
-import { stageStars, stageStates, worldProgress } from '../../services/progress.rules';
+import {
+  derivedUnlockedTileIds,
+  stageStars,
+  stageStates,
+  worldProgress,
+} from '../../services/progress.rules';
 import { ProgressService } from '../../services/progress.service';
 import { ContentError } from '../../ui/content-error/content-error';
 import { Hud } from '../../ui/hud/hud';
 import { MapCanvas, TILE_SIZE, resolveTileOrigin } from '../../ui/map-canvas/map-canvas';
 import { MapCanvasPoint, MapCanvasTile } from '../../ui/map-canvas/map-canvas.types';
 import { MapPoint } from '../../ui/map-canvas/map-point/map-point';
+
+/** Geltungsbereich der Kachel-Freischaltung im Spielstand (ADR-020). */
+const REVEAL_SCOPE = 'arc_overview';
 
 /**
  * Seekarte der Story-Etappen unter `theme/:themeId/timeline` — welche Etappe
@@ -47,11 +63,6 @@ export class Timeline {
       url: this.content.assetUrl(this.themeId(), 'maps', tile.background),
     }));
   });
-
-  /** Phase 1: noch keine Fortschritts-Berechnung — alle Kacheln offen (Phase 3 ersetzt das). */
-  protected readonly unlockedTileIds = computed<readonly string[]>(() =>
-    this.tiles().map((tile: MapCanvasTile) => tile.id),
-  );
 
   protected pointX(tileId: string, percentX: number): number {
     const origin = resolveTileOrigin(this.tiles(), tileId);
@@ -100,6 +111,39 @@ export class Timeline {
       .filter(([, state]: [string, ProgressState]) => state === 'locked')
       .map(([mapId]: [string, ProgressState]) => mapId),
   );
+
+  private readonly orderedTileIds = computed<readonly string[]>(
+    () => this.world()?.arc_overview.tiles.map((tile) => tile.id) ?? [],
+  );
+
+  /** Die Etappen-Zustände nach Kachel gruppiert — Eingabe der Freischalt-Regel. */
+  private readonly stateStatesByTile = computed<ReadonlyMap<string, readonly ProgressState[]>>(
+    () => {
+      const stages = this.world()?.arc_overview.stages ?? [];
+      const states = this.stageStateMap();
+      const byTile = new Map<string, ProgressState[]>();
+
+      for (const stage of stages) {
+        const list = byTile.get(stage.tile_id) ?? [];
+        list.push(states.get(stage.map_id) ?? 'locked');
+        byTile.set(stage.tile_id, list);
+      }
+
+      return byTile;
+    },
+  );
+
+  /** Abgeleiteter Stand vereinigt mit der gespeicherten Hochwassermarke (ADR-020). */
+  protected readonly unlockedTileIds = computed<readonly string[]>(() => {
+    const derived = derivedUnlockedTileIds(this.orderedTileIds(), this.stateStatesByTile());
+    const persisted = this.progressService.revealedTileIds(this.themeId(), REVEAL_SCOPE);
+
+    return [...new Set([...derived, ...persisted])];
+  });
+
+  private readonly persistUnlockedTiles = effect(() => {
+    this.progressService.syncRevealedTiles(this.themeId(), REVEAL_SCOPE, this.unlockedTileIds());
+  });
 
   protected readonly progress = computed<{ done: number; total: number } | null>(() => {
     const world = this.world();
