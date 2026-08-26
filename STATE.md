@@ -26,6 +26,18 @@ in [phase-4](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/phase-4-auto-
 Batches in der Reihenfolge Gebietskarte Alabastia → Gebietskarte Vertania →
 Weltenkarte → Planetenkarte.
 
+🔴 **Reihenfolge (Sascha, 26.08.2026): „Bilder zuerst, Umgruppierung danach."**
+`world_config.json` steht noch auf dem alten Stand — **eine** Gebietskarte mit
+vier Kacheln statt zwei mit je zweien, `arc_overview` mit einem Ort statt zwei,
+Wald noch auf `{-1,2}`. Das wird als **Nachtrag 5b nach Phase 6** nachgezogen
+(Tabelle Ist/Soll im Kopf von [phase-5](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/phase-5-level-neuplanung.md)).
+Bis dahin liegen die Bilder auf der Platte, ohne dass das Spiel die zweite
+Gebietskarte kennt. Bewusst so gewählt, kein Versehen — **aber nicht deployen
+und nicht abnehmen wollen, bevor 5b durch ist.**
+
+🟡 **Ungeklärt, vor 5b zu suchen:** `data/hub/main_hub.json` liegt nicht an dem
+Pfad, den dieser Merkzettel bisher genannt hat.
+
 🟡 **Der Plan ist am 26.08.2026 in drei Punkten neu gefasst worden** (Sascha),
 alle drei sind in README/Phase 5/Phase 6 eingearbeitet:
 - **Drei Kartenebenen** statt zwei: Planetenkarte und Weltenkarte sind je

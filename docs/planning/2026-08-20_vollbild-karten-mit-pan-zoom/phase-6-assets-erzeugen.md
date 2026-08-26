@@ -221,4 +221,42 @@ danach.
 
 ## Report-Back
 
-*(nach Umsetzung ausfüllen)*
+### Schritt 0 — Auflösungstest bestanden (26.08.2026)
+
+**Ergebnis: Krea 2 Turbo hält eine 2048×2048-Komposition zusammen.** Der
+gewählte Weg (2048 erzeugen, einmal um Faktor 4 hochskalieren) ist damit
+bestätigt, die Rückfallebene über 1024 wird nicht gebraucht. Die Geografie ist
+zusammenhängend — Gebirge im Norden, Waldgürtel, Wiesen mit Flusslauf und
+Teichen, Trampelpfade, Küste mit Strand im Süden und Osten. Keine verdoppelten
+Landmarken, kein Zerfallen. Und: **kein einziges Bauwerk**, das Verbot aus Weg C
+hat auf Anhieb gegriffen.
+
+🔴 **Ein Befund, der vor den echten Leinwänden in den Prompt muss:** Das
+Testbild ist **nicht orthografisch von oben**, sondern leicht perspektivisch —
+oben deutet sich ein Horizont an, und links unten steht ein Grasbüschel in
+Vordergrund-Größe statt in Kartenmaßstab. Für eine Karte, die in ein Raster
+zerschnitten wird, ist das ein Problem: Kacheln müssen **denselben Maßstab**
+haben, sonst passen Norden und Süden nicht zusammen, egal wie sauber die Naht
+ist. Der Prompt braucht ausdrücklich: senkrechte Draufsicht, kein Horizont,
+keine Fluchtpunkte, gleichmäßiger Maßstab über die ganze Fläche, keine
+Vordergrund-Objekte.
+
+### Zwei Fallen im `Krea2 Txt2Img`-Workflow (Zeitverlust: ein Fehllauf)
+
+- **Die Größe kommt aus `ResolutionSelector` (Knoten 49)**, nicht aus dem
+  `EmptyLatentImage` — dessen Breite/Höhe sind vom Selector überschrieben. Und
+  dessen „Megapixel" rechnen in Einheiten von **1024²**, nicht 1.000.000: 4.19
+  ergibt 2096, für exakt 2048×2048 ist der Wert **4.0**.
+- **Der Prompt gehört in Knoten 19** (`30/19.value`), nicht in das
+  `CLIPTextEncode`-Widget (`30/6.text`) — letzteres ist tot. Setzt man das
+  falsche, läuft der zuletzt dort stehende Prompt durch, ohne Fehlermeldung.
+  **Kontrolle:** die Antwort des Laufs enthält unter `text_outputs` den
+  tatsächlich benutzten Text — vor dem Ansehen des Bildes dort nachlesen, ob
+  der eigene Prompt drinsteht.
+
+### Was noch offen ist
+
+- Die vier Batch-Leinwände (Gebietskarte Alabastia → Vertania → Weltenkarte →
+  Planetenkarte), jeweils mit dem um die Draufsicht ergänzten Prompt.
+- 14 Stations-Sprites + 2 Orts-Sprites.
+- ADR-021 und `ASSET_REQUIREMENTS.md` Abschnitt 4.

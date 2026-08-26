@@ -30,6 +30,25 @@ größte Arbeitsblock im ganzen Plan, siehe Aufwands-Hinweis unten)
 > Karten darüber wachsen von je einer Kachel auf 8×8. Vollständige Struktur:
 > README → „Drei Kartenebenen". Der Content dieser Phase (Episoden, Aufgaben,
 > Texte) ist von der Änderung **nicht** betroffen.
+>
+> **Nachtrag 5b — Umgruppierung, terminiert nach Phase 6** (Sascha, 26.08.2026:
+> „Bilder zuerst, Umgruppierung danach"). Die Datei `world_config.json` steht
+> noch auf dem alten Stand und muss nachgezogen werden:
+>
+> | | Ist | Soll |
+> |---|---|---|
+> | `maps` | **ein** Eintrag (id `route_1`) mit vier Kacheln, 14 Stationen | **zwei** Einträge mit je zwei Kacheln |
+> | `arc_overview` | eine Kachel `arc_0_0`, **ein** Stage-Marker | Kachel `{0,0}` einer 8192er Karte, **zwei** Orte |
+> | `vertania_wald` | `{row: -1, col: 2}` | `{row: -1, col: 0}` |
+> | Planetenkarte | `data/hub/main_hub.json` liegt **nicht** an dem in STATE.md genannten Pfad — vor 5b suchen | Kachel `{0,0}` einer 8192er Karte |
+>
+> Die 14 Stationen hängen an ihren Kacheln und wandern mit — sie werden nicht
+> neu verteilt. Der Kartenname `route_1` sollte bei der Gelegenheit mit, er
+> beschreibt seit Phase 5 nicht mehr, was in der Karte liegt.
+>
+> 🔴 **Bis 5b erledigt ist, ist die zweite Gebietskarte im Spiel nicht
+> vorhanden** — die Bilder aus Phase 6 liegen dann auf der Platte, aber nichts
+> zeigt sie an. Das ist die bewusst gewählte Reihenfolge, kein Versehen.
 
 - **Planetenkarte** (`MainHub`): 8192×8192, anfangs nur `{0,0}` aufgedeckt,
   darauf der Planet Pokémon. Nicht Teil dieser Phase — Bildarbeit in Phase 6.
