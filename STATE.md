@@ -21,10 +21,18 @@ MapScreen/MainHub am Bildschirm öffnen, manuelles Zoomen/Ziehen nach dem
 Fokus prüfen, `prefers-reduced-motion` durchspielen — Details und Priorität
 in [phase-4](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/phase-4-auto-fokus.md).
 
-**Nächster Schritt:** Phase 6 Schritt 0 — ein Krea-2-Testbild der Kanto-Karte in
-2048×2048 erzeugen und ansehen, ob die Komposition zusammenhält. Danach die vier
-Batches in der Reihenfolge Gebietskarte Alabastia → Gebietskarte Vertania →
-Weltenkarte → Planetenkarte.
+**Nächster Schritt:** Die vier Batch-Leinwände erzeugen, Reihenfolge
+Gebietskarte Alabastia → Gebietskarte Vertania → Weltenkarte → Planetenkarte.
+Danach zerschneiden, dann die 14 Stations-Sprites und 2 Orts-Sprites.
+
+✅ **Schritt 0 ist durch, das Stil-Rezept steht** (26.08.2026, von Sascha
+abgenommen): echte Draufsicht, keine Perspektive, keine Bauwerke. Der erprobte
+Prompt und die beiden Bedienfallen des Krea2-Workflows (Prompt gehört in
+Knoten 19, Größe kommt aus `ResolutionSelector` und rechnet in 1024²-Einheiten)
+stehen als Standard-Vorlage in
+[`data/_authoring/image-prompts/MAPS.md`](data/_authoring/image-prompts/MAPS.md).
+Krea 2 hält 2048×2048 zusammen — der Weg „2048 erzeugen, einmal um Faktor 4
+hoch" ist bestätigt.
 
 🔴 **Reihenfolge (Sascha, 26.08.2026): „Bilder zuerst, Umgruppierung danach."**
 `world_config.json` steht noch auf dem alten Stand — **eine** Gebietskarte mit

@@ -231,15 +231,30 @@ Teichen, Trampelpfade, Küste mit Strand im Süden und Osten. Keine verdoppelten
 Landmarken, kein Zerfallen. Und: **kein einziges Bauwerk**, das Verbot aus Weg C
 hat auf Anhieb gegriffen.
 
-🔴 **Ein Befund, der vor den echten Leinwänden in den Prompt muss:** Das
-Testbild ist **nicht orthografisch von oben**, sondern leicht perspektivisch —
-oben deutet sich ein Horizont an, und links unten steht ein Grasbüschel in
-Vordergrund-Größe statt in Kartenmaßstab. Für eine Karte, die in ein Raster
-zerschnitten wird, ist das ein Problem: Kacheln müssen **denselben Maßstab**
-haben, sonst passen Norden und Süden nicht zusammen, egal wie sauber die Naht
-ist. Der Prompt braucht ausdrücklich: senkrechte Draufsicht, kein Horizont,
-keine Fluchtpunkte, gleichmäßiger Maßstab über die ganze Fläche, keine
-Vordergrund-Objekte.
+### Stil-Rezept steht (26.08.2026, nach drei Läufen von Sascha abgenommen)
+
+Der erste Testlauf war **nicht orthografisch von oben**, sondern leicht
+perspektivisch — Horizont oben, ein Grasbüschel in Vordergrund-Größe links
+unten. Für eine Rasterkarte ist das ein echtes Problem: Kacheln müssen denselben
+Maßstab haben, sonst passen Norden und Süden nicht zusammen, egal wie sauber die
+Naht ist.
+
+**Zwei Hebel haben es gelöst**, beide gemessen an aufeinanderfolgenden Läufen:
+
+1. **Die Bäume.** Solange das Modell sie mit Stamm von der Seite malt, entsteht
+   automatisch ein Horizont. Die Vorgabe „Kronen von oben, keine Stämme, keine
+   Seiten sichtbar" hat die Perspektive in einem Lauf beseitigt.
+2. **Die Felswände.** Lauf 2 war top-down, malte aber Klippen als Seitenansicht
+   — das verrät eine Blickrichtung und liest sich am Bildrand als „hier endet
+   die Welt", ausgerechnet dort, wo Nachbarkacheln anschließen. Behoben durch
+   „keine senkrechten Flächen, Höhe nur als umrissene Kante und Farbstufe von
+   oben" plus „Gelände läuft flach bis an alle vier Bildränder".
+
+**Der erprobte Prompt steht als Standard-Vorlage in
+[`image-prompts/MAPS.md`](../../../data/_authoring/image-prompts/MAPS.md)**,
+zusammen mit den beiden Bedienfallen des Krea2-Workflows. Die beiden alten
+Vorlagen dort sind als überholt markiert — sie sind auf 16:9 geschrieben und
+beschreiben Bauwerke als Landmarken, was Weg C ausschließt.
 
 ### Zwei Fallen im `Krea2 Txt2Img`-Workflow (Zeitverlust: ein Fehllauf)
 
