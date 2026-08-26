@@ -90,18 +90,35 @@ mit Prompt-Vorlage, Größen und Bedienfallen steht in
 Werkzeuge:
 
 ```bat
-:: Nahtlinien des Kachel-Nachschaerfens aufloesen
-.venv\Scripts\python.exe heal_map_seams.py gekachelt.png nahtlos.png fertig.png
+:: Detail erzeugen - ueberlappende Kacheln durch FLUX.2, Kosinus-Ueberblendung
+.venv\Scripts\python.exe refine_map_tiles.py leinwand.png detail.png ^
+  --prompt-file ..\image-prompts\DETAIL_PROMPT.txt --steps 8 --denoise 0.48
+
+:: Palette der Vorlage zurueckholen (gegen Farbdrift der Kacheln)
+.venv\Scripts\python.exe match_map_colour.py detail.png leinwand.png fertig.png
 
 :: Leinwand auf Zielgroesse bringen und in 1024er-Kacheln zerschneiden
 .venv\Scripts\python.exe slice_map.py fertig.png leinwand.png 2048x1024 "[{\"id\":\"alabastia\",\"row\":0,\"col\":0,\"out\":\"...\\map_alabastia.webp\"}]"
+
+:: Rueckfallebene: Nahtlinien eines schwachen Kachel-Laufs aufloesen
+.venv\Scripts\python.exe heal_map_seams.py gekachelt.png nahtlos.png fertig.png
 ```
 
-`heal_map_seams.py` braucht **zwei** Fassungen desselben Entwurfs: die
-gekachelt nachgeschärfte (hat die Zeichnung, aber Nahtlinien) und eine rein
-hochskalierte (nahtlos, aber weich). Es nimmt aus der zweiten nur die paar
-Pixel, auf denen die Linien sitzen. Warum es das braucht und wie die nahtlose
-Fassung entsteht: MAPS.md, Abschnitt „Hochskalieren — drei Läufe, nicht einer".
+`refine_map_tiles.py` ist das Herzstück: es macht die Kachelung selbst, mit
+halber Kachelbreite Versatz und Kosinus-Fenster, damit eine harte Kante gar
+nicht entstehen kann — und es kann mit `--region` einen Ausschnitt behandeln
+statt der ganzen Leinwand. Das ist der Sparhebel bei den großen Karten.
+
+`match_map_colour.py` zieht die Palette der Vorlage zurück ins Bild. Ohne das
+wird eine Kachel heller, die nächste gelber, und der Weltstil driftet weg.
+
+`heal_map_seams.py` ist nur noch Rückfallebene für Läufe mit wenigen
+Schritten. Es braucht **zwei** Fassungen desselben Entwurfs: die gekachelt
+nachgeschärfte (hat die Zeichnung, aber Nahtlinien) und eine rein
+hochskalierte (nahtlos, aber weich).
+
+Alle Werte, die Reihenfolge und die Fallen: MAPS.md, Abschnitt „Hochskalieren
+— der Detailgrad hängt an drei Reglern".
 
 ## Nicht hierher gehört
 

@@ -347,21 +347,70 @@ Nahtpositionen numerisch bestimmt statt geschätzt):
 | grobe Töne aus einem nahtlosen Durchgang übernehmen | Linien stehen unverändert — es ist kein Tonwertsprung |
 | Kachel-Durchgang ganz weglassen | nahtlos, aber beim Hineinzoomen matschig → reißt AK 6 |
 
-**Gelöst durch einen dritten Lauf plus ein Werkzeug:** derselbe Entwurf wird
-zusätzlich **rein** hochskaliert (vier Knoten, direkt an die Schnittstelle,
-Sekunden) — nahtlos, aber weich. `data/_authoring/image-tools/heal_map_seams.py`
-setzt daraus genau die ein bis zwei Pixel je Linie ein, vorher im Tonwert an die
-Umgebung angeglichen. Danach ist im 896er-Raster kein Treffer mehr messbar, und
-Papierkörnung, Sandstreifen und Linienführung stehen unangetastet. Der ganze
-Ablauf ist in `MAPS.md` unter „Hochskalieren — drei Läufe, nicht einer"
-beschrieben; die Werkzeuge (`heal_map_seams.py`, `slice_map.py`) liegen im
-Repo.
+**Erster Fix (überholt, siehe unten):** ein dritter Lauf, der denselben Entwurf
+**rein** hochskaliert, plus `heal_map_seams.py`, das daraus die ein bis zwei
+Pixel je Linie einsetzt. Funktionierte messbar, war aber ein Pflaster.
 
-🟡 **Was das Werkzeug nicht kann:** Es findet die Linien über ihre Stärke und
-darüber, dass sie durch das ganze Bild laufen. Eine Naht, die zufällig genau
-auf einer langen geraden Bildkante liegt, würde es nicht von ihr unterscheiden.
-Auf organisch gezeichneten Karten ist das kein Fall, auf einer Karte mit
-langen geraden Kanten (Stadtplan, Raster) wäre vorher hinzusehen.
+### 🔴 Der Detailgrad war zu niedrig (26.08.2026, von Sascha am Bildschirm gemeldet)
+
+Sascha nach dem Nahtfix: *„Remacri sieht matschig und undetailiert aus, die
+Detailtreue in Upscale_00005 ist auch eher mager."* Zu Recht. Sein Vorschlag,
+in 256er-Kacheln zu zerlegen und jede auf 1024 zu bringen, ist geometrisch
+**identisch** mit dem, was der Ablauf ohnehin tut (64 Kacheln, je 1024²
+Ausgabe). Das Problem lag woanders — an drei Reglern, die alle in die falsche
+Richtung standen:
+
+| Regler | Stand | Befund |
+|---|---|---|
+| **Schritte** (`Flux2Scheduler`) | **2** | Zwei Schritte reichen zum Nachziehen von Kanten und für nichts sonst. Größter Hebel. |
+| **Kachel-Prompt** | Konservierungs-Auftrag | Verbietet wörtlich *„artificial micro-detail"* und *„detail merely to make an area appear busy"* — also genau das, wofür der Aufruf da ist. |
+| **Rauschen** | 0,5 im Paket | Erreicht den Auftrag über comfy-cli gar nicht. |
+
+**Belegter Vergleich** (Alabastia, 8 Schritte, Detail-Prompt statt
+Konservierungs-Prompt): einzelne Grashalme, Kiesel auf den Wegen, Erdrisse,
+Blattklumpen mit eigenem Umriss, Wasserkräusel. Die Ausliefer-Kacheln sind von
+111 auf 233 KB gewachsen — bei gleicher Auflösung.
+
+🟡 **Und eine Falle, in die ich selbst getappt bin:** der erste Detail-Prompt
+sagte „ink-and-watercolour language", „soft watercolour washes", „gentle paper
+grain". Ergebnis: eine technisch großartige **Aquarellkarte**, die mit dem
+`art_style` der Welt nichts mehr zu tun hatte. Die Stilwörter im Prompt
+schlagen alles andere — der `art_style` der Welt gehört wörtlich hinein. Zweiter
+Lauf mit flacher Zellenschattierung im Prompt sitzt.
+
+**Zwei neue Werkzeuge im Repo:**
+
+- **`refine_map_tiles.py`** — macht die Kachelung selbst: überlappende Kacheln
+  mit halber Kachelbreite Versatz, jede einzeln durch FLUX.2, Zusammensetzen mit
+  Kosinus-Fenster. Eine harte Kante *kann* dabei nicht entstehen. Kann mit
+  `--region` einen Ausschnitt behandeln. Baut den Auftrag selbst und umgeht damit
+  die tote Paket-Verdrahtung.
+- **`match_map_colour.py`** — bei 0,48 Rauschen erfindet FLUX.2 auch Palette
+  (eine Kachel heller, die nächste gelber). Das Werkzeug nimmt die groben Töne
+  aus der rein hochskalierten Leinwand und lässt die feine Zeichnung stehen.
+  Farbdrift ist damit strukturell erledigt.
+
+**Nähte sind bei acht Schritten kein Thema mehr:** die neue Zeichnung füllt die
+Kachelränder so dicht zu, dass im 896er-Raster kein Treffer mehr messbar ist.
+`heal_map_seams.py` bleibt Rückfallebene.
+
+🔴 **Umfang bei den 8192ern entschieden (Sascha, 26.08.2026): „nur was sichtbar
+ist".** Acht Schritte kosten den vierfachen Rechenaufwand; eine volle
+8192×8192-Leinwand liegt damit bei rund vier Stunden. Von einer 8×8-Leinwand
+ist am Anfang genau **eine** Kachel sichtbar. Nachgeschärft wird deshalb nur
+Kachel `{0,0}` plus ein Kachelring Rand; der Rest bleibt Remacri-glatt und wird
+nachgeschärft, wenn er freigeschaltet wird. Der nahtlose Anschluss bleibt, weil
+alles aus derselben Leinwand kommt.
+
+🟡 **Damit ist AK 7 nur dem Sinn nach erfüllt, nicht dem Buchstaben.** Die
+Leinwand liegt vollständig vor und jede spätere Kachel schließt nahtlos an —
+aber sie braucht vor der Auslieferung noch einen Nachschärf-Lauf, ist also
+nicht „ohne neue Bildarbeit" fertig. Bewusst so entschieden.
+
+🟡 **Was `heal_map_seams.py` nicht kann:** Es findet Linien über ihre Stärke und
+darüber, dass sie durch das ganze Bild laufen. Eine Naht, die genau auf einer
+langen geraden Bildkante liegt, würde es nicht von ihr unterscheiden. Auf
+organisch gezeichneten Karten kein Fall, auf einem Stadtplan mit Raster schon.
 
 ### Was noch offen ist
 

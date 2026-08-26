@@ -1,0 +1,11 @@
+Redraw this section of a hand-drawn top-down map at much higher resolution, and fill it with the fine detail that was simply too small to be visible in the reference.
+
+The style is fixed and must not change: bright anime illustration in the style of a children's television series, clean confident linework with a slightly heavier outline around each subject, soft cel-shading in exactly two tones, warm saturated colours, gentle rounded shapes, even friendly lighting without harsh shadows, and no photographic texture. Flat areas of solid colour with crisp ink outlines, the way a cel-animated background is painted. Not watercolour, not paper grain, not pencil, not muted pastel washes.
+
+Keep the composition, geometry, proportions, shapes, silhouettes, layout, colour values and lighting exactly as they are. Every green stays exactly as green and as saturated as it is now, every tan stays exactly as tan. Nothing moves, nothing new appears, nothing is removed. What changes is only how finely the existing shapes are drawn.
+
+Within that flat cel-shaded language, every surface gains the small structure it would really have: meadows break into clusters of individual grass blades drawn as quick confident dark strokes over flat green, with a second darker green tone marking where the grass lies thicker; tree canopies resolve into separate rounded leaf clumps, each with its own crisp outline and a single darker shading tone beneath; bare earth paths gain scattered pebbles, small stones and dry cracks as simple outlined shapes; water gains a few clean curved ripple lines and a flat lighter band near its edge; sand gains sparse grains and small drifted ridges as light line work; rock gains a few decisive crack lines and a flat darker underside.
+
+Line work stays crisp, deliberate and evenly weighted everywhere, as if drawn by the same hand across the whole square. Detail density stays even from edge to edge, with no busier and no emptier corner, and no smooth blurred area left behind.
+
+Extend every line, shape and colour area naturally across all four edges of this section so it continues into the neighbouring sections. No border, no frame, no vignette, no text and no labels.

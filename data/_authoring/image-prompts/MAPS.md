@@ -119,51 +119,103 @@ Ergebnis am Ende auf die Zielgröße herunterrechnen — herunterrechnen nach de
 Nachschärfen kostet keine Schärfe, ein zu kleiner Entwurf kostet die
 Komposition.
 
-### Hochskalieren — drei Läufe, nicht einer
+### Hochskalieren — der Detailgrad hängt an drei Reglern
 
-Der Ablauf `Upscale Map` allein liefert **keine** brauchbare Leinwand. Er
-zerlegt das Bild in Kacheln, schärft jede einzeln mit FLUX.2 nach und setzt sie
-wieder zusammen — und beim Zusammensetzen stößt er sie **auf Stoß statt sie zu
-überblenden**. Jede Kachel trägt vom Dekodieren einen Rand, und diese Ränder
-reihen sich zu geraden Linien über die ganze Leinwand, im Raster
-`Kachelgröße − Überlappung` (bei den Vorgabewerten also alle 896 px). Auf einer
-Karte sieht das aus wie ein aufgedrucktes Gitternetz.
+Eine Kachelkarte muss beim Hineinzoomen bis auf Kachel-Nativgröße standhalten.
+Rein hochskalieren reicht dafür nicht: das vergrößert nur, was da ist, und
+liefert Matsch. Das Detail muss **erzeugt** werden, und zwar von FLUX.2, das
+jede Kachel neu zeichnet.
 
-**Mit den Reglern des Ablaufs ist das nicht zu heilen** (26.08.2026 durchgemessen):
+**Der gespeicherte Ablauf `Upscale Map` tut das viel zu zaghaft**, aus drei
+Gründen — alle drei am 26.08.2026 durchgemessen:
 
-- Mehr Überlappung verschiebt die Linien nur — bei 320 statt 128 sitzen sie im
-  704er-Raster, weg sind sie nicht.
-- Weniger Rauschen pro Kachel (`denoise`) wäre der richtige Hebel, aber der
-  Regler liegt **im Knotenpaket** und erreicht über comfy-cli den Auftrag gar
-  nicht: der Lauf liefert dieselbe Datei zurück. Nur Regler außerhalb des
-  Pakets wirken.
-- Die Linien sind **kein** Tonwertsprung. Grobe Töne austauschen lässt sie
-  stehen; sie sitzen in zwei bis drei Pixeln.
+| Regler | Gespeicherter Stand | Was daran falsch ist |
+|---|---|---|
+| **Schritte** | `2` | Zwei Schritte reichen zum Nachziehen von Kanten und für sonst nichts. **Der mit Abstand größte Hebel.** |
+| **Kachel-Prompt** | ein Konservierungs-Auftrag | Steht wörtlich drin: *„Do not introduce … artificial micro-detail … Do not add detail merely to make an area appear busy."* Wir verbieten dem Modell genau das, wofür wir es aufrufen. |
+| **Rauschen** (`denoise`) | `0.5` | An sich brauchbar — aber der Regler liegt **im Knotenpaket** und erreicht über comfy-cli den Auftrag gar nicht. Ein Lauf mit geändertem Wert liefert wortwörtlich dieselbe Datei zurück. |
 
-Der Weg ist deshalb dreiteilig:
+**Deshalb wird der Auftrag nicht über comfy-cli geschickt, sondern selbst
+gebaut.** ComfyUI gibt unter `GET /history/<prompt_id>` den fertig
+umgewandelten Auftrag zurück; darin lassen sich alle Werte direkt setzen und
+das Ganze per `POST /prompt` wieder einreichen. Damit ist die tote
+Paket-Verdrahtung umgangen.
 
-1. **`Upscale Map`** wie unten beschrieben laufen lassen — liefert die feine
-   Zeichnung, die eine Karte beim Hineinzoomen braucht.
-2. **Denselben Entwurf nochmal rein hochskalieren**, ohne Kacheln — vier
-   Knoten, direkt an die Schnittstelle geschickt: `LoadImage` →
-   `UpscaleModelLoader` (`4x_foolhardy_Remacri.pth`) → `ImageUpscaleWithModel`
-   → `SaveImage`. Dauert Sekunden und ist garantiert nahtlos, aber weich und
-   detailarm — als Bild unbrauchbar, als Ersatzteillager perfekt.
-3. **`heal_map_seams.py`** setzt die Nahtlinien aus dem nahtlosen Bild ein,
-   vorher im Tonwert an die Umgebung angeglichen:
+#### Die Kette
+
+1. **Leinwand bauen: Remacri ×4**, ohne Kacheln. Vier Knoten, direkt an die
+   Schnittstelle: `LoadImage` → `UpscaleModelLoader`
+   (`4x_foolhardy_Remacri.pth`) → `ImageUpscaleWithModel` → `SaveImage`.
+   Dauert Sekunden, ist nahtlos und farbtreu, aber weich. Diese Datei wird
+   **zweimal** gebraucht: als Gerüst und später als Farbvorlage.
+2. **Detail erzeugen.** Zwei Wege, je nach Fall:
+   - **Ganze Leinwand:** den Auftrag von `Upscale Map` aus der Historie holen,
+     `Flux2Scheduler.steps` auf **8**, `ImageAddNoise.strength` auf **0.48**
+     und den positiven Text auf einen **Detail-Prompt** setzen (siehe unten),
+     dann einreichen.
+   - **Nur ein Ausschnitt, oder wenn die Überblendung garantiert sein muss:**
+     `refine_map_tiles.py`. Es schneidet überlappende Kacheln (halbe
+     Kachelbreite Versatz), schickt jede einzeln durch FLUX.2 und setzt sie mit
+     Kosinus-Fenster zusammen — eine harte Kante kann dabei nicht entstehen.
+     ```bat
+     data\_authoring\image-tools\.venv\Scripts\python.exe ^
+       data\_authoring\image-tools\refine_map_tiles.py leinwand.png detail.png ^
+       --prompt-file detail_prompt.txt --steps 8 --denoise 0.48 --region 0,0,2048,2048
+     ```
+3. **Farbe zurückholen: `match_map_colour.py`.** Bei 0.48 Rauschen erfindet
+   FLUX.2 nicht nur Struktur, sondern auch Palette — eine Kachel wird heller,
+   die nächste gelber. Das Werkzeug nimmt die **groben** Töne aus der Leinwand
+   von Schritt 1 und lässt die **feine** Zeichnung aus Schritt 2 stehen. Damit
+   ist Farbdrift strukturell erledigt, weil die Farbe gar nicht mehr aus den
+   Kacheln kommt.
    ```bat
-   data\_authoring\image-tools\.venv\Scripts\python.exe ^
-     data\_authoring\image-tools\heal_map_seams.py gekachelt.png nahtlos.png fertig.png
+   .venv\Scripts\python.exe match_map_colour.py detail.png leinwand.png fertig.png
    ```
-   Ersetzt werden ein bis zwei Pixel je Linie plus ein weicher Auslauf. Der
-   Detailverlust ist im Bild nicht auszumachen, die Linie dagegen schon.
+4. **`slice_map.py`** bringt die Leinwand auf Zielgröße und schneidet die
+   Ausliefer-Kacheln heraus.
 
-Danach mit `slice_map.py` auf Zielgröße bringen und in die Ausliefer-Kacheln
-zerschneiden.
+#### Der Detail-Prompt — und die Falle darin
 
-⚠️ **Nicht auf das Weglassen von Schritt 1 verkürzen.** Rein hochskaliert ist
-die Karte zwar sofort nahtlos, aber beim Hineinzoomen matschig — genau der
-Zustand, für den der Kachel-Umweg überhaupt gebaut wurde.
+⚠️ **Die Stilwörter im Prompt schlagen alles andere.** Ein Testlauf mit
+„ink-and-watercolour language", „soft watercolour washes" und „gentle paper
+grain" hat eine technisch großartige **Aquarellkarte** geliefert — mit dem
+`art_style` der Welt hatte sie nichts mehr zu tun. Das Modell gehorcht aufs
+Wort; der Fehler saß im Auftrag.
+
+Deshalb: **den `art_style` der Welt wörtlich in den Detail-Prompt schreiben**
+und die Materialbeschreibungen in derselben Sprache halten. Für die
+Pokémon-Welt also flache Zellenschattierung in zwei Tönen, satte Farben,
+klare kräftige Umrisse — und ausdrücklich *kein* Aquarell, *kein* Papierkorn.
+Der erprobte Text steht als Datei neben den Werkzeugen.
+
+Aufbau, der sich bewährt hat: erst **Stil festnageln**, dann **Komposition
+einfrieren** („nothing moves, nothing new appears"), dann **Material für
+Material** sagen, welche kleine Struktur dazukommt (Grashalme als schnelle
+dunkle Striche über flachem Grün, Blattklumpen mit eigenem Umriss, Kiesel als
+einfache Konturformen, Wasserkräusel als saubere Bögen), zuletzt **gleichmäßige
+Detaildichte** und **Fortsetzung über alle vier Ränder** verlangen.
+
+#### Nähte
+
+Bei acht Schritten füllt die neue Zeichnung die Kachelränder so dicht zu, dass
+im Nahtraster **kein Treffer mehr messbar** ist — die Stoßkante des
+ComfyUI-Zusammensetzers geht in der Textur unter. `heal_map_seams.py` bleibt
+als Rückfallebene für Läufe mit wenigen Schritten; bei `refine_map_tiles.py`
+wird es gar nicht erst gebraucht.
+
+#### Was das kostet, und wo man spart
+
+Acht Schritte statt zwei sind der vierfache Rechenaufwand. Eine kleine
+Gebietskarte (4096×2304) braucht damit rund eine Viertelstunde, eine volle
+8192×8192-Leinwand **rund vier Stunden**.
+
+**Bei den großen Karten wird deshalb nur nachgeschärft, was ausgeliefert wird.**
+Von einer 8×8-Leinwand ist am Anfang genau eine Kachel sichtbar; die anderen
+63 in Ausliefer-Qualität zu zeichnen ist Rechenzeit für die Schublade. Die
+Leinwand bleibt dort Remacri-glatt, `refine_map_tiles.py --region` schärft die
+sichtbare Kachel plus einen Kachelring Rand. Wird später eine Kachel
+freigeschaltet, wird ihr Bereich nachgeschärft — der Anschluss bleibt nahtlos,
+weil alles aus derselben Leinwand kommt.
 
 ### Handgriffe im Ablauf `Upscale Map`
 
