@@ -31,3 +31,17 @@ Abarbeiten der jeweiligen Phase abhaken.
   der dortige Prompt läuft nicht mit und muss nicht gepflegt werden. Die
   Zielgröße beim Zusammensetzen ist verdrahtet (`GetImageSize` auf die
   SeedVR2-Ausgabe), nicht getippt.
+- [x] → Phase 6: `Upscale Map` ist erprobt. 3072×2048 (12 Kacheln) in rund vier
+  Minuten, Kachelgrenzen bei 1:1-Sichtprüfung nahtlos, Stil bleibt Zeichnung.
+  Zwei Dinge waren im gelieferten Stand offen und müssen vor jedem Lauf geprüft
+  werden: **kein Upscale-Modell ausgewählt** (`978.model_name` leer) und
+  **`GetImageSize` misst das Eingangsbild statt des hochskalierten** (Draht ist
+  beim Austausch von SeedVR2 auf den Vorgängerknoten zurückgefallen).
+- [ ] → Phase 3: Mit zwei Gebietskarten statt einer gibt es einen neuen
+  Übergang, den `derivedUnlockedTileIds()` bisher nicht kennt: den Sprung von
+  Gebietskarte 1 auf Gebietskarte 2 über die Weltenkarte. Naheliegend, aber
+  unbelegt: Vertania City erscheint auf der Weltenkarte, sobald `route_1` durch
+  ist. Vor der Umsetzung gegen den echten Code prüfen.
+- [ ] → Phase 7: Weg C bringt zwei zusätzliche Sprites, die vorher niemand
+  bestellt hatte — Alabastia und Vertania City als Bauwerk-Sprites auf der
+  Weltenkarte. Stehen jetzt in Phase 6, nicht vergessen.

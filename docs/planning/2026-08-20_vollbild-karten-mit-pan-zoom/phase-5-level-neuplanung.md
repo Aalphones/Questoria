@@ -21,32 +21,61 @@ größte Arbeitsblock im ganzen Plan, siehe Aufwands-Hinweis unten)
 - `frontend/src/app/models/content.types.ts` — Stand nach Phase 1
   (`MapTileDef`, `tile_id`-Felder).
 
-## Einordnung: zwei Kartenebenen, nur eine wird hier neu bestückt
+## Einordnung: drei Kartenebenen (überarbeitet 26.08.2026)
 
-`arc_overview` (Timeline) bleibt vorerst bei **einer** Kachel mit dem
-einzigen bestehenden Stage-Marker „Route 1 · Alabastia" — weitere Arcs
-(Marmoria City etc.) sind ein späterer Ausbau, nicht Teil dieser Phase.
-**Diese Phase bestückt die Ortskarte** (`world.maps[]`-Eintrag für „Route 1 ·
-Alabastia") mit vier Kacheln und vierzehn Stationen statt der heutigen drei.
+> 🔴 **Diese Sektion ist am 26.08.2026 neu gefasst worden**, nachdem die
+> ursprüngliche Fassung nur zwei Ebenen kannte und alle vierzehn Stationen auf
+> **eine** Ortskarte legte. Die Kacheln und ihre Stationen sind dieselben
+> geblieben — sie sind nur auf **zwei Gebietskarten** aufgeteilt, und die beiden
+> Karten darüber wachsen von je einer Kachel auf 8×8. Vollständige Struktur:
+> README → „Drei Kartenebenen". Der Content dieser Phase (Episoden, Aufgaben,
+> Texte) ist von der Änderung **nicht** betroffen.
+
+- **Planetenkarte** (`MainHub`): 8192×8192, anfangs nur `{0,0}` aufgedeckt,
+  darauf der Planet Pokémon. Nicht Teil dieser Phase — Bildarbeit in Phase 6.
+- **Weltenkarte** (`arc_overview`, Timeline): 8192×8192 der Kanto-Region,
+  anfangs nur `{0,0}` aufgedeckt. Darauf liegen **zwei** Orte statt des
+  bisherigen einen Stage-Markers: **Alabastia** und **Vertania City**. Jeder
+  führt in seine Gebietskarte.
+- **Gebietskarten** (`world.maps[]`): **zwei** Einträge, je zwei Kacheln.
 
 ## Neues Kachel-/Stationen-Layout
+
+### Gebietskarte 1 — Alabastia
 
 | Kachel-Id | Position | Enthält (Stationen) |
 |---|---|---|
 | `alabastia` | `{row: 0, col: 0}` (Start) | Zuhause · Rivalen-Haus · Prof. Eichs Labor |
 | `route_1` | `{row: 0, col: 1}` | Die Wiese am Weg · Markt-Verkäufer (gibt ein Heiltrank-Item) · Wildgras-Begegnung |
-| `vertania_city` | `{row: 0, col: 2}` | Pokémon-Center · Pokémon-Markt · Arena (sichtbar, erzählerisch „Arenaleiter nicht da" — wie im Original) · ein Wohnhaus |
-| `vertania_wald` | `{row: -1, col: 2}` | Waldeingang · Käfersammler-Trainer · Gegenstand zum Finden · Waldausgang |
 
-**Bewusster Knick bei `vertania_wald`** (Zeile statt Spalte 3): Der Wald
-umgibt Vertania City geografisch und ist ihre einzige Verbindung weiter
-nordwärts (Quelle: PokéWiki „Vertania-Wald"), keine gerade Fortsetzung von
-Route 1. Nebeneffekt: testet die Bounding-Box-Klemmung aus Phase 2 an einem
-echten L-förmigen Layout (siehe README → Konfidenz-Ausweis).
+### Gebietskarte 2 — Vertania
 
-**Freischalt-Reihenfolge** = Array-Reihenfolge in der Tabelle oben
-(`alabastia` → `route_1` → `vertania_city` → `vertania_wald`), passend zur
+| Kachel-Id | Position | Enthält (Stationen) |
+|---|---|---|
+| `vertania_city` | `{row: 0, col: 0}` (Start) | Pokémon-Center · Pokémon-Markt · Arena (sichtbar, erzählerisch „Arenaleiter nicht da" — wie im Original) · ein Wohnhaus |
+| `vertania_wald` | `{row: -1, col: 0}` | Waldeingang · Käfersammler-Trainer · Gegenstand zum Finden · Waldausgang |
+
+**Bewusster Knick bei `vertania_wald`** (eine Zeile nach oben statt eine Spalte
+nach rechts): Der Wald umgibt Vertania City geografisch und ist ihre einzige
+Verbindung weiter nordwärts (Quelle: PokéWiki „Vertania-Wald"), keine gerade
+Fortsetzung. Nebeneffekt: testet die Bounding-Box-Klemmung aus Phase 2 an einem
+Layout mit einem leeren Eckfeld (siehe README → Konfidenz-Ausweis).
+
+**Positionen sind Prozentwerte innerhalb ihrer Kachel** und bleiben deshalb bei
+der Umgruppierung unverändert gültig — eine Kachel behält ihre Stationen, egal
+in welcher Karte sie hängt. Das ist genau die Eigenschaft, die der Kontrakt aus
+Phase 1 zugesagt hat, und sie hat sich hier zum ersten Mal ausgezahlt.
+
+**Freischalt-Reihenfolge** = Array-Reihenfolge **innerhalb jeder Gebietskarte**
+(`alabastia` → `route_1`, bzw. `vertania_city` → `vertania_wald`), passend zur
 `derivedUnlockedTileIds()`-Logik aus Phase 3.
+
+🟡 **Offen, an Phase 3 zu prüfen:** Wann wird Gebietskarte 2 überhaupt
+erreichbar? Bisher lief die Freischaltung innerhalb *einer* Karte durch; jetzt
+gibt es zusätzlich den Sprung von Karte zu Karte über die Weltenkarte. Der
+naheliegende Weg: Vertania City erscheint auf der Weltenkarte, sobald
+`route_1` durchgespielt ist. Belegt ist das nicht — vor der Umsetzung gegen
+`derivedUnlockedTileIds()` prüfen.
 
 ## Stationen im Detail
 

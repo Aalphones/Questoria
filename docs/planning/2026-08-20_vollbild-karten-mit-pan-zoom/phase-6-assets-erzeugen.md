@@ -13,10 +13,15 @@
   dieser Phase.
 - `data/_authoring/ASSET_REQUIREMENTS.md` Abschnitt 4 (Map-Grafiken) — wird
   aktualisiert.
-- Sascha stellt den **Tiled-Upscale-Workflow** noch bereit (Chat vom
-  20.08.2026) — bis dahin lässt sich die Basis-Generierung schon vorbereiten,
-  der finale hochaufgelöste Export der Kachel-Leinwände wartet auf den
-  Workflow.
+- **Tiled-Upscale-Workflow `Upscale Map`** — liegt seit 26.08.2026 vor und ist
+  erprobt. Er skaliert um Faktor 4 (`4x_foolhardy_Remacri`), zerlegt in
+  1024er-Kacheln mit 128 Überlappung, schärft jede Kachel mit FLUX.2 klein 9B
+  nach und setzt sie wieder zusammen. Sein Kachel-Prompt ist auf Karten
+  geschrieben und verbietet Neuerfindung ausdrücklich.
+- **Die richtige ComfyUI-Instanz ist `F:\Comfy-Desktop\`** (STATE.md). Die
+  gespeicherten Workflows der laufenden Instanz holt man über
+  `http://127.0.0.1:8188/api/userdata?dir=workflows`, nicht aus dem Ordner, auf
+  den der `comfy`-MCP-Server per Voreinstellung zeigt.
 
 ## Ziel dieser Phase
 
@@ -38,32 +43,86 @@ freigestelltes PNG-Sprite (unabhängig vom Batch-Hintergrund — ein Gebäude/
 eine Figur muss nicht mit ihren Nachbarn nahtlos verschmelzen, sie liegt als
 eigene Ebene obendrauf).
 
-## Batches für diese Phase
+## Batches für diese Phase (neu gefasst 26.08.2026)
 
-| Batch | Enthaltene Kacheln | Leinwandgröße (Kachel-Bounding-Box × 1024) |
+> 🔴 **Die frühere Fassung dieser Tabelle war in zwei Punkten falsch.** Erstens
+> rechnete sie die Ortskarten-Leinwand als „3×2 Kachel-Felder = 6144×2048" —
+> 3 Spalten × 1024 sind **3072**, nicht 6144; die Breite war verdoppelt, die
+> Höhe nicht. Zweitens kannte sie nur eine Ortskarte und je eine Einzelkachel
+> für Planeten- und Weltenkarte. Beides ist mit der Drei-Ebenen-Struktur vom
+> 26.08.2026 hinfällig (README → „Drei Kartenebenen").
+
+| Batch | Leinwand | Ausliefer-Kacheln |
 |---|---|---|
-| Planetenkarte | `hub` (1 Kachel) | 1024×1024 — ein Batch mit nur einer Kachel, kein Nahtproblem |
-| Alabastia-Übersicht | `arc_overview` (1 Kachel) | 1024×1024 |
-| Alabastia-Ortskarte | `alabastia` `{0,0}`, `route_1` `{0,1}`, `vertania_city` `{0,2}`, `vertania_wald` `{-1,2}` | Bounding-Box über alle vier Positionen: Zeilen −1..0, Spalten 0..2 → **3×2 Kachel-Felder = 6144×2048** |
+| **Planetenkarte** (`MainHub`) | 8192×8192 (8×8 Felder) | vorerst nur `{0,0}` |
+| **Weltenkarte Kanto** (`arc_overview`) | 8192×8192 (8×8 Felder) | vorerst nur `{0,0}` |
+| **Gebietskarte Alabastia** | 2048×1024 (2×1 Felder) | `alabastia` `{0,0}`, `route_1` `{0,1}` |
+| **Gebietskarte Vertania** | 2048×2048 (2×2 Felder) | `vertania_city` `{0,0}`, `vertania_wald` `{-1,0}` |
 
-Bei der Alabastia-Ortskarte werden nur **vier** der sechs Felder in der
-3×2-Bounding-Box tatsächlich als Ausliefer-Kachel gebraucht — die beiden
-unbenutzten Felder (`{-1,0}` und `{-1,1}`) werden in der großen Leinwand
-trotzdem mitgemalt (als natürliche Umgebung, z. B. Gebirge/Horizont nördlich
-von Alabastia und Route 1, das im Spiel nie als eigene Kachel auftaucht) und
-nach dem Zuschneiden verworfen — sie sind reiner Kontext für eine stimmige
-Komposition, kein Ausliefer-Asset.
+**Bei der Gebietskarte Vertania werden nur zwei der vier Felder ausgeliefert.**
+Die beiden unbenutzten (`{-1,1}` und `{0,1}`) werden in der Leinwand trotzdem
+mitgemalt — als natürliche Umgebung, die im Spiel nie als eigene Kachel
+auftaucht — und nach dem Zuschneiden verworfen. Sie sind Kontext für eine
+stimmige Komposition, kein Ausliefer-Asset.
 
-## 🔴 Vor dem ersten Bild: Kartenverfahren gemeinsam festlegen
+**Bei den beiden 8192er-Karten gilt dasselbe in groß:** die volle Leinwand wird
+erzeugt, ausgeliefert wird nur `{0,0}`. Die Leinwand ist der Grund, warum eine
+später aufgedeckte Kachel ohne neue Bildarbeit an ihre Nachbarn anschließt; sie
+bleibt als Quellartefakt unter `data/_authoring/` liegen und wandert **nicht**
+mit ins Spiel.
+
+## Erzeugungsweg für die 8192er-Leinwände (entschieden 26.08.2026, Sascha)
+
+**In 2048×2048 erzeugen, einmal um Faktor 4 hochskalieren.** Nicht in 1024
+erzeugen und zweimal hochskalieren.
+
+| | 2048 + ein Durchgang (gewählt) | 1024 + zwei Durchgänge |
+|---|---|---|
+| Modellbereich | Krea 2 Turbo ist bis 2k trainiert — 2048 ist sein oberes Ende, noch im gelernten Bereich | 1024 ist bequem, aber die Komposition ganz Kantos auf 1024 px zu planen ist eng |
+| Zielgröße | 2048 × 4 = **8192 exakt**, kein Zwischenskalieren | 1024 → 4096 → 16384, muss halbiert werden — bezahltes Detail wird weggeworfen |
+| Stiltreue | ein Nachschärf-Durchgang, eine Gelegenheit zum Abdriften | zwei Durchgänge, zweimal Neuerfindung trotz Verbot im Prompt |
+| Rechenzeit | 64 Kacheln durch FLUX.2 | rund das Doppelte |
+
+**Rückfallebene:** Fällt Krea 2 bei 2048×2048 kompositorisch auseinander
+(erkennbar an verdoppelten Landmarken oder zerfallender Geografie), dann der
+Weg über 1024 mit zwei Durchgängen. Das kostet ein Testbild, keine Stunde —
+also **vor** der ersten großen Leinwand einmal prüfen.
+
+**Gemessene Grundlage:** 3072×2048 (12 Kacheln) brauchen mit
+`Upscale Map` rund vier Minuten. Eine 8192×8192-Leinwand liegt damit bei knapp
+einer Stunde.
+
+## ✅ Kartenverfahren — entschieden am 26.08.2026: Weg C
+
+**Die Karte ist Untergrund, alle Bauwerke liegen als eigene Sprites obendrauf.**
+Begründung und Reichweite: README → „Gebäude gehören nicht in die Karte". Kurz:
+dieselbe Kachel muss zeigen können, dass ein Ort verschlossen ist, und später,
+dass er offen ist — ein eingemaltes Gebäude kann das nicht.
+
+**Folge für jeden Karten-Prompt:** nur Gelände — Wiese, Wald, Wege, Wasser,
+Küste, Fels, Gebirge. **Keine** Häuser, Ortschaften, Türme, Brücken, Zäune um
+Grundstücke, keine Bauwerke jeder Art. Gehört in den Positiv- **und** in den
+Negativ-Prompt.
+
+🟡 **Belegter Anlass:** Der Probelauf vom 26.08.2026 (Vorlage
+`map_route_1.webp`) hat ein bestehendes Gebäude aus der alten Karte brav
+mitverfeinert — genau der Zustand, den Weg C ausschließt. Die alten Karten aus
+dem Bestand taugen deshalb **nicht** als Vorlage, sondern nur als Stilreferenz.
+
+**Der Tiled-Upscale-Teil der Frage hat sich erledigt:** Der Workflow
+`Upscale Map` liegt vor und ist erprobt (siehe Report-Back). ChatGPT als
+Entwurfsquelle wird damit nicht gebraucht — lokal erzeugt und lokal veredelt
+reicht.
+
+<details>
+<summary>Ursprüngliche Entscheidungsvorlage vom 23.08.2026 (historisch)</summary>
 
 Sascha am 23.08.2026: *„Speziell bei der Karte können wir uns ja auch überlegen
 eine detailliertere Karte mit ChatGPT zu erstellen und dann mit Tiled Upscale
 und Flux 2 oder Krea 2 hochskalieren und mehr Details ergänzen. Lass uns das in
 Phase 6 gemeinsam ausloten."*
 
-Das ist **keine Umsetzungsanweisung, sondern ein offener Punkt** — er wird am
-Anfang dieser Phase mit Sascha entschieden, nicht vom Umsetzer allein. Zur
-Entscheidung stehen mindestens drei Wege:
+Zur Entscheidung standen drei Wege:
 
 | Weg | Grundlage | Wofür er spricht | Wogegen |
 |---|---|---|---|
@@ -71,74 +130,94 @@ Entscheidung stehen mindestens drei Wege:
 | **B — ChatGPT als Entwurf, lokal veredelt** | ChatGPT/GPT Image zeichnet die Gesamtkomposition, Tiled Upscale + Flux 2 oder Krea 2 bringen Auflösung und Details | GPT Image plant Bildaufbau über eine große Fläche deutlich verlässlicher | Stilbruch zum Rest der Welt; GPT Image lehnt geschützte Figuren unvorhersehbar ab (`SPRITES.md`) — bei einer reinen Landschaftskarte ohne Pokémon aber unkritisch |
 | **C — Entwurf grob, Details als eigene Ebene** | Karte bleibt schlichter Untergrund, die Detailfülle kommt aus den Stations-Sprites obendrauf | Details lassen sich einzeln ändern, ohne die Karte neu zu erzeugen; ein Ort verrutscht → nur ein PNG wandert | die Karte selbst bleibt vergleichsweise leer |
 
-**Vor der Entscheidung zu klären** (billig, macht sie erst beantwortbar):
+Die damals offenen Vorfragen sind alle beantwortet: der Tiled-Upscale-Workflow
+liegt vor (`Upscale Map`), die richtige Instanz ist `F:\Comfy-Desktop\` (nicht
+das nie existierende `B:\`), und der Probelauf ist gelaufen.
 
-1. Liegt der Tiled-Upscale-Workflow inzwischen vor? Ohne ihn ist die
-   6144×2048-Leinwand aus dem Batch-Prinzip unten sowieso nicht erreichbar, und
-   alle drei Wege stehen still.
-2. Läuft er auf dieser Maschine — `B:\ComfyUI_windows_portable\ComfyUI\`, nicht
-   der Pfad aus den Skills (STATE.md).
-3. **Ein Probelauf auf einer einzigen Kachel, bevor die große Leinwand
-   angefasst wird.** Erst das Ergebnis dieser einen Kachel entscheidet, ob der
-   Weg trägt — nicht die Überlegung vorher. Der teure Teil ist die
-   6144er-Leinwand, geprüft wird an 1024.
+</details>
 
-Ergebnis der Entscheidung als ADR festhalten, wenn sie auf B oder C fällt (A ist
-der bereits dokumentierte Standardweg).
+**ADR:** Weg C wird als ADR-021 festgehalten (Karten tragen kein Bauwerk).
 
-## 🟡 Reihenfolge: Freistell-Werkzeug zuerst
+## ✅ Freistell-Werkzeug — erledigt am 26.08.2026
 
-Die 14 Stations-Sprites laufen durch dasselbe `cutout.py`, das in
-[Phase 7](phase-7-figuren-und-aufgabenbilder.md) Teil A repariert wird — heute
-stanzt es helle, umschlossene Flächen aus der Figur heraus (belegt an
-`bisasam_neutral.png`). **Teil A von Phase 7 vorziehen und vor dem ersten
-Stations-Sprite erledigen**, sonst wird dieselbe Arbeit zweimal gemacht.
+Die 14 Stations-Sprites laufen durch dasselbe `cutout.py` wie die Figuren.
+[Phase 7](phase-7-figuren-und-aufgabenbilder.md) Teil A wurde deshalb
+vorgezogen und ist umgesetzt — inklusive der Korrektur, dass der Fehler kein
+Loch ist, sondern eine **durchscheinende** Fläche (Alpha 9–64). Details dort.
+Die Sprites dieser Phase können also ohne Nacharbeit durchlaufen.
 
 ## Auflösungsvorgaben
 
 | Asset | Format | Größe |
 |---|---|---|
-| Batch-Leinwand (Zwischenschritt) | intern, vor dem Zerschneiden | Bounding-Box in 1024er-Vielfachen, siehe Tabelle oben |
+| Krea-2-Entwurf (Zwischenschritt) | intern | ein Viertel der Zielleinwand je Kante — 2048×2048 für eine 8192er Karte, 512×256 für die Gebietskarte Alabastia |
+| Batch-Leinwand nach dem Hochskalieren | intern, Quellartefakt unter `data/_authoring/` | Bounding-Box in 1024er-Vielfachen, siehe Batch-Tabelle oben |
 | Ausliefer-Kachel (nach dem Zerschneiden) | `.webp` | exakt 1024×1024 je Kachel |
 | Stations-Sprite | `.png` mit Alpha | Freigestelltes Einzelmotiv, Ausgabegröße 512×512 (Erzeugung in Modell-Nativgröße, danach verkleinert — dieselbe Kette wie bei Lernstufen-Bildern, ADR-018) |
+| Orts-Sprite auf der Weltenkarte | `.png` mit Alpha | Alabastia und Vertania City als eigene Bauwerk-Sprites, 512×512 — **neu**, ergibt sich aus Weg C |
+
+🟡 **Der Krea-2-Entwurf ist bewusst klein.** Die Kette skaliert um Faktor 4;
+wer den Entwurf größer macht, überschießt die Zielgröße und muss verkleinern —
+und wirft damit genau die Schärfe weg, für die der Umweg gebaut wurde.
 
 ## Umsetzung
 
-0. Kartenverfahren mit Sascha entscheiden (Abschnitt oben), Probelauf auf einer
-   Kachel, `cutout.py`-Fix aus Phase 7 Teil A vorziehen.
-1. Pro Batch: **einen** Prompt für die gesamte Szene formulieren (welche
-   Kacheln/Stationen liegen wo in der Leinwand, welcher Übergang zwischen
-   ihnen — z. B. Weg, der von `alabastia` nach `route_1` hinüberläuft, Wald,
-   der `vertania_city` nach Norden umschließt), `krea2-bilder`-Skill nutzen,
-   mit Tiled-Upscale-Workflow auf die Ziel-Leinwandgröße bringen.
-2. Leinwand an den Kachel-Grenzen zerschneiden (`row`/`col` × 1024 als
+**Reihenfolge der vier Batches: Gebietskarten zuerst.** Ihr Inhalt steht heute
+vollständig fest (Phase 5), sie sind klein, und sie sind das einzige, was für
+eine Abnahme am Bildschirm gebraucht wird. Die beiden 8192er-Karten kommen
+danach.
+
+0. **Auflösungs-Testbild:** eine Kanto-Komposition mit Krea 2 in 2048×2048
+   erzeugen und ansehen — hält sie zusammen, oder verdoppeln sich Landmarken?
+   Entscheidet zwischen dem gewählten Weg und der Rückfallebene über 1024.
+   Ein Bild, ein paar Minuten.
+1. Pro Batch: **einen** Prompt für die gesamte Szene formulieren (welches
+   Gelände liegt wo in der Leinwand, welcher Übergang zwischen den Feldern —
+   z. B. Weg, der von `alabastia` nach `route_1` hinüberläuft, Wald, der
+   `vertania_city` nach Norden umschließt). **Nur Gelände, keine Bauwerke**
+   (Weg C, Abschnitt oben) — auch nicht „ein kleines Dorf am Horizont".
+   `krea2-bilder`-Skill nutzen.
+2. Leinwand mit `Upscale Map` um Faktor 4 auf die Zielgröße bringen. Vor dem
+   Lauf prüfen: Upscale-Modell ausgewählt, und `GetImageSize` misst das
+   **hochskalierte** Bild, nicht das Eingangsbild (beides war im gelieferten
+   Stand vom 26.08.2026 offen, siehe Report-Back).
+3. Leinwand an den Kachel-Grenzen zerschneiden (`row`/`col` × 1024 als
    Ausschnitt-Offset), nur die tatsächlich gebrauchten Kacheln als Dateien
-   speichern, unbenutzte Bounding-Box-Felder verwerfen.
-3. Für jede der 14 Stationen: eigenes freigestelltes Sprite,
+   speichern, unbenutzte Felder verwerfen. Leinwand als Quellartefakt behalten.
+4. Für jede der 14 Stationen: eigenes freigestelltes Sprite,
    `krea2-bilder`-Skill (oder `flux2-bilder` nur bei wiederkehrender Figur).
-4. Dateien unter den in Phase 5 vergebenen Namen ablegen
+   Dazu **zwei Orts-Sprites** für Alabastia und Vertania City auf der
+   Weltenkarte.
+5. Dateien unter den in Phase 5 vergebenen Namen ablegen
    (`data/hub/`, `data/themes/pokemon/maps/`).
-5. `ASSET_REQUIREMENTS.md` Abschnitt 4 aktualisieren: Batch-Prinzip
-   dokumentieren („Kacheln, die aneinandergrenzen, gemeinsam als eine
-   Leinwand erzeugen und zerschneiden — nie eine Kachel isoliert generieren,
-   wenn sie Nachbarn hat, mit denen ihr Rand zusammenpassen muss").
+6. `ASSET_REQUIREMENTS.md` Abschnitt 4 aktualisieren, drei Punkte:
+   - **Batch-Prinzip**: „Kacheln, die aneinandergrenzen, gemeinsam als eine
+     Leinwand erzeugen und zerschneiden — nie eine Kachel isoliert generieren,
+     wenn sie Nachbarn hat, mit denen ihr Rand zusammenpassen muss."
+   - **Gebäudeverbot**: Karten tragen nur Gelände, Bauwerke sind Sprites.
+   - **Erzeugungsweg**: Entwurf in einem Viertel der Zielkantenlänge, ein
+     Durchgang `Upscale Map`.
 
 ## Akzeptanzkriterien
 
-1. Alle Ausliefer-Kacheln liegen vor, exakt 1024×1024.
-2. Innerhalb der Alabastia-Ortskarte sind die Übergänge zwischen
-   benachbarten Kacheln (`alabastia`↔`route_1`, `route_1`↔`vertania_city`,
-   `vertania_city`↔`vertania_wald`) nahtlos — Sichtprüfung am Bildschirm bei
-   Zoom auf die jeweilige Kachelgrenze, kein sichtbarer Bruch in Weg/
-   Vegetation/Licht.
+1. Alle Ausliefer-Kacheln liegen vor, exakt 1024×1024: 2 für die Gebietskarte
+   Alabastia, 2 für Vertania, je 1 für Planeten- und Weltenkarte.
+2. Die Übergänge zwischen benachbarten Kacheln (`alabastia`↔`route_1`,
+   `vertania_city`↔`vertania_wald`) sind nahtlos — Sichtprüfung am Bildschirm
+   bei Zoom auf die jeweilige Kachelgrenze, kein sichtbarer Bruch in Weg,
+   Vegetation oder Licht.
 3. Alle 14 Stations-Sprites liegen vor, freigestellt, an der von Phase 5
-   vergebenen Datei-Adresse.
-4. `ASSET_REQUIREMENTS.md` beschreibt das Batch-Prinzip **und** das
-   entschiedene Kartenverfahren.
-5. Die Karte hält beim Hineinzoomen bis auf Kachel-Nativgröße stand — beim
+   vergebenen Datei-Adresse — dazu die zwei Orts-Sprites der Weltenkarte.
+4. **Auf keiner Kartenleinwand ist ein Bauwerk eingemalt.** Prüfung: Leinwand
+   ohne Sprites ansehen — sie muss wie unbewohntes Gelände aussehen.
+5. `ASSET_REQUIREMENTS.md` beschreibt Batch-Prinzip, Gebäudeverbot und
+   Erzeugungsweg.
+6. Die Karte hält beim Hineinzoomen bis auf Kachel-Nativgröße stand — beim
    maximalen Zoom sind noch Details zu sehen, kein Weichzeichner-Matsch. Das
    war der Anlass für den Tiled-Upscale-Umweg.
-6. `deploy.cmd content` einmal durchgeführt.
+7. Die beiden 8192×8192-Leinwände liegen vollständig unter `data/_authoring/`
+   und sind **nicht** mit deployt worden.
+8. `deploy.cmd content` einmal durchgeführt.
 
 ## Report-Back
 

@@ -2,7 +2,7 @@
 
 **Aktiver Plan:** [docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/README.md)
 
-**Phase:** 5/8 — Level-Neuplanung Alabastia (complete). Plan jetzt 8 statt 7
+**Phase:** 6/8 — Assets erzeugen (in Arbeit). Plan jetzt 8 statt 7
 Phasen — neue **Phase 8 „Vertonung, vollständig statt nur Dialog"** angehängt
 (23.08.2026, Sascha): jede Frage und zwei feste Engine-Ansagen sollen eine
 echte Aufnahme statt Browser-Sprachausgabe bekommen. Rating heikel — echte
@@ -21,10 +21,29 @@ MapScreen/MainHub am Bildschirm öffnen, manuelles Zoomen/Ziehen nach dem
 Fokus prüfen, `prefers-reduced-motion` durchspielen — Details und Priorität
 in [phase-4](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/phase-4-auto-fokus.md).
 
-**Nächster Schritt:** `/clear`, dann `/model sonnet` (Phase 6 „Assets erzeugen"
-ist standard). Phase 6 startet mit einer 🔴-Entscheidung zum Kartenverfahren
-(ChatGPT-Entwurf + Tiled Upscale vs. lokal) — die zuerst mit Sascha klären,
-bevor Bilder erzeugt werden.
+**Nächster Schritt:** Phase 6 Schritt 0 — ein Krea-2-Testbild der Kanto-Karte in
+2048×2048 erzeugen und ansehen, ob die Komposition zusammenhält. Danach die vier
+Batches in der Reihenfolge Gebietskarte Alabastia → Gebietskarte Vertania →
+Weltenkarte → Planetenkarte.
+
+🟡 **Der Plan ist am 26.08.2026 in drei Punkten neu gefasst worden** (Sascha),
+alle drei sind in README/Phase 5/Phase 6 eingearbeitet:
+- **Drei Kartenebenen** statt zwei: Planetenkarte und Weltenkarte sind je
+  8192×8192 mit nur der ersten Kachel aufgedeckt; die bisherige *eine* Ortskarte
+  zerfällt in **zwei Gebietskarten** (Alabastia + Route 1 / Vertania City +
+  Vertania-Wald). Die vier Kacheln und ihre vierzehn Stationen bleiben
+  unverändert — nur umgruppiert.
+- **Gebäude gehören nicht in die Karte** (Weg C): Karten tragen nur Gelände,
+  jedes Bauwerk ist ein eigenes Sprite. Damit ist der alte 🔴-Punkt
+  „Kartenverfahren" entschieden. Neu bestellt: zwei Orts-Sprites für die
+  Weltenkarte.
+- **Erzeugungsweg:** in 2048×2048 erzeugen, **einmal** um Faktor 4
+  hochskalieren (Krea 2 ist bis 2k trainiert, 4× trifft 8192 exakt).
+
+🟡 **Der Freistell-Fix ist erledigt** (`4b59882`, Phase 7 Teil A vorgezogen) —
+und die im Plan festgeschriebene Mechanik war falsch: der Fehler ist kein Loch,
+sondern eine **durchscheinende** Fläche (Alpha 9–64 am Bisasam-Auge). Gesucht
+wird jetzt nach eingeschlossenen Flächen unter Alpha 200. Details in phase-7.
 
 🔴 **`pokemon` ist bis Phase 7 nicht abnahmefähig/deploybar:** Phase 5 hat
 Content und Datenmodell fertig (Build+Lint grün, alle Referenzen
@@ -62,7 +81,9 @@ Die geplante Mechanik hat am Bildschirm nicht getragen und wurde am 21.08.2026 e
 
 **Nachbar-Bug gefunden und gefixt (21.08.2026, `a63c052`):** Das Erfolgs-Overlay aus `fcf36c0` lag bei **jeder** der sechs Aufgabenarten von Anfang an über der Karte (abgedunkelter Scrim, leeres Panel), nicht erst nach einem Treffer — `&__feedback:empty` prüfte den falschen Knoten, alle sechs Aufgaben-Typen projizieren ihren Feedback-Container immer, nur dessen Inhalt ist bedingt. Mit `:has()` gefixt, Build + Lint grün, gepusht. Betrifft auch die neue `word_match`-Anzeige aus dem Screenshot — sollte jetzt wieder normal spielbar sein.
 
-🟡 **Für die Bildmaschine gemerkt:** Die Eingabepfade in den Skills `krea2-bilder`/`flux2-bilder` (`F:\Comfy-Desktop\...`) stimmen auf dieser Maschine nicht — die laufende ComfyUI-Instanz ist die portable Installation `B:\ComfyUI_windows_portable\ComfyUI\`, Referenzbilder für FLUX.2 gehören in deren `input\`. Skills sind dazu noch nicht korrigiert (Details: Phase-1-Report-Back).
+**Für die Bildmaschine gemerkt (korrigiert 26.08.2026):** Die richtige Instanz ist die Comfy-Desktop-Installation unter `F:\Comfy-Desktop\` — die Pfade in den Skills `krea2-bilder`/`flux2-bilder` stimmen also. Ein- und Ausgabe liegen gemeinsam unter `F:\Comfy-Desktop\ComfyUI-Shared\input\` bzw. `...\output\`, Referenzbilder für FLUX.2 gehören ins `input\`. Der frühere Hinweis auf `B:\ComfyUI_windows_portable\` war falsch; das Laufwerk existiert auf dieser Maschine nicht.
+
+**Gespeicherte Workflows** (`user/default/workflows/`): `Krea2 Txt2Img`, `Flux2 Txt2Img`, `Flux Edit`, `SeedVR2`, `Upscale`, `Upscale Map`. Der Aufruf über den `comfy`-MCP-Server zeigt per Voreinstellung auf einen **anderen** Ordner (`F:\Comfy-Desktop\ComfyUI-Installs\...`) — die Workflows der laufenden Instanz holt man über `http://127.0.0.1:8188/api/userdata?dir=workflows`, nicht aus dem Dateisystem.
 
 **Smoke-Test der Pokémon-Welt (20.08.2026) hat vier Anzeigefehler gefunden — alle noch am selben Tag behoben, gepusht:**
 - `image_search` (`anlaut_b_suche`, `anlaut_m_suche`, `wald_suche`): akzeptierte nur eine fest verdrahtete Teilmenge der im Bild passenden Objekte — ein Kind, das zurecht auf ein drittes, ebenfalls richtiges Objekt tippte, bekam „Da ist nichts". Neues Content-Feld `find_count` behebt das (jedes passende Objekt zählt); die drei betroffenen JSON-Dateien und `JSON_SCHEMA_REFERENCE.md` sind nachgezogen. Damit ist auch die alte Nachbestell-Liste aus dem Phase-4-Report-Back hinfällig — es gibt keine Arenaleiter-Lücke mehr, weil jetzt immer alle bekannten Objekte als Ziel zählen.

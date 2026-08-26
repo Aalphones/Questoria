@@ -40,6 +40,51 @@ Beginn von Phase 6 gemeinsam entschieden. Phase 7 ist neu und wurde von Phase 6
 abgetrennt, weil Kartenkacheln und Figurenbilder außer dem Zeitpunkt nichts
 gemeinsam haben.
 
+## Drei Kartenebenen (festgelegt 26.08.2026, Sascha)
+
+Die Karten sind nicht drei gleichrangige Screens, sondern **drei Zoomstufen
+derselben Welt**. Jede Ebene ist eine eigene Kachelkarte mit eigener
+Freischaltung; man steigt von oben nach unten hinein.
+
+| Ebene | Screen | Leinwand | Anfangs aufgedeckt | Was darauf liegt |
+|---|---|---|---|---|
+| **Planetenkarte** | `MainHub` | 8192×8192 (8×8 Kacheln) | nur `{0,0}` | der Planet Pokémon; später weitere Planeten = weitere Welten |
+| **Weltenkarte** | `Timeline` (`arc_overview`) | 8192×8192 (8×8 Kacheln) | nur `{0,0}` | die Kanto-Region; auf der ersten Kachel zwei Orte: **Alabastia** und **Vertania City** |
+| **Gebietskarte** | `MapScreen` (`world.maps[]`) | je 2×1 Kacheln (2048×1024) | siehe Phase 3 | die Episoden eines Gebiets |
+
+**Zwei Gebietskarten**, nicht eine (Korrektur vom 26.08.2026 — bis dahin sah
+der Plan eine einzige Ortskarte mit vier Kacheln vor):
+
+| Gebietskarte | Kacheln | Stationen |
+|---|---|---|
+| Alabastia | `alabastia` `{0,0}`, `route_1` `{0,1}` | 6 |
+| Vertania | `vertania_city` `{0,0}`, `vertania_wald` `{-1,0}` | 8 |
+
+Die **Kacheln selbst und die Verteilung der vierzehn Stationen darauf bleiben
+unverändert** gegenüber der ursprünglichen Phase-5-Planung — es wird
+umgruppiert, nicht neu verteilt. Der Knick des Waldes über Vertania City bleibt
+erhalten (jetzt `{-1,0}` statt `{-1,2}`) und bleibt damit der Testfall für die
+Pan-Klemmung aus dem Konfidenz-Ausweis unten.
+
+**Die 8192er-Leinwände werden vollständig erzeugt, aber nur die tatsächlich
+benutzten Kacheln als Datei ausgeliefert.** Die große Leinwand ist das, was die
+Nahtlosigkeit für jede spätere Aufdeckung garantiert; 126 schwarze Dateien
+auszuliefern, die nach AK 3 ohnehin nie geladen werden, wäre Ballast. Die
+Leinwände bleiben als Quellartefakt unter `data/_authoring/` liegen.
+
+## Gebäude gehören nicht in die Karte (festgelegt 26.08.2026, Sascha)
+
+Karten zeigen **nur Gelände**: Wiese, Wald, Wege, Wasser, Küste, Fels. Häuser,
+Ortschaften, Türme, Brücken und sonstige Bauwerke werden **nie** in die
+Kartenleinwand hineingemalt, sondern liegen als eigene, freigestellte Sprites
+obendrauf.
+
+Der Grund ist nicht Ästhetik, sondern Mechanik: dieselbe Kachel muss zeigen
+können, dass ein Ort noch verschlossen ist, und später, dass er offen ist. Ein
+eingebackenes Gebäude kann das nicht — es ist immer da, in immer demselben
+Zustand, und lässt sich nicht verschieben, wenn ein Ort umzieht. Damit ist auch
+der offene Punkt „Kartenverfahren" aus Phase 6 entschieden: **Weg C**.
+
 ## Kontrakt — `MapCanvas` (`ui/map-canvas/map-canvas.ts`)
 
 Betrifft `features/main-hub`, `features/timeline`, `features/map` gleichzeitig
@@ -95,8 +140,9 @@ Zustand, Phase 3).
 5. Panel, Legende, Erfolge, Kompass bleiben beim Ziehen/Zoomen fest am
    Bildschirmrand.
 6. Beim Öffnen zentriert sich die Ansicht animiert auf die aktuelle Station.
-7. `pokemon` zeigt die neu geplante Alabastia-Route (4 Kacheln,
-   ~13–15 Stationen) mit echten PNG-Sprites statt Punkten.
+7. `pokemon` zeigt die neu geplante Alabastia-Route auf **zwei Gebietskarten**
+   (Alabastia + Route 1 / Vertania City + Vertania-Wald, zusammen 4 Kacheln,
+   14 Stationen) mit echten PNG-Sprites statt Punkten.
 8. Freischalt-Zustand übersteht einen Tab-Neustart (Savegame, Phase 3).
 9. MainHub hat **keinen** Fortschritts-Gatekeeper — installierte Welten sind
    sofort sichtbar, sobald sie existieren (kein Warten auf Freischaltung).
@@ -111,6 +157,12 @@ Zustand, Phase 3).
     am Gerät des Kindes auf einen Blick abzählbar.
 15. Im Vorlesemodus läuft jede Frage und jede Engine-Ansage über eine echte
     Aufnahme, nirgends mehr über die Sprachausgabe des Geräts (Phase 8).
+16. Auf keiner Kartenleinwand ist ein Gebäude eingemalt — jedes Bauwerk, das
+    man sieht, ist ein eigenes Sprite und lässt sich einzeln austauschen,
+    verschieben oder ausblenden.
+17. Planetenkarte und Weltenkarte liegen als vollständige 8192×8192-Leinwand
+    vor, sodass eine später aufgedeckte Kachel ohne neue Bildarbeit nahtlos
+    an ihre Nachbarn anschließt.
 
 ## 🟡 Risiken & Annahmen
 
@@ -150,11 +202,17 @@ Kachelfolge überhaupt einen Unterschied macht — bei linearer Sequenz sind
 alle freigeschalteten Kacheln ohnehin zusammenhängend in Erkundungsreihenfolge,
 eine Bounding-Box über eine Linie von Kacheln kann aber bei geknickten
 Sequenzen (Kachel liegt nicht stur nebeneinander, sondern macht einen Knick)
-mehr Fläche freigeben als tatsächlich freigeschaltet ist. **Check:** In
-Phase 2, sobald die Alabastia-Route (Phase 5) mit einem Knick im Layout
-vorliegt (z. B. Vertania City nicht stur östlich von Route 1, sondern
-versetzt), am Bildschirm prüfen, ob sich in die Ecke zwischen zwei
-Kacheln pannen lässt, obwohl dort keine dritte Kachel liegt.
+mehr Fläche freigeben als tatsächlich freigeschaltet ist. **Check:** Auf der
+**Gebietskarte Vertania** liegt der Wald über der City (`{-1,0}` statt
+`{0,1}`) — sobald Phase 6 die Bilder liefert, am Bildschirm prüfen, ob sich in
+die leere Ecke neben dem Wald pannen lässt, obwohl dort keine Kachel liegt.
+
+🟡 **Seit der Umgruppierung auf zwei Gebietskarten ist dieser Check schwächer
+geworden**: bei nur zwei Kacheln pro Karte ist das umschließende Rechteck
+2×2 Felder groß, es gibt also genau **ein** leeres Feld zu prüfen statt
+mehrerer. Der Fehler, um den es geht, wird dadurch nicht kleiner, nur seltener
+sichtbar — bei der nächsten Gebietskarte mit drei oder mehr Kacheln noch einmal
+hinsehen.
 
 ## Summary
 
