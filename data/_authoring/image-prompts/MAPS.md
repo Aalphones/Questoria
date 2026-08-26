@@ -153,14 +153,13 @@ Paket-Verdrahtung umgangen.
      `Flux2Scheduler.steps` auf **8**, `ImageAddNoise.strength` auf **0.48**
      und den positiven Text auf einen **Detail-Prompt** setzen (siehe unten),
      dann einreichen.
-   - **Nur ein Ausschnitt, oder wenn die Überblendung garantiert sein muss:**
-     `refine_map_tiles.py`. Es schneidet überlappende Kacheln (halbe
-     Kachelbreite Versatz), schickt jede einzeln durch FLUX.2 und setzt sie mit
-     Kosinus-Fenster zusammen — eine harte Kante kann dabei nicht entstehen.
+   - **Immer, sobald der Detailgrad hoch ist — und für Ausschnitte:**
+     `refine_map_tiles.py`. Warum das nötig ist, steht gleich darunter.
      ```bat
      data\_authoring\image-tools\.venv\Scripts\python.exe ^
        data\_authoring\image-tools\refine_map_tiles.py leinwand.png detail.png ^
-       --prompt-file detail_prompt.txt --steps 8 --denoise 0.48 --region 0,0,2048,2048
+       --prompt-file ..\image-prompts\DETAIL_PROMPT.txt --steps 8 --denoise 0.48 ^
+       --region 0,0,2048,2048
      ```
 3. **Farbe zurückholen: `match_map_colour.py`.** Bei 0.48 Rauschen erfindet
    FLUX.2 nicht nur Struktur, sondern auch Palette — eine Kachel wird heller,
@@ -195,27 +194,60 @@ dunkle Striche über flachem Grün, Blattklumpen mit eigenem Umriss, Kiesel als
 einfache Konturformen, Wasserkräusel als saubere Bögen), zuletzt **gleichmäßige
 Detaildichte** und **Fortsetzung über alle vier Ränder** verlangen.
 
-#### Nähte
+#### Nähte: mitteln ist immer falsch
 
-Bei acht Schritten füllt die neue Zeichnung die Kachelränder so dicht zu, dass
-im Nahtraster **kein Treffer mehr messbar** ist — die Stoßkante des
-ComfyUI-Zusammensetzers geht in der Textur unter. `heal_map_seams.py` bleibt
-als Rückfallebene für Läufe mit wenigen Schritten; bei `refine_map_tiles.py`
-wird es gar nicht erst gebraucht.
+`ImageMergeTileList` **mittelt** die Überlappung beim Zusammensetzen. Solange
+jede Kachel nur zaghaft nachgeschärft wird, fällt das nicht auf — die Nachbarn
+sind ohnehin fast gleich. Sobald der Detailgrad hochgeht, erfindet aber jede
+Kachel **ihren eigenen** Busch, und das Mittel aus zwei verschiedenen Büschen
+ist ein durchscheinendes **Doppelbild**. Am Rand des gemittelten Bandes bleiben
+zusätzlich zwei harte Linien stehen — das waren die „Nahtlinien", gegen die
+`heal_map_seams.py` gebaut wurde. Es hat das Symptom behandelt.
 
-#### Was das kostet, und wo man spart
+⚠️ **Ein breiteres Überblendfenster macht es schlimmer, nicht besser.** Ein
+erster Anlauf mit halber Kachelbreite Versatz und Kosinus-Fenster hätte
+denselben Fehler über 512 statt 128 Pixel verteilt. Mitteln ist der falsche
+Weg, egal wie sanft.
 
-Acht Schritte statt zwei sind der vierfache Rechenaufwand. Eine kleine
-Gebietskarte (4096×2304) braucht damit rund eine Viertelstunde, eine volle
-8192×8192-Leinwand **rund vier Stunden**.
+**`refine_map_tiles.py` macht es deshalb anders:**
 
-**Bei den großen Karten wird deshalb nur nachgeschärft, was ausgeliefert wird.**
-Von einer 8×8-Leinwand ist am Anfang genau eine Kachel sichtbar; die anderen
-63 in Ausliefer-Qualität zu zeichnen ist Rechenzeit für die Schublade. Die
-Leinwand bleibt dort Remacri-glatt, `refine_map_tiles.py --region` schärft die
-sichtbare Kachel plus einen Kachelring Rand. Wird später eine Kachel
-freigeschaltet, wird ihr Bereich nachgeschärft — der Anschluss bleibt nahtlos,
-weil alles aus derselben Leinwand kommt.
+- Die Kacheln laufen **der Reihe nach**, und jede bekommt ihren Ausschnitt aus
+  der **bereits nachgeschärften** Leinwand. Sie sieht also, was ihr Nachbar
+  gezeichnet hat, und führt es fort, statt dieselbe Stelle unabhängig ein
+  zweites Mal zu erfinden. Das ist der eigentliche Fix.
+- Eingesetzt wird mit einem **schmalen Saum** (Vorgabe 32 px) an genau den
+  Kanten, die an fertige Fläche stoßen. Kein breites Mitteln, also kein
+  Doppelbild.
+
+Gemessen an einem Streifen mit zwei Kachelgrenzen: **kein einziger Treffer** im
+Nahtraster, und im Bild kein Geisterbusch. `heal_map_seams.py` bleibt nur noch
+für Altlasten aus dem gemittelten Verfahren.
+
+#### Was das kostet — und die zwei Stellen, an denen man es verschenkt
+
+Eine Kachel braucht mit acht Schritten rund eine Minute. **Die einzige Frage
+ist also: wie viele Kacheln schärfe ich?** Zwei Antworten, die naheliegen und
+beide falsch sind:
+
+⚠️ **Nicht auf Zwischengröße schärfen und danach herunterrechnen.** Wer eine
+Gebietskarte auf 4096 schärft und das Ergebnis auf 2048 bringt, zahlt den
+**vierfachen** Aufwand — und bekommt ein **unschärferes** Bild, weil das
+Herunterrechnen genau die neuen Feinstrukturen wieder wegmittelt. Reihenfolge
+also: **erst auf Zielgröße bringen (`slice_map.py` mit leerer Kachelliste),
+dann schärfen.** Aus 15 Kacheln werden so 3.
+
+⚠️ **Nicht schärfen, was nicht ausgeliefert wird.** Von einer 8×8-Leinwand ist
+am Anfang genau **eine** Kachel sichtbar. Die anderen 63 in Ausliefer-Qualität
+zu zeichnen sind rund vier Stunden für die Schublade. `--region 0,0,1024,1024`
+schärft genau die eine Kachel; der Rest der Leinwand bleibt Remacri-glatt.
+
+Wird später eine Kachel freigeschaltet, wird ihr Bereich nachgeschärft. Der
+Anschluss bleibt nahtlos, weil `refine_map_tiles.py` seinen Ausschnitt aus der
+laufenden Leinwand nimmt und die bereits geschärfte Nachbarkachel damit als
+Kontext sieht.
+
+Realistische Zahlen für die Pokémon-Welt: vier Karten, **14 Kacheln, rund eine
+Viertelstunde** — statt 58 Kacheln und siebzig Minuten für dasselbe Ergebnis.
 
 ### Handgriffe im Ablauf `Upscale Map`
 

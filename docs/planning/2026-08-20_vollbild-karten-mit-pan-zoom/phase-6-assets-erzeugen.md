@@ -378,21 +378,43 @@ grain". Ergebnis: eine technisch großartige **Aquarellkarte**, die mit dem
 schlagen alles andere — der `art_style` der Welt gehört wörtlich hinein. Zweiter
 Lauf mit flacher Zellenschattierung im Prompt sitzt.
 
-**Zwei neue Werkzeuge im Repo:**
+### 🔴 Der Zusammensetzer mittelt — und produziert Geisterbilder (26.08.2026, von Sascha am Bildschirm gemeldet)
 
-- **`refine_map_tiles.py`** — macht die Kachelung selbst: überlappende Kacheln
-  mit halber Kachelbreite Versatz, jede einzeln durch FLUX.2, Zusammensetzen mit
-  Kosinus-Fenster. Eine harte Kante *kann* dabei nicht entstehen. Kann mit
-  `--region` einen Ausschnitt behandeln. Baut den Auftrag selbst und umgeht damit
-  die tote Paket-Verdrahtung.
+Direkt nach dem Detail-Fix: *„Die Überlappung hier ist Schmutz, das geht so
+nicht."* Belegt am Screenshot und in der Leinwand wiedergefunden — ein
+senkrechtes Band um x≈896, also **genau an der Kachelgrenze**, in dem zwei
+Büsche durchscheinend übereinanderliegen.
+
+**Damit ist auch die frühere Nahtdiagnose korrigiert:** `ImageMergeTileList`
+stößt die Kacheln nicht auf Stoß, es **mittelt** die 128 px Überlappung. Bei
+zwei Schritten waren die Nachbarkacheln fast identisch, das Mittel fiel nicht
+auf, und übrig blieben nur die beiden harten Linien an den Bandrändern — das,
+was `heal_map_seams.py` behandelt hat. Bei acht Schritten erfindet jede Kachel
+ihren eigenen Busch, und das Mittel aus zweien ist ein Doppelbild.
+`heal_map_seams.py` hat also von Anfang an das Symptom behandelt, nicht die
+Ursache.
+
+⚠️ **Mein erster Orchestrator hätte denselben Fehler gemacht, nur schlimmer:**
+halbe Kachelbreite Versatz mit Kosinus-Fenster hätte über 512 statt 128 Pixel
+gemittelt. Mitteln ist der falsche Weg, egal wie sanft.
+
+**Die Werkzeuge im Repo:**
+
+- **`refine_map_tiles.py`** — macht die Kachelung selbst, aber **ohne zu
+  mitteln**: die Kacheln laufen der Reihe nach, und jede bekommt ihren
+  Ausschnitt aus der **bereits nachgeschärften** Leinwand. Sie sieht damit, was
+  der Nachbar gezeichnet hat, und führt es fort statt dieselbe Stelle ein
+  zweites Mal unabhängig zu erfinden. Eingesetzt wird mit einem schmalen Saum
+  von 32 px. `--region` behandelt einen Ausschnitt. Baut den Auftrag selbst und
+  umgeht damit die tote Paket-Verdrahtung.
+  **Gemessen an einem Streifen mit zwei Kachelgrenzen: null Treffer im
+  Nahtraster, kein Geisterbusch.**
 - **`match_map_colour.py`** — bei 0,48 Rauschen erfindet FLUX.2 auch Palette
   (eine Kachel heller, die nächste gelber). Das Werkzeug nimmt die groben Töne
   aus der rein hochskalierten Leinwand und lässt die feine Zeichnung stehen.
   Farbdrift ist damit strukturell erledigt.
-
-**Nähte sind bei acht Schritten kein Thema mehr:** die neue Zeichnung füllt die
-Kachelränder so dicht zu, dass im 896er-Raster kein Treffer mehr messbar ist.
-`heal_map_seams.py` bleibt Rückfallebene.
+- **`heal_map_seams.py`** — nur noch für Altlasten aus dem gemittelten
+  Verfahren.
 
 🔴 **Umfang bei den 8192ern entschieden (Sascha, 26.08.2026): „nur was sichtbar
 ist".** Acht Schritte kosten den vierfachen Rechenaufwand; eine volle

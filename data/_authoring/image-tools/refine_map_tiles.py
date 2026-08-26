@@ -1,31 +1,29 @@
-"""Eine Kartenleinwand kachelweise nachschaerfen - mit Ueberblendung statt Stoss.
+"""Eine Kartenleinwand kachelweise nachschaerfen - ohne Geisterbilder an den Naehten.
 
 Warum es dieses Werkzeug gibt: der gespeicherte ComfyUI-Ablauf `Upscale Map`
-zerlegt die Leinwand selbst in Kacheln und setzt sie danach **auf Stoss**
-wieder zusammen. Dabei bleibt an jeder Kachelgrenze eine harte Linie stehen,
-und weil jedes bisschen mehr Rauschen die Linien staerker macht, muss man dort
-den Detailgrad kleinhalten - genau den, fuer den der ganze Umweg gebaut wurde.
-Dazu kommt, dass die Regler des Nachschaerfers in einem Knotenpaket sitzen und
-ueber comfy-cli gar nicht ankommen.
+zerlegt die Leinwand selbst in Kacheln und **mittelt** die Ueberlappung beim
+Zusammensetzen. Solange jede Kachel nur zaghaft nachgeschaerft wird, faellt das
+nicht auf - die Nachbarn sind ohnehin fast gleich. Sobald man den Detailgrad
+hochdreht, erfindet aber jede Kachel ihren eigenen Busch, und das Mittel aus
+zwei verschiedenen Bueschen ist ein durchscheinendes Doppelbild. Am Rand des
+gemittelten Bandes bleiben zusaetzlich zwei harte Linien stehen.
 
-Dieses Werkzeug macht die Kachelung deshalb selbst:
+Mitteln ist deshalb der falsche Weg, egal wie breit. Dieses Werkzeug macht es
+anders:
 
-- Es schneidet **ueberlappende** Kacheln (Vorgabe: halbe Kachelbreite Versatz).
-- Es schickt jede einzeln durch FLUX.2, mit frei waehlbaren Schritten und
-  Rauschstaerke und einem Prompt, der Detail bestellt statt es zu verbieten.
-- Es setzt sie mit einem Kosinus-Fenster zusammen. Jeder Punkt der Leinwand
-  bekommt Beitraege aus mehreren Kacheln, gewichtet nach Abstand zur jeweiligen
-  Kachelmitte. Eine harte Kante kann dabei gar nicht erst entstehen - es gibt
-  keine Stelle, an der eine Kachel aufhoert und die naechste anfaengt.
+- Die Kacheln laufen **der Reihe nach**, und jede bekommt ihren Ausschnitt aus
+  der **bereits nachgeschaerften** Leinwand. Sie sieht also, was ihr Nachbar
+  gezeichnet hat, und fuehrt es fort, statt dieselbe Stelle unabhaengig ein
+  zweites Mal zu erfinden. Das ist der eigentliche Fix.
+- Zusammengesetzt wird mit einem **schmalen Saum** an genau den Kanten, die an
+  schon fertige Flaeche stossen. Kein breites Mitteln, also kein Doppelbild.
 
-Die Eingabe ist eine Leinwand, die **bereits auf Zielgroesse** liegt (also
-vorher mit einem Hochskalierer vergroessert). Dieses Werkzeug aendert die
-Groesse nicht, es fuellt nur Detail nach.
+Die Eingabe ist eine Leinwand, die **bereits auf Zielgroesse** liegt (vorher mit
+einem Hochskalierer vergroessert). Dieses Werkzeug aendert die Groesse nicht, es
+fuellt nur Detail nach.
 """
 import argparse
 import json
-import shutil
-import sys
 import time
 import urllib.request
 from pathlib import Path
@@ -43,7 +41,8 @@ VAE_NAME = "flux2-vae.safetensors"
 NEGATIVE_PROMPT = (
     "text, logo, watermark, lettering, caption, signature, buildings, houses, "
     "people, animals, photorealism, photographic texture, blurry, smudged, "
-    "flat plastic colour, seams, tile edges, borders, frame"
+    "flat plastic colour, seams, tile edges, borders, frame, double exposure, "
+    "ghosting, duplicated shapes"
 )
 
 
@@ -117,21 +116,18 @@ def tile_origins(total: int, tile: int, step: int) -> list[int]:
     return origins
 
 
-def blend_window(length: int, is_first: bool, is_last: bool) -> np.ndarray:
-    """Kosinus-Fenster, an den Bildraendern flachgezogen.
+def seam_ramp(length: int, feather: int, blend_start: bool) -> np.ndarray:
+    """Gewicht der neuen Kachel entlang einer Achse.
 
-    Innen laeuft es zu beiden Seiten weich auf null aus, damit sich benachbarte
-    Kacheln ueberblenden. Am Bildrand gibt es keinen Nachbarn, der uebernehmen
-    koennte - dort bleibt das Fenster auf eins, sonst frisst es den Rand weg.
+    Nur die Kante, die an bereits fertige Flaeche stoesst, bekommt einen Saum -
+    dort waechst das Gewicht ueber wenige Pixel von null auf eins. Der Rest der
+    Kachel wird voll uebernommen. Kein breites Mitteln, deshalb kein Doppelbild.
     """
-    positions = np.arange(length, dtype=np.float32)
-    window = 0.5 - 0.5 * np.cos(2.0 * np.pi * (positions + 0.5) / length)
-    middle = length // 2
-    if is_first:
-        window[:middle] = 1.0
-    if is_last:
-        window[middle:] = 1.0
-    return window
+    weight = np.ones(length, dtype=np.float32)
+    if blend_start and feather > 0:
+        width = min(feather, length)
+        weight[:width] = np.linspace(0.0, 1.0, width, endpoint=False, dtype=np.float32)
+    return weight
 
 
 def main() -> None:
@@ -140,39 +136,44 @@ def main() -> None:
     parser.add_argument("target", help="Wohin das Ergebnis geschrieben wird")
     parser.add_argument("--prompt-file", required=True, help="Textdatei mit dem Detail-Prompt")
     parser.add_argument("--tile", type=int, default=1024, help="Kachelkante (Vorgabe 1024)")
-    parser.add_argument("--step", type=int, default=None, help="Versatz (Vorgabe: halbe Kachel)")
+    parser.add_argument("--overlap", type=int, default=128, help="Ueberlappung als Kontext fuer die naechste Kachel")
+    parser.add_argument("--feather", type=int, default=32, help="Breite des Saums beim Einsetzen")
     parser.add_argument("--steps", type=int, default=8, help="Rechenschritte je Kachel")
-    parser.add_argument("--denoise", type=float, default=0.62, help="Rauschstaerke je Kachel")
+    parser.add_argument("--denoise", type=float, default=0.48, help="Rauschstaerke je Kachel")
     parser.add_argument("--seed", type=int, default=None, help="Startwert, gilt fuer alle Kacheln")
     parser.add_argument("--region", default=None, help="Nur ein Ausschnitt: x,y,breite,hoehe")
     arguments = parser.parse_args()
 
     tile = arguments.tile
-    step = arguments.step or tile // 2
+    step = tile - arguments.overlap
     seed = arguments.seed if arguments.seed is not None else int(time.time() * 1000) % 10**12
     positive = Path(arguments.prompt_file).read_text(encoding="utf-8").strip()
 
-    canvas = Image.open(arguments.source).convert("RGB")
-    result = np.asarray(canvas, dtype=np.float32).copy()
-    accumulated = np.zeros_like(result)
-    weights = np.zeros(result.shape[:2], dtype=np.float32)
+    source_image = Image.open(arguments.source).convert("RGB")
+    canvas = np.asarray(source_image, dtype=np.float32).copy()
 
     if arguments.region:
         left, top, width, height = (int(value) for value in arguments.region.split(","))
     else:
-        left, top, width, height = 0, 0, canvas.width, canvas.height
+        left, top, width, height = 0, 0, source_image.width, source_image.height
 
     columns = [left + offset for offset in tile_origins(width, tile, step)]
     rows = [top + offset for offset in tile_origins(height, tile, step)]
     total = len(columns) * len(rows)
-    print(f"Leinwand {canvas.size}, Ausschnitt {width}x{height} ab ({left},{top})")
-    print(f"{total} Kacheln a {tile} px, Versatz {step}, {arguments.steps} Schritte, Rauschen {arguments.denoise}")
+    print(f"Leinwand {source_image.size}, Ausschnitt {width}x{height} ab ({left},{top})")
+    print(f"{total} Kacheln a {tile} px, Versatz {step}, Saum {arguments.feather}, "
+          f"{arguments.steps} Schritte, Rauschen {arguments.denoise}")
 
     COMFY_INPUT_DIR.mkdir(parents=True, exist_ok=True)
     done = 0
     for row_index, origin_y in enumerate(rows):
         for column_index, origin_x in enumerate(columns):
-            piece = canvas.crop((origin_x, origin_y, origin_x + tile, origin_y + tile))
+            patch = slice(origin_y, origin_y + tile), slice(origin_x, origin_x + tile)
+
+            # Der Ausschnitt kommt aus der laufenden Leinwand, nicht aus der
+            # Vorlage: was der linke und der obere Nachbar gezeichnet haben,
+            # steht schon drin und wird von dieser Kachel fortgefuehrt.
+            piece = Image.fromarray(np.clip(canvas[patch], 0, 255).astype(np.uint8))
             name = f"_maptile_{origin_x}_{origin_y}.png"
             piece.save(COMFY_INPUT_DIR / name)
 
@@ -180,22 +181,17 @@ def main() -> None:
             if refined.size != (tile, tile):
                 refined = refined.resize((tile, tile), Image.LANCZOS)
 
-            window = np.outer(
-                blend_window(tile, row_index == 0, row_index == len(rows) - 1),
-                blend_window(tile, column_index == 0, column_index == len(columns) - 1),
-            ).astype(np.float32)
-
-            patch = slice(origin_y, origin_y + tile), slice(origin_x, origin_x + tile)
-            accumulated[patch] += np.asarray(refined, dtype=np.float32) * window[:, :, None]
-            weights[patch] += window
+            weight = np.outer(
+                seam_ramp(tile, arguments.feather, row_index > 0),
+                seam_ramp(tile, arguments.feather, column_index > 0),
+            )[:, :, None]
+            canvas[patch] = canvas[patch] * (1.0 - weight) + np.asarray(refined, dtype=np.float32) * weight
             (COMFY_INPUT_DIR / name).unlink(missing_ok=True)
 
             done += 1
             print(f"  {done}/{total} bei ({origin_x},{origin_y})", flush=True)
 
-    covered = weights > 1e-6
-    result[covered] = accumulated[covered] / weights[covered][:, None]
-    Image.fromarray(np.clip(result, 0, 255).astype(np.uint8)).save(arguments.target)
+    Image.fromarray(np.clip(canvas, 0, 255).astype(np.uint8)).save(arguments.target)
     print(f"geschrieben: {arguments.target}")
 
 

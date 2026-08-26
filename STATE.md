@@ -26,20 +26,31 @@ in [phase-4](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/phase-4-auto-
 Weltenkarte und Planetenkarte (je 8192×8192, je knapp eine Stunde), dann die
 14 Stations-Sprites und 2 Orts-Sprites.
 
-🔴 **Karten brauchen drei Läufe, nicht einen** (26.08.2026, von Sascha am
-Bildschirm gefunden): `Upscale Map` setzt die nachgeschärften Kacheln auf Stoß
-zusammen und hinterlässt ein Gitternetz aus Linien im 896er-Raster. Weder mehr
-Überlappung noch weniger Rauschen heilen das (Messungen im Report-Back von
-Phase 6). Der Weg ist: gekachelt schärfen, denselben Entwurf zusätzlich **rein**
-hochskalieren, dann `data/_authoring/image-tools/heal_map_seams.py` die
-Nahtlinien aus dem nahtlosen Bild einsetzen lassen. Beschrieben in
+🔴 **Der Karten-Ablauf ist am 26.08.2026 zweimal grundlegend umgebaut worden**
+(beide Male nach einem Befund von Sascha am Bildschirm). Verbindlich ist jetzt
 [`image-prompts/MAPS.md`](data/_authoring/image-prompts/MAPS.md) →
-„Hochskalieren — drei Läufe, nicht einer".
+„Hochskalieren — der Detailgrad hängt an drei Reglern". Kurzfassung:
 
-🟡 **Der `denoise`-Regler im Knotenpaket erreicht den Auftrag nicht.** Über
-comfy-cli wirken nur Regler **außerhalb** des Pakets; ein Lauf mit geändertem
-Innenwert liefert dieselbe Datei zurück. Gilt für `Upscale Map` — beim
-`Krea2 Txt2Img` ist es laut Skill andersherum.
+1. **Der gespeicherte Ablauf `Upscale Map` reicht nicht** — Schritte stehen auf
+   2, und sein Kachel-Prompt **verbietet** ausdrücklich das Hinzufügen von
+   Feinstruktur. Ergebnis war Matsch.
+2. **Die Regler im Knotenpaket erreichen den Auftrag über comfy-cli gar nicht.**
+   Deshalb wird der fertig umgewandelte Auftrag aus `GET /history/<id>` geholt,
+   direkt gepatcht und per `POST /prompt` eingereicht.
+3. **Kette:** Remacri ×4 (Leinwand, nahtlos und farbtreu) → Detail-Lauf mit
+   8 Schritten und 0,48 Rauschen und dem Detail-Prompt
+   ([`DETAIL_PROMPT.txt`](data/_authoring/image-prompts/DETAIL_PROMPT.txt)) →
+   `match_map_colour.py` (Palette zurückholen) → `slice_map.py`.
+   Für Ausschnitte und garantierte Überblendung: `refine_map_tiles.py`.
+4. **Die Stilwörter im Prompt schlagen alles andere.** Ein Detail-Prompt mit
+   „watercolour" liefert eine Aquarellkarte. Der `art_style` der Welt gehört
+   wörtlich hinein.
+
+🔴 **Bei den 8192ern wird nur nachgeschärft, was sichtbar ist** (Sascha,
+26.08.2026): Kachel `{0,0}` plus ein Kachelring Rand. Eine volle Leinwand
+kostet rund vier Stunden für 63 Kacheln, die niemand sieht. Damit ist AK 7 dem
+Sinn nach erfüllt (nahtloser Anschluss aus derselben Leinwand), dem Buchstaben
+nach nicht (eine spätere Kachel braucht noch einen Schärf-Lauf).
 
 🟡 **Drei Plan-Vorgaben haben in der Praxis nicht getragen** und sind in
 [`image-prompts/MAPS.md`](data/_authoring/image-prompts/MAPS.md) korrigiert —

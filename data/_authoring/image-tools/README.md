@@ -104,10 +104,17 @@ Werkzeuge:
 .venv\Scripts\python.exe heal_map_seams.py gekachelt.png nahtlos.png fertig.png
 ```
 
-`refine_map_tiles.py` ist das Herzstück: es macht die Kachelung selbst, mit
-halber Kachelbreite Versatz und Kosinus-Fenster, damit eine harte Kante gar
-nicht entstehen kann — und es kann mit `--region` einen Ausschnitt behandeln
-statt der ganzen Leinwand. Das ist der Sparhebel bei den großen Karten.
+`refine_map_tiles.py` ist das Herzstück. Es macht die Kachelung selbst und
+**mittelt die Überlappung nicht** — das erzeugt bei hohem Detailgrad
+durchscheinende Doppelbilder, weil jede Kachel ihren eigenen Busch erfindet.
+Stattdessen laufen die Kacheln der Reihe nach, und jede bekommt ihren
+Ausschnitt aus der bereits geschärften Leinwand: sie sieht, was der Nachbar
+gezeichnet hat, und führt es fort. Eingesetzt wird mit einem schmalen Saum.
+
+Zwei Sparregeln, beide teuer gelernt: **erst auf Zielgröße bringen, dann
+schärfen** (auf Zwischengröße schärfen kostet das Vierfache und mittelt die
+neuen Details beim Herunterrechnen wieder weg), und **mit `--region` nur
+schärfen, was ausgeliefert wird**.
 
 `match_map_colour.py` zieht die Palette der Vorlage zurück ins Bild. Ohne das
 wird eine Kachel heller, die nächste gelber, und der Weltstil driftet weg.
