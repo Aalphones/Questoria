@@ -1,0 +1,13 @@
+Redraw this section of a hand-drawn night sky at much higher resolution, and fill it with the fine detail that was simply too small to be visible in the reference.
+
+The subject is deep space seen from far outside: nebula cloud, star fields and open colour. There is no ground anywhere, no landscape, no terrain, no grass, no earth, no rock, no water and no plants of any kind. Nothing solid, nothing growing, nothing lying on a surface.
+
+The style is fixed and must not change: bright anime illustration in the style of a children's television series, clean confident linework where an edge is needed, soft cel-shading in two tones, warm saturated colours, gentle rounded shapes, even friendly lighting without harsh shadows, and no photographic texture. Flat areas of luminous colour, the way a cel-animated sky is painted.
+
+Keep the composition, geometry, proportions, shapes, layout, colour values and brightness exactly as they are. Every indigo stays exactly as deep, every rose and gold stays exactly as warm. Nothing moves, nothing new appears, nothing is removed. What changes is only how finely the existing shapes are drawn.
+
+Within that flat cel-shaded language, the sky gains the small structure it would really have: nebula banks resolve into layered rounded lobes of cloud, each with a soft hand-drawn outline and a single lighter tone along its lit side; their thin edges break into small drifting wisps; dust lanes gain fine curving filaments that thread between the lobes; star fields resolve into many separate points of light at several sizes, from tiny specks to a few brighter four-pointed sparkles, scattered unevenly and drifting into faint glittering ribbons; the open colour between them keeps smooth gentle gradients with a few soft banded steps.
+
+Line work stays crisp and deliberate where it appears, and the wide calm areas stay calm. Detail density stays even from edge to edge, with no busier and no emptier corner, and no smooth blurred area left behind.
+
+Extend every cloud, filament and colour area naturally across all four edges of this section so it continues into the neighbouring sections. No border, no frame, no vignette, no text and no labels.

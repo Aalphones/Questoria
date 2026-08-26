@@ -194,6 +194,19 @@ dunkle Striche über flachem Grün, Blattklumpen mit eigenem Umriss, Kiesel als
 einfache Konturformen, Wasserkräusel als saubere Bögen), zuletzt **gleichmäßige
 Detaildichte** und **Fortsetzung über alle vier Ränder** verlangen.
 
+⚠️ **Und der Prompt muss zum Motiv passen.** Die Material-Liste ist der Kern
+des Prompts, also gibt es **zwei** Fassungen:
+
+| Datei | Wofür |
+|---|---|
+| `DETAIL_PROMPT.txt` | Gelände — Gebietskarten und Weltenkarten |
+| `DETAIL_PROMPT_SKY.txt` | Himmel — die Planetenkarte |
+
+Den Gelände-Prompt auf einen Sternenhimmel loszulassen liefert brav das
+Bestellte: Grasbüschel, Kiesel und Erdrisse im Nebel (26.08.2026 passiert). Der
+Himmel-Prompt sagt stattdessen ausdrücklich, dass es keinen Boden gibt, und
+beschreibt Nebelbänke, Staubfäden und Sternfelder.
+
 #### Nähte: mitteln ist immer falsch
 
 `ImageMergeTileList` **mittelt** die Überlappung beim Zusammensetzen. Solange

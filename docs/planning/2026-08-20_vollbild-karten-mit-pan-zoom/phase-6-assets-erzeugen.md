@@ -434,8 +434,33 @@ darüber, dass sie durch das ganze Bild laufen. Eine Naht, die genau auf einer
 langen geraden Bildkante liegt, würde es nicht von ihr unterscheiden. Auf
 organisch gezeichneten Karten kein Fall, auf einem Stadtplan mit Raster schon.
 
+### Alle sechs Kacheln liegen (26.08.2026)
+
+| Kachel | Datei | Größe |
+|---|---|---|
+| `alabastia` | `maps/map_alabastia.webp` | 180 KB |
+| `route_1` | `maps/map_route_1.webp` | 212 KB |
+| `vertania_wald` | `maps/map_vertania_wald.webp` | 266 KB |
+| `vertania_city` | `maps/map_vertania_city.webp` | 195 KB |
+| Weltenkarte `arc_0_0` | `maps/map_route_uebersicht.webp` | 211 KB |
+| Planetenkarte `hub_0_0` | `data/hub/map_planetenkarte.webp` | 110 KB |
+
+Alle exakt 1024×1024. Quellleinwände unter `data/_authoring/map-canvases/`
+(gitignored): zwei Gebietskarten in Zielgröße, zwei 8192×8192-Leinwände, bei
+denen nur die Kachel `{0,0}` nachgeschärft ist.
+
+🟡 **Ein dritter Prompt-Fehler derselben Art:** der Gelände-Detailprompt lief
+zuerst auch auf die Planetenkarte — und FLUX.2 hat brav Grasbüschel, Kiesel und
+Erdrisse in den Sternennebel gemalt. Es gibt jetzt zwei Fassungen,
+`DETAIL_PROMPT.txt` für Gelände und `DETAIL_PROMPT_SKY.txt` für Himmel. Muster
+über alle drei Fälle (Uferbefestigung, Aquarell, Acker im Weltraum): **das
+Modell liefert exakt das Bestellte; jeder dieser Fehler saß im Prompt, nicht im
+Modell.**
+
 ### Was noch offen ist
 
-- Zwei Batch-Leinwände: Weltenkarte (8192×8192) → Planetenkarte (8192×8192).
 - 14 Stations-Sprites + 2 Orts-Sprites.
 - ADR-021 und `ASSET_REQUIREMENTS.md` Abschnitt 4.
+- Nachtrag 5b (`world_config.json` auf zwei Gebietskarten umstellen) — bis
+  dahin grenzen `route_1` und `vertania_city` im alten Schema direkt aneinander,
+  obwohl sie aus verschiedenen Leinwänden stammen. Sichtbarer Bruch, bekannt.

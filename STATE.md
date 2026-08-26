@@ -21,10 +21,10 @@ MapScreen/MainHub am Bildschirm öffnen, manuelles Zoomen/Ziehen nach dem
 Fokus prüfen, `prefers-reduced-motion` durchspielen — Details und Priorität
 in [phase-4](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/phase-4-auto-fokus.md).
 
-**Nächster Schritt:** **Alle vier Spiel-Kacheln liegen** — `map_alabastia`,
-`map_route_1`, `map_vertania_city`, `map_vertania_wald`. Als nächstes
-Weltenkarte und Planetenkarte (je 8192×8192, je knapp eine Stunde), dann die
-14 Stations-Sprites und 2 Orts-Sprites.
+**Nächster Schritt:** **Alle sechs Kartenkacheln liegen** — vier Gebietskacheln,
+Weltenkarte und Planetenkarte, alle 1024×1024 und nachgeschärft. Als nächstes
+die **14 Stations-Sprites und 2 Orts-Sprites**, dann ADR-021 und
+`ASSET_REQUIREMENTS.md`.
 
 🔴 **Der Karten-Ablauf ist am 26.08.2026 zweimal grundlegend umgebaut worden**
 (beide Male nach einem Befund von Sascha am Bildschirm). Verbindlich ist jetzt
