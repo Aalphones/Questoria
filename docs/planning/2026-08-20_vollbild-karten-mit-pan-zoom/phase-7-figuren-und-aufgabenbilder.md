@@ -23,6 +23,11 @@ Zeitpunkt.
 
 ## Teil A — Der Loch-Fresser im Freistell-Werkzeug
 
+> **Status: erledigt am 26.08.2026**, vorgezogen aus Phase 6 (die 14
+> Stations-Sprites laufen durch dasselbe Werkzeug). Werkzeug und `SPRITES.md`
+> sind nachgezogen. Die **Figuren selbst** sind damit noch nicht neu — das ist
+> Teil B und bleibt offen.
+
 **Belegter Befund:** In `bisasam_neutral.png` ist das linke Auge vollständig
 durchsichtig, im rechten fehlt ein Teil des Weißen. Ursache ist nicht der
 Prompt, sondern `rembg`: das Modell hält eine helle, vom Rest der Figur
@@ -31,20 +36,36 @@ gezeichneten Figur mit weißem Augapfel, Zähnen oder Glanzlicht passiert das
 wieder — die heutige Anleitung („Backdrop-Farbe wählen, die nicht in der Figur
 vorkommt") hilft dagegen nicht, weil Augenweiß in *jeder* Figur vorkommt.
 
-**Fix in `cutout.py`, nach `remove()` und vor dem Zuschneiden:** Alle
-durchsichtigen Flächen, die **keine** Verbindung zum Bildrand haben, sind
-Löcher in der Figur und werden wieder deckend gemacht.
+🔴 **Korrektur der Mechanik (26.08.2026, beim Vorziehen in Phase 6 gemessen):**
+Der Fehler ist **kein Loch**. In `bisasam_neutral.png` liegt das ausgefressene
+Augenweiß bei **Alpha 9–64** — durchscheinend, nicht ausgestanzt. Die unten
+ursprünglich vorgesehene Suche nach „durchsichtigen Flächen ohne Randverbindung"
+kann ihn deshalb prinzipiell nicht finden: für sie ist die Fläche Figur.
+Nachgemessen: der Randfüller erreicht **alle** 818713 durchsichtigen Pixel des
+Bildes, und auch mit bis zu 13 px Nahtzugabe (morphologisches Schließen) bleibt
+die Zahl gefundener Innenlöcher bei 0.
 
-- Umsetzung ohne neue Abhängigkeit: Alphakanal auf eine Schwarz-Weiß-Maske
-  schwellen, in eine um ein Pixel größere Leinwand einsetzen, mit
-  `PIL.ImageDraw.floodfill` von der Ecke `(0, 0)` aus füllen. Was danach noch
-  ungefüllt und gleichzeitig durchsichtig ist, ist ein Innenloch.
+**Umgesetzter Fix in `cutout.py`, nach `remove()` und vor dem Zuschneiden:**
+Gesucht werden eingeschlossene Flächen, die **nicht voll deckend** sind. Sie
+werden wieder deckend gemacht, die Farben kommen aus dem Originalbild.
+
+- Maske ist „Alpha ≥ 200" (voll deckende Figur), nicht „Alpha > 8". Das ist der
+  Kern der Korrektur — gegen die niedrige Schwelle geprüft, ist die Fläche
+  Figur und fällt nie auf.
+- Umsetzung ohne neue Abhängigkeit: Maske in eine um ein Pixel größere Leinwand
+  einsetzen, mit `PIL.ImageDraw.floodfill` von der Ecke `(0, 0)` aus füllen. Was
+  danach ungefüllt bleibt, liegt ringsum von voll deckender Figur eingeschlossen.
+- **Belegte Wirkung:** Findet im ganzen Bisasam genau zwei Flecken — 4206 px
+  (Augenweiß) und 516 px (Glanzpunkt), beide im linken Auge, sonst nichts. Kein
+  Fehlalarm an der Silhouette, keine Halo-Kante nach dem Füllen. Professor Eich
+  bekommt 795 px repariert, Pikachu und Rattfratz null.
 - Die Farbwerte für gefüllte Löcher kommen aus dem **Originalbild** — rembg
   liefert an diesen Stellen keine brauchbaren Farben zurück.
-- 🟡 **Ein Loch kann auch richtig sein** (der Ring eines Henkels, ein Spalt
-  zwischen Arm und Körper, der nicht bis zum Rand durchläuft). Deshalb nur
-  Löcher unterhalb eines Flächenanteils füllen (Vorschlag: 2 % der Figur) und
-  einen Schalter `--keep-holes` anbieten, der die Füllung ganz abschaltet.
+- 🟡 **Eine Aussparung kann auch richtig sein** (der Ring eines Henkels, ein
+  Spalt zwischen Arm und Körper, der nicht bis zum Rand durchläuft). Deshalb nur
+  Flächen unterhalb eines Flächenanteils füllen (umgesetzt: 2 % der Figur — das
+  Bisasam-Auge liegt bei 0,57 %) und den Schalter `--keep-holes`, der die
+  Reparatur ganz abschaltet.
 - **Ausgabe erweitern:** Anzahl und Gesamtfläche der gefüllten Löcher in die
   bestehende Erfolgszeile aufnehmen. Ein stiller Fix, der irgendwann nicht
   mehr greift, ist kein Fix — man muss sehen, dass er gearbeitet hat.

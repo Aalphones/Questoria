@@ -113,14 +113,33 @@ Keins der drei Modelle liefert einen verlässlichen Alphakanal. GPT Image gibt
 sogar ausdrücklich deckende Bilder aus und empfiehlt selbst das nachgelagerte
 Freistellen.
 
+Freigestellt wird über [`cutout.py`](../image-tools/cutout.py), **nicht** über
+den nackten `rembg`-Aufruf — das Werkzeug repariert dabei einen Ausfall, den
+rembg zuverlässig produziert (siehe unten):
+
 ```bash
-rembg i sprite_raw.png sprite_freigestellt.png
+.venv/Scripts/python.exe cutout.py sprite_raw.png --out sprite_freigestellt.png
 ```
+
+Die Erfolgszeile meldet mit, wie viele durchscheinende Innenflächen zugemacht
+wurden. Steht dort bei einer Figur mit hellen Augen `keine Ausfälle`, lohnt der
+Blick auf dunklem Grund trotzdem.
+
+**Warum nicht `rembg` direkt:** rembg hält helle, von der Figur umschlossene
+Flächen für Hintergrund und macht sie **durchscheinend** — Augenweiß, Zähne,
+Glanzlichter. Bei `bisasam_neutral.png` lag das linke Auge dadurch bei Alpha
+9–64: nicht ausgestanzt, aber der Hintergrund schien hindurch. Die Backdrop-Farbe
+hilft dagegen nicht, weil Augenweiß in *jeder* Figur vorkommt. Ist eine
+Aussparung Absicht (der Ring eines Henkels), schaltet `--keep-holes` die
+Reparatur ab.
 
 Danach prüfen:
 
 - Kein Rest des Hintergrunds am Silhouettenrand, besonders zwischen Haarsträhnen.
 - Keine Löcher in Kleidung, die zufällig die Backdrop-Farbe hatte.
+- **Augen, Zähne und Glanzlichter angesehen — auf dunklem Grund, nicht auf
+  weißem.** Auf Weiß sieht ein durchscheinendes Augenweiß völlig normal aus;
+  genau daran ist der Bisasam-Fehler monatelang vorbeigelaufen.
 - Zuschnitt und Anker: Figur mittig, **Füße nahe der Bildunterkante** — die
   Vorgabe steht in [ASSET_REQUIREMENTS.md](../ASSET_REQUIREMENTS.md).
 - Alle vier Emotionen identisch zugeschnitten, sonst springt die Figur beim
