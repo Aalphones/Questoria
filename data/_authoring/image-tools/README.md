@@ -78,7 +78,30 @@ Bei Sprites und Icons erst freistellen, dann formatieren — sonst schneidet die
 .venv\Scripts\python.exe format_assets.py zwischen.png --out ..\..\themes\pokemon\sprites\pikachu\pikachu_neutral.png
 ```
 
-Bei Szenen, Karten und Antwortbildern reicht der Formatierungsschritt allein.
+Bei Szenen und Antwortbildern reicht der Formatierungsschritt allein.
+
+## Kachelkarten
+
+Kachelkarten haben eine eigene Kette, weil sie nicht als einzelnes Bild
+entstehen, sondern als **eine** Leinwand, die anschließend zerschnitten wird —
+nur so passen benachbarte Kacheln an ihren Rändern zusammen. Der ganze Ablauf
+mit Prompt-Vorlage, Größen und Bedienfallen steht in
+[../image-prompts/MAPS.md](../image-prompts/MAPS.md); hier nur die beiden
+Werkzeuge:
+
+```bat
+:: Nahtlinien des Kachel-Nachschaerfens aufloesen
+.venv\Scripts\python.exe heal_map_seams.py gekachelt.png nahtlos.png fertig.png
+
+:: Leinwand auf Zielgroesse bringen und in 1024er-Kacheln zerschneiden
+.venv\Scripts\python.exe slice_map.py fertig.png leinwand.png 2048x1024 "[{\"id\":\"alabastia\",\"row\":0,\"col\":0,\"out\":\"...\\map_alabastia.webp\"}]"
+```
+
+`heal_map_seams.py` braucht **zwei** Fassungen desselben Entwurfs: die
+gekachelt nachgeschärfte (hat die Zeichnung, aber Nahtlinien) und eine rein
+hochskalierte (nahtlos, aber weich). Es nimmt aus der zweiten nur die paar
+Pixel, auf denen die Linien sitzen. Warum es das braucht und wie die nahtlose
+Fassung entsteht: MAPS.md, Abschnitt „Hochskalieren — drei Läufe, nicht einer".
 
 ## Nicht hierher gehört
 

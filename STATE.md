@@ -21,11 +21,25 @@ MapScreen/MainHub am Bildschirm öffnen, manuelles Zoomen/Ziehen nach dem
 Fokus prüfen, `prefers-reduced-motion` durchspielen — Details und Priorität
 in [phase-4](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/phase-4-auto-fokus.md).
 
-**Nächster Schritt:** Die **Gebietskarte Alabastia ist fertig und
-zerschnitten** (`map_alabastia.webp`, `map_route_1.webp`). Als nächstes die
-Gebietskarte Vertania (2048×2048), danach Weltenkarte und Planetenkarte (je
-8192×8192, je knapp eine Stunde), dann die 14 Stations-Sprites und 2
-Orts-Sprites.
+**Nächster Schritt:** **Alle vier Spiel-Kacheln liegen** — `map_alabastia`,
+`map_route_1`, `map_vertania_city`, `map_vertania_wald`. Als nächstes
+Weltenkarte und Planetenkarte (je 8192×8192, je knapp eine Stunde), dann die
+14 Stations-Sprites und 2 Orts-Sprites.
+
+🔴 **Karten brauchen drei Läufe, nicht einen** (26.08.2026, von Sascha am
+Bildschirm gefunden): `Upscale Map` setzt die nachgeschärften Kacheln auf Stoß
+zusammen und hinterlässt ein Gitternetz aus Linien im 896er-Raster. Weder mehr
+Überlappung noch weniger Rauschen heilen das (Messungen im Report-Back von
+Phase 6). Der Weg ist: gekachelt schärfen, denselben Entwurf zusätzlich **rein**
+hochskalieren, dann `data/_authoring/image-tools/heal_map_seams.py` die
+Nahtlinien aus dem nahtlosen Bild einsetzen lassen. Beschrieben in
+[`image-prompts/MAPS.md`](data/_authoring/image-prompts/MAPS.md) →
+„Hochskalieren — drei Läufe, nicht einer".
+
+🟡 **Der `denoise`-Regler im Knotenpaket erreicht den Auftrag nicht.** Über
+comfy-cli wirken nur Regler **außerhalb** des Pakets; ein Lauf mit geändertem
+Innenwert liefert dieselbe Datei zurück. Gilt für `Upscale Map` — beim
+`Krea2 Txt2Img` ist es laut Skill andersherum.
 
 🟡 **Drei Plan-Vorgaben haben in der Praxis nicht getragen** und sind in
 [`image-prompts/MAPS.md`](data/_authoring/image-prompts/MAPS.md) korrigiert —

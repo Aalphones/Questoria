@@ -314,16 +314,57 @@ ohnehin aus), das Repo bleibt schlank. 🟡 Preis: die Leinwände liegen nur
 lokal, nicht im Drive-Backup. Regenerierbar, aber die beiden 8192er kosten
 je knapp eine Stunde.
 
-🟡 **Unsicherste Stelle, gehört an den Bildschirm:** Über die fertige Leinwand
-laufen **feine gerade Hilfslinien** im Abstand der FLUX.2-Nachschärf-Kacheln —
-etwa ein Pixel breit, kontrastarm, im Gras zu sehen. Sie sind nicht die
-Ausliefer-Naht (die läuft sauber durch, die Erdkante geht ohne Bruch
-hindurch), sondern die inneren Kachelgrenzen des Nachschärfens. Ob sie am
-Gerät des Kindes auffallen, kann nur die Sichtprüfung entscheiden.
+### Gebietskarte Vertania liegt, und der Ablauf hat ein viertes Loch (26.08.2026)
+
+Ausgeliefert: `map_vertania_wald.webp` (oben, `{-1,0}`) und
+`map_vertania_city.webp` (unten, `{0,0}`), Quellleinwand
+`gebiet_vertania_2048x2048.png`. Damit sind **alle vier Spiel-Kacheln da**.
+
+Zwei Läufe waren nötig, beide am selben Punkt: das Modell malt dichten Wald
+mit **Stämmen von der Seite** und viel zu großen Kronen. Der Hebel war nicht
+die Formulierung der Blickrichtung, sondern der **Maßstab** — „jede Krone nur
+ein winziger runder Fleck, etwa ein Vierzigstel der Bildbreite, viele hundert
+davon". Ohne diesen Anker wären die Bäume der Gebietskarte Vertania fünfmal so
+groß gewesen wie die von Alabastia; auf zwei Karten derselben Ebene ist das ein
+sichtbarer Bruch. Steht in `MAPS.md`.
+
+### 🔴 Der Kachel-Nachschärfer erzeugt ein Gitternetz (26.08.2026, von Sascha am Bildschirm gemeldet)
+
+`Upscale Map` allein liefert **keine** brauchbare Leinwand. Beim Zusammensetzen
+stößt er die nachgeschärften Kacheln **auf Stoß statt sie zu überblenden**;
+jede Kachel trägt vom Dekodieren einen Rand, und diese Ränder reihen sich zu
+geraden Linien über die ganze Leinwand — im Raster `Kachelgröße − Überlappung`,
+bei den Vorgabewerten alle 896 px. Auf einer Karte liest sich das als
+aufgedrucktes Gitternetz.
+
+**Durchgemessen, was nicht hilft** (jeweils Gradient über die volle Bildhöhe,
+Nahtpositionen numerisch bestimmt statt geschätzt):
+
+| Versuch | Ergebnis |
+|---|---|
+| Überlappung 128 → 320 | Linien wandern ins 704er-Raster, bleiben |
+| `denoise` 0,5 → 0,25 | **kommt gar nicht an** — der Regler liegt im Knotenpaket, comfy-cli liefert dieselbe Datei zurück. Nur Regler außerhalb des Pakets wirken |
+| grobe Töne aus einem nahtlosen Durchgang übernehmen | Linien stehen unverändert — es ist kein Tonwertsprung |
+| Kachel-Durchgang ganz weglassen | nahtlos, aber beim Hineinzoomen matschig → reißt AK 6 |
+
+**Gelöst durch einen dritten Lauf plus ein Werkzeug:** derselbe Entwurf wird
+zusätzlich **rein** hochskaliert (vier Knoten, direkt an die Schnittstelle,
+Sekunden) — nahtlos, aber weich. `data/_authoring/image-tools/heal_map_seams.py`
+setzt daraus genau die ein bis zwei Pixel je Linie ein, vorher im Tonwert an die
+Umgebung angeglichen. Danach ist im 896er-Raster kein Treffer mehr messbar, und
+Papierkörnung, Sandstreifen und Linienführung stehen unangetastet. Der ganze
+Ablauf ist in `MAPS.md` unter „Hochskalieren — drei Läufe, nicht einer"
+beschrieben; die Werkzeuge (`heal_map_seams.py`, `slice_map.py`) liegen im
+Repo.
+
+🟡 **Was das Werkzeug nicht kann:** Es findet die Linien über ihre Stärke und
+darüber, dass sie durch das ganze Bild laufen. Eine Naht, die zufällig genau
+auf einer langen geraden Bildkante liegt, würde es nicht von ihr unterscheiden.
+Auf organisch gezeichneten Karten ist das kein Fall, auf einer Karte mit
+langen geraden Kanten (Stadtplan, Raster) wäre vorher hinzusehen.
 
 ### Was noch offen ist
 
-- Drei Batch-Leinwände: Gebietskarte Vertania (2048×2048) → Weltenkarte
-  (8192×8192) → Planetenkarte (8192×8192).
+- Zwei Batch-Leinwände: Weltenkarte (8192×8192) → Planetenkarte (8192×8192).
 - 14 Stations-Sprites + 2 Orts-Sprites.
 - ADR-021 und `ASSET_REQUIREMENTS.md` Abschnitt 4.

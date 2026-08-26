@@ -119,9 +119,55 @@ Ergebnis am Ende auf die Zielgröße herunterrechnen — herunterrechnen nach de
 Nachschärfen kostet keine Schärfe, ein zu kleiner Entwurf kostet die
 Komposition.
 
-### Hochskalieren (Workflow `Upscale Map`)
+### Hochskalieren — drei Läufe, nicht einer
 
-Drei Handgriffe vor jedem Lauf, sonst läuft er falsch durch:
+Der Ablauf `Upscale Map` allein liefert **keine** brauchbare Leinwand. Er
+zerlegt das Bild in Kacheln, schärft jede einzeln mit FLUX.2 nach und setzt sie
+wieder zusammen — und beim Zusammensetzen stößt er sie **auf Stoß statt sie zu
+überblenden**. Jede Kachel trägt vom Dekodieren einen Rand, und diese Ränder
+reihen sich zu geraden Linien über die ganze Leinwand, im Raster
+`Kachelgröße − Überlappung` (bei den Vorgabewerten also alle 896 px). Auf einer
+Karte sieht das aus wie ein aufgedrucktes Gitternetz.
+
+**Mit den Reglern des Ablaufs ist das nicht zu heilen** (26.08.2026 durchgemessen):
+
+- Mehr Überlappung verschiebt die Linien nur — bei 320 statt 128 sitzen sie im
+  704er-Raster, weg sind sie nicht.
+- Weniger Rauschen pro Kachel (`denoise`) wäre der richtige Hebel, aber der
+  Regler liegt **im Knotenpaket** und erreicht über comfy-cli den Auftrag gar
+  nicht: der Lauf liefert dieselbe Datei zurück. Nur Regler außerhalb des
+  Pakets wirken.
+- Die Linien sind **kein** Tonwertsprung. Grobe Töne austauschen lässt sie
+  stehen; sie sitzen in zwei bis drei Pixeln.
+
+Der Weg ist deshalb dreiteilig:
+
+1. **`Upscale Map`** wie unten beschrieben laufen lassen — liefert die feine
+   Zeichnung, die eine Karte beim Hineinzoomen braucht.
+2. **Denselben Entwurf nochmal rein hochskalieren**, ohne Kacheln — vier
+   Knoten, direkt an die Schnittstelle geschickt: `LoadImage` →
+   `UpscaleModelLoader` (`4x_foolhardy_Remacri.pth`) → `ImageUpscaleWithModel`
+   → `SaveImage`. Dauert Sekunden und ist garantiert nahtlos, aber weich und
+   detailarm — als Bild unbrauchbar, als Ersatzteillager perfekt.
+3. **`heal_map_seams.py`** setzt die Nahtlinien aus dem nahtlosen Bild ein,
+   vorher im Tonwert an die Umgebung angeglichen:
+   ```bat
+   data\_authoring\image-tools\.venv\Scripts\python.exe ^
+     data\_authoring\image-tools\heal_map_seams.py gekachelt.png nahtlos.png fertig.png
+   ```
+   Ersetzt werden ein bis zwei Pixel je Linie plus ein weicher Auslauf. Der
+   Detailverlust ist im Bild nicht auszumachen, die Linie dagegen schon.
+
+Danach mit `slice_map.py` auf Zielgröße bringen und in die Ausliefer-Kacheln
+zerschneiden.
+
+⚠️ **Nicht auf das Weglassen von Schritt 1 verkürzen.** Rein hochskaliert ist
+die Karte zwar sofort nahtlos, aber beim Hineinzoomen matschig — genau der
+Zustand, für den der Kachel-Umweg überhaupt gebaut wurde.
+
+### Handgriffe im Ablauf `Upscale Map`
+
+Drei Dinge vor jedem Lauf, sonst läuft er falsch durch:
 
 - **Upscale-Modell wählen.** `UpscaleModelLoader` (Knoten 978) kommt leer aus
   dem gespeicherten Stand. Wert: `4x_foolhardy_Remacri.pth`.
