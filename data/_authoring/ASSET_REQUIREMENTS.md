@@ -88,9 +88,13 @@ spiegelt/platziert es passend zum gewählten Platz.
 **Pflicht ist jedes Sprite, das eine Dialogzeile nennt** — fehlt die Datei zur
 angegebenen `sprite`-Zeile, bleibt die Bühne an dieser Stelle leer. Die vier
 Gefühle sind der Vorrat, aus dem Dialoge schöpfen, kein Soll pro Figur: Wer
-nur `neutral` und `happy` spielt, bestellt auch nur die beiden. `pokemon_lesen`
-kommt mit acht Sprites für vier Figuren aus (20.08.2026 durchgespielt); alle
-vier Gefühle für jede Nebenfigur wären Aufwand ohne Gegenwert.
+nur `neutral` und `happy` spielt, bestellt auch nur die beiden. `pokemon`
+(vormals `pokemon_lesen`) kommt nach Phase 7 mit 18 Sprites für zehn Figuren
+aus — `bisasam` trägt als einzige Figur das volle Vier-Emotionen-Set, weil der
+Content alle drei nicht-neutralen Ausdrücke tatsächlich abruft; die übrigen
+neun Figuren haben je zwei bis drei, exakt was ihre Dialogzeilen nennen (Stand
+26.08.2026, gegen alle `episodes/*.json` geprüft). Alle vier Gefühle für jede
+Nebenfigur auf Vorrat zu bestellen wäre Aufwand ohne Gegenwert.
 
 ---
 

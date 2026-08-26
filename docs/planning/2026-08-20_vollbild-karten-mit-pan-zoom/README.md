@@ -28,7 +28,7 @@ neu geplant und um neue Stationen verdichtet.
 | 4 | [Automatischer Fokus](phase-4-auto-fokus.md) | standard | complete |
 | 5 | [Level-Neuplanung Alabastia](phase-5-level-neuplanung.md) | standard | complete |
 | 6 | [Assets erzeugen](phase-6-assets-erzeugen.md) | standard | pending |
-| 7 | [Figuren- und Aufgabenbilder neu](phase-7-figuren-und-aufgabenbilder.md) | standard | pending |
+| 7 | [Figuren- und Aufgabenbilder neu](phase-7-figuren-und-aufgabenbilder.md) | standard | complete |
 | 8 | [Vertonung, vollständig statt nur Dialog](phase-8-vertonung.md) | heikel | pending |
 
 **Nachtrag 23.08.2026 (Sascha):** Vier Wünsche sind dazugekommen und in

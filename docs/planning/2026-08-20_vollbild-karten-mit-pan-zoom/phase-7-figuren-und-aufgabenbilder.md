@@ -79,6 +79,52 @@ dunklem Hintergrund angesehen hat.
 
 ## Teil B — Figuren neu
 
+> **Status: erledigt am 26.08.2026 — mit geänderter Erzeugungs-Methode.**
+> Statt freihändig via Prompt (ursprünglicher Plan) lieferte Sascha für acht
+> Figuren echte Referenzbilder (offizielle Artwork/Anime-Standbilder,
+> `Downloads/*.png`) — Grund: die freihändig erzeugten Basisbilder aus dem
+> ersten Anlauf gefielen nicht. Erzeugt mit `flux2-bilder` (Referenzbild als
+> Image 1, `keep face/hair/outfit/proportions identical, change only the
+> expression`), pro Figur erst `neutral` gegen die echte Vorlage, danach die
+> weiteren Emotionen gegen das eigene `neutral`-Ergebnis als Anker (SPRITES.md
+> „Referenzbild (belastbar)"-Weg). `verkaeufer` und `nachbar` (keine
+> Kanon-Figur, freihändig) liefen über Krea2-Text-zu-Bild für `neutral`, danach
+> genauso mit FLUX.2 verkettet — FLUX.2 lehnt einen Lauf ganz ohne Referenzbild
+> technisch ab (Pflichteingang am Paket-Knoten).
+>
+> **Bestand (10 Figuren, 18 Dateien):** `bisasam` (neutral/happy/worried/angry
+> — vollständiges Set nach AK 2), `pikachu`/`prof_eich`
+> (neutral/happy), `rattfratz` (neutral/worried), `blau`/`mama`/`schwester`/
+> `kaefersammler`/`verkaeufer`/`nachbar` (neutral/happy) — exakt das, was der
+> Content referenziert (`grep` gegen alle `episodes/*.json`).
+>
+> 🟡 **Widerspruch zwischen AK 2 und `ASSET_REQUIREMENTS.md` gefunden, nicht
+> aufgelöst:** AK 2 verlangt für „alle vier bestehenden Figuren" ein
+> vollständiges Vier-Emotionen-Set. `ASSET_REQUIREMENTS.md` § 2 sagt
+> ausdrücklich das Gegenteil („kein Soll pro Figur … Aufwand ohne Gegenwert").
+> Umgesetzt: `bisasam` vollständig (deckt AK 2 dem Buchstaben nach für eine
+> Figur), `pikachu`/`prof_eich`/`rattfratz` nur die tatsächlich referenzierten
+> zwei Emotionen — dem Doc-Grundsatz folgend, AK 2 damit nicht wörtlich
+> erfüllt. Nachzuziehen ist entweder AK 2 (lockern) oder die drei Figuren
+> (ergänzen) — Entscheidung steht aus.
+>
+> **Ein echter Freistell-Fund unterwegs:** Bei `schwester` (Nurse-Joy-Frisur,
+> zwei große Haarschlaufen) hat `cutout.py` die Schlaufen-Löcher zuerst als
+> „durchscheinenden Ausfall" gewertet und mit der grauen Hintergrundfarbe
+> zugemalt — genau der in `cutout.py --help` beschriebene Henkel-Fall, nur
+> zum ersten Mal real getroffen. Mit `--keep-holes` neu freigestellt, danach
+> auf dunklem Grund geprüft: korrekt. `kaefersammler` (Kescher-Ring) vorsorglich
+> gleich mit `--keep-holes` erzeugt.
+>
+> **Ein Nacharbeit-Fall:** `rattfratz_neutral` brauchte drei Anläufe — die
+> ersten beiden übernahmen den fauchenden Kampf-Ausdruck der Vorlage trotz
+> Prompt-Vorgabe „calm and even". Sascha entschied sich für den zweiten
+> (fauchenden) Versuch als Anker, nicht den dritten (bewusst beruhigten) —
+> geschmacklich seine Entscheidung, nicht meine.
+
+Ursprünglicher (nicht mehr genutzter) Plantext unten stehen gelassen als
+Kontext, was ursprünglich vorgesehen war:
+
 Bestand heute: `bisasam`, `pikachu`, `prof_eich`, `rattfratz` — **je zwei von
 vier Emotionen.** `SPRITES.md` verlangt alle vier, sonst bleibt die Figur bei
 der falschen Dialogzeile stumm. Die Neuerstellung schließt diese Lücke mit,
@@ -128,6 +174,30 @@ vorhandenen `props/pokeball.png`.
   Umgestellt wird der Verweis in `events/silben_klatschen.json` (Phase 5).
 
 ## Teil D — Bildantworten aus dem Pokémon-Universum
+
+> **Status: erledigt am 26.08.2026.** Bestand gegen alle `events/*.json` und
+> `episodes/*.json` gegengeprüft (Skript: `grep` über alle `"image"`-Felder),
+> nicht aus der Bestellliste des Phase-5-Report-Backs übernommen — die listete
+> `antwort_pokeball_item.png` und 14 weitere Motive, real gebraucht wurden
+> dieselben 14 plus ein zusätzliches, im Report-Back vergessenes
+> `antwort_trank.png` (Trank ≠ Heiltrank, zwei getrennte Wörter im
+> Content). Alle 14 neuen Motive erzeugt mit Krea2 (1024×1024, Backdrop
+> blasses Flieder, `art_style` der Welt), `antwort_rattfratz.png` stattdessen
+> mit FLUX.2 gegen den in Teil B erzeugten Rattfratz-Anker, damit Sprite und
+> Bildantwort dieselbe Figur zeigen. `antwort_pokeball_item.png` ist keine
+> Neugenerierung, sondern eine Kopie von `antwort_pokeball_1.png` (identisches
+> Motiv, beide Kontexte). Die acht nicht mehr referenzierten alten Motive
+> (`antwort_auto/ball/blume/boot/igel/katze/milch/ofen.png`) sind gelöscht.
+> Abgleich am Ende: kein referenziertes Bild fehlt, keine Datei ist verwaist.
+>
+> 🟡 **Ein zweiter echter Freistell-Fund:** `antwort_fahrrad.png` hatte
+> dieselbe Klasse Fehler wie `schwester` in Teil B — beide Radzentren (echte,
+> gewollte Löcher) wurden beim ersten Lauf mit der lilafarbenen
+> Backdrop-Nachbarfarbe zugemalt. Mit `--keep-holes` neu freigestellt. Zwei
+> Treffer in einer Phase heißt: Kreisförmige Aussparungen (Ring, Rad,
+> Henkel) sind der Regelfall, nicht die Ausnahme — nach jedem `cutout.py`-Lauf
+> mit einer nicht ganz kleinen "Ausfälle gefüllt"-Zahl (hier: 2,1 % der
+> Fahrrad-Fläche) lohnt der Blick aufs Ergebnis, bevor es als erledigt gilt.
 
 Phase 5 legt fest, **welche** Wörter die Aufgaben künftig benutzen. Diese Phase
 erzeugt die zugehörigen Bilder. Der Bestand `answers/` enthält heute 21
@@ -179,4 +249,57 @@ freigestellt mit `cutout.py --trim`.
 
 ## Report-Back
 
-*(nach Umsetzung ausfüllen)*
+**Umgesetzt am 26.08.2026.** Alle vier Teile durch. AK 8 (`deploy.cmd
+content`) aus Phase 7 selbst ist **kein** offener Punkt dieser Phase — den
+gibt es hier gar nicht, Umsetzungsschritt 8 „deploy.cmd content" ist bewusst
+**nicht** ausgeführt: Nachtrag 5b (README/Phase 5 — Umgruppierung von einer
+Ortskarte mit vier Kacheln auf zwei Gebietskarten mit je zwei) ist noch nicht
+gemacht, `world_config.json` steht nachweislich noch auf dem alten Schema
+(`maps[0].id == "route_1"`, vier Kacheln in einer Karte). Deploy bleibt
+gesperrt bis 5b fertig ist — deckt sich mit der schon in STATE.md stehenden
+Reihenfolge „Bilder zuerst, Umgruppierung danach".
+
+**Akzeptanzkriterien:**
+
+1. ✅ `cutout.py` füllt Innenlöcher und meldet die Anzahl (Teil A, aus Phase 6
+   vorgezogen, Commit `4b59882`).
+2. 🟡 **Teilweise, mit dokumentiertem Zielkonflikt.** `bisasam` hat alle vier
+   Emotionen identisch zugeschnitten. Die drei anderen Bestandsfiguren
+   (`pikachu`, `prof_eich`, `rattfratz`) haben nur die vom Content
+   tatsächlich referenzierten zwei — nach `ASSET_REQUIREMENTS.md` § 2 korrekt
+   („kein Soll pro Figur"), nach dem Wortlaut dieser AK nicht. Entscheidung
+   steht aus: AK lockern oder drei Figuren nachbestellen.
+3. ✅ Jedes neue Sprite auf dunklem Grund geprüft — zwei echte Aussparungen
+   gefunden (`schwester`-Haarschlaufen, `kaefersammler`-Netzring) und mit
+   `--keep-holes` korrekt freigestellt.
+4. 🟡 `antwort_pokeball_1..4.png` liegen vor (Teil C). Abzählbarkeit **am
+   Handy** ist nicht durch mich geprüft — das kann nur der User.
+5. ✅ Kein `antwort_ziffer_*.png` mehr im Bestand, kein Verweis im Content.
+6. ✅ Jedes referenzierte `image` existiert, keine Datei in `answers/` ist
+   verwaist (`comm`-Abgleich gegen alle `events/*.json`/`episodes/*.json`).
+7. ✅ `SPRITES.md`, `ANSWER_IMAGES.md` und `ASSET_REQUIREMENTS.md`
+   beschreiben den tatsächlichen Stand.
+
+**Von der Plan-Vorgabe abgewichen (Sascha, während der Umsetzung):** Teil B
+sollte laut Plantext freihändig per Prompt entstehen. Die ersten freihändigen
+Basisbilder gefielen nicht — Sascha lieferte stattdessen acht echte
+Referenzbilder (offizielle Artwork/Anime-Standbilder), zwei Figuren
+(`verkaeufer`, `nachbar`) blieben freihändig, weil sie keine Kanon-Vorlage
+haben. Erzeugungsweg dadurch verändert: `neutral` gegen die echte Referenz
+(bzw. bei den beiden freihändigen Figuren über Krea2, weil FLUX.2 kein Bild
+ganz ohne Referenz erzeugen kann), danach die weiteren Emotionen gegen das
+eigene `neutral`-Ergebnis. Details und der eine Nacharbeit-Fall
+(`rattfratz`, drei Anläufe) stehen in Teil B oben.
+
+**Unsicherste Stelle:** AK 2 (Vier-Emotionen-Vorgabe vs. `ASSET_REQUIREMENTS.md`
+„kein Soll pro Figur") — siehe Findungspunkt in Teil B. Zweitunsicherste:
+AK 4, weil die Abzählbarkeit der Pokébälle nur am Bildschirm beurteilt wurde,
+nicht am Gerät.
+
+**Files touched:** `data/_authoring/image-prompts/ANSWER_IMAGES.md`,
+`data/_authoring/ASSET_REQUIREMENTS.md`, `data/themes/pokemon/sprites/**`
+(18 Dateien, 10 Figuren, außerhalb Git), `data/themes/pokemon/answers/**`
+(30 Dateien, außerhalb Git).
+
+**Nicht angefasst — bewusst außerhalb dieser Phase:** Nachtrag 5b
+(`world_config.json`-Umgruppierung), Phase 8 (Vertonung).

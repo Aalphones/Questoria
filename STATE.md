@@ -2,25 +2,38 @@
 
 **Aktiver Plan:** [docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/README.md)
 
-**Phase:** 7/8 — Figuren- und Aufgabenbilder neu. Teil A (Loch-Fresser im
-Freistell-Werkzeug) und Teil C (Pokéball-Zählbilder) sind durch (26.08.2026).
-Offen: **Teil B** (zehn Figuren neu — vier Bestandsfiguren um `worried`/
-`angry` ergänzen, sechs neue Figuren aus Phase 5 erst erzeugen) und **Teil D**
-(16 neue Bildantworten aus dem Pokémon-Universum, 9 alte generische löschen).
-Danach Phase 8 „Vertonung, vollständig statt nur Dialog" (23.08.2026,
-Sascha angehängt): jede Frage und zwei feste Engine-Ansagen sollen eine echte
-Aufnahme statt Browser-Sprachausgabe bekommen. Rating heikel — echte Schema-
-und Komponenten-Arbeit, keine reine Content-Phase. Startet mit einer eigenen
-🔴-Entscheidung (siehe Phasendatei).
+**Phase:** 7/8 — Figuren- und Aufgabenbilder neu. **Komplett durch
+(26.08.2026)**, alle vier Teile. Als nächstes **Phase 8 — Vertonung,
+vollständig statt nur Dialog** (23.08.2026, Sascha angehängt): jede Frage und
+zwei feste Engine-Ansagen sollen eine echte Aufnahme statt Browser-
+Sprachausgabe bekommen. Rating heikel — echte Schema- und Komponenten-Arbeit,
+keine reine Content-Phase. Startet mit einer eigenen 🔴-Entscheidung (siehe
+Phasendatei).
 
-✅ **Phase 7 Teil C ist durch (26.08.2026):** `antwort_pokeball_1..4.png`
-erzeugt (Krea2, 1024×1024, blasses Flieder), mit dem reparierten `cutout.py`
-freigestellt (keine Löcher — Pokébälle haben keine umschlossenen hellen
-Flächen), alte `antwort_ziffer_*.png` gelöscht. `silben_klatschen.json`
-referenzierte die neuen Namen schon seit Phase 5. `ANSWER_IMAGES.md` ist auf
-`cutout.py` umgestellt und trägt jetzt die Pokémon-Motivregel aus Teil D.
-🟡 **Am Gerät noch nicht geprüft**, ob die Anzahl auf einen Blick abzählbar
-ist (AK 4) — Bilder liegen bereit, Prüfung steht aus.
+✅ **Phase 7 ist fertig (26.08.2026):** Teil A/C/D vollständig, Teil B mit
+geänderter Methode (siehe unten). Details, AK-Abhaken und die zwei
+Freistell-Funde im Report-Back von
+[phase-7](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/phase-7-figuren-und-aufgabenbilder.md).
+
+🟡 **Teil B lief anders als geplant:** Statt freihändig per Prompt hat Sascha
+acht echte Referenzbilder geliefert (die freihändigen Basisbilder gefielen
+nicht) — `bisasam`, `pikachu`, `rattfratz`, `prof_eich`, `blau`, `mama`,
+`schwester`, `kaefersammler` sind jetzt komplett neu, gegen die Vorlage
+erzeugt. `verkaeufer`/`nachbar` (keine Kanon-Figur) blieben freihändig über
+Krea2. `bisasam` trägt alle vier Emotionen, die anderen neun Figuren nur die
+vom Content tatsächlich referenzierten (18 Sprite-Dateien insgesamt).
+
+🔴 **Widerspruch gefunden, nicht aufgelöst:** Phase-7-AK 2 verlangt für „alle
+vier bestehenden Figuren" ein volles Vier-Emotionen-Set,
+`ASSET_REQUIREMENTS.md` § 2 sagt ausdrücklich „kein Soll pro Figur". Umgesetzt
+nach dem Doc-Grundsatz (nur `pikachu`/`prof_eich`/`rattfratz` mit den
+tatsächlich gebrauchten zwei) — AK 2 damit nicht wörtlich erfüllt. Entscheidung
+steht aus: AK lockern oder drei Figuren um die fehlenden Emotionen ergänzen.
+
+🟡 **`deploy.cmd content` bewusst nicht ausgeführt** — Nachtrag 5b
+(Kartenumgruppierung, `world_config.json` noch auf altem Schema) ist eigener,
+noch offener Punkt, kein Teil von Phase 7. Reihenfolge „Bilder zuerst,
+Umgruppierung danach" bleibt in Kraft.
 
 ✅ **Phase 6 ist bildseitig durch (26.08.2026):** alle 14 Stations-Sprites und
 die 2 neuen Orts-Sprites (Alabastia, Vertania City auf der Weltenkarte) liegen
@@ -46,9 +59,9 @@ MapScreen/MainHub am Bildschirm öffnen, manuelles Zoomen/Ziehen nach dem
 Fokus prüfen, `prefers-reduced-motion` durchspielen — Details und Priorität
 in [phase-4](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/phase-4-auto-fokus.md).
 
-**Nächster Schritt:** Phase 7 läuft, Teil A und Teil C sind durch. Als
-nächstes **Teil B** (zehn Figuren, siehe oben) oder **Teil D** (16 Bildantworten)
-— Reihenfolge frei, beide sind unabhängig voneinander.
+**Nächster Schritt:** Phase 7 ist fertig. Als nächstes **Nachtrag 5b**
+(Kartenumgruppierung, Voraussetzung fürs Deployen) oder **Phase 8 —
+Vertonung** — beide unabhängig voneinander, Reihenfolge frei.
 
 🔴 **Der Karten-Ablauf ist am 26.08.2026 zweimal grundlegend umgebaut worden**
 (beide Male nach einem Befund von Sascha am Bildschirm). Verbindlich ist jetzt
