@@ -104,6 +104,16 @@ reparierten Loch-Füller.
 
 ## Teil C — Zählbilder: Pokébälle statt Sterne
 
+> **Status: erledigt am 26.08.2026.** `antwort_pokeball_1..4.png` liegen unter
+> `data/themes/pokemon/answers/`, erzeugt mit `Krea2 Txt2Img` (1024×1024,
+> Backdrop blasses Flieder wie der Rest des Antwortbestands), freigestellt mit
+> `cutout.py --trim` (kein Loch-Fund — Pokébälle haben keine umschlossenen
+> hellen Flächen). `silben_klatschen.json` referenzierte die neuen Dateinamen
+> bereits seit Phase 5, `antwort_ziffer_1..4.png` sind gelöscht, kein Treffer
+> mehr im Content. `ANSWER_IMAGES.md` ist auf `cutout.py` statt nacktem
+> `rembg` umgestellt (galt vorher nur für Sprites) und trägt jetzt die
+> Pokémon-Universum-Motivregel aus Teil D.
+
 `antwort_ziffer_1..4.png` zeigen heute weiße Sterne auf weißem Grund — auf dem
 hellen Antwortfeld praktisch unsichtbar, unabhängig vom Thema. Sie werden
 ersetzt durch **ein bis vier Pokébälle**, Bildsprache passend zum bereits

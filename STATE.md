@@ -2,12 +2,25 @@
 
 **Aktiver Plan:** [docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/README.md)
 
-**Phase:** 6/8 — Assets erzeugen (Bildarbeit fertig, AK 8 bewusst offen). Plan
-jetzt 8 statt 7 Phasen — neue **Phase 8 „Vertonung, vollständig statt nur
-Dialog"** angehängt (23.08.2026, Sascha): jede Frage und zwei feste
-Engine-Ansagen sollen eine echte Aufnahme statt Browser-Sprachausgabe
-bekommen. Rating heikel — echte Schema- und Komponenten-Arbeit, keine reine
-Content-Phase. Startet mit einer eigenen 🔴-Entscheidung (siehe Phasendatei).
+**Phase:** 7/8 — Figuren- und Aufgabenbilder neu. Teil A (Loch-Fresser im
+Freistell-Werkzeug) und Teil C (Pokéball-Zählbilder) sind durch (26.08.2026).
+Offen: **Teil B** (zehn Figuren neu — vier Bestandsfiguren um `worried`/
+`angry` ergänzen, sechs neue Figuren aus Phase 5 erst erzeugen) und **Teil D**
+(16 neue Bildantworten aus dem Pokémon-Universum, 9 alte generische löschen).
+Danach Phase 8 „Vertonung, vollständig statt nur Dialog" (23.08.2026,
+Sascha angehängt): jede Frage und zwei feste Engine-Ansagen sollen eine echte
+Aufnahme statt Browser-Sprachausgabe bekommen. Rating heikel — echte Schema-
+und Komponenten-Arbeit, keine reine Content-Phase. Startet mit einer eigenen
+🔴-Entscheidung (siehe Phasendatei).
+
+✅ **Phase 7 Teil C ist durch (26.08.2026):** `antwort_pokeball_1..4.png`
+erzeugt (Krea2, 1024×1024, blasses Flieder), mit dem reparierten `cutout.py`
+freigestellt (keine Löcher — Pokébälle haben keine umschlossenen hellen
+Flächen), alte `antwort_ziffer_*.png` gelöscht. `silben_klatschen.json`
+referenzierte die neuen Namen schon seit Phase 5. `ANSWER_IMAGES.md` ist auf
+`cutout.py` umgestellt und trägt jetzt die Pokémon-Motivregel aus Teil D.
+🟡 **Am Gerät noch nicht geprüft**, ob die Anzahl auf einen Blick abzählbar
+ist (AK 4) — Bilder liegen bereit, Prüfung steht aus.
 
 ✅ **Phase 6 ist bildseitig durch (26.08.2026):** alle 14 Stations-Sprites und
 die 2 neuen Orts-Sprites (Alabastia, Vertania City auf der Weltenkarte) liegen
@@ -33,9 +46,9 @@ MapScreen/MainHub am Bildschirm öffnen, manuelles Zoomen/Ziehen nach dem
 Fokus prüfen, `prefers-reduced-motion` durchspielen — Details und Priorität
 in [phase-4](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/phase-4-auto-fokus.md).
 
-**Nächster Schritt:** Phase 6 ist bildseitig abgeschlossen (alle sechs
-Kartenkacheln, alle 16 Sprites, ADR-021, `ASSET_REQUIREMENTS.md`). Als
-nächstes **Phase 7 — Figuren- und Aufgabenbilder neu**.
+**Nächster Schritt:** Phase 7 läuft, Teil A und Teil C sind durch. Als
+nächstes **Teil B** (zehn Figuren, siehe oben) oder **Teil D** (16 Bildantworten)
+— Reihenfolge frei, beide sind unabhängig voneinander.
 
 🔴 **Der Karten-Ablauf ist am 26.08.2026 zweimal grundlegend umgebaut worden**
 (beide Male nach einem Befund von Sascha am Bildschirm). Verbindlich ist jetzt

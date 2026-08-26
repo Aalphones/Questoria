@@ -147,12 +147,24 @@ that its whole body faces to the left, its head, eye, muzzle and both long uprig
 visible from the side" saß. Bei Tieren gehört die Blickrichtung in den Prompt, nicht in die
 Hoffnung.
 
+## Motiv aus der Welt statt Alltagsgegenstand (Phase 7, `pokemon`)
+
+In der Welt `pokemon` zeigt ein Bild einen Gegenstand oder ein Wesen, wie es im
+Pokémon-Universum vorkommt — Pokéball, Beere, Trank, Angel, Kescher,
+Lagerfeuer, Fahrrad, Baumstumpf, ein bestimmtes Pokémon — statt eines
+beliebigen Alltagsgegenstands (Auto, Vase, Ofen). Die Eindeutigkeitsregel oben
+steht darüber: **im Zweifel gewinnt das erkennbarere Bild, nicht das
+thematisch passendere.** Ein Kind, das rät, hat nichts gelernt, egal wie gut
+das Motiv zum Thema passt.
+
 ## Nach der Generierung
 
-1. Freistellen — die Bilder liegen später auf farbigen Antwort-Buttons, ein
-   weißer Kasten drumherum fällt sofort auf:
+1. Freistellen mit `cutout.py`, nicht mit nacktem `rembg` — die Bilder liegen
+   später auf farbigen Antwort-Buttons, ein weißer Kasten drumherum fällt
+   sofort auf, und `rembg` allein lässt bei hellen, umschlossenen Flächen
+   (Augenweiß, Glanzlicht) durchscheinende Reste zurück (Phase 7 Teil A):
    ```bash
-   rembg i antwort_raw.png antwort_norden.png
+   data/_authoring/image-tools/.venv/Scripts/python.exe data/_authoring/image-tools/cutout.py antwort_raw.png --out antwort_norden.png --trim --margin 4
    ```
 2. Quadratisch beschneiden und auf mindestens 512×512 px bringen.
 3. **Das Set nebeneinanderlegen.** Erst im Vergleich zeigt sich, ob zwei
