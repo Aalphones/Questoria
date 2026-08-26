@@ -16,7 +16,8 @@ Komposition auseinander.
 ├── cards.json
 ├── cover.webp
 ├── maps/
-│   ├── map_<map_id>.webp           ← pro Story-Arc eine Ortskarte
+│   ├── map_<tile_id>.webp          ← eine Ausliefer-Kachel (1024×1024) je TileDef
+│   ├── sprite_<station_id>.png     ← freigestelltes Stations-/Bauwerk-Sprite (512×512)
 │   ├── <arc_overview_bg>.webp      ← Hintergrund der Etappenkarte
 │   └── ep_<nr>.webp                ← Etappen-Illustration je Story-Arc
 ├── backgrounds/
@@ -123,15 +124,52 @@ Rückverweis `audio_path` selbst — von Hand benannt wird hier nichts.
 
 ## 4. Map-Grafiken
 
+Eine Karte besteht aus einzelnen **1024×1024-Kacheln** (`TileDef`,
+Schema-Referenz Abschnitt 2), die einzeln durchs Spiel freigeschaltet werden.
+`row`/`col` sind offen — neue Kacheln kommen später einfach mit neuen
+Koordinaten dazu, kein festes Raster. Jede Kachel ist genau eine Bilddatei,
+keine Slicing-Pipeline zur Laufzeit.
+
 | Eigenschaft | Vorgabe |
 |---|---|
-| Format | `.webp` |
-| Seitenverhältnis | 16:9, gleiche Auflösung wie Hintergründe |
-| Inhalt | begehbare Übersichtskarte mit erkennbaren Landmarken für Node-Platzierung |
+| Format Ausliefer-Kachel | `.webp`, exakt 1024×1024 |
+| Format Stations-/Orts-Sprite | `.png` mit Alpha, 512×512 |
+| Inhalt Kachel | nur Gelände (siehe Gebäudeverbot) |
+| Inhalt Sprite | ein freigestelltes Einzelmotiv (Gebäude, Ort, Gegenstand, Figur) |
 
-**Eine Welt hat von Anfang an mehrere Maps** — eine pro Story-Arc, nicht
-nachträglich angeflanscht. Bei One Piece zum Beispiel: `map_east_blue.webp`,
-`map_alabasta.webp`, `map_skypiea.webp`, jede mit eigenen Episoden-Nodes.
+**Batch-Prinzip:** Kacheln, die aneinandergrenzen, werden **gemeinsam als eine
+Leinwand** erzeugt und danach zerschnitten — nie eine Kachel isoliert
+generieren, wenn sie Nachbarn hat, mit denen ihr Rand zusammenpassen muss.
+Unabhängig erzeugte Nachbarkacheln haben keinen Grund, an der gemeinsamen
+Kante zusammenzupassen (andere Bäume, anderer Weg, andere Beleuchtung genau an
+der Naht). Ein späterer Ausbau bekommt seinen eigenen Batch — nur die eine
+Naht zwischen zwei Batches ist nicht automatisch perfekt.
+
+**Gebäudeverbot (ADR-021):** Kartenleinwände tragen **nur Gelände** — Wiese,
+Wald, Wege, Wasser, Küste, Fels, Gebirge. Keine Häuser, Ortschaften, Türme,
+Brücken, Zäune oder sonstigen Bauwerke, auch nicht als Landmarke im
+Hintergrund. Jedes Bauwerk und jeder benannte Ort ist stattdessen ein eigenes
+freigestelltes Sprite, das obendrauf liegt — nur so kann dieselbe Kachel
+zeigen, dass ihre Station noch verschlossen oder schon offen ist, und nur so
+lässt sich eine Station verschieben, ohne die Karte neu zu erzeugen.
+
+**Erzeugungsweg:** Entwurf mit Krea 2 Turbo in einem Viertel der
+Zielkantenlänge je Seite (mindestens 1024 px Breite — darunter liefert das
+Modell erfundene Strukturen statt sauberer Flächen), danach **ein** Durchgang
+`Upscale Map` (Faktor 4) auf die Zielgröße. Details, Prompt-Vorlage und die
+gesammelten Fallstricke: [image-prompts/MAPS.md](image-prompts/MAPS.md).
+Stations- und Orts-Sprites laufen über denselben Krea2-Weg, danach durch
+`cutout.py` (Freistellen) — Vorlage folgt dem Muster in
+[image-prompts/SPRITES.md](image-prompts/SPRITES.md), Backdrop-Farbe wählen,
+die im Motiv selbst nicht vorkommt.
+
+**Eine Welt hat von Anfang an mehrere Karten-Ebenen** — Planetenkarte,
+Weltenkarte (eine pro Story-Arc) und Gebietskarten, nicht nachträglich
+angeflanscht. Die beiden obersten Ebenen sind als vollständige
+8192×8192-Leinwand angelegt (nur die anfangs sichtbare Kachel wird
+ausgeliefert), damit eine später aufgedeckte Kachel ohne neue Bildarbeit an
+ihre Nachbarn anschließt — Details und Rechenaufwand:
+[image-prompts/MAPS.md](image-prompts/MAPS.md).
 
 Dazu kommt **eine Etappenkarte pro Welt** — die Übersicht über alle Arcs, mit
 eigenem Hintergrund und einer kleinen Illustration je Etappe (`ep_01.webp` …).
@@ -139,11 +177,12 @@ Die Illustrationen werden als organische Inselformen beschnitten dargestellt,
 also motivisch mittig anlegen und keine wichtigen Details an den Rand legen.
 
 **Node-Koordinaten sind Prozentwerte, keine Pixel.** Position und Größe jedes
-Kartenpunkts stehen als Prozent der Kartenbildbreite bzw. -höhe in
-`world_config.json` (Schema-Referenz Abschnitt 2). Damit sitzt ein Punkt auf
-jedem Gerät auf derselben Landmarke. Praktisch heißt das beim Zeichnen: die
-Landmarken deutlich sichtbar und nicht zu nah am Bildrand platzieren, sonst
-liegt der Punkt später halb außerhalb.
+Kartenpunkts stehen als Prozent der **Kachelbreite bzw. -höhe** in
+`world_config.json` (Schema-Referenz Abschnitt 2), nicht mehr der ganzen
+Karte — eine Station bleibt damit an ihrem Platz, auch wenn ihre Kachel später
+umgruppiert wird. Praktisch heißt das beim Platzieren: die Landmarken deutlich
+sichtbar und nicht zu nah am Kachelrand, sonst liegt der Punkt später halb
+außerhalb.
 
 ---
 

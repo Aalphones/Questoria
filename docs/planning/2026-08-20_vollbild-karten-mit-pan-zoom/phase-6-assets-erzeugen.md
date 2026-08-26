@@ -457,10 +457,69 @@ Erdrisse in den Sternennebel gemalt. Es gibt jetzt zwei Fassungen,
 Modell liefert exakt das Bestellte; jeder dieser Fehler saß im Prompt, nicht im
 Modell.**
 
-### Was noch offen ist
+### Alle 14 Stations-Sprites + 2 Orts-Sprites liegen (26.08.2026)
 
-- 14 Stations-Sprites + 2 Orts-Sprites.
-- ADR-021 und `ASSET_REQUIREMENTS.md` Abschnitt 4.
+Prompts kamen direkt aus den `illustration_label`-Texten in der bestehenden
+`world_config.json` (Phase 5 hatte sie schon vergeben) — Subjekt in einem Satz,
+`art_style` der Welt wörtlich angehängt, dazu ein fester Rahmen für die
+Sprite-Existenz: „isolated icon, seen from a friendly three-quarter angle …
+stands alone against a completely flat, uniform mid-grey backdrop … no text or
+lettering". Alle 16 Läufe auf Anhieb brauchbar, keine Nachbesserungsrunde
+nötig — Bild angesehen, Stil und Motiv treffen die Bestellung.
+
+🟡 **Design-Entscheidung, die der Plan offenließ:** Die Stations-Sprites sind
+**nicht** streng orthografisch von oben gezeichnet (das Gebot aus `MAPS.md`
+gilt für die Kartenleinwand, nicht für das, was daraufliegt), sondern in einer
+freundlichen Drei-Viertel-Perspektive wie ein Spielfiguren-Icon — ein reines
+Dach-von-oben-Symbol wäre bei 512 px kaum als Haus zu erkennen gewesen. Kein
+Bruch mit ADR-021 (das regelt nur, dass Bauwerke *nicht in der Leinwand*
+stecken), aber eine Lesart, die der Plan nicht ausbuchstabiert hatte.
+
+Kette: Krea 2 Turbo (1:1, 1448×1448 nativ) → `cutout.py --trim` (Modell
+`u2net` für Gebäude/Objekte/Orte, `isnet-anime` für den Käfersammler-Jungen,
+da er eine Figur ist) → `format_assets.py --kind prop` (512×512, PNG mit
+Alpha). Kein einziger Ausfall wie beim Bisasam-Fund aus Phase 7 Teil A — die
+Backdrop-Farbe kam bei keinem Motiv in der Figur selbst vor.
+
+| Datei | Station | Auffälligkeit |
+|---|---|---|
+| `sprite_zuhause.png` | Zuhause | — |
+| `sprite_rivalenhaus.png` | Rivalen-Haus | — |
+| `sprite_labor.png` | Prof. Eichs Labor | — |
+| `sprite_wiese.png` | Die Wiese am Weg | — |
+| `sprite_markt_verkaeufer.png` | Markt-Verkäufer | — |
+| `sprite_wildgras.png` | Wildgras-Begegnung | — |
+| `sprite_pokemon_center.png` | Pokémon-Center | — |
+| `sprite_pokemon_markt.png` | Pokémon-Markt | Quelle 506×537, leicht auf 512×512 hochskaliert |
+| `sprite_arena.png` | Arena | — |
+| `sprite_wohnhaus.png` | Wohnhaus | Quelle 478×709, leicht auf 512×512 hochskaliert |
+| `sprite_waldeingang.png` | Waldeingang | — |
+| `sprite_kaefersammler.png` | Käfersammler-Trainer | einzige Figur der Charge, `isnet-anime` |
+| `sprite_gegenstand.png` | Gegenstand zum Finden | — |
+| `sprite_waldausgang.png` | Waldausgang | — |
+| `sprite_alabastia.png` | Orts-Sprite Weltenkarte | neu durch Weg C, noch ohne Verdrahtung (5b) |
+| `sprite_vertania_city.png` | Orts-Sprite Weltenkarte | neu durch Weg C, noch ohne Verdrahtung (5b) |
+
+Alle unter `data/themes/pokemon/maps/` — liegt auf Drive, kein Git-Commit
+nötig. Die zwei leichten Hochskalierungen sind Rauschen (unter 7 % Kantenlänge),
+keine Nacharbeit wert.
+
+### ADR-021 und `ASSET_REQUIREMENTS.md` sind nachgezogen (26.08.2026)
+
+[ADR-021](../../decisions/021-karten-tragen-kein-bauwerk.md) hält Weg C fest.
+`ASSET_REQUIREMENTS.md` Abschnitt 4 ist von der alten Einzelbild-16:9-Vorgabe
+auf das Kachel-/Sprite-Schema umgeschrieben — Batch-Prinzip, Gebäudeverbot,
+Erzeugungsweg, plus die Ordnerstruktur oben in der Datei nachgezogen
+(`maps/` trägt jetzt auch `sprite_<id>.png`).
+
+### 🔴 Was noch offen ist
+
+- **AK 8 (`deploy.cmd content`) ist bewusst nicht ausgeführt.** Die README
+  sperrt `pokemon` explizit bis Phase 7 fertig ist (Episoden-Hintergründe,
+  Bildantworten und Figuren-Sprites fehlen noch) — ein Deploy jetzt würde eine
+  unfertige Welt auf den Server heben. Nachgeholt, sobald Phase 7 durch ist,
+  in einem Rutsch mit dessen Assets.
 - Nachtrag 5b (`world_config.json` auf zwei Gebietskarten umstellen) — bis
   dahin grenzen `route_1` und `vertania_city` im alten Schema direkt aneinander,
-  obwohl sie aus verschiedenen Leinwänden stammen. Sichtbarer Bruch, bekannt.
+  obwohl sie aus verschiedenen Leinwänden stammen, und die beiden neuen
+  Orts-Sprites hängen an keinem Kartenpunkt. Sichtbarer Bruch, bekannt.

@@ -22,15 +22,17 @@ Abarbeiten der jeweiligen Phase abhaken.
   stattdessen: eingeschlossene Flächen suchen, die **nicht voll deckend** sind
   (Schwelle Alpha ≥ 200). Findet im ganzen Bisasam genau die zwei echten
   Stellen im linken Auge, sonst nichts.
-- [ ] → Phase 6: Der Nachschärf-Prompt in `Upscale.json` ist auf Fotografie
+- [x] → Phase 6: Der Nachschärf-Prompt in `Upscale.json` ist auf Fotografie
   geschrieben („raw photograph, full-frame camera, natural sensor grain"). Für
   gezeichnete Karten muss er auf Illustration umgestellt werden, sonst zieht
   die Kachel-Stufe die Karte Richtung Foto. Eine erprobte Fassung liegt in der
-  Probe-Datei des Phase-6-Report-Backs.
-- [ ] → Phase 6: Knoten 970 in `Upscale.json` steht auf Bypass (`mode: 4`) —
+  Probe-Datei des Phase-6-Report-Backs. Erledigt: `DETAIL_PROMPT.txt` /
+  `DETAIL_PROMPT_SKY.txt` liegen mit Illustrationsstil vor, alle sechs Kacheln
+  sind damit erzeugt.
+- [x] → Phase 6: Knoten 970 in `Upscale.json` steht auf Bypass (`mode: 4`) —
   der dortige Prompt läuft nicht mit und muss nicht gepflegt werden. Die
   Zielgröße beim Zusammensetzen ist verdrahtet (`GetImageSize` auf die
-  SeedVR2-Ausgabe), nicht getippt.
+  SeedVR2-Ausgabe), nicht getippt. Rein informativ, keine offene Handlung.
 - [x] → Phase 6: `Upscale Map` ist erprobt. 3072×2048 (12 Kacheln) in rund vier
   Minuten, Kachelgrenzen bei 1:1-Sichtprüfung nahtlos, Stil bleibt Zeichnung.
   Zwei Dinge waren im gelieferten Stand offen und müssen vor jedem Lauf geprüft
@@ -47,6 +49,9 @@ Abarbeiten der jeweiligen Phase abhaken.
   das Verbotene ins Bild** (Krea 2 hat keinen Negativ-Zweig). Beim Formulieren
   der Sprite-Prompts nicht „no background" schreiben, sondern den gewünschten
   Zustand beschreiben. Details in `image-prompts/MAPS.md`.
-- [ ] → Phase 7: Weg C bringt zwei zusätzliche Sprites, die vorher niemand
+- [x] → Phase 7: Weg C bringt zwei zusätzliche Sprites, die vorher niemand
   bestellt hatte — Alabastia und Vertania City als Bauwerk-Sprites auf der
-  Weltenkarte. Stehen jetzt in Phase 6, nicht vergessen.
+  Weltenkarte. Stehen jetzt in Phase 6, nicht vergessen. Erledigt:
+  `sprite_alabastia.png` / `sprite_vertania_city.png` liegen unter
+  `data/themes/pokemon/maps/`. Verdrahtung in `world_config.json` folgt erst
+  mit Nachtrag 5b, dort einsetzen.

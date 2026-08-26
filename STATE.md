@@ -2,12 +2,24 @@
 
 **Aktiver Plan:** [docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/README.md)
 
-**Phase:** 6/8 — Assets erzeugen (in Arbeit). Plan jetzt 8 statt 7
-Phasen — neue **Phase 8 „Vertonung, vollständig statt nur Dialog"** angehängt
-(23.08.2026, Sascha): jede Frage und zwei feste Engine-Ansagen sollen eine
-echte Aufnahme statt Browser-Sprachausgabe bekommen. Rating heikel — echte
-Schema- und Komponenten-Arbeit, keine reine Content-Phase. Startet mit einer
-eigenen 🔴-Entscheidung (siehe Phasendatei).
+**Phase:** 6/8 — Assets erzeugen (Bildarbeit fertig, AK 8 bewusst offen). Plan
+jetzt 8 statt 7 Phasen — neue **Phase 8 „Vertonung, vollständig statt nur
+Dialog"** angehängt (23.08.2026, Sascha): jede Frage und zwei feste
+Engine-Ansagen sollen eine echte Aufnahme statt Browser-Sprachausgabe
+bekommen. Rating heikel — echte Schema- und Komponenten-Arbeit, keine reine
+Content-Phase. Startet mit einer eigenen 🔴-Entscheidung (siehe Phasendatei).
+
+✅ **Phase 6 ist bildseitig durch (26.08.2026):** alle 14 Stations-Sprites und
+die 2 neuen Orts-Sprites (Alabastia, Vertania City auf der Weltenkarte) liegen
+unter `data/themes/pokemon/maps/`, ADR-021 („Karten tragen kein Bauwerk")
+und `ASSET_REQUIREMENTS.md` Abschnitt 4 sind nachgezogen. Details, Ketten und
+die eine Design-Entscheidung (Sprites in Drei-Viertel-Ansicht statt streng
+top-down) im Report-Back von
+[phase-6](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/phase-6-assets-erzeugen.md).
+🔴 **AK 8 (`deploy.cmd content`) bewusst nicht ausgeführt** — `pokemon` bleibt
+bis Phase 7 gesperrt (Figuren-/Aufgabenbilder fehlen noch), sonst hängt eine
+unfertige Welt live. Nächster Schritt: **Phase 7 — Figuren- und
+Aufgabenbilder neu** (Rating: standard, `sonnet` reicht).
 
 🟡 **Welt umbenannt (23.08.2026, Sascha):** `pokemon_lesen` → `pokemon`, Fach
 erweitert auf Deutsch/Mathe/Sachkunde. Ordner, `theme_id`, `main_hub.json`
@@ -21,10 +33,9 @@ MapScreen/MainHub am Bildschirm öffnen, manuelles Zoomen/Ziehen nach dem
 Fokus prüfen, `prefers-reduced-motion` durchspielen — Details und Priorität
 in [phase-4](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/phase-4-auto-fokus.md).
 
-**Nächster Schritt:** **Alle sechs Kartenkacheln liegen** — vier Gebietskacheln,
-Weltenkarte und Planetenkarte, alle 1024×1024 und nachgeschärft. Als nächstes
-die **14 Stations-Sprites und 2 Orts-Sprites**, dann ADR-021 und
-`ASSET_REQUIREMENTS.md`.
+**Nächster Schritt:** Phase 6 ist bildseitig abgeschlossen (alle sechs
+Kartenkacheln, alle 16 Sprites, ADR-021, `ASSET_REQUIREMENTS.md`). Als
+nächstes **Phase 7 — Figuren- und Aufgabenbilder neu**.
 
 🔴 **Der Karten-Ablauf ist am 26.08.2026 zweimal grundlegend umgebaut worden**
 (beide Male nach einem Befund von Sascha am Bildschirm). Verbindlich ist jetzt
