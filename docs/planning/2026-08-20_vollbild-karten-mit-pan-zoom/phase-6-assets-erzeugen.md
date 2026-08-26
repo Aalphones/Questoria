@@ -269,9 +269,61 @@ beschreiben Bauwerke als Landmarken, was Weg C ausschließt.
   tatsächlich benutzten Text — vor dem Ansehen des Bildes dort nachlesen, ob
   der eigene Prompt drinsteht.
 
+### Gebietskarte Alabastia liegt (26.08.2026)
+
+Die erste der vier Leinwände ist durch. Ausgeliefert:
+`data/themes/pokemon/maps/map_alabastia.webp` und `map_route_1.webp`, beide
+exakt 1024×1024. Quellleinwand:
+`data/_authoring/map-canvases/gebiet_alabastia_2048x1024.png`.
+
+🟡 **`map_route_1.webp` wurde überschrieben** — an dem Namen lag die alte
+16:9-Karte aus dem Bestand. Das ist die Bestellung aus Phase 5, kein Versehen;
+der alte Stand liegt nur noch in der Drive-Versionierung.
+
+**Drei Vorgaben des Plans haben in der Praxis nicht getragen** — alle drei sind
+in [`image-prompts/MAPS.md`](../../../data/_authoring/image-prompts/MAPS.md)
+nachgezogen, damit die nächsten drei Leinwände nicht dieselbe Runde drehen:
+
+1. **Es gibt kein 2:1.** Der `ResolutionSelector` kennt nur 1:1, 2:3, 3:2, 3:4,
+   4:3, 9:16, 16:9, 21:9 — eine 2×1-Kachel-Leinwand ist aber exakt 2:1. Weg:
+   in 16:9 entwerfen, **nach** dem Hochskalieren mittig auf die Zielhöhe
+   stutzen. Betrifft nur Alabastia; Vertania (2×2) und die beiden 8192er sind
+   quadratisch.
+2. **Die Viertel-Regel hat eine Untergrenze.** Für Alabastia hätte sie einen
+   Entwurf von 512×288 ergeben (0,14 MP). Zwei Läufe dort haben erfundene
+   Strukturen und eine harte Farbkante mitten im Bild geliefert. Ab 1024×576
+   (0,56 MP) war es sofort sauber. Der Weg für kleine Karten ist deshalb:
+   in 1024er-Breite entwerfen, ×4 hochskalieren, am Ende auf die Zielgröße
+   herunterrechnen. Herunterrechnen **nach** dem Nachschärfen kostet keine
+   Schärfe — der Warnhinweis im Abschnitt „Auflösungsvorgaben" meint den
+   anderen Fall (groß erzeugen *statt* hochskalieren) und bleibt gültig.
+3. **Eigene Verbotssätze holen genau das ins Bild, was sie fernhalten sollen.**
+   Lauf 1 hatte eine hölzerne Uferbefestigung am Strand. Der Nachbesserungs-
+   versuch „no retaining walls, no wooden planks, no boardwalks, no piers, no
+   seawalls" hat die Bretterwand in Lauf 3 quer durchs Bild und um den Teich
+   gezogen — Krea 2 fährt ohne Führung und hat keinen Negativ-Zweig, jedes
+   Wort ist eine Bestellung. Erst die **positive** Umformulierung („every edge
+   soft, organic and grown rather than made") war die Lösung. Die
+   Verbotszeilen der erprobten Vorlage selbst bleiben unangetastet.
+
+**Ablage der Leinwände geklärt:** `data/_authoring/` liegt in Git und trug
+bisher nur Markdown und drei Skripte. Die Leinwände gehen deshalb nach
+`data/_authoring/map-canvases/` und der Ordner steht in `.gitignore` — AK 7
+greift („liegt unter `_authoring/`", `deploy.cmd content` spart `_authoring/`
+ohnehin aus), das Repo bleibt schlank. 🟡 Preis: die Leinwände liegen nur
+lokal, nicht im Drive-Backup. Regenerierbar, aber die beiden 8192er kosten
+je knapp eine Stunde.
+
+🟡 **Unsicherste Stelle, gehört an den Bildschirm:** Über die fertige Leinwand
+laufen **feine gerade Hilfslinien** im Abstand der FLUX.2-Nachschärf-Kacheln —
+etwa ein Pixel breit, kontrastarm, im Gras zu sehen. Sie sind nicht die
+Ausliefer-Naht (die läuft sauber durch, die Erdkante geht ohne Bruch
+hindurch), sondern die inneren Kachelgrenzen des Nachschärfens. Ob sie am
+Gerät des Kindes auffallen, kann nur die Sichtprüfung entscheiden.
+
 ### Was noch offen ist
 
-- Die vier Batch-Leinwände (Gebietskarte Alabastia → Vertania → Weltenkarte →
-  Planetenkarte), jeweils mit dem um die Draufsicht ergänzten Prompt.
+- Drei Batch-Leinwände: Gebietskarte Vertania (2048×2048) → Weltenkarte
+  (8192×8192) → Planetenkarte (8192×8192).
 - 14 Stations-Sprites + 2 Orts-Sprites.
 - ADR-021 und `ASSET_REQUIREMENTS.md` Abschnitt 4.

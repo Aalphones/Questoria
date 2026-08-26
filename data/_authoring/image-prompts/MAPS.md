@@ -88,6 +88,61 @@ density across the whole square frame. No border, no frame, no legend, no
 compass rose, no text and no labels.
 ```
 
+### Die Vorlage nicht um eigene Verbote erweitern
+
+Krea 2 fährt ohne Führung (Stärke 1.0) und hat deshalb **keinen** Negativ-Zweig —
+jedes Wort im Prompt ist eine Bestellung, auch das hinter einem „no". Die
+Verbotszeilen in der Vorlage oben sind erprobt und bleiben so stehen; **eigene
+zusätzliche Verbotssätze holen dagegen genau das ins Bild, was sie fernhalten
+sollen.**
+
+Belegt am 26.08.2026 an der Gebietskarte Alabastia: Lauf 1 hatte eine
+hölzerne Uferbefestigung am Strand. Der Nachbesserungsversuch — ein Satz
+„no retaining walls, no wooden planks, no boardwalks, no piers, no seawalls" —
+hat die Bretterwand in Lauf 3 quer durchs ganze Bild und um den Teich herum
+gezogen. Erst als der Satz durch eine **positive** Beschreibung ersetzt wurde
+(„every single edge soft, organic and grown rather than made"; „the grass thins
+gradually into a pale strip of loose sand"), war das Holz weg.
+
+Merksatz: **eine unerwünschte Sache wird beschrieben, nicht verboten** — was an
+ihrer Stelle stehen soll.
+
+### Wie klein darf der Entwurf sein
+
+Die Viertel-Regel unten stößt bei kleinen Karten an eine Untergrenze. Eine
+Gebietskarte aus 2×1 Kacheln ergäbe nach ihr einen Entwurf von 512×288, also
+0,14 Megapixel — dort erfindet das Modell Strukturen, um die Fläche zu füllen,
+und setzt harte Farbkanten mitten ins Bild. **Unter etwa 0,5 Megapixeln
+(1024×576) nicht entwerfen.** Ist die Zielleinwand kleiner als das Vierfache
+davon, lieber in 1024er-Breite entwerfen, um Faktor 4 hochskalieren und das
+Ergebnis am Ende auf die Zielgröße herunterrechnen — herunterrechnen nach dem
+Nachschärfen kostet keine Schärfe, ein zu kleiner Entwurf kostet die
+Komposition.
+
+### Hochskalieren (Workflow `Upscale Map`)
+
+Drei Handgriffe vor jedem Lauf, sonst läuft er falsch durch:
+
+- **Upscale-Modell wählen.** `UpscaleModelLoader` (Knoten 978) kommt leer aus
+  dem gespeicherten Stand. Wert: `4x_foolhardy_Remacri.pth`.
+- **`GetImageSize` (Knoten 937) muss am hochskalierten Bild hängen**, also am
+  Ausgang von `ImageUpscaleWithModel` (977) — im gespeicherten Stand hängt es
+  am Eingangsbild, und die Kacheln werden dann auf die *Eingangs*größe
+  zusammengesetzt. Kontrolle: das Ergebnis muss viermal so breit sein wie der
+  Entwurf.
+- **Eingangsbild hochladen** nach `POST /upload/image`, dann den Dateinamen in
+  `LoadImage` (974) setzen.
+
+Knoten 970 steht auf Bypass — der Prompt dort läuft nicht mit und muss nicht
+gepflegt werden.
+
+### Es gibt kein 2:1
+
+Der `ResolutionSelector` kennt nur 1:1, 2:3, 3:2, 3:4, 4:3, 9:16, 16:9 und 21:9.
+Eine Leinwand aus 2×1 Kacheln ist aber exakt 2:1. Weg: in 16:9 entwerfen und
+**nach** dem Hochskalieren mittig auf die Zielhöhe stutzen. Das Gelände läuft
+laut Vorlage ohnehin flach bis an alle vier Ränder, der Schnitt kostet nichts.
+
 ### Bedienung (Workflow `Krea2 Txt2Img`)
 
 Zwei Fallen, die stumm das Falsche tun:

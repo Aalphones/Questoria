@@ -21,9 +21,24 @@ MapScreen/MainHub am Bildschirm öffnen, manuelles Zoomen/Ziehen nach dem
 Fokus prüfen, `prefers-reduced-motion` durchspielen — Details und Priorität
 in [phase-4](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/phase-4-auto-fokus.md).
 
-**Nächster Schritt:** Die vier Batch-Leinwände erzeugen, Reihenfolge
-Gebietskarte Alabastia → Gebietskarte Vertania → Weltenkarte → Planetenkarte.
-Danach zerschneiden, dann die 14 Stations-Sprites und 2 Orts-Sprites.
+**Nächster Schritt:** Die **Gebietskarte Alabastia ist fertig und
+zerschnitten** (`map_alabastia.webp`, `map_route_1.webp`). Als nächstes die
+Gebietskarte Vertania (2048×2048), danach Weltenkarte und Planetenkarte (je
+8192×8192, je knapp eine Stunde), dann die 14 Stations-Sprites und 2
+Orts-Sprites.
+
+🟡 **Drei Plan-Vorgaben haben in der Praxis nicht getragen** und sind in
+[`image-prompts/MAPS.md`](data/_authoring/image-prompts/MAPS.md) korrigiert —
+Herleitung im Report-Back von Phase 6: der `ResolutionSelector` kennt kein 2:1;
+die Viertel-Regel hat eine Untergrenze bei 1024×576; und **eigene Verbotssätze
+im Prompt holen genau das ins Bild, was sie fernhalten sollen** (Krea 2 hat
+keinen Negativ-Zweig — die Bretterwand am Strand kam aus dem Satz, der sie
+verbieten sollte).
+
+🟡 **Karten-Leinwände liegen unter `data/_authoring/map-canvases/` und sind
+gitignored** — `data/_authoring/` trägt sonst nur Markdown und Skripte, eine
+8192er Leinwand gehört nicht in die Repo-Historie. Preis: nur lokal, kein
+Drive-Backup.
 
 ✅ **Schritt 0 ist durch, das Stil-Rezept steht** (26.08.2026, von Sascha
 abgenommen): echte Draufsicht, keine Perspektive, keine Bauwerke. Der erprobte

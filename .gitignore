@@ -29,6 +29,11 @@ data/_authoring/image-tools/.venv/
 data/_authoring/image-tools/__pycache__/
 data/_authoring/image-tools/roh/
 
+# Karten-Leinwaende: Quellartefakt der Kachelkarten, aus dem die Ausliefer-
+# Kacheln geschnitten werden. Bleiben lokal — eine 8192er Leinwand ist ein
+# dreistelliger Megabyte-Betrag und gehoert nicht in die Repo-Historie.
+data/_authoring/map-canvases/
+
 # OS / editor
 .DS_Store
 Thumbs.db

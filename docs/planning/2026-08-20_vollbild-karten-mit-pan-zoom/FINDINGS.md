@@ -42,6 +42,11 @@ Abarbeiten der jeweiligen Phase abhaken.
   Gebietskarte 1 auf Gebietskarte 2 über die Weltenkarte. Naheliegend, aber
   unbelegt: Vertania City erscheint auf der Weltenkarte, sobald `route_1` durch
   ist. Vor der Umsetzung gegen den echten Code prüfen.
+- [ ] → Phase 7: Sprites laufen über denselben `Krea2 Txt2Img` wie die Karten.
+  Dort gilt seit dem 26.08.2026 belegt: **eigene Verbotssätze im Prompt holen
+  das Verbotene ins Bild** (Krea 2 hat keinen Negativ-Zweig). Beim Formulieren
+  der Sprite-Prompts nicht „no background" schreiben, sondern den gewünschten
+  Zustand beschreiben. Details in `image-prompts/MAPS.md`.
 - [ ] → Phase 7: Weg C bringt zwei zusätzliche Sprites, die vorher niemand
   bestellt hatte — Alabastia und Vertania City als Bauwerk-Sprites auf der
   Weltenkarte. Stehen jetzt in Phase 6, nicht vergessen.
