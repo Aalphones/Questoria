@@ -16,6 +16,7 @@ import { seededRandom, shuffle } from '../../../services/variation';
 import { ImageSlot } from '../../../ui/image-slot/image-slot';
 import { TaskCard } from '../../../ui/task-card/task-card';
 import { EpisodeRun } from '../../episode/episode-run';
+import { questionAudioUrlOf } from '../question-audio';
 import { AnswerState, AnswerView } from './multiple-choice.types';
 
 const LETTER_KEYS = ['A', 'B', 'C', 'D'] as const;
@@ -83,6 +84,10 @@ export class MultipleChoice {
 
   protected readonly solved = computed<boolean>(() =>
     this.pickedIndexes().includes(this.config().correct_index),
+  );
+
+  protected readonly questionAudioUrl = computed<string | undefined>(() =>
+    questionAudioUrlOf(this.content, this.context().themeId, this.config().question_audio_path),
   );
 
   protected readonly questionText = computed<string>(() => {

@@ -9,7 +9,11 @@ import {
   viewChild,
 } from '@angular/core';
 
+import { ContentService } from '../../../services/content.service';
 import { NarrationService } from '../../../services/narration.service';
+
+/** Die Ansage ist ein fester Engine-Satz, keine Content-Zeile — eine Aufnahme reicht für jede Welt. */
+const QUESTION_AUDIO_FILE = 'erzaehler_resume_prompt.mp3';
 
 const QUESTION = 'Du warst hier schon mittendrin! Willst du weiterspielen oder von vorn anfangen?';
 
@@ -30,12 +34,14 @@ const QUESTION = 'Du warst hier schon mittendrin! Willst du weiterspielen oder v
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResumePrompt {
+  private readonly content = inject(ContentService);
   private readonly narration = inject(NarrationService);
 
   readonly resumeRun = output<void>();
   readonly restartRun = output<void>();
 
   protected readonly question = QUESTION;
+  protected readonly questionAudioUrl = this.content.engineAudioUrl(QUESTION_AUDIO_FILE);
 
   private readonly dialog = viewChild.required<ElementRef<HTMLDialogElement>>('dialog');
 
@@ -45,7 +51,7 @@ export class ResumePrompt {
       this.dialog().nativeElement.showModal();
 
       if (this.narration.mode() === 'listen') {
-        this.narration.speak(QUESTION);
+        this.narration.speak(QUESTION, this.questionAudioUrl);
       }
     });
   });

@@ -2,9 +2,11 @@ import { ChangeDetectionStrategy, Component, computed, inject, input, signal } f
 
 import { TextInputConfig } from '../../../models/content.types';
 import { EventContext } from '../../../models/event-runtime.types';
+import { ContentService } from '../../../services/content.service';
 import { NarrationService } from '../../../services/narration.service';
 import { TaskCard } from '../../../ui/task-card/task-card';
 import { EpisodeRun } from '../../episode/episode-run';
+import { questionAudioUrlOf } from '../question-audio';
 import { matchesAcceptedAnswer } from './text-input.types';
 
 /**
@@ -22,6 +24,7 @@ import { matchesAcceptedAnswer } from './text-input.types';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TextInput {
+  private readonly content = inject(ContentService);
   private readonly narration = inject(NarrationService);
   private readonly run = inject(EpisodeRun);
 
@@ -32,6 +35,10 @@ export class TextInput {
   protected readonly solved = signal(false);
   /** Nur der erste Prüf-Versuch entscheidet über den Stern. */
   private readonly firstTryCorrect = signal<boolean | null>(null);
+
+  protected readonly questionAudioUrl = computed<string | undefined>(() =>
+    questionAudioUrlOf(this.content, this.context().themeId, this.config().question_audio_path),
+  );
 
   protected readonly questionText = computed<string>(() => {
     const config = this.config();

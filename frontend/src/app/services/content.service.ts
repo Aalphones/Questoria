@@ -76,6 +76,11 @@ export class ContentService {
     return `/content/themes/${themeId}/${file}`;
   }
 
+  /** Feste Engine-Ansage, unabhängig von jeder Welt (Phase 8). */
+  engineAudioUrl(file: string): string {
+    return `/content/audio/engine/${file}`;
+  }
+
   hubAssetUrl(file: string): string {
     return `/content/hub/${file}`;
   }

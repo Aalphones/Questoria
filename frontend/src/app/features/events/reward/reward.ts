@@ -2,9 +2,13 @@ import { ChangeDetectionStrategy, Component, effect, inject, input, untracked } 
 
 import { RewardConfig } from '../../../models/content.types';
 import { EventContext } from '../../../models/event-runtime.types';
+import { ContentService } from '../../../services/content.service';
 import { NarrationService } from '../../../services/narration.service';
 import { ReadAloudButton } from '../../../ui/read-aloud-button/read-aloud-button';
 import { EpisodeRun } from '../../episode/episode-run';
+
+/** Die Erfolgs-Nachricht ist ein fester Engine-Satz, keine Content-Zeile — eine Aufnahme reicht für jede Welt. */
+const MESSAGE_AUDIO_FILE = 'erzaehler_reward_done.mp3';
 
 const MESSAGE = 'Du hast alles geschafft — super gemacht!';
 
@@ -22,6 +26,7 @@ const MESSAGE = 'Du hast alles geschafft — super gemacht!';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Reward {
+  private readonly content = inject(ContentService);
   private readonly narration = inject(NarrationService);
   private readonly run = inject(EpisodeRun);
 
@@ -29,6 +34,7 @@ export class Reward {
   readonly context = input.required<EventContext>();
 
   protected readonly message = MESSAGE;
+  protected readonly messageAudioUrl = this.content.engineAudioUrl(MESSAGE_AUDIO_FILE);
 
   /** Wird einmal beim Erscheinen gemerkt — Meilenstein 5 vergibt die Karte, hier nur der Haken. */
   private readonly rememberCard = effect(() => {
@@ -41,7 +47,7 @@ export class Reward {
   private readonly speakMessage = effect(() => {
     untracked(() => {
       if (this.narration.mode() === 'listen') {
-        this.narration.speak(MESSAGE);
+        this.narration.speak(MESSAGE, this.messageAudioUrl);
       }
     });
   });

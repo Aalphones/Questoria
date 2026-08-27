@@ -1,13 +1,23 @@
 ---
 name: vertonung
-description: Dialogzeilen einer Questoria-Welt lokal vertonen — besetzen, Stimmprobe, Stapellauf mit Orpheus (deutsch) oder Kokoro, mp3 und Rückverweis ins Content-JSON. TRIGGER wenn Sprachausgabe, Sprecher, Stimmen oder Audio für eine Welt gebraucht werden — auch bei "vertone welt X", "stimmen für die Figuren", "audio erzeugen", "orpheus", "kokoro", "sprachausgabe". SKIP für Bilder (→ krea2-bilder, flux2-bilder), für Musik und Geräusche (nicht abgedeckt) und für reines Textschreiben ohne Erzeugung.
+description: Alles Gesprochene einer Questoria-Welt lokal vertonen — Dialoge, Ansagen und Fragetexte — besetzen, Stimmprobe, Stapellauf mit Orpheus (deutsch) oder Kokoro, mp3 und Rückverweis ins Content-JSON. TRIGGER wenn Sprachausgabe, Sprecher, Stimmen oder Audio für eine Welt gebraucht werden — auch bei "vertone welt X", "stimmen für die Figuren", "audio erzeugen", "orpheus", "kokoro", "sprachausgabe". SKIP für Bilder (→ krea2-bilder, flux2-bilder), für Musik und Geräusche (nicht abgedeckt) und für reines Textschreiben ohne Erzeugung.
 ---
 
-# Vertonung — aus Dialogtexten werden Sprachdateien
+# Vertonung — aus Texten werden Sprachdateien
 
-Die Skripte unter `data/_authoring/voice-tools/` lesen die Episodendateien einer Welt, erzeugen pro Dialogzeile eine Audiodatei am richtigen Ort mit dem richtigen Namen und tragen den Verweis `audio_path` zurück ins Content-JSON. Kein Copy-Paste von Text, keine Handbenennung.
+Die Skripte unter `data/_authoring/voice-tools/` lesen die Content-Dateien einer Welt, erzeugen pro gesprochener Zeile eine Audiodatei am richtigen Ort mit dem richtigen Namen und tragen den Verweis zurück ins Content-JSON. Kein Copy-Paste von Text, keine Handbenennung.
 
-**Ansagen zählen mit.** Neben den Dialogzeilen sammelt das Werkzeug auch die gesprochenen Ansagen der Spiel-Events ein — aktuell der `intro`-Text von `pokemon_catch`. Sie kommen aus dem Off, laufen deshalb immer über den Besetzungseintrag `erzaehler` und schreiben ihren Verweis nach `intro_audio_path` statt nach `audio_path`. Welche Eventtypen eine Ansage tragen, steht in `voice_lines.py` unter `ANNOUNCEMENT_EVENT_FIELDS`; ein neuer Typ mit Ansage braucht dort eine Zeile und sonst nichts. Im Trockenlauf stehen sie als Sprecher „Ansage" mit eigener Nummerierung.
+**Drei Arten von Zeilen, ein Lauf.** Was das Werkzeug einsammelt und wohin der Rückverweis geht:
+
+| Art | Woher | Sprecher | Rückverweis |
+|---|---|---|---|
+| Dialogzeile | `episodes/*.json`, `dialog`-Events | die Figur (aus dem Sprite-Namen) | `audio_path` |
+| Ansage eines Spiel-Events | `episodes/*.json`, `config` des Events | `erzaehler` | z. B. `intro_audio_path` |
+| **Fragetext einer Aufgabe** | `events/*.json`, je Variante bzw. Pool-Eintrag | `erzaehler` | `question_audio_path` |
+
+Ansagen und Fragen kommen aus dem Off — sie hängen an keiner Bühnenfigur und laufen deshalb immer über den Besetzungseintrag `erzaehler`. Jede Art wird eigen durchnummeriert.
+
+Erweiterungspunkte in `voice_lines.py`: `ANNOUNCEMENT_EVENT_FIELDS` (welcher Eventtyp trägt eine Ansage, in welchen Feldern) und `QUESTION_EVENT_TYPES` (welche Aufgabentypen haben eine Frage). Ein neuer Eventtyp braucht dort eine Zeile und sonst nichts.
 
 **Deutsch heißt Orpheus.** Kokoro kann offiziell kein Deutsch — es bleibt für fremdsprachige Zeilen und schnelle Rohfassungen. Die ganze Herleitung steht in `data/_authoring/voice-tools/README.md`.
 
@@ -41,7 +51,9 @@ PYTHONIOENCODING=utf-8 ./.venv-orpheus/Scripts/python.exe generate_orpheus.py --
 PYTHONIOENCODING=utf-8 ./.venv-orpheus/Scripts/python.exe generate_orpheus.py --theme <welt> --dry-run
 ```
 
-Die Ausgabe zeigt jede Dialogzeile mit Episode, laufender Nummer, Sprechername und **der Stimme in eckigen Klammern**. Das ist der eigentliche Befund: Steht überall dieselbe Stimme, ist keine Figur besetzt und alles fällt auf `_default`. Genau so sah es zuletzt für `pokemon` (bis 23.08.2026 `pokemon_lesen`) aus — 16 Zeilen, viermal Julian, weil Professor Eich, Bisasam, Pikachu und Rattfratz keinen Eintrag haben.
+Eingesammelt wird **alles Gesprochene einer Welt**, aus zwei Ordnern: Dialogzeilen und Event-Ansagen aus `episodes/`, **Fragetexte aus `events/`**. Fragen erscheinen als Sprecher `Frage`, Ansagen als `Ansage` — beide werden über den Besetzungseintrag `erzaehler` gesprochen, weil sie an keiner Bühnenfigur hängen. Bei einer `pool`-Variante zählt **jeder Pool-Eintrag** als eigene Zeile: jeder hat einen eigenen Fragetext.
+
+Die Ausgabe zeigt jede Zeile mit Quelldatei, laufender Nummer, Sprechername und **der Stimme in eckigen Klammern**. Das ist der eigentliche Befund: Steht überall dieselbe Stimme, ist keine Figur besetzt und alles fällt auf `_default`. Genau so sah es zuletzt für `pokemon` (bis 23.08.2026 `pokemon_lesen`) aus — 16 Zeilen, viermal Julian, weil Professor Eich, Bisasam, Pikachu und Rattfratz keinen Eintrag haben.
 
 ### 2. Besetzen
 
@@ -82,6 +94,23 @@ PYTHONIOENCODING=utf-8 ./.venv-orpheus/Scripts/python.exe generate_orpheus.py --
 
 Ein einzelner Fehlschlag stoppt den Stapel nicht: die Zeile steht am Ende in der Fehlerliste, der Rest läuft durch.
 
+**Fragen getrennt fahren, wenn die Figuren noch nicht abgenommen sind.** Alle Fragen und Ansagen laufen über `erzaehler`, also trennt `--character erzaehler` sie sauber vom Rest:
+
+```bash
+# Nur die Fragen und Ansagen einer Welt
+PYTHONIOENCODING=utf-8 ./.venv-orpheus/Scripts/python.exe generate_orpheus.py --theme <welt> --character erzaehler --mp3
+```
+
+### 4b. Die festen Engine-Ansagen (einmalig, nicht pro Welt)
+
+Der Fortsetzen-Dialog und die Erfolgs-Nachricht am Episodenende gehören keiner Welt — sie stehen als Konstanten im Frontend. Ein eigenes Skript vertont sie:
+
+```bash
+PYTHONIOENCODING=utf-8 ./.venv-orpheus/Scripts/python.exe generate_engine_lines.py --mp3
+```
+
+Das läuft **einmal für die ganze Anwendung**, nicht je Welt, und schreibt nach `data/audio/engine/`. Ändert sich einer der beiden Sätze im Frontend, muss er in `generate_engine_lines.py` mitgeändert und der Lauf mit `--force` wiederholt werden — die Texte stehen an zwei Stellen, das Skript nennt die Fundstellen im Frontend.
+
 ### 5. Kontrollieren
 
 Der Lauf meldet „Erzeugt / Übersprungen / Fehlgeschlagen" und wie viele Episodendateien einen neuen `audio_path` bekommen haben. Danach:
@@ -108,10 +137,14 @@ Werte, die belegt sind und **nicht** angefasst werden sollten: Temperatur 0.6, t
 ## Wo die Dateien landen
 
 ```
-data/themes/<welt>/audio/voices/<character_id>_<episode_id>_<nnn>.mp3
+data/themes/<welt>/audio/voices/<character_id>_<episode_id>_<nnn>.mp3     Dialog und Ansage
+data/themes/<welt>/audio/voices/erzaehler_frage_<event_id>_<nnn>.mp3      Fragetext
+data/audio/engine/erzaehler_<name>.mp3                                    feste Engine-Ansage
 ```
 
-Die laufende Nummer zählt **alle** Dialogzeilen der Episode durch, über alle `dialog`-Events hinweg — nicht pro Event neu. Verbindliche Vorgaben: `data/_authoring/ASSET_REQUIREMENTS.md` Abschnitt 3.
+Fragen tragen `frage_` im Namen, weil `event_id` und `episode_id` in getrennten Namensräumen leben — ohne das Stück könnten zwei verschiedene Zeilen dieselbe Datei treffen und die zweite die erste überschreiben.
+
+Die laufende Nummer zählt **alle** Dialogzeilen der Episode durch, über alle `dialog`-Events hinweg — nicht pro Event neu. Bei Fragen zählt sie alle Fragetexte **einer Event-Datei** durch, über alle Lernstufen und Pool-Einträge hinweg. **Deshalb verschiebt das Einfügen eines Pool-Eintrags in der Mitte alle folgenden Nummern** — dann einmal mit `--force` durchlaufen, sonst zeigt der Rückverweis auf die Aufnahme der Nachbarfrage. Verbindliche Vorgaben: `data/_authoring/ASSET_REQUIREMENTS.md` Abschnitt 3.
 
 `data/themes/` liegt auf Google Drive hinter einer Junction — die Dateien landen im Backup, aber nicht in Git.
 

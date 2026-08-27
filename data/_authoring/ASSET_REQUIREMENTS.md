@@ -37,10 +37,15 @@ Komposition auseinander.
 │   └── <slug>.png                  ← Spielgegenstände (Ball, später Netz, Lasso), 512 × 512 px
 ├── audio/
 │   └── voices/
-│       └── <character_id>_<episode_id>_<line_nr>.mp3
+│       ├── <character_id>_<episode_id>_<line_nr>.mp3    ← Dialogzeile, Event-Ansage
+│       └── erzaehler_frage_<event_id>_<line_nr>.mp3     ← Fragetext einer Aufgabe
 ├── episodes/                       ← Eventlisten; Dialoge stecken hier drin
 └── events/                         ← Aufgaben-Events mit Lernstufen-Varianten
 ```
+
+**Weltunabhängig, deshalb außerhalb:** die zwei festen Ansagen der Engine
+(Fortsetzen-Dialog, Erfolgs-Nachricht) liegen unter `data/audio/engine/`. Sie
+gehören keiner Welt — läge eine davon in einer, fehlte sie in jeder anderen.
 
 Kein eigener `dialogues/`-Ordner — Dialoge sind Events innerhalb der
 Episodendatei, sonst nirgends. Kein eigener `characters/`-Stammdatenordner — Sprite,
@@ -105,8 +110,9 @@ Nebenfigur auf Vorrat zu bestellen wäre Aufwand ohne Gegenwert.
 | Format | `.mp3` (bevorzugt zum Ausliefern) oder `.wav` |
 | Abtastrate | **24 kHz, mono** — die Ausgabe der eingesetzten Sprachmodelle |
 | Bitrate | 96 kbps mp3 reicht für 24 kHz mono aus |
-| Dateiname | `<character_id>_<episode_id>_<laufende_nummer>.mp3`, Nummer dreistellig |
-| Pflicht? | optional pro Dialogzeile — fehlt `audio_path`, liest die Engine die Zeile über die Sprachausgabe des Geräts vor |
+| Dateiname Dialog/Ansage | `<character_id>_<episode_id>_<laufende_nummer>.mp3`, Nummer dreistellig |
+| Dateiname Fragetext | `erzaehler_frage_<event_id>_<laufende_nummer>.mp3` |
+| Pflicht? | technisch optional — fehlt der Rückverweis, liest die Engine den Text über die Sprachausgabe des Geräts vor. **Eine fertige Welt hat überall eine Aufnahme**, die Gerätestimme ist der Notnagel, nicht der Normalfall |
 
 Die `character_id` steckt nicht in der Dialogzeile, sondern im Sprite-Namen:
 aus `shanks_neutral.png` wird `shanks`. Die laufende Nummer zählt alle
@@ -114,6 +120,24 @@ Dialogzeilen der Episode durch, bei 001 beginnend — über **alle**
 `dialog`-Events hinweg, nicht pro Event neu. Hat eine Episode zwei Dialoge mit
 je zwei Zeilen, sind das die Nummern 001 bis 004. Sonst kollidieren die
 Dateinamen innerhalb einer Episode.
+
+**Drei Arten von Aufnahmen, drei Rückverweise.** Was wohin gehört, steht in der
+Schema-Referenz Abschnitt 6 als Tabelle; hier nur die Ablage:
+
+| Art | Ordner | Rückverweis |
+|---|---|---|
+| Dialogzeile, Event-Ansage | `data/themes/<welt>/audio/voices/` | `audio_path` bzw. `intro_audio_path` |
+| Fragetext einer Aufgabe | `data/themes/<welt>/audio/voices/` | `question_audio_path` (in der Event-Datei) |
+| Feste Engine-Ansage | `data/audio/engine/` | keiner — der Dateiname steht als Konstante im Frontend |
+
+Fragen tragen `frage_` im Namen, weil `event_id` und `episode_id` in getrennten
+Namensräumen leben: ohne das Stück könnten zwei verschiedene Zeilen dieselbe
+Datei treffen, und die zweite überschriebe die erste.
+
+🟡 **Die Fragen-Nummer zählt Positionen, keine Identitäten.** Wird ein
+Pool-Eintrag später **in der Mitte** einer Event-Datei eingefügt, verschieben
+sich alle folgenden Nummern und jeder Rückverweis zeigt auf die Nachbarfrage.
+Gegenmittel ist ein `--force`-Lauf über die betroffene Welt.
 
 **44.1 kHz ergibt hier nichts.** Beide eingesetzten Sprachmodelle liefern
 24 kHz; Hochrechnen fügt keine Information hinzu, nur Dateigröße. Aufwendig

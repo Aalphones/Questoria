@@ -17,6 +17,7 @@ import { seededRandom, shuffle } from '../../../services/variation';
 import { ImageSlot } from '../../../ui/image-slot/image-slot';
 import { TaskCard } from '../../../ui/task-card/task-card';
 import { EpisodeRun } from '../../episode/episode-run';
+import { questionAudioUrlOf } from '../question-audio';
 import { ImageTileView, SlotState, WordCardView } from './word-match.types';
 
 /** Wie lange ein falsch gelegtes Paar rot stehen bleibt, bevor beides wieder aufgeht. */
@@ -90,6 +91,10 @@ export class WordMatch {
 
   protected readonly solved = computed<boolean>(
     () => this.matchedPairs().length === this.config().pairs.length,
+  );
+
+  protected readonly questionAudioUrl = computed<string | undefined>(() =>
+    questionAudioUrlOf(this.content, this.context().themeId, this.config().question_audio_path),
   );
 
   protected readonly questionText = computed<string>(() => {

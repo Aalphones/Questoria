@@ -436,6 +436,25 @@ die Engine `config.ref` und die Variante der aktiven Lernstufe auf, bevor die
 Komponente etwas sieht; die Komponente selbst kennt weder `ref` noch
 Lernstufen.
 
+**Jede Frage kann eine Aufnahme tragen** — `question_audio_path`, optional, neben
+`question`/`question_simple`. Die Regel gilt für alle sechs Aufgabentypen
+(5.3–5.8) gleich und steht deshalb hier statt sechsmal einzeln:
+
+- Der Wert ist der **volle Unterpfad ab dem Welt-Ordner**, also
+  `audio/voices/erzaehler_frage_reim_1_003.mp3` — genau wie `audio_path` bei
+  Dialogzeilen. Nur der Dateiname allein funktioniert nicht.
+- Bei einer `pool`-Variante trägt **jeder Pool-Eintrag** sein eigenes Feld: jeder
+  hat einen eigenen Fragetext, also braucht jeder eine eigene Aufnahme.
+- Das Feld wird **nicht von Hand gepflegt.** `generate_orpheus.py` erzeugt die
+  Aufnahmen und schreibt den Pfad selbst zurück (Anleitung: Skill `vertonung`).
+- Fehlt das Feld, liest das Gerät die Frage mit seiner eigenen Stimme vor. Das
+  ist der Rückfall, nicht das Ziel — eine fertige Welt hat überall eine Aufnahme.
+
+**`generated`-Varianten können keine Aufnahme tragen** und sind deshalb für
+Fragetexte nicht mehr zulässig: Der Text entsteht erst beim Spielen, eine feste
+Aufnahme kann ihn nicht abdecken. Wer Variation will, nimmt `pool` mit mehreren
+festen Fragen (siehe „`pool` und `generated`" weiter unten).
+
 ### 5.0 Verbindliche Typ-Tabelle
 
 Diese Tabelle ist der einzige Ort, an dem Eventtyp ↔ Komponente zugeordnet wird.
@@ -1013,8 +1032,24 @@ es zwei Modi, die das Kind (oder ein Elternteil) jederzeit umschalten kann:
 - `image` bei Multiple-Choice-Antworten ist im Vorlesemodus **die einzige
   Information, die ein nicht-lesendes Kind bekommt.** Fehlt es, sieht das Kind
   eine leere Fläche mit einer Ziffer und rät.
-- Vorproduzierte Sprachaufnahmen (`audio_path`) gehen immer vor der
-  automatischen Sprachausgabe. Fehlt die Datei, spricht das Gerät selbst.
+- Vorproduzierte Sprachaufnahmen gehen immer vor der automatischen
+  Sprachausgabe. Fehlt die Datei, spricht das Gerät selbst.
+
+**Wo überall eine Aufnahme hingehört** — der Anspruch ist, dass die Gerätestimme
+in einer fertigen Welt nie zu hören ist:
+
+| Was | Feld | Wo es steht |
+|---|---|---|
+| Dialogzeile | `audio_path` | in der Episodendatei, an der Zeile |
+| Ansage eines Spiel-Events | `intro_audio_path` | in der Episodendatei, am `config` |
+| **Fragetext einer Aufgabe** | `question_audio_path` | in der Event-Datei, an der Variante bzw. am Pool-Eintrag (Abschnitt 5) |
+| Fortsetzen-Dialog, Erfolgs-Nachricht | — | fest in der Engine, `data/audio/engine/` (Skript `generate_engine_lines.py`) |
+
+**Was bewusst keine Aufnahme bekommt:** Multiple-Choice-Antworten zeigen im
+Vorlesemodus Bild und Ziffer statt Text — da ist nichts zu sprechen. Bei
+`word_match` werden die Wörter **nie** vorgelesen, das ist die Lernziel-
+Entscheidung aus Abschnitt 5.6 und keine Lücke. Sortier-Körbe und -Gegenstände
+tragen Bild oder Wort und werden nicht einzeln gesprochen.
 
 ---
 

@@ -39,12 +39,35 @@ MP3_BITRATE = "96k"
 # mit einer Dialogzeile kollidieren.
 ANNOUNCER_CHARACTER_ID = "erzaehler"
 ANNOUNCER_SPEAKER_NAME = "Ansage"
+# Fragen kommen aus demselben Off, sind aber beim Durchsehen einer Liste etwas
+# anderes als eine Buehnenansage — deshalb ein eigener Name in der Ausgabe.
+QUESTION_SPEAKER_NAME = "Frage"
 
 # Eventtypen, die eine gesprochene Ansage tragen: Feld mit dem Text, Feld fuer
 # den Rueckverweis auf die Aufnahme.
 ANNOUNCEMENT_EVENT_FIELDS: dict[str, tuple[str, str]] = {
     "pokemon_catch": ("intro", "intro_audio_path"),
 }
+
+# Fragetexte stehen nicht in der Episode, sondern in den ausgelagerten
+# Event-Dateien unter events/ (JSON_SCHEMA_REFERENCE Abschnitt 4). Die
+# Feldnamen sind fuer alle Aufgabentypen dieselben.
+QUESTION_TEXT_FIELD = "question"
+QUESTION_SIMPLE_FIELD = "question_simple"
+QUESTION_AUDIO_FIELD = "question_audio_path"
+
+# Aufgabentypen mit einer gesprochenen Frage. `dialog` und `reward` tragen
+# keine, `pokemon_catch` traegt stattdessen eine Ansage (siehe oben).
+QUESTION_EVENT_TYPES: frozenset[str] = frozenset(
+    {
+        "multiple_choice",
+        "text_input",
+        "image_search",
+        "word_match",
+        "sorting",
+        "number_line",
+    }
+)
 
 # Alles unter diesem Bruchteil des Spitzenpegels gilt als Stille. Danach bleiben
 # 80 ms Luft stehen, damit kein Anlaut abgeschnitten wird.
@@ -57,6 +80,8 @@ class VoiceLine:
     """Eine einzelne zu vertonende Zeile — Dialog oder Ansage."""
 
     theme_id: str
+    # Bei Dialog und Ansage die Episode, bei einer Frage die ausgelagerte
+    # Event-Datei und ihre event_id — die Zeile kennt nur ihre Quelldatei.
     episode_id: str
     episode_file: Path
     line_index: int
@@ -64,12 +89,17 @@ class VoiceLine:
     speaker_name: str
     text: str
     # "dialog" = eine Zeile in einem dialog-Event, "ansage" = ein Ansagetext
-    # eines Spiel-Events. Beide werden getrennt durchnummeriert.
+    # eines Spiel-Events, "frage" = der Fragetext einer Aufgabe. Jede Art wird
+    # getrennt durchnummeriert.
     kind: str = "dialog"
 
     @property
     def file_stem(self) -> str:
-        return f"{self.character_id}_{self.episode_id}_{self.line_index:03d}"
+        # Fragen tragen ihre Art im Namen: event_id und episode_id leben in
+        # getrennten Namensraeumen und koennten sonst denselben Dateinamen
+        # bilden — die zweite Aufnahme wuerde die erste ueberschreiben.
+        prefix = "frage_" if self.kind == "frage" else ""
+        return f"{self.character_id}_{prefix}{self.episode_id}_{self.line_index:03d}"
 
     @property
     def slot_key(self) -> str:
@@ -156,14 +186,54 @@ def iter_announcement_lines(episode: dict[str, Any]) -> Iterator[tuple[int, dict
         yield line_index, config, text, audio_field
 
 
-def choose_text(dialogue_line: dict[str, Any], prefer_simple: bool) -> str:
+def iter_question_lines(event_file: dict[str, Any]) -> Iterator[tuple[int, dict[str, Any]]]:
+    """Alle Fragetexte einer ausgelagerten Event-Datei, durchnummeriert ab 1.
+
+    Eine Aufgabe traegt je Lernstufe eine Variante (JSON_SCHEMA_REFERENCE
+    Abschnitt 4). Ist die Variante ein Pool, hat jeder Pool-Eintrag seinen
+    eigenen Fragetext und braucht darum eine eigene Aufnahme; sonst ist die
+    Variante selbst der Traeger.
+
+    Die Reihenfolge muss stabil sein: `write_audio_paths` laeuft spaeter noch
+    einmal durch dieselbe Datei und ordnet die erzeugten Dateien ueber genau
+    diese Nummer zu.
+
+    Die gelieferten Dicts sind die Originale, nicht Kopien: wer
+    `question_audio_path` setzt, aendert damit die Event-Datei selbst.
+    """
+    if str(event_file.get("type")) not in QUESTION_EVENT_TYPES:
+        return
+
+    line_index = 0
+    variants: dict[str, Any] = event_file.get("variants") or {}
+    for variant in variants.values():
+        if not isinstance(variant, dict):
+            continue
+        pool = variant.get("pool")
+        holders: list[Any] = pool if isinstance(pool, list) else [variant]
+        for holder in holders:
+            if not isinstance(holder, dict):
+                continue
+            if not str(holder.get(QUESTION_TEXT_FIELD) or "").strip():
+                continue
+            line_index += 1
+            yield line_index, holder
+
+
+def choose_text(
+    holder: dict[str, Any],
+    prefer_simple: bool,
+    full_field: str = "text",
+    simple_field: str = "text_simple",
+) -> str:
     """Welche Textfassung vertont wird.
 
-    Standard ist die Vorlesefassung `text_simple` — vorgelesen wird fuer Kinder,
-    die noch nicht selbst lesen. Fehlt sie, faellt es auf `text` zurueck.
+    Standard ist die Vorlesefassung (`text_simple` bzw. `question_simple`) —
+    vorgelesen wird fuer Kinder, die noch nicht selbst lesen. Fehlt sie, faellt
+    es auf die volle Fassung zurueck.
     """
-    simple_text = str(dialogue_line.get("text_simple") or "").strip()
-    full_text = str(dialogue_line.get("text") or "").strip()
+    simple_text = str(holder.get(simple_field) or "").strip()
+    full_text = str(holder.get(full_field) or "").strip()
     if prefer_simple and simple_text:
         return simple_text
     return full_text
@@ -175,7 +245,12 @@ def collect_voice_lines(
     prefer_simple_text: bool,
     themes_root: Path = THEMES_ROOT,
 ) -> list[VoiceLine]:
-    """Alle Dialogzeilen einsammeln, die vertont werden sollen."""
+    """Alle zu vertonenden Zeilen einsammeln — Dialoge, Ansagen und Fragen.
+
+    Dialoge und Ansagen stehen in den Episodendateien, Fragen in den
+    ausgelagerten Event-Dateien daneben. Eine Welt kann das eine ohne das
+    andere haben, deshalb wird jeder der beiden Ordner fuer sich geprueft.
+    """
     if not themes_root.is_dir():
         raise FileNotFoundError(f"Kein Weltenordner unter {themes_root} — vertont wird gegen data/themes/.")
 
@@ -186,10 +261,8 @@ def collect_voice_lines(
         if theme_id is not None and theme_folder.name != theme_id:
             continue
         episodes_folder = theme_folder / "episodes"
-        if not episodes_folder.is_dir():
-            continue
 
-        for episode_file in sorted(episodes_folder.glob("*.json")):
+        for episode_file in sorted(episodes_folder.glob("*.json")) if episodes_folder.is_dir() else []:
             episode = json.loads(episode_file.read_text(encoding="utf-8"))
             current_episode_id = str(episode.get("episode_id") or episode_file.stem)
             if episode_id is not None and current_episode_id != episode_id:
@@ -222,6 +295,39 @@ def collect_voice_lines(
                         speaker_name=ANNOUNCER_SPEAKER_NAME,
                         text=text,
                         kind="ansage",
+                    )
+                )
+
+        events_folder = theme_folder / "events"
+
+        for event_path in sorted(events_folder.glob("*.json")) if events_folder.is_dir() else []:
+            event_file = json.loads(event_path.read_text(encoding="utf-8"))
+            current_event_id = str(event_file.get("event_id") or event_path.stem)
+            # `--episode` grenzt hier auf die event_id ein: eine Frage haengt an
+            # ihrer Aufgabe, nicht an einer Episode, und dieselbe Aufgabe kann in
+            # mehreren Episoden vorkommen.
+            if episode_id is not None and current_event_id != episode_id:
+                continue
+
+            for position, holder in iter_question_lines(event_file):
+                text = choose_text(
+                    holder,
+                    prefer_simple_text,
+                    QUESTION_TEXT_FIELD,
+                    QUESTION_SIMPLE_FIELD,
+                )
+                if not text:
+                    continue
+                collected.append(
+                    VoiceLine(
+                        theme_id=theme_folder.name,
+                        episode_id=current_event_id,
+                        episode_file=event_path,
+                        line_index=position,
+                        character_id=ANNOUNCER_CHARACTER_ID,
+                        speaker_name=QUESTION_SPEAKER_NAME,
+                        text=text,
+                        kind="frage",
                     )
                 )
 
@@ -335,24 +441,43 @@ def convert_to_mp3(wav_file: Path) -> Path:
     return mp3_file
 
 
-def write_audio_paths(produced: dict[Path, dict[str, str]]) -> int:
-    """Den Rueckverweis auf die Aufnahme in die Episodendateien zurueckschreiben.
+def audio_targets_of(source_file: Path, data: dict[str, Any]) -> dict[str, tuple[dict[str, Any], str]]:
+    """Platz -> (Dict, das den Rueckverweis traegt, Feldname darin).
 
-    produced: Episodendatei -> {VoiceLine.slot_key: relativer Audiopfad}
+    Welche Plaetze eine Datei hat, haengt daran, was fuer eine Datei sie ist:
+    eine Event-Datei traegt Fragen, eine Episodendatei Dialoge und Ansagen. Die
+    Nummerierung entsteht hier genauso wie beim Einsammeln — dieselben
+    `iter_*`-Funktionen, dieselbe Reihenfolge.
+    """
+    if source_file.parent.name == "events":
+        return {
+            f"frage:{index}": (holder, QUESTION_AUDIO_FIELD)
+            for index, holder in iter_question_lines(data)
+        }
+
+    targets: dict[str, tuple[dict[str, Any], str]] = {
+        f"dialog:{index}": (dialogue_line, "audio_path")
+        for index, dialogue_line in iter_dialogue_lines(data)
+    }
+    for index, config, _text, audio_field in iter_announcement_lines(data):
+        targets[f"ansage:{index}"] = (config, audio_field)
+
+    return targets
+
+
+def write_audio_paths(produced: dict[Path, dict[str, str]]) -> int:
+    """Den Rueckverweis auf die Aufnahme in die Content-Dateien zurueckschreiben.
+
+    produced: Quelldatei -> {VoiceLine.slot_key: relativer Audiopfad}
 
     Dialogzeilen bekommen `audio_path`, Ansagen das Feld, das ihr Eventtyp dafuer
-    vorsieht (bei `pokemon_catch` ist das `intro_audio_path`).
+    vorsieht (bei `pokemon_catch` ist das `intro_audio_path`), Fragen
+    `question_audio_path`.
     """
     changed_files = 0
     for episode_file, paths_per_slot in produced.items():
         episode = json.loads(episode_file.read_text(encoding="utf-8"))
-        # Platz -> (Dict, das den Verweis traegt, Feldname darin)
-        targets_by_slot: dict[str, tuple[dict[str, Any], str]] = {
-            f"dialog:{index}": (dialogue_line, "audio_path")
-            for index, dialogue_line in iter_dialogue_lines(episode)
-        }
-        for index, config, _text, audio_field in iter_announcement_lines(episode):
-            targets_by_slot[f"ansage:{index}"] = (config, audio_field)
+        targets_by_slot = audio_targets_of(episode_file, episode)
 
         file_changed = False
 

@@ -218,6 +218,8 @@ export interface MultipleChoiceConfig {
   question: string;
   /** kurze Fassung für den Vorlesemodus, siehe Abschnitt 6 */
   question_simple?: string;
+  /** Aufnahme der Frage, voller Unterpfad ab dem Welt-Ordner ("audio/voices/…") — siehe Abschnitt 6 */
+  question_audio_path?: string;
   options: AnswerOption[];
   /** 0-basiert, Index in options */
   correct_index: number;
@@ -228,6 +230,8 @@ export interface TextInputConfig {
   question: string;
   /** kurze Fassung für den Vorlesemodus, siehe Abschnitt 6 */
   question_simple?: string;
+  /** Aufnahme der Frage, voller Unterpfad ab dem Welt-Ordner ("audio/voices/…") — siehe Abschnitt 6 */
+  question_audio_path?: string;
   input_type: 'text' | 'number';
   accepted_answers: string[];
   /** default false — ohne `true` wird Groß-/Kleinschreibung ignoriert */
@@ -251,6 +255,8 @@ export interface ImageSearchConfig {
   image: string;
   question: string;
   question_simple?: string;
+  /** Aufnahme der Frage, voller Unterpfad ab dem Welt-Ordner ("audio/voices/…") — siehe Abschnitt 6 */
+  question_audio_path?: string;
   targets: SearchTarget[];
   find_all: boolean;
   /**
@@ -323,6 +329,8 @@ export interface WordMatchConfig {
   question: string;
   /** kurze Fassung für den Vorlesemodus, siehe Abschnitt 6 */
   question_simple?: string;
+  /** Aufnahme der Frage, voller Unterpfad ab dem Welt-Ordner ("audio/voices/…") — siehe Abschnitt 6 */
+  question_audio_path?: string;
   /** drei oder vier Paare — jedes Wort und jedes Bild genau einmal */
   pairs: WordPair[];
 }
@@ -350,6 +358,8 @@ export interface SortingConfig {
   question: string;
   /** kurze Fassung für den Vorlesemodus, siehe Abschnitt 6 */
   question_simple?: string;
+  /** Aufnahme der Frage, voller Unterpfad ab dem Welt-Ordner ("audio/voices/…") — siehe Abschnitt 6 */
+  question_audio_path?: string;
   categories: SortingCategory[];
   items: SortingItem[];
   /**
@@ -364,6 +374,8 @@ export interface NumberLineConfig {
   question: string;
   /** kurze Fassung für den Vorlesemodus, siehe Abschnitt 6 */
   question_simple?: string;
+  /** Aufnahme der Frage, voller Unterpfad ab dem Welt-Ordner ("audio/voices/…") — siehe Abschnitt 6 */
+  question_audio_path?: string;
   /** Kleinster und größter Wert des Strahls — beide sichtbar, beide eingeschlossen. */
   min: number;
   max: number;

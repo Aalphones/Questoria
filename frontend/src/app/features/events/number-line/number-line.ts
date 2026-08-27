@@ -10,9 +10,11 @@ import {
 
 import { NumberLineConfig } from '../../../models/content.types';
 import { EventContext } from '../../../models/event-runtime.types';
+import { ContentService } from '../../../services/content.service';
 import { NarrationService } from '../../../services/narration.service';
 import { TaskCard } from '../../../ui/task-card/task-card';
 import { EpisodeRun } from '../../episode/episode-run';
+import { questionAudioUrlOf } from '../question-audio';
 import { FieldState, NumberFieldView, fieldValues, isLabelled } from './number-line.types';
 
 /** Wie lange ein falsch getroffenes Feld rot bleibt, bevor es wieder aufgeht. */
@@ -38,6 +40,7 @@ const WRONG_FEEDBACK_MS = 900;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NumberLine {
+  private readonly content = inject(ContentService);
   private readonly narration = inject(NarrationService);
   private readonly run = inject(EpisodeRun);
   private readonly destroyRef = inject(DestroyRef);
@@ -55,6 +58,10 @@ export class NumberLine {
   private wrongTimeout: ReturnType<typeof setTimeout> | undefined;
 
   protected readonly solved = computed<boolean>(() => this.foundValue() !== null);
+
+  protected readonly questionAudioUrl = computed<string | undefined>(() =>
+    questionAudioUrlOf(this.content, this.context().themeId, this.config().question_audio_path),
+  );
 
   protected readonly questionText = computed<string>(() => {
     const config = this.config();

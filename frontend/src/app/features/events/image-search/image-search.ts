@@ -16,6 +16,7 @@ import { ImageSlot } from '../../../ui/image-slot/image-slot';
 import { MapPoint } from '../../../ui/map-canvas/map-point/map-point';
 import { TaskCard } from '../../../ui/task-card/task-card';
 import { EpisodeRun } from '../../episode/episode-run';
+import { questionAudioUrlOf } from '../question-audio';
 import { hitTarget } from './image-search.types';
 
 /** Bezugsseitenverhältnis der Suchfläche — passend zum Rest der App (`qst-map-canvas`). */
@@ -58,6 +59,10 @@ export class ImageSearch {
   protected readonly missMarker = signal<{ readonly x: number; readonly y: number } | null>(null);
 
   private missMarkerTimeout: ReturnType<typeof setTimeout> | undefined;
+
+  protected readonly questionAudioUrl = computed<string | undefined>(() =>
+    questionAudioUrlOf(this.content, this.context().themeId, this.config().question_audio_path),
+  );
 
   protected readonly questionText = computed<string>(() => {
     const config = this.config();

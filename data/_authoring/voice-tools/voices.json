@@ -15,9 +15,11 @@
   "//11": "p=brasilianisch). Deutsch ist da nicht dabei — siehe README.md.",
   "//12": "Ein Eintrag _default ist Pflicht: er faengt jede nicht besetzte Figur auf.",
 
+  "//16": "_default steht bewusst NICHT auf Julian: das ist Professor Eichs Stimme, und",
+  "//17": "jede vergessene Figur haette unbemerkt wie er geklungen.",
   "_default": {
     "engine": "orpheus",
-    "voice": "Julian",
+    "voice": "Jakob",
     "speed": 1.0
   },
 
@@ -50,6 +52,45 @@
   "rattfratz": {
     "engine": "orpheus",
     "voice": "Felix",
+    "speed": 1.05
+  },
+
+  "//18": "Sechs Figuren aus der Level-Neuplanung, besetzt am 27.08.2026 — vor dem",
+  "//19": "grossen Lauf einmal anhoeren, Stimmen sind Vorschlaege.",
+
+  "mama": {
+    "engine": "orpheus",
+    "voice": "Marie",
+    "speed": 0.95
+  },
+
+  "schwester": {
+    "engine": "orpheus",
+    "voice": "Mia",
+    "speed": 1.05
+  },
+
+  "blau": {
+    "engine": "orpheus",
+    "voice": "Elias",
+    "speed": 1.05
+  },
+
+  "verkaeufer": {
+    "engine": "orpheus",
+    "voice": "Anton",
+    "speed": 1.0
+  },
+
+  "nachbar": {
+    "engine": "orpheus",
+    "voice": "Jonas",
+    "speed": 0.95
+  },
+
+  "kaefersammler": {
+    "engine": "orpheus",
+    "voice": "Ben",
     "speed": 1.05
   },
 

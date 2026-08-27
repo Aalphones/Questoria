@@ -20,6 +20,7 @@ import { PickSource } from '../../../ui/pick-place/pick-source';
 import { PickTarget } from '../../../ui/pick-place/pick-target';
 import { TaskCard } from '../../../ui/task-card/task-card';
 import { EpisodeRun } from '../../episode/episode-run';
+import { questionAudioUrlOf } from '../question-audio';
 import { CategoryView, ItemState, ItemView, PlacedItemView, drawPlayedItems } from './sorting.types';
 
 /** Wie lange ein falsch einsortierter Gegenstand rot bleibt, bevor er wieder normal aussieht. */
@@ -82,6 +83,10 @@ export class Sorting {
   private wrongTimeout: ReturnType<typeof setTimeout> | undefined;
 
   protected readonly solved = computed<boolean>(() => this.openItems().length === 0);
+
+  protected readonly questionAudioUrl = computed<string | undefined>(() =>
+    questionAudioUrlOf(this.content, this.context().themeId, this.config().question_audio_path),
+  );
 
   protected readonly questionText = computed<string>(() => {
     const config = this.config();
