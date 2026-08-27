@@ -2,14 +2,38 @@
 
 **Aktiver Plan:** [docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/README.md)
 
-**Phase:** 7/8 fertig, **Nachtrag 5b (Kartenumgruppierung) jetzt auch fertig
-(27.08.2026)** — Details im Nachtrag-Block von
+**Phase:** 8/8 — **alle Phasen umgesetzt, committet (`6e49dc6`), nicht
+abgenommen** (27.08.2026). `pokemon` ist vollständig vertont: 145 Aufnahmen,
+kein Fehlschlag, jeder Verweis im Content zeigt auf eine vorhandene Datei.
+Bericht im Report-Back von
+[phase-8](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/phase-8-vertonung.md),
+Plan-Bilanz in der
+[README](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/README.md)
+(Summary, Abweichungen, Follow-ups).
+
+**Nächster Schritt:** 🔴 **Abnahme durch Sascha** — der Plan wird erst danach
+archiviert. Zwei Teile:
+
+1. **Sieben Aufnahmen anhören** (Liste mit Prüfpunkt in phase-8, „Was noch
+   aussteht"). Prüfstein sind die Eigennamen: „Raupy", „Hornliu", „Pokéball".
+2. **Smoke am Bildschirm** — die Prüf-Checkliste in phase-5, plus Vorlese-Knopf
+   in einer Aufgabe und der Fortsetzen-Dialog nach einem Episoden-Abbruch.
+
+Danach kann `deploy.cmd content` laufen (die Sperre unten ist damit hinfällig)
+und der Plan ins Archiv.
+
+🟡 **Noch nicht committet:** die Änderungen an Frontend, Werkzeug und Doku liegen
+im Arbeitsbaum. Erst committen, wenn die Läufe durch sind — sonst zeigt das
+Content-JSON auf Aufnahmen, die es noch nicht gibt.
+
+**Nachtrag 5b (Kartenumgruppierung) ist fertig (27.08.2026)** — Details im
+Nachtrag-Block von
 [phase-5](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/phase-5-level-neuplanung.md).
-Als nächstes **Phase 8 — Vertonung, vollständig statt nur Dialog**
-(23.08.2026, Sascha angehängt): jede Frage und zwei feste Engine-Ansagen
-sollen eine echte Aufnahme statt Browser-Sprachausgabe bekommen. Rating
-heikel — echte Schema- und Komponenten-Arbeit, keine reine Content-Phase.
-Startet mit einer eigenen 🔴-Entscheidung (siehe Phasendatei).
+
+✅ **Der AK-12-Widerspruch aus Phase 7 ist entschieden** (Sascha, 27.08.2026):
+AK gelockert, `ASSET_REQUIREMENTS.md` § 2 gewinnt — keine Figur braucht ein
+Soll-Set an Emotionen, nur die vom Content referenzierten. Die README ist
+nachgezogen, es steht keine Bildarbeit mehr aus.
 
 ✅ **Nachtrag 5b ist fertig (27.08.2026):** `world_config.json` auf zwei
 Gebietskarten (`alabastia`, `vertania`) umgestellt, `arc_overview` zeigt jetzt
@@ -33,12 +57,9 @@ erzeugt. `verkaeufer`/`nachbar` (keine Kanon-Figur) blieben freihändig über
 Krea2. `bisasam` trägt alle vier Emotionen, die anderen neun Figuren nur die
 vom Content tatsächlich referenzierten (18 Sprite-Dateien insgesamt).
 
-🔴 **Widerspruch gefunden, nicht aufgelöst:** Phase-7-AK 2 verlangt für „alle
-vier bestehenden Figuren" ein volles Vier-Emotionen-Set,
-`ASSET_REQUIREMENTS.md` § 2 sagt ausdrücklich „kein Soll pro Figur". Umgesetzt
-nach dem Doc-Grundsatz (nur `pikachu`/`prof_eich`/`rattfratz` mit den
-tatsächlich gebrauchten zwei) — AK 2 damit nicht wörtlich erfüllt. Entscheidung
-steht aus: AK lockern oder drei Figuren um die fehlenden Emotionen ergänzen.
+✅ **Der Emotionen-Widerspruch ist entschieden** (Sascha, 27.08.2026): AK
+gelockert, die Doku gewinnt. `pikachu`/`prof_eich`/`rattfratz` bleiben bei den
+tatsächlich gebrauchten zwei Emotionen.
 
 🟡 **`deploy.cmd content` bewusst nicht ausgeführt** — Nachtrag 5b
 (Kartenumgruppierung, `world_config.json` noch auf altem Schema) ist eigener,
@@ -69,11 +90,9 @@ MapScreen/MainHub am Bildschirm öffnen, manuelles Zoomen/Ziehen nach dem
 Fokus prüfen, `prefers-reduced-motion` durchspielen — Details und Priorität
 in [phase-4](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/phase-4-auto-fokus.md).
 
-**Nächster Schritt:** Phase 7 und Nachtrag 5b sind fertig. Als nächstes
-**Phase 8 — Vertonung** (startet mit eigener 🔴-Entscheidung, siehe Phasendatei)
-oder erst der noch offene **AK-2-Widerspruch** (Vier-Emotionen-Sets, siehe
-weiter unten) klären. Vor dem nächsten `deploy.cmd content` zusätzlich: Smoke
-am Bildschirm (Prüf-Checkliste unten in phase-5) mindestens einmal durchspielen.
+🟡 **Vor dem nächsten `deploy.cmd content`:** Smoke am Bildschirm
+(Prüf-Checkliste unten in phase-5) mindestens einmal durchspielen. Der aktuelle
+nächste Schritt steht oben im Kopf dieser Datei, nicht hier.
 
 🔴 **Der Karten-Ablauf ist am 26.08.2026 zweimal grundlegend umgebaut worden**
 (beide Male nach einem Befund von Sascha am Bildschirm). Verbindlich ist jetzt

@@ -29,7 +29,7 @@ neu geplant und um neue Stationen verdichtet.
 | 5 | [Level-Neuplanung Alabastia](phase-5-level-neuplanung.md) | standard | complete |
 | 6 | [Assets erzeugen](phase-6-assets-erzeugen.md) | standard | pending |
 | 7 | [Figuren- und Aufgabenbilder neu](phase-7-figuren-und-aufgabenbilder.md) | standard | complete |
-| 8 | [Vertonung, vollständig statt nur Dialog](phase-8-vertonung.md) | heikel | pending |
+| 8 | [Vertonung, vollständig statt nur Dialog](phase-8-vertonung.md) | heikel | complete |
 
 **Nachtrag 23.08.2026 (Sascha):** Vier Wünsche sind dazugekommen und in
 Phase 5–7 eingearbeitet — Figurenbilder neu (und der rembg-Fehler, der Bisasam
@@ -150,7 +150,9 @@ Zustand, Phase 3).
     tastaturbedienbar, `prefers-reduced-motion` wird respektiert.
 11. Kein Figurenbild hat Löcher an Augen, Zähnen oder Glanzlichtern, und das
     Freistell-Werkzeug kann sie gar nicht mehr erzeugen (Phase 7).
-12. Alle vier Figuren liegen in vier Emotionen vor statt in zwei.
+12. Jede Figur liegt in genau den Emotionen vor, die der Content tatsächlich
+    referenziert — kein Soll-Set pro Figur (`ASSET_REQUIREMENTS.md` § 2
+    gewinnt; gelockert am 27.08.2026 nach dem Widerspruch aus Phase 7).
 13. Die Aufgaben der Welt nennen Wörter aus dem Pokémon-Universum; wo Reim oder
     Anlaut das verhindern, ist die Ausnahme benannt und begründet.
 14. Silben werden mit Pokébällen gezählt, nicht mit Sternen — und die Anzahl ist
@@ -216,20 +218,85 @@ hinsehen.
 
 ## Summary
 
-*(nach Abschluss ausfüllen)*
+**Alle acht Phasen sind umgesetzt (Stand 27.08.2026).** Aus „Ränder weg" ist ein
+Kartensystem mit drei Zoomstufen geworden: Karten bestehen aus einzeln
+freigeschalteten 1024er-Kacheln, man zieht und zoomt darin, die Ansicht
+zentriert sich beim Öffnen auf die aktuelle Station, und der Freischalt-Zustand
+liegt im Spielstand statt abgeleitet zu werden. Die Welt `pokemon` ist entlang
+der echten Kanto-Geografie neu geplant (zwei Gebietskarten, vier Kacheln,
+vierzehn Stationen), komplett neu bebildert und vollständig vertont — inklusive
+jeder einzelnen Frage, was vorher in **keiner** Welt der Fall war.
+
+🔴 **Der Plan ist gebaut, aber nicht abgenommen.** Fast nichts davon hat je ein
+Mensch am Bildschirm gesehen; die offenen Prüfpunkte stehen unten und in den
+Report-Backs der Phasen 3, 4, 5 und 8. Vor dem Archivieren gehört mindestens die
+Prüf-Checkliste aus phase-5 einmal durchgespielt.
 
 ## Files touched
 
-*(nach Abschluss ausfüllen)*
+Grob, nach Bereich — die genauen Listen stehen in den Report-Backs der Phasen:
+
+- **Karten-Baustein:** `frontend/src/app/ui/map-canvas/` (Kachelmodell, Pan/Zoom,
+  Klemmung, Auto-Fokus) und die drei Screens `features/main-hub`,
+  `features/timeline`, `features/map`
+- **Spielstand:** `backend/src/Validators/SavegameValidator.php`,
+  `backend/src/Repositories/SavegameRepository.php` (Phase 3)
+- **Aufgaben-Engine:** alle sechs Aufgabentypen unter `features/events/`, neu
+  `features/events/question-audio.ts`, `ui/task-card/`, `services/content.service.ts`
+  (Phase 8)
+- **Vertonungs-Werkstatt:** `data/_authoring/voice-tools/voice_lines.py`,
+  neu `generate_engine_lines.py`, `voices.json`
+- **Content (außerhalb Git):** `data/themes/pokemon/` vollständig — Kacheln,
+  Sprites, Bildantworten, 145 Aufnahmen
+- **Doku:** `JSON_SCHEMA_REFERENCE.md`, `ASSET_REQUIREMENTS.md`,
+  `image-prompts/MAPS.md`, `docs/code-map.md`, ADR-019/020/021, Skill `vertonung`
 
 ## Commits
 
-*(nach Abschluss ausfüllen)*
+`3a2e2c1` (Kachel-Fundament) · `a8a112e` (Pan/Zoom) · `fb5297c` (Freischaltung
+und Spielstand) · `275bc71` (Auto-Fokus) · `e125594` (Sprites statt Punkte) ·
+`9ced5b3` (Umstellung auf drei Kartenebenen) · `4b59882` (Freistell-Fix) ·
+`7c1e9c8`, `c972551`, `08cc2d2`, `f3f21b2`, `4b3a3a4`, `73fd76b`, `3eb0815`
+(Kartenbilder und ihre Fallen) · `7989fe2`, `4c97e98` (Figuren und
+Aufgabenbilder) · `aa945bb` (Kartenumgruppierung) · `6e49dc6` (Vertonung)
 
 ## Deviations from plan
 
-*(nach Abschluss ausfüllen)*
+- **Phase 6, Kartenverfahren:** Der gespeicherte Ablauf `Upscale Map` trug nicht
+  (Ergebnis war Matsch), und die Regler erreichten den Auftrag über comfy-cli gar
+  nicht. Verbindlich ist jetzt der Weg in `image-prompts/MAPS.md`. Drei
+  Plan-Vorgaben zu Auflösung und Prompt haben sich in der Praxis als falsch
+  erwiesen und sind dort korrigiert.
+- **Phase 6, AK 7 nur dem Sinn nach erfüllt:** Bei den 8192er-Leinwänden wird nur
+  nachgeschärft, was sichtbar ist — eine volle Leinwand kostet vier Stunden für
+  63 Kacheln, die niemand sieht. Eine später aufgedeckte Kachel braucht noch
+  einen Schärf-Lauf.
+- **Phase 7, Teil B:** Statt freihändig per Prompt sind acht Figuren gegen echte
+  Referenzbilder erzeugt worden — die freihändigen Basisbilder gefielen nicht.
+- **AK 12 nachträglich gelockert** (27.08.2026): Der Plan verlangte vier
+  Emotionen je Figur, `ASSET_REQUIREMENTS.md` § 2 sagt „kein Soll pro Figur". Die
+  Doku hat gewonnen, das AK ist umformuliert.
+- **Phase 8 betraf sechs Aufgabentypen statt fünf** — `text_input` fehlte in der
+  Plan-Aufzählung.
 
 ## Follow-ups
 
-*(nach Abschluss ausfüllen)*
+- 🔴 **Abnahme am Bildschirm steht für fast den ganzen Plan aus** — Ziehen und
+  Zoomen (Phase 2), der Spielstand-Schreibkreis beim Kartenöffnen (Phase 3),
+  Auto-Fokus und `prefers-reduced-motion` (Phase 4), die Prüf-Checkliste zur
+  neuen Welt (Phase 5), Vorlese-Knopf und Fortsetzen-Dialog (Phase 8).
+- 🔴 **`deploy.cmd content` ist bewusst nie gelaufen.** `pokemon` ist jetzt
+  strukturell und inhaltlich vollständig — die Sperre kann fallen, sobald der
+  Smoke einmal durch ist.
+- 🟡 **Phase 6 steht in der Tabelle oben noch auf `pending`**, weil ihr AK 8
+  genau dieses Deployment war. Bildseitig ist sie fertig.
+- 🟡 **Der Pan-Klemmungs-Check ist schwächer geworden**, seit die Ortskarte in
+  zwei Gebietskarten zerfallen ist — bei der nächsten Karte mit drei oder mehr
+  Kacheln noch einmal hinsehen (Konfidenz-Ausweis oben).
+- 🟡 **Der Fortsetzen-Dialog hat keinen Wiederhol-Knopf.** Ein Kind, das die Frage
+  nicht versteht, kann sie nicht noch einmal hören.
+- 🟡 **`VoiceLine.episode_file`/`.episode_id` heißen irreführend**, seit sie bei
+  Fragen die Event-Datei tragen. Sauber wäre `source_file`/`source_id`.
+- 🟡 **Die Fragen-Nummer zählt Positionen**: ein später in der Mitte eingefügter
+  Pool-Eintrag verschiebt alle folgenden Rückverweise. Gegenmittel ist ein
+  `--force`-Lauf.

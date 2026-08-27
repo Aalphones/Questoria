@@ -169,4 +169,130 @@ Test-Dateiname durchspielen und im Debugger/Log prüfen, dass
 
 ## Report-Back
 
-*(nach Umsetzung ausfüllen)*
+**Phase abgeschlossen am 27.08.2026.** Code, Werkzeug, Doku und alle Aufnahmen
+sind fertig; offen ist allein die Abnahme am Bildschirm und am Ohr.
+
+**Die Läufe:** 97 Fragen erzeugt (0 Fehlschläge, Rückverweis in allen zwölf
+Aufgaben-Dateien), danach 31 Dialogzeilen der sechs neuen Figuren (0
+Fehlschläge, 10 Episodendateien nachgezogen). `pokemon` steht bei 145 Aufnahmen.
+Gegengeprüft: **jeder** `audio_path`, `intro_audio_path` und
+`question_audio_path` im Content zeigt auf eine tatsächlich vorhandene Datei —
+kein toter Verweis.
+
+**Commit:** `6e49dc6`
+
+### Akzeptanzkriterien — Stand
+
+| AK | Stand | Beleg |
+|---|---|---|
+| 1 — jede Frage mit Wiederhol-Knopf und echter Aufnahme | **am Code erfüllt, am Bildschirm ungeprüft** | alle sechs `*.html` binden `[questionAudioUrl]`, alle sechs `*.ts` haben das `computed` |
+| 2 — beide Engine-Ansagen mit fester Aufnahme | **erfüllt** | `data/audio/engine/erzaehler_resume_prompt.mp3` und `…_reward_done.mp3` liegen, beide Komponenten verdrahtet |
+| 3 — `pokemon` vollständig vertont | **erfüllt** | 145 Aufnahmen unter `audio/voices/`, 0 Fehlschläge, jeder Verweis im Content zeigt auf eine vorhandene Datei |
+| 4 — kein `generated`-Fragetext ohne Audio | **erfüllt** | `"generated"` kommt in `data/themes/` nirgends mehr vor (gegen den ganzen Ordner geprüft) |
+| 5 — Trockenlauf zeigt Fragen-Zeilen | **erfüllt** | `--dry-run` listet 97 Fragen als Sprecher `Frage`, plus 47 Dialoge und 1 Ansage |
+| 6 — Build + Lint grün, Doku beschreibt den Stand | **erfüllt** | `ng build` und `ng lint` sauber; Schema-Referenz 5+6, `ASSET_REQUIREMENTS.md` 3, `vertonung`-Skill und `code-map.md` nachgezogen |
+
+Offen bleibt allein die Abnahme am Bildschirm und am Ohr — beides steht in der
+Prüf-Checkliste am Ende der Plan-README.
+
+### Die drei Entscheidungen am Anfang (Sascha, 27.08.2026)
+
+- **`generated` → Weg A.** `zahlenstrahl_wald.jungtrainer`/`.trainer` sind jetzt
+  `pool`-Varianten mit je drei festen Fragen. Damit trägt keine Aufgabe der
+  Anwendung mehr einen zur Laufzeit gebauten Fragetext — geprüft, `"generated"`
+  kommt in `data/themes/` nirgends mehr vor. AK 4 erfüllt.
+- **AK 12 gelockert** (Vier-Emotionen-Widerspruch aus Phase 7): `ASSET_REQUIREMENTS.md`
+  § 2 gewinnt, das AK ist in der README umformuliert. Keine Bildarbeit nötig.
+- **Umfang bestätigt:** vertont wird die *Frage*, nicht jedes Antwortwort.
+
+### 🟡 Der Plan zählte fünf Aufgabentypen — es sind sechs
+
+`text_input` trägt eine `question`, hat eine eigene Komponente und steht in
+`SCORED_EVENT_TYPES`. Mit fünf wäre AK 1 („kein Rückfall auf `speechSynthesis`")
+schlicht falsch gewesen. Er ist überall mitgezogen — Schema, Typ, Komponente,
+Werkzeug.
+
+### Konfidenz-Check: am Code beantwortet, nicht im Debugger
+
+Der Plan wollte eine Aufgabe mit Test-Dateinamen durchspielen, um zu sehen, ob
+`question_audio_path` die Pool-Auflösung überlebt. Der Blick in
+`resolve-event-config.ts` beantwortet das billiger und sicherer: `resolveSlot()`
+gibt einen Pool-Eintrag als `{ id, ...config }` weiter und `resolveTemplateDeep()`
+läuft über *jedes* Feld. Es gibt keine Feldliste, die ein zusätzliches optionales
+Feld verlieren könnte — das Durchreichen ist generisch.
+
+### Was gebaut wurde
+
+- **Schema:** `question_audio_path` an allen sechs Frage-Configs
+  (`content.types.ts`), dokumentiert in `JSON_SCHEMA_REFERENCE.md` Abschnitt 5
+  (einmal zentral statt sechsmal) und Abschnitt 6 (Tabelle „wo überall eine
+  Aufnahme hingehört" plus die bewussten Nicht-Fälle).
+- **Frontend, sechs Aufgabentypen:** jede Komponente hat ein
+  `questionAudioUrl`-`computed`, jedes Template bindet es an `qst-task-card`.
+  Die Pfad-Falle („der Wert trägt den Unterpfad schon, `assetUrl()` würde ihn
+  verdoppeln") steht **einmal** in der neuen geteilten Funktion
+  `features/events/question-audio.ts` statt sechsmal als Kommentar.
+- **Frontend, zwei Engine-Ansagen:** `resume-prompt.ts` und `reward.ts` bekommen
+  ihre Aufnahme über die neue `ContentService.engineAudioUrl()`; der
+  Wiederhol-Knopf im `reward` spielt sie ebenfalls.
+- **Werkzeug:** `voice_lines.py` liest jetzt zusätzlich `events/*.json`
+  (`iter_question_lines`, `QUESTION_EVENT_TYPES`), schreibt `question_audio_path`
+  zurück (`audio_targets_of` als Weiche je Dateisorte) und zeigt Fragen im
+  Trockenlauf als Sprecher „Frage". Neu daneben: `generate_engine_lines.py` für
+  die zwei weltunabhängigen Sätze.
+- **Besetzung:** die sechs neuen Figuren aus Phase 5 (`mama`, `schwester`,
+  `blau`, `verkaeufer`, `nachbar`, `kaefersammler`) stehen in `voices.json`.
+
+### Zwei eigene Entscheidungen unterwegs
+
+- **`_default` von Julian auf Jakob umgestellt.** Das war ein offener 🟡-Punkt aus
+  einem früheren Plan: `_default` klang wie Professor Eich, jede vergessene Figur
+  hätte unbemerkt wie er geklungen. Jetzt, wo ohnehin sechs Figuren dazukamen,
+  war der Moment dafür. Begründung steht als Kommentar in `voices.json`.
+- **`data/audio/engine/` liegt im Repo**, anders als `data/themes/` und
+  `data/avatars/`. Zwei mp3s à ~50 KB, weltunabhängig, gehören zur Engine wie
+  jedes andere ausgelieferte Asset. `deploy.cmd content` nimmt sie mit
+  (`_authoring/` ist der einzige ausgesparte Ordner).
+
+### 🔴 Was noch aussteht — Abnahme
+
+✅ Stimmproben abgenommen (Sascha, 27.08.2026), beide Läufe durch.
+
+**Stichprobe anhören** (Plan-Schritt 10) — Prüfstein sind die Eigennamen,
+deutsche Modelle raten bei sowas:
+
+| Datei (unter `data/themes/pokemon/audio/voices/`) | Worauf hören |
+|---|---|
+| `erzaehler_frage_zahlenstrahl_wald_001.mp3` | „Raupy" — frisch erfundener Fragetext, nie zuvor vertont |
+| `erzaehler_frage_zahlenstrahl_wald_002.mp3` | „Hornliu" — dito |
+| `erzaehler_frage_silben_klatschen_001.mp3` | „Pokéball" — das Akut-e ist der klassische Stolperer |
+| `mama_ep_alabastia_zuhause_001.mp3` | neue Stimme Marie im echten Satz |
+| `blau_ep_alabastia_rivale_001.mp3` | neue Stimme Elias, Rivalen-Ton |
+| `data/audio/engine/erzaehler_resume_prompt.mp3` | Engine-Ansage, lange Frage mit zwei Alternativen |
+| `data/audio/engine/erzaehler_reward_done.mp3` | Engine-Ansage, kurzer Jubelsatz |
+
+Klingt ein Eigenname falsch: Wort lautschriftlich in den Content-Text schreiben
+(`Pokeball` statt `Pokéball`) und einmal mit `--force` über die Welt laufen.
+
+**Am Bildschirm prüfen:** eine Aufgabe im Vorlesemodus öffnen und den
+Wiederhol-Knopf drücken — spielt eine Aufnahme, nicht die Gerätestimme. Und
+eine Episode abbrechen, neu betreten: der Fortsetzen-Dialog muss jetzt gesprochen
+werden statt vorgelesen.
+
+### 🟡 Eine Falle, die beim Bauen aufgefallen ist
+
+Die laufende Nummer einer Frage zählt **Position** in der Event-Datei, über alle
+Lernstufen und Pool-Einträge hinweg. Wird später ein Pool-Eintrag **in der Mitte**
+eingefügt, verschieben sich alle folgenden Nummern, und jeder Rückverweis zeigt
+dann auf die Aufnahme der Nachbarfrage. Steht als Warnung im `vertonung`-Skill;
+Gegenmittel ist ein `--force`-Lauf über die betroffene Welt.
+
+### Follow-ups (nichts davon blockiert)
+
+- **`VoiceLine.episode_file`/`.episode_id` heißen jetzt irreführend** — bei einer
+  Frage tragen sie die Event-Datei und die `event_id`. Ein Kommentar sagt das;
+  sauber wäre `source_file`/`source_id`, das berührt aber beide Generatoren und
+  gehörte nicht in diese Phase.
+- **Der Fortsetzen-Dialog hat keinen Wiederhol-Knopf.** Ein Kind, das die Frage
+  nicht versteht, kann sie nicht noch einmal hören. Ein `qst-read-aloud-button`
+  wäre eine Zeile — AK 2 verlangt ihn nicht, deshalb nicht ungefragt gebaut.
