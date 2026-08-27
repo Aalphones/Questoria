@@ -1,190 +1,55 @@
 # STATE
 
-**Aktiver Plan:** [docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/README.md)
+**Aktiver Plan:** [docs/planning/2026-08-18_sammelkarten-und-druckbogen/](docs/planning/2026-08-18_sammelkarten-und-druckbogen/README.md)
+— freigegeben am 18.08.2026, sechs Phasen, **noch nicht begonnen.**
 
-**Phase:** 8/8 — **alle Phasen umgesetzt, committet (`6e49dc6`), nicht
-abgenommen** (27.08.2026). `pokemon` ist vollständig vertont: 145 Aufnahmen,
-kein Fehlschlag, jeder Verweis im Content zeigt auf eine vorhandene Datei.
-Bericht im Report-Back von
-[phase-8](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/phase-8-vertonung.md),
-Plan-Bilanz in der
-[README](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/README.md)
-(Summary, Abweichungen, Follow-ups).
+**Phase:** 0/6 — Einstieg über `/implement`.
 
-**Nächster Schritt:** 🔴 **Abnahme durch Sascha** — der Plan wird erst danach
-archiviert. Zwei Teile:
+🟡 **Vorher zu klären:** Phase 6 dieses Plans baut `pokemon_lesen` von 6 auf ≥11
+Karten aus. Die Welt heißt seit dem 23.08.2026 `pokemon`, und ihr Content ist
+inzwischen deutlich größer als bei der Planung — die Phase gehört einmal gegen
+den heutigen Stand gerechnet, bevor sie losläuft.
 
-1. **Sieben Aufnahmen anhören** (Liste mit Prüfpunkt in phase-8, „Was noch
-   aussteht"). Prüfstein sind die Eigennamen: „Raupy", „Hornliu", „Pokéball".
-2. **Smoke am Bildschirm** — die Prüf-Checkliste in phase-5, plus Vorlese-Knopf
-   in einer Aufgabe und der Fortsetzen-Dialog nach einem Episoden-Abbruch.
+---
 
-Danach kann `deploy.cmd content` laufen (die Sperre unten ist damit hinfällig)
-und der Plan ins Archiv.
+## Offene Abnahme: Kartenplan (archiviert 27.08.2026, ungeprüft)
 
-🟡 **Noch nicht committet:** die Änderungen an Frontend, Werkzeug und Doku liegen
-im Arbeitsbaum. Erst committen, wenn die Läufe durch sind — sonst zeigt das
-Content-JSON auf Aufnahmen, die es noch nicht gibt.
+[docs/archive/2026-08/2026-08-20_vollbild-karten-mit-pan-zoom/](docs/archive/2026-08/2026-08-20_vollbild-karten-mit-pan-zoom/README.md)
+— acht Phasen, alle umgesetzt und committet, **nichts davon am Bildschirm
+abgenommen.** Sascha sammelt die Korrekturen und macht sie gebündelt in einer
+eigenen Session.
 
-**Nachtrag 5b (Kartenumgruppierung) ist fertig (27.08.2026)** — Details im
-Nachtrag-Block von
-[phase-5](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/phase-5-level-neuplanung.md).
+🔴 **Die vollständige Liste steht unter „Follow-ups" in der archivierten
+README** — dort und in den Report-Backs der Phasen 3, 4, 5 und 8, nicht hier
+noch einmal. Kurzfassung, was zu prüfen ist:
 
-✅ **Der AK-12-Widerspruch aus Phase 7 ist entschieden** (Sascha, 27.08.2026):
-AK gelockert, `ASSET_REQUIREMENTS.md` § 2 gewinnt — keine Figur braucht ein
-Soll-Set an Emotionen, nur die vom Content referenzierten. Die README ist
-nachgezogen, es steht keine Bildarbeit mehr aus.
+- Ziehen und Zoomen, die Kachel-Freischaltung, der Spielstand-Schreibkreis beim
+  Kartenöffnen, der animierte Auto-Fokus, `prefers-reduced-motion`
+- die neue `pokemon`-Welt insgesamt (Prüf-Checkliste in phase-5)
+- der Vorlese-Knopf in einer Aufgabe und der gesprochene Fortsetzen-Dialog
+- sieben Aufnahmen anhören (Liste in phase-8) — Prüfstein sind die Eigennamen
 
-✅ **Nachtrag 5b ist fertig (27.08.2026):** `world_config.json` auf zwei
-Gebietskarten (`alabastia`, `vertania`) umgestellt, `arc_overview` zeigt jetzt
-zwei Orte statt einem, alle 13 Episoden auf ihr neues `active_map_id`
-umgezogen, automatischer Referenz-Check sauber. `pokemon` ist damit
-**strukturell deploybar** — `deploy.cmd content` ist trotzdem noch bewusst
-nicht gelaufen, siehe unten. Drei eigene Entscheidungen unterwegs (Kartennamen,
-Achievement-Scope, Weltenkarten-Route) — Details und Begründung im
-Nachtrag-Block von phase-5, dort auch als Smoke-Punkt vorgemerkt.
+🔴 **`deploy.cmd content` ist bewusst nie gelaufen.** `pokemon` ist strukturell,
+bildlich und tonlich vollständig; die Sperre kann fallen, sobald der Smoke
+einmal durch ist.
 
-✅ **Phase 7 ist fertig (26.08.2026):** Teil A/C/D vollständig, Teil B mit
-geänderter Methode (siehe unten). Details, AK-Abhaken und die zwei
-Freistell-Funde im Report-Back von
-[phase-7](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/phase-7-figuren-und-aufgabenbilder.md).
+🟡 **Offene Entscheidung:** Der Fortsetzen-Dialog spricht, hat aber keinen
+Wiederhol-Knopf — ein Kind, das die Frage überhört, kann sie nicht noch einmal
+hören. Ein `qst-read-aloud-button` wäre eine Zeile im Template.
 
-🟡 **Teil B lief anders als geplant:** Statt freihändig per Prompt hat Sascha
-acht echte Referenzbilder geliefert (die freihändigen Basisbilder gefielen
-nicht) — `bisasam`, `pikachu`, `rattfratz`, `prof_eich`, `blau`, `mama`,
-`schwester`, `kaefersammler` sind jetzt komplett neu, gegen die Vorlage
-erzeugt. `verkaeufer`/`nachbar` (keine Kanon-Figur) blieben freihändig über
-Krea2. `bisasam` trägt alle vier Emotionen, die anderen neun Figuren nur die
-vom Content tatsächlich referenzierten (18 Sprite-Dateien insgesamt).
-
-✅ **Der Emotionen-Widerspruch ist entschieden** (Sascha, 27.08.2026): AK
-gelockert, die Doku gewinnt. `pikachu`/`prof_eich`/`rattfratz` bleiben bei den
-tatsächlich gebrauchten zwei Emotionen.
-
-🟡 **`deploy.cmd content` bewusst nicht ausgeführt** — Nachtrag 5b
-(Kartenumgruppierung, `world_config.json` noch auf altem Schema) ist eigener,
-noch offener Punkt, kein Teil von Phase 7. Reihenfolge „Bilder zuerst,
-Umgruppierung danach" bleibt in Kraft.
-
-✅ **Phase 6 ist bildseitig durch (26.08.2026):** alle 14 Stations-Sprites und
-die 2 neuen Orts-Sprites (Alabastia, Vertania City auf der Weltenkarte) liegen
-unter `data/themes/pokemon/maps/`, ADR-021 („Karten tragen kein Bauwerk")
-und `ASSET_REQUIREMENTS.md` Abschnitt 4 sind nachgezogen. Details, Ketten und
-die eine Design-Entscheidung (Sprites in Drei-Viertel-Ansicht statt streng
-top-down) im Report-Back von
-[phase-6](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/phase-6-assets-erzeugen.md).
-🔴 **AK 8 (`deploy.cmd content`) bewusst nicht ausgeführt** — `pokemon` bleibt
-bis Phase 7 gesperrt (Figuren-/Aufgabenbilder fehlen noch), sonst hängt eine
-unfertige Welt live. Nächster Schritt: **Phase 7 — Figuren- und
-Aufgabenbilder neu** (Rating: standard, `sonnet` reicht).
-
-🟡 **Welt umbenannt (23.08.2026, Sascha):** `pokemon_lesen` → `pokemon`, Fach
-erweitert auf Deutsch/Mathe/Sachkunde. Ordner, `theme_id`, `main_hub.json`
-und alle load-bearing Doku-Verweise sind nachgezogen (Details: Report-Back
-Phase 5). Weiter unten in dieser Datei stehen noch alte Verweise auf
-`pokemon_lesen` in älteren, nicht mehr aktiven Abschnitten — die sind
-historisch korrekt und bleiben so stehen.
-
-🟡 **Phase-4-Smoke steht noch aus** (Report-Back der Phasendatei): Timeline/
-MapScreen/MainHub am Bildschirm öffnen, manuelles Zoomen/Ziehen nach dem
-Fokus prüfen, `prefers-reduced-motion` durchspielen — Details und Priorität
-in [phase-4](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/phase-4-auto-fokus.md).
-
-🟡 **Vor dem nächsten `deploy.cmd content`:** Smoke am Bildschirm
-(Prüf-Checkliste unten in phase-5) mindestens einmal durchspielen. Der aktuelle
-nächste Schritt steht oben im Kopf dieser Datei, nicht hier.
-
-🔴 **Der Karten-Ablauf ist am 26.08.2026 zweimal grundlegend umgebaut worden**
-(beide Male nach einem Befund von Sascha am Bildschirm). Verbindlich ist jetzt
+🟡 **Bildmaschine:** Der Karten-Ablauf ist am 26.08.2026 zweimal grundlegend
+umgebaut worden. Verbindlich und vollständig ist
 [`image-prompts/MAPS.md`](data/_authoring/image-prompts/MAPS.md) →
-„Hochskalieren — der Detailgrad hängt an drei Reglern". Kurzfassung:
+„Hochskalieren — der Detailgrad hängt an drei Reglern". Das Wichtigste in einem
+Satz: der gespeicherte Ablauf `Upscale Map` trägt nicht, die Regler erreichen den
+Auftrag über comfy-cli gar nicht, und die Stilwörter im Prompt schlagen alles
+andere — der `art_style` der Welt gehört wörtlich hinein.
 
-1. **Der gespeicherte Ablauf `Upscale Map` reicht nicht** — Schritte stehen auf
-   2, und sein Kachel-Prompt **verbietet** ausdrücklich das Hinzufügen von
-   Feinstruktur. Ergebnis war Matsch.
-2. **Die Regler im Knotenpaket erreichen den Auftrag über comfy-cli gar nicht.**
-   Deshalb wird der fertig umgewandelte Auftrag aus `GET /history/<id>` geholt,
-   direkt gepatcht und per `POST /prompt` eingereicht.
-3. **Kette:** Remacri ×4 (Leinwand, nahtlos und farbtreu) → Detail-Lauf mit
-   8 Schritten und 0,48 Rauschen und dem Detail-Prompt
-   ([`DETAIL_PROMPT.txt`](data/_authoring/image-prompts/DETAIL_PROMPT.txt)) →
-   `match_map_colour.py` (Palette zurückholen) → `slice_map.py`.
-   Für Ausschnitte und garantierte Überblendung: `refine_map_tiles.py`.
-4. **Die Stilwörter im Prompt schlagen alles andere.** Ein Detail-Prompt mit
-   „watercolour" liefert eine Aquarellkarte. Der `art_style` der Welt gehört
-   wörtlich hinein.
+🟡 **Karten-Leinwände** liegen unter `data/_authoring/map-canvases/` und sind
+gitignored — eine 8192er Leinwand gehört nicht in die Repo-Historie. Preis: nur
+lokal, kein Drive-Backup.
 
-🔴 **Bei den 8192ern wird nur nachgeschärft, was sichtbar ist** (Sascha,
-26.08.2026): Kachel `{0,0}` plus ein Kachelring Rand. Eine volle Leinwand
-kostet rund vier Stunden für 63 Kacheln, die niemand sieht. Damit ist AK 7 dem
-Sinn nach erfüllt (nahtloser Anschluss aus derselben Leinwand), dem Buchstaben
-nach nicht (eine spätere Kachel braucht noch einen Schärf-Lauf).
-
-🟡 **Drei Plan-Vorgaben haben in der Praxis nicht getragen** und sind in
-[`image-prompts/MAPS.md`](data/_authoring/image-prompts/MAPS.md) korrigiert —
-Herleitung im Report-Back von Phase 6: der `ResolutionSelector` kennt kein 2:1;
-die Viertel-Regel hat eine Untergrenze bei 1024×576; und **eigene Verbotssätze
-im Prompt holen genau das ins Bild, was sie fernhalten sollen** (Krea 2 hat
-keinen Negativ-Zweig — die Bretterwand am Strand kam aus dem Satz, der sie
-verbieten sollte).
-
-🟡 **Karten-Leinwände liegen unter `data/_authoring/map-canvases/` und sind
-gitignored** — `data/_authoring/` trägt sonst nur Markdown und Skripte, eine
-8192er Leinwand gehört nicht in die Repo-Historie. Preis: nur lokal, kein
-Drive-Backup.
-
-✅ **Schritt 0 ist durch, das Stil-Rezept steht** (26.08.2026, von Sascha
-abgenommen): echte Draufsicht, keine Perspektive, keine Bauwerke. Der erprobte
-Prompt und die beiden Bedienfallen des Krea2-Workflows (Prompt gehört in
-Knoten 19, Größe kommt aus `ResolutionSelector` und rechnet in 1024²-Einheiten)
-stehen als Standard-Vorlage in
-[`data/_authoring/image-prompts/MAPS.md`](data/_authoring/image-prompts/MAPS.md).
-Krea 2 hält 2048×2048 zusammen — der Weg „2048 erzeugen, einmal um Faktor 4
-hoch" ist bestätigt.
-
-✅ **Reihenfolge „Bilder zuerst, Umgruppierung danach" (Sascha, 26.08.2026)
-ist durchgelaufen** — Nachtrag 5b hat `world_config.json` am 27.08.2026 auf
-zwei Gebietskarten umgestellt (Details oben). `pokemon` ist strukturell
-komplett, aber noch nicht deployt/abgenommen — siehe Nächster-Schritt-Zeile
-oben.
-
-✅ **Geklärt:** `main_hub.json` liegt unter `data/main_hub.json`, nicht unter
-`data/hub/` (das enthält nur das Kachelbild). Kein Nachziehen nötig, war schon
-konform.
-
-🟡 **Der Plan ist am 26.08.2026 in drei Punkten neu gefasst worden** (Sascha),
-alle drei sind in README/Phase 5/Phase 6 eingearbeitet:
-- **Drei Kartenebenen** statt zwei: Planetenkarte und Weltenkarte sind je
-  8192×8192 mit nur der ersten Kachel aufgedeckt; die bisherige *eine* Ortskarte
-  zerfällt in **zwei Gebietskarten** (Alabastia + Route 1 / Vertania City +
-  Vertania-Wald). Die vier Kacheln und ihre vierzehn Stationen bleiben
-  unverändert — nur umgruppiert.
-- **Gebäude gehören nicht in die Karte** (Weg C): Karten tragen nur Gelände,
-  jedes Bauwerk ist ein eigenes Sprite. Damit ist der alte 🔴-Punkt
-  „Kartenverfahren" entschieden. Neu bestellt: zwei Orts-Sprites für die
-  Weltenkarte.
-- **Erzeugungsweg:** in 2048×2048 erzeugen, **einmal** um Faktor 4
-  hochskalieren (Krea 2 ist bis 2k trainiert, 4× trifft 8192 exakt).
-
-🟡 **Der Freistell-Fix ist erledigt** (`4b59882`, Phase 7 Teil A vorgezogen) —
-und die im Plan festgeschriebene Mechanik war falsch: der Fehler ist kein Loch,
-sondern eine **durchscheinende** Fläche (Alpha 9–64 am Bisasam-Auge). Gesucht
-wird jetzt nach eingeschlossenen Flächen unter Alpha 200. Details in phase-7.
-
-🔴 **`pokemon` ist bis Phase 7 nicht abnahmefähig/deploybar:** Phase 5 hat
-Content und Datenmodell fertig (Build+Lint grün, alle Referenzen
-konsistenzgeprüft), aber es fehlen noch alle Bilddateien — 4 Kachel-
-Hintergründe, 14 Stations-Sprites, 10 Episoden-Hintergründe, 18 neue
-Bildantworten, plus Sprites für 6 neue Figuren. Vollständige Bestellliste im
-Report-Back von [phase-5](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/phase-5-level-neuplanung.md).
-**Nicht deployen, solange Phase 7 nicht fertig ist.** Die Planetenkarte
-(`data/main_hub.json`, migriert) bleibt separat funktionsfähig.
-
-🟡 **Ziehen, Zoomen und die Kachel-Freischaltung sind gebaut, aber am Bildschirm noch nicht abgenommen.** Die Abnahme von Phase 2 und 3 hängt zusammen und steht als eine Liste im Report-Back von [phase-3](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/phase-3-fortschritts-freischaltung.md). Unsicherste Stellen: Zwei-Finger-Zoom gleichzeitig mit Schieben (Phase 2) und der Spielstand-Schreibkreis beim Öffnen einer Karte — höchstens ein `PUT` beim ersten Öffnen, keins beim zweiten (Phase 3). **Jetzt zusätzlich prüfbar** (FINDINGS.md → Phase 5, noch offen): `vertania_wald` liegt bewusst im Knick (`{row:-1,col:2}`) — sobald Phase 6 die Bilder liefert, am Bildschirm prüfen, ob sich in die leere Ecke neben `vertania_wald` pannen lässt, obwohl dort keine Kachel liegt.
-
-**Sammelkarten-Plan liegt weiter geparkt:** [docs/planning/2026-08-18_sammelkarten-und-druckbogen/README.md](docs/planning/2026-08-18_sammelkarten-und-druckbogen/README.md).
-
-**Davor offene Abnahme (Pokéball werfen) noch unbearbeitet — steht unten.**
+---
 
 ## Zuletzt fertig: Pokéball werfen (archiviert 21.08.2026)
 
@@ -236,14 +101,13 @@ Die geplante Mechanik hat am Bildschirm nicht getragen und wurde am 21.08.2026 e
 Stehen dort jeweils unter „Follow-ups", hier nur als Merkposten:
 
 - 🟡 **`data/hub/` ist nicht in `.gitignore`** — anders als `data/themes/` und `data/avatars/` würde die Planetenkarte im Repo landen. Zu entscheiden: mitversionieren oder ausnehmen. Aufs Deployen hat es keinen Einfluss.
-- 🟡 **`_default` in `voices.json` steht auf Julian**, derselben Stimme wie Professor Eich — jede künftig unbesetzte Figur klingt unbemerkt wie er. Jakob wäre frei und schon geprobt.
 - 🟡 **Der Server-Vorfall vom 19.08.2026 ist nicht aufgeklärt** (30–40 s pro API-Aufruf, Verzögerung vor PHP, am 20.08. von selbst weg). Diagnose-Zeilen liegen in `api-bridge/diag.php` bereit.
 - Aus dem UI-Umbau: das letzte `vh` statt `dvh` in `--size-answer-image`, das zu klein gewordene Größenbudget des Builds. (Der Bühnen-Kontrakt ohne automatischen Wächter ist am 20.08.2026 behoben — `align-content: safe end` in `episode.scss`.)
 - Aus Meilenstein 4: die Smoke-Checkliste der [archivierten README](docs/archive/2026-08/2026-08-17_nutzerverwaltung-und-spielstand/README.md) ist noch nicht abgearbeitet — sieben Punkte, die drei ersten mit 🔴.
 
 ## Danach
 
-**Sammelkarten & Druckbogen** — sechs Phasen, freigegeben am 18.08.2026: [docs/planning/2026-08-18_sammelkarten-und-druckbogen/](docs/planning/2026-08-18_sammelkarten-und-druckbogen/README.md). 🟡 Phase 6 baut `pokemon_lesen` von 6 auf ≥11 Karten in drei Gruppen aus — das war früher die Rolle der Testwelt `dev_fixture`, die es nicht mehr gibt.
+Der Backlog ist leer, sobald Sammelkarten & Druckbogen (oben, jetzt aktiv) durch ist.
 
 Alle gesammelten Spielideen mit Stand und Bewertung: [docs/knowledge/spielmechaniken-katalog.md](docs/knowledge/spielmechaniken-katalog.md) — Ideenspeicher, kein Fahrplan.
 
@@ -251,6 +115,6 @@ Alle gesammelten Spielideen mit Stand und Bewertung: [docs/knowledge/spielmechan
 
 - **PHP/Composer** liegen unter `C:\Users\sasch\develop\.tools\` (`php.cmd`/`composer.cmd`), nicht im Suchpfad. Für den PHP-Linter müssen die Entwicklungs-Abhängigkeiten installiert sein (`composer install` ohne `--no-dev`).
 - **Ad-hoc-Testserver nie auf Port 8000 oder 4200** — Sascha nutzt beide selbst parallel (`backend\serve.cmd` / `npm start`).
-- **Python** gibt es nur in den Werkzeug-Umgebungen: `data/_authoring/image-tools/.venv/Scripts/python.exe`. Ein blankes `python` liegt nicht im Suchpfad. **ImageMagick ist nicht installiert** — das `convert` im Suchpfad ist das Windows-Dateisystem-Werkzeug und richtet bei falschem Aufruf Schaden an.
+- **Python** gibt es nur in den Werkzeug-Umgebungen: `data/_authoring/image-tools/.venv/Scripts/python.exe` für Bilder, `data/_authoring/voice-tools/.venv-orpheus/Scripts/python.exe` für Vertonung. Ein blankes `python` liegt nicht im Suchpfad. Beim Vertonen `PYTHONIOENCODING=utf-8` davorsetzen, sonst bricht die Ausgabe am ersten Umlaut ab. **ImageMagick ist nicht installiert** — das `convert` im Suchpfad ist das Windows-Dateisystem-Werkzeug und richtet bei falschem Aufruf Schaden an.
 - **Der Content unter `data/themes/` liegt außerhalb von Git** (Drive-Verknüpfung). Weltdateien und erzeugte Bilder tauchen in keinem Commit auf; gesichert werden sie über Drive, auf den Server kommen sie mit `deploy.cmd content`.
 - **Bilderzeugung** läuft ferngesteuert über den MCP-Server `comfy` (Comfy Desktop muss laufen). Bedienung, Werte und alle bekannten Fallen: [data/_authoring/image-prompts/GENERATING.md](data/_authoring/image-prompts/GENERATING.md). Handwerk pro Modell: Skills `krea2-bilder` und `flux2-bilder`, Vertonung: Skill `vertonung`.
