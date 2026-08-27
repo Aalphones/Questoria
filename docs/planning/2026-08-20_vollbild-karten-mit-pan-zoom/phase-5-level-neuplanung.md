@@ -49,6 +49,41 @@ größte Arbeitsblock im ganzen Plan, siehe Aufwands-Hinweis unten)
 > 🔴 **Bis 5b erledigt ist, ist die zweite Gebietskarte im Spiel nicht
 > vorhanden** — die Bilder aus Phase 6 liegen dann auf der Platte, aber nichts
 > zeigt sie an. Das ist die bewusst gewählte Reihenfolge, kein Versehen.
+>
+> ✅ **Nachtrag 5b umgesetzt (27.08.2026).** `world_config.json`: `maps[]`
+> jetzt zwei Einträge (`alabastia`: Kacheln `alabastia`+`route_1`, 6 Stationen;
+> `vertania`: Kacheln `vertania_city`+`vertania_wald`, 8 Stationen inkl.
+> Arena-Hinweis-Knoten), `vertania_wald` auf `{row:-1,col:0}`. `arc_overview`
+> hat jetzt zwei Stages (`alabastia`, `vertania`) auf derselben Kachel
+> `arc_0_0`, mit den zwei Orts-Sprites aus Phase 6
+> (`sprite_alabastia.png`/`sprite_vertania_city.png`) statt der alten
+> `ep_01.webp`. Alle 13 Episoden-Dateien auf ihr neues `active_map_id`
+> umgestellt (6× `alabastia`, 7× `vertania`). Automatischer Konsistenz-Check
+> (Tile-/Node-/Episode-Referenzen, Achievement-Ziele) läuft sauber durch.
+> `main_hub.json` lag entgegen dem alten STATE.md-Hinweis direkt unter
+> `data/main_hub.json` (nicht `data/hub/`) und war inhaltlich schon konform
+> (eine Kachel `{0,0}`, `map_planetenkarte.webp`) — keine Änderung nötig, nur
+> der Pfad-Hinweis war veraltet.
+>
+> 🟡 **Drei eigene Entscheidungen dabei, nicht wörtlich im Plan vorgegeben:**
+> 1. Kartennamen `alabastia`/`vertania` statt `route_1` (wie im Report-Back
+>    oben angemerkt fällig) — Tile-Id `alabastia` und Karten-Id `alabastia`
+>    koexistieren bewusst, wie schon vorher bei `route_1`/`route_1`.
+> 2. Achievement „Meister von Alabastia" (`buchstaben_meister`) jetzt an
+>    `stage_id: "alabastia"` gebunden (6 Stationen) statt wie vorher an die
+>    komplette, inzwischen aufgeteilte Route (14 Stationen) — der Titel nennt
+>    nur Alabastia, die Beschreibung ist entsprechend angepasst
+>    („alle Orte in Alabastia" statt „auf Route 1"). Wer die alte Fassung
+>    schon mit 14/14 freigeschaltet hatte, bekommt den Erfolg jetzt ggf. schon
+>    nach 6 statt vorher nach 14 — im Savegame gibt es aber noch keine
+>    Bestandsspieler, also folgenlos.
+> 3. Auf der Weltenkarte eine sichtbare Route zwischen den beiden Orten
+>    ergänzt (`arc_overview.routes: [["alabastia","vertania"]]`, vorher leer)
+>    — unverbindliche Ausschmückung, kein Kontrakt-Punkt.
+>
+> Platzierung der zwei Orts-Sprites auf der Weltenkarte (`x`/`y`/`shape`) ist
+> freihändig gesetzt, wie schon die Stationsplatzierungen in dieser Phase —
+> am Bildschirm zu prüfen, siehe Smoke-Checkliste unten.
 
 - **Planetenkarte** (`MainHub`): 8192×8192, anfangs nur `{0,0}` aufgedeckt,
   darauf der Planet Pokémon. Nicht Teil dieser Phase — Bildarbeit in Phase 6.

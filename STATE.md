@@ -2,13 +2,23 @@
 
 **Aktiver Plan:** [docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/README.md)
 
-**Phase:** 7/8 — Figuren- und Aufgabenbilder neu. **Komplett durch
-(26.08.2026)**, alle vier Teile. Als nächstes **Phase 8 — Vertonung,
-vollständig statt nur Dialog** (23.08.2026, Sascha angehängt): jede Frage und
-zwei feste Engine-Ansagen sollen eine echte Aufnahme statt Browser-
-Sprachausgabe bekommen. Rating heikel — echte Schema- und Komponenten-Arbeit,
-keine reine Content-Phase. Startet mit einer eigenen 🔴-Entscheidung (siehe
-Phasendatei).
+**Phase:** 7/8 fertig, **Nachtrag 5b (Kartenumgruppierung) jetzt auch fertig
+(27.08.2026)** — Details im Nachtrag-Block von
+[phase-5](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/phase-5-level-neuplanung.md).
+Als nächstes **Phase 8 — Vertonung, vollständig statt nur Dialog**
+(23.08.2026, Sascha angehängt): jede Frage und zwei feste Engine-Ansagen
+sollen eine echte Aufnahme statt Browser-Sprachausgabe bekommen. Rating
+heikel — echte Schema- und Komponenten-Arbeit, keine reine Content-Phase.
+Startet mit einer eigenen 🔴-Entscheidung (siehe Phasendatei).
+
+✅ **Nachtrag 5b ist fertig (27.08.2026):** `world_config.json` auf zwei
+Gebietskarten (`alabastia`, `vertania`) umgestellt, `arc_overview` zeigt jetzt
+zwei Orte statt einem, alle 13 Episoden auf ihr neues `active_map_id`
+umgezogen, automatischer Referenz-Check sauber. `pokemon` ist damit
+**strukturell deploybar** — `deploy.cmd content` ist trotzdem noch bewusst
+nicht gelaufen, siehe unten. Drei eigene Entscheidungen unterwegs (Kartennamen,
+Achievement-Scope, Weltenkarten-Route) — Details und Begründung im
+Nachtrag-Block von phase-5, dort auch als Smoke-Punkt vorgemerkt.
 
 ✅ **Phase 7 ist fertig (26.08.2026):** Teil A/C/D vollständig, Teil B mit
 geänderter Methode (siehe unten). Details, AK-Abhaken und die zwei
@@ -59,9 +69,11 @@ MapScreen/MainHub am Bildschirm öffnen, manuelles Zoomen/Ziehen nach dem
 Fokus prüfen, `prefers-reduced-motion` durchspielen — Details und Priorität
 in [phase-4](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/phase-4-auto-fokus.md).
 
-**Nächster Schritt:** Phase 7 ist fertig. Als nächstes **Nachtrag 5b**
-(Kartenumgruppierung, Voraussetzung fürs Deployen) oder **Phase 8 —
-Vertonung** — beide unabhängig voneinander, Reihenfolge frei.
+**Nächster Schritt:** Phase 7 und Nachtrag 5b sind fertig. Als nächstes
+**Phase 8 — Vertonung** (startet mit eigener 🔴-Entscheidung, siehe Phasendatei)
+oder erst der noch offene **AK-2-Widerspruch** (Vier-Emotionen-Sets, siehe
+weiter unten) klären. Vor dem nächsten `deploy.cmd content` zusätzlich: Smoke
+am Bildschirm (Prüf-Checkliste unten in phase-5) mindestens einmal durchspielen.
 
 🔴 **Der Karten-Ablauf ist am 26.08.2026 zweimal grundlegend umgebaut worden**
 (beide Male nach einem Befund von Sascha am Bildschirm). Verbindlich ist jetzt
@@ -111,17 +123,15 @@ stehen als Standard-Vorlage in
 Krea 2 hält 2048×2048 zusammen — der Weg „2048 erzeugen, einmal um Faktor 4
 hoch" ist bestätigt.
 
-🔴 **Reihenfolge (Sascha, 26.08.2026): „Bilder zuerst, Umgruppierung danach."**
-`world_config.json` steht noch auf dem alten Stand — **eine** Gebietskarte mit
-vier Kacheln statt zwei mit je zweien, `arc_overview` mit einem Ort statt zwei,
-Wald noch auf `{-1,2}`. Das wird als **Nachtrag 5b nach Phase 6** nachgezogen
-(Tabelle Ist/Soll im Kopf von [phase-5](docs/planning/2026-08-20_vollbild-karten-mit-pan-zoom/phase-5-level-neuplanung.md)).
-Bis dahin liegen die Bilder auf der Platte, ohne dass das Spiel die zweite
-Gebietskarte kennt. Bewusst so gewählt, kein Versehen — **aber nicht deployen
-und nicht abnehmen wollen, bevor 5b durch ist.**
+✅ **Reihenfolge „Bilder zuerst, Umgruppierung danach" (Sascha, 26.08.2026)
+ist durchgelaufen** — Nachtrag 5b hat `world_config.json` am 27.08.2026 auf
+zwei Gebietskarten umgestellt (Details oben). `pokemon` ist strukturell
+komplett, aber noch nicht deployt/abgenommen — siehe Nächster-Schritt-Zeile
+oben.
 
-🟡 **Ungeklärt, vor 5b zu suchen:** `data/hub/main_hub.json` liegt nicht an dem
-Pfad, den dieser Merkzettel bisher genannt hat.
+✅ **Geklärt:** `main_hub.json` liegt unter `data/main_hub.json`, nicht unter
+`data/hub/` (das enthält nur das Kachelbild). Kein Nachziehen nötig, war schon
+konform.
 
 🟡 **Der Plan ist am 26.08.2026 in drei Punkten neu gefasst worden** (Sascha),
 alle drei sind in README/Phase 5/Phase 6 eingearbeitet:
