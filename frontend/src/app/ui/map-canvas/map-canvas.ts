@@ -21,15 +21,22 @@ export const TILE_SIZE = 1024;
 const BOW_RATIO = 0.18;
 const MAX_BOW = 110;
 
-/** Zoomstufen: 1 = ganze freigeschaltete Fläche eingepasst, darüber wird hineingezoomt. */
-const MIN_ZOOM = 1;
-const MAX_ZOOM = 2.5;
+/** Ein Weltpixel ist ein Bildschirmpixel — eine Kachel erreicht ihre native Größe. */
+const NATIVE_SCALE = 1;
+
+/** Sichtbarer Nebelrand um die freigeschaltete Fläche, damit „hier geht es weiter" lesbar ist. */
+const FOG_MARGIN = TILE_SIZE;
 
 /** Erst ab dieser Bewegung gilt eine Berührung als Ziehen statt als Tipp. */
 const DRAG_THRESHOLD_PX = 6;
 
-/** Zoomänderung pro Mausrad-Rastung. */
-const WHEEL_STEP = 0.15;
+/**
+ * Zoomschritte sind multiplikativ, nicht additiv: ein fester Summand fühlt
+ * sich am herausgezoomten Ende träge und am hineingezoomten ruckartig an,
+ * weil derselbe Betrag dort ein Vielfaches und hier ein Bruchteil ist.
+ */
+const WHEEL_FACTOR = 1.15;
+const BUTTON_FACTOR = 1.4;
 
 /**
  * Gemeinsame Kartenfläche von Planeten-, Etappen- und Ortskarte: eine Liste
@@ -39,12 +46,16 @@ const WHEEL_STEP = 0.15;
  *
  * Nur freigeschaltete Kacheln (`unlockedTileIds`) werden überhaupt gerendert
  * — nicht freigeschaltete zeigen einen Nebel-Platzhalter ohne Bild-Request.
- * Die Fläche zentriert sich per Cover-Skalierung auf die Bounding-Box der
- * freigeschalteten Kacheln.
  *
- * Ziehen und Zoomen laufen ohne Fremdbibliothek (ADR-019) und sind exakt auf
- * diese Bounding-Box geklemmt: über die freigeschaltete Fläche hinaus lässt
- * sich nicht schieben.
+ * Die sichtbare Fläche ist die Bounding-Box der freigeschalteten Kacheln,
+ * um eine Kachelbreite erweitert und auf die Gesamtfläche beschnitten
+ * (ADR-022). So ist immer so viel Nebel zu sehen, dass er als „hier geht es
+ * weiter" liest, ohne dass man in eine leere Fläche hinauswandern kann.
+ *
+ * Ziehen und Zoomen laufen ohne Fremdbibliothek (ADR-019) und sind auf diese
+ * Fläche geklemmt. Der herausgezoomte Anschlag zeigt sie vollständig
+ * (`fitScale`), der Startzustand füllt die Bühne randlos (`coverScale`,
+ * ADR-017), und hinein geht es bis zur nativen Kachelgröße.
  */
 @Component({
   selector: 'qst-map-canvas',
@@ -124,20 +135,47 @@ export class MapCanvas {
     boundingBoxOf(this.unlockedTiles()),
   );
 
+  private readonly allTilesBounds = computed<WorldRect | null>(() => boundingBoxOf(this.tiles()));
+
+  /**
+   * Die Fläche, auf der gezoomt und geklemmt wird: freigeschaltete Kacheln
+   * plus einen Kachelrand Nebel, beschnitten auf das, was die Karte überhaupt
+   * hergibt. Sind alle Kacheln frei, ist der Rand automatisch weg.
+   */
+  private readonly visibleBounds = computed<WorldRect | null>(() => {
+    const unlocked = this.unlockedBounds();
+    const all = this.allTilesBounds();
+
+    if (unlocked === null) {
+      return all;
+    }
+
+    if (all === null) {
+      return unlocked;
+    }
+
+    return {
+      left: Math.max(all.left, unlocked.left - FOG_MARGIN),
+      top: Math.max(all.top, unlocked.top - FOG_MARGIN),
+      right: Math.min(all.right, unlocked.right + FOG_MARGIN),
+      bottom: Math.min(all.bottom, unlocked.bottom + FOG_MARGIN),
+    };
+  });
+
   protected readonly worldWidth = computed<number>(() => {
-    const bounds = this.unlockedBounds();
+    const bounds = this.visibleBounds();
 
     return bounds === null ? TILE_SIZE : bounds.right - bounds.left;
   });
 
   protected readonly worldHeight = computed<number>(() => {
-    const bounds = this.unlockedBounds();
+    const bounds = this.visibleBounds();
 
     return bounds === null ? TILE_SIZE : bounds.bottom - bounds.top;
   });
 
   private readonly worldOriginOffset = computed<{ x: number; y: number }>(() => {
-    const bounds = this.unlockedBounds();
+    const bounds = this.visibleBounds();
 
     return bounds === null ? { x: 0, y: 0 } : { x: bounds.left, y: bounds.top };
   });
@@ -165,7 +203,13 @@ export class MapCanvas {
     this.hasMeasured.set(true);
   });
 
-  private readonly zoom = signal<number>(MIN_ZOOM);
+  /**
+   * Der vom Nutzer gewünschte Maßstab — `null` heißt „noch keiner gewählt",
+   * dann gilt der randlos füllende Startzustand. Bewusst der Maßstab selbst
+   * und kein Faktor darauf: ein Faktor müsste sich bei jeder Änderung der
+   * freigeschalteten Fläche mit umrechnen lassen, sonst springt die Ansicht.
+   */
+  private readonly requestedScale = signal<number | null>(null);
   /** Zusätzlicher Versatz zur eingepassten Position, in Bildschirmpixeln. */
   private readonly panX = signal<number>(0);
   private readonly panY = signal<number>(0);
@@ -197,11 +241,48 @@ export class MapCanvas {
     });
   }
 
+  /** Randlos füllend — die Fläche wird an der schmaleren Achse angeschnitten. */
   protected readonly coverScale = computed<number>(() =>
     Math.max(this.viewportWidth() / this.worldWidth(), this.viewportHeight() / this.worldHeight()),
   );
 
-  protected readonly scale = computed<number>(() => this.coverScale() * this.zoom());
+  /** Vollständig sichtbar — an der breiteren Achse bleibt Rand stehen. */
+  protected readonly fitScale = computed<number>(() =>
+    Math.min(this.viewportWidth() / this.worldWidth(), this.viewportHeight() / this.worldHeight()),
+  );
+
+  /**
+   * Hinein bis zur nativen Kachelgröße. `coverScale` ist die Untergrenze
+   * davon: eine kleine Karte auf einem großen Bildschirm füllt schon über
+   * nativer Größe, und dann darf der Startzustand nicht über dem Anschlag
+   * liegen.
+   */
+  private readonly maxScale = computed<number>(() =>
+    Math.max(this.coverScale(), NATIVE_SCALE),
+  );
+
+  protected readonly scale = computed<number>(() => {
+    const requested = this.requestedScale();
+
+    return clamp(requested ?? this.coverScale(), this.fitScale(), this.maxScale());
+  });
+
+  /**
+   * Kehrwert des Maßstabs, damit Kartenknoten ihre Bildschirmgröße behalten,
+   * statt mit der Karte zu wachsen und zu schrumpfen — sonst fällt ein
+   * Antippziel beim Herauszoomen unter die 44-Pixel-Grenze.
+   *
+   * Als Custom Property auf dem Host, nicht als Style-Bindung im Template:
+   * Angulars Bindung auf Custom Properties ist nicht zugesichert (dieselbe
+   * Begründung wie in `map-point.ts`), und über den Host erbt sie an jeden
+   * `qst-map-point` weiter.
+   */
+  private readonly applyInverseScale = effect(() => {
+    this.hostElement.nativeElement.style.setProperty(
+      '--map-inverse-scale',
+      String(1 / this.scale()),
+    );
+  });
 
   /** Bildschirmposition der linken Kante der freigeschalteten Fläche, ungeklemmt. */
   private readonly rawWorldLeft = computed<number>(
@@ -287,14 +368,22 @@ export class MapCanvas {
     }
   }
 
-  protected zoomBy(delta: number): void {
+  /** `factor > 1` zoomt hinein, `factor < 1` heraus — immer um die Mitte der Fläche. */
+  protected zoomBy(factor: number): void {
     const rect = this.hostElement.nativeElement.getBoundingClientRect();
 
-    this.zoomAround(this.zoom() + delta, rect.left + rect.width / 2, rect.top + rect.height / 2);
+    this.zoomAround(
+      this.scale() * factor,
+      rect.left + rect.width / 2,
+      rect.top + rect.height / 2,
+    );
   }
 
+  protected readonly buttonFactor = BUTTON_FACTOR;
+
+  /** Zurück auf den randlos füllenden Startzustand, mittig. */
   protected resetView(): void {
-    this.zoom.set(MIN_ZOOM);
+    this.requestedScale.set(null);
     this.panX.set(0);
     this.panY.set(0);
   }
@@ -360,7 +449,10 @@ export class MapCanvas {
   });
 
   private applyFocus(worldPosition: { x: number; y: number }): void {
-    this.zoom.set(Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, this.focusZoom())));
+    // `focusZoom` ist ein Vielfaches des randlos füllenden Startzustands,
+    // nicht des herausgezoomten Anschlags — sonst würde die Zentrierung mit
+    // dem Zoom-Boden aus ADR-022 stillschweigend weiter wegrücken.
+    this.requestedScale.set(this.coverScale() * this.focusZoom());
 
     const scale = this.scale();
     const origin = this.worldOriginOffset();
@@ -426,7 +518,7 @@ export class MapCanvas {
     if (previousDistance !== null && previousCenter !== null && previousDistance > 0) {
       this.panX.update((offset: number) => offset + (center.x - previousCenter.x));
       this.panY.update((offset: number) => offset + (center.y - previousCenter.y));
-      this.zoomAround(this.zoom() * (distance / previousDistance), center.x, center.y);
+      this.zoomAround(this.scale() * (distance / previousDistance), center.x, center.y);
     }
 
     this.pinchDistance = distance;
@@ -434,7 +526,7 @@ export class MapCanvas {
   }
 
   /** Zoomt so, dass der Weltpunkt unter (`clientX`, `clientY`) dort liegen bleibt. */
-  private zoomAround(nextZoom: number, clientX: number, clientY: number): void {
+  private zoomAround(wantedScale: number, clientX: number, clientY: number): void {
     const rect = this.hostElement.nativeElement.getBoundingClientRect();
     const focusX = clientX - rect.left;
     const focusY = clientY - rect.top;
@@ -442,7 +534,7 @@ export class MapCanvas {
     const worldX = (focusX - this.translateX()) / previousScale;
     const worldY = (focusY - this.translateY()) / previousScale;
 
-    this.zoom.set(Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, nextZoom)));
+    this.requestedScale.set(wantedScale);
 
     const nextScale = this.scale();
     const origin = this.worldOriginOffset();
@@ -477,9 +569,9 @@ export class MapCanvas {
   private readonly onWheel = (event: WheelEvent): void => {
     event.preventDefault();
 
-    const direction = event.deltaY > 0 ? -1 : 1;
+    const factor = event.deltaY > 0 ? 1 / WHEEL_FACTOR : WHEEL_FACTOR;
 
-    this.zoomAround(this.zoom() + direction * WHEEL_STEP, event.clientX, event.clientY);
+    this.zoomAround(this.scale() * factor, event.clientX, event.clientY);
   };
 
   private readonly onClickCapture = (event: MouseEvent): void => {
@@ -498,14 +590,26 @@ interface PointerPosition {
   readonly y: number;
 }
 
+function clamp(value: number, lowest: number, highest: number): number {
+  return Math.min(highest, Math.max(lowest, value));
+}
+
 /**
  * Klemmt die Bildschirmposition der linken/oberen Kante so, dass der sichtbare
- * Ausschnitt die freigeschaltete Fläche nie verlässt.
+ * Ausschnitt die Karte nie verlässt.
+ *
+ * Zwei Fälle, und der zweite ist neu (ADR-022): Ist die Karte auf dieser Achse
+ * **kleiner** als die Fläche — herausgezoomt bis zum Anschlag —, gibt es
+ * nichts zu klemmen, sondern zu zentrieren. Ohne diesen Zweig würde die Karte
+ * dort in die linke obere Ecke gedrückt, weil die alte Rechnung stillschweigend
+ * voraussetzte, dass die Welt immer größer als die Fläche ist.
  */
 function clampWorldEdge(rawEdge: number, viewportSize: number, worldPxSize: number): number {
-  const lowerBound = Math.min(0, viewportSize - worldPxSize);
+  if (worldPxSize <= viewportSize) {
+    return (viewportSize - worldPxSize) / 2;
+  }
 
-  return Math.min(0, Math.max(lowerBound, rawEdge));
+  return clamp(rawEdge, viewportSize - worldPxSize, 0);
 }
 
 interface WorldRect {

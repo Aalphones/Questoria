@@ -59,10 +59,13 @@ Zwei Skalen statt einer:
 - `coverScale` = `Math.max(vw / w, vh / h)` — bleibt für den Startzustand.
 
 Der wirksame Maßstab wird direkt geklemmt, nicht mehr der Zoomfaktor:
-`scale ∈ [fitScale, maxScale]` mit `maxScale = Math.max(fitScale, 1)`.
+`scale ∈ [fitScale, maxScale]` mit `maxScale = Math.max(coverScale, 1)`.
 `1` heißt: ein Weltpixel ist ein Bildschirmpixel, eine Kachel erreicht also
-ihre native Größe von 1024 px. `Math.max` fängt den Fall ab, dass eine kleine
-Karte auf einem großen Bildschirm schon eingepasst über nativer Größe liegt.
+ihre native Größe von 1024 px. `coverScale` steht in der Obergrenze, weil eine
+kleine Karte auf einem großen Bildschirm schon **füllend** über nativer Größe
+liegt — läge die Obergrenze darunter, würde der eigene Startzustand
+weggeklemmt und die Bühne bekäme Ränder. *(Bei der Umsetzung korrigiert: der
+Plan hatte hier zuerst `fitScale` stehen, was genau diesen Fall zerlegt hätte.)*
 
 **E3 — Startzustand und Zurücksetzen bleiben „füllend".**
 `resetView()` setzt den Maßstab auf `coverScale` und die Verschiebung auf
@@ -114,44 +117,75 @@ Gegenskalierung erledigt dasselbe rein deklarativ.
 
 ## Checkliste
 
-- [ ] `MIN_ZOOM` / `MAX_ZOOM` aus `map-canvas.ts` entfernen; stattdessen
+- [x] `MIN_ZOOM` / `MAX_ZOOM` aus `map-canvas.ts` entfernen; stattdessen
       `NATIVE_SCALE = 1` einführen und den Maßstab klemmen (E2).
-- [ ] `visibleBounds` einführen (E1): `unlockedBounds` um `TILE_SIZE`
+- [x] `visibleBounds` einführen (E1): `unlockedBounds` um `TILE_SIZE`
       erweitern, auf `boundingBoxOf(this.tiles())` beschneiden. `worldWidth`,
       `worldHeight`, `worldOriginOffset` beziehen sich ab jetzt darauf.
       `unlockedBounds` bleibt als eigene Rechnung erhalten — Phase 2 braucht sie.
-- [ ] `fitScale` als eigenes `computed` neben `coverScale` (E2).
-- [ ] `scale` klemmt auf `[fitScale, Math.max(fitScale, NATIVE_SCALE)]`.
-- [ ] `zoomAround` und `zoomBy` rechnen auf dem Maßstab statt auf einem
-      Zoomfaktor; das Signal `zoom` wird zu `scaleSignal` (Maßstab, nicht
-      Faktor) umbenannt, damit kein Rest der alten Bedeutung stehenbleibt.
-- [ ] `WHEEL_STEP` von einem additiven Faktor auf einen **multiplikativen**
+- [x] `fitScale` als eigenes `computed` neben `coverScale` (E2).
+- [x] `scale` klemmt auf `[fitScale, Math.max(coverScale, NATIVE_SCALE)]`.
+- [x] `zoomAround` und `zoomBy` rechnen auf dem Maßstab statt auf einem
+      Zoomfaktor; das Signal `zoom` heißt jetzt `requestedScale` und hält den
+      Maßstab selbst, `null` heißt „noch keiner gewählt".
+- [x] `WHEEL_STEP` von einem additiven Faktor auf einen **multiplikativen**
       Schritt umstellen (`1.15` hinein, `1 / 1.15` heraus). Additiv auf dem
       Maßstab fühlt sich am Boden träge und oben ruckartig an.
-- [ ] `clampWorldEdge` um den Zentrier-Zweig erweitern (E4).
-- [ ] `resetView()` setzt auf `coverScale` mittig statt auf den alten
+- [x] `clampWorldEdge` um den Zentrier-Zweig erweitern (E4).
+- [x] `resetView()` setzt auf `coverScale` mittig statt auf den alten
       Zoomfaktor 1 (E3). Der Startzustand ergibt sich daraus.
-- [ ] `focusZoom` (Eingang) von „Zoomfaktor" auf „Vielfaches der eingepassten
-      Größe" umdeuten und in `applyFocus` gegen dieselbe Klemmung fahren.
-      Aufrufer (`main-hub.html`, `map.html`, `timeline.html`) prüfen: der
-      bisherige Vorgabewert `1.6` bleibt gültig, weil er in beiden Lesarten
-      „etwas näher als der Boden" heißt.
-- [ ] `--map-inverse-scale` auf `.map-canvas__world` setzen (E5), über eine
-      Style-Bindung im Template auf dem bestehenden `__world`-Element.
-- [ ] `map-point.scss`: `scale: var(--map-inverse-scale, 1);` ergänzen (E5).
-- [ ] Prüfen, ob `--map-point-size` in `cqw` dadurch doppelt greift. `cqw`
+- [x] `focusZoom` (Eingang) als **Vielfaches des füllenden Zustands** deuten
+      und in `applyFocus` gegen dieselbe Klemmung fahren. Aufrufer geprüft:
+      `main-hub.html`, `map.html` und `timeline.html` setzen `focusZoom` gar
+      nicht, es gilt überall der Vorgabewert `1.6` — die automatische
+      Zentrierung verhält sich damit exakt wie vorher.
+- [x] `--map-inverse-scale` setzen (E5) — **auf dem Host statt im Template.**
+      Custom Properties erben nach unten und erreichen jeden `qst-map-point`;
+      Angulars Style-Bindung auf Custom Properties ist ausdrücklich nicht
+      zugesichert (Begründung stand schon in `map-point.ts`).
+- [x] `map-point.scss`: `scale: var(--map-inverse-scale, 1);` ergänzen (E5).
+- [x] Prüfen, ob `--map-point-size` in `cqw` dadurch doppelt greift. `cqw`
       bezieht sich auf die Breite des `map-canvas`-Hosts und ist damit
       zoom-unabhängig; die Gegenskalierung ist die einzige Zoomkorrektur.
       Sollte ein Knoten doppelt korrigiert erscheinen, ist die Bindung an der
       falschen Ebene gelandet — nicht die Größe nachjustieren.
-- [ ] `docs/decisions/022-kartenausschnitt-und-zoomboden.md` schreiben
-      (Kontext / Optionen / Entscheidung / Konsequenzen, 10 Zeilen). Nummer 022
-      ist frei: 021 ist die höchste auf Platte, 011–013 sind vom Sammelkarten-Plan
-      reserviert.
-- [ ] `docs/code-map.md`, Zeile „Kartenfläche": den Halbsatz „exakt auf die
-      freigeschaltete Fläche geklemmt" auf die neue Regel ziehen
-      (freigeschaltete Fläche plus ein Kachelrand, Zoom-Boden ist die
-      Gesamtansicht).
-- [ ] `npm run lint`, `npm run build` im Frontend.
+- [x] `docs/decisions/022-kartenausschnitt-und-zoomboden.md` schreiben.
+- [x] `docs/code-map.md`, Zeile „Kartenfläche" auf die neue Regel gezogen.
+- [x] `npm run lint`, `npm run build` im Frontend.
 
 ## Report-Back
+
+**Status:** complete (Code), Abnahme am Bildschirm steht aus.
+
+Umgesetzt wie geplant, mit zwei Korrekturen am Plan selbst:
+
+1. **Obergrenze des Maßstabs auf `coverScale` statt `fitScale` bezogen.** Der
+   Plan hätte bei einer kleinen Karte auf einem großen Bildschirm den eigenen
+   Startzustand weggeklemmt und Ränder erzeugt — genau der Fall, den die
+   Vollbild-Doktrin ausschließt. In E2 nachgezogen.
+2. **`focusZoom` auf den füllenden statt den eingepassten Zustand bezogen.**
+   Damit ändert sich die automatische Zentrierung gegenüber vorher gar nicht;
+   die Plan-Fassung hätte sie stillschweigend etwas weiter weggerückt.
+
+Dazu eine Abweichung in der Umsetzung: `--map-inverse-scale` sitzt auf dem
+Host, nicht als Style-Bindung auf `.map-canvas__world`. Grund steht in der
+Checkliste — der Bestand hatte dieselbe Falle in `map-point.ts` bereits
+kommentiert.
+
+**Geprüft:** `npm run lint` sauber, `npm run build` grün (die fünf
+SCSS-Budget-Warnungen sind Bestand und betreffen andere Dateien).
+
+**Nicht geprüft — das kann nur am Bildschirm entschieden werden:** ob der
+Zentrier-Zweig aus E4 am Anschlag wirklich mittig steht, und ob die
+Gegenskalierung der Knoten einfach greift. Beides steht als Punkt 1 und 3 in
+der Smoke-Checkliste der README.
+
+**Berührte Dateien**
+
+| Datei | Was |
+|---|---|
+| `ui/map-canvas/map-canvas.ts` | Bezugsfläche, zwei Skalen, Maßstab-Klemmung, Zentrier-Zweig, multiplikative Zoomschritte, Gegenskalierung |
+| `ui/map-canvas/map-canvas.html` | Zoom-Knöpfe rufen Faktoren statt Summanden |
+| `ui/map-canvas/map-point/map-point.scss` | Gegenskalierung |
+| `docs/decisions/022-…` | neu |
+| `docs/code-map.md` | Zeile „Kartenfläche" |

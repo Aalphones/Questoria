@@ -48,7 +48,7 @@ Sie bleibt.
 
 | # | Phase | Rating | Status |
 |---|---|---|---|
-| 1 | [Kartenausschnitt und Zoom-Boden](phase-1-kartenausschnitt-und-zoom.md) | heikel | pending |
+| 1 | [Kartenausschnitt und Zoom-Boden](phase-1-kartenausschnitt-und-zoom.md) | heikel | **complete** |
 | 2 | [Nebel als eigene Schicht](phase-2-nebel-als-schicht.md) | heikel | pending |
 | 3 | [Drei Marker-Zustände](phase-3-marker-zustaende.md) | standard | pending |
 | 4 | [Orientierung: Minikarte und Legende](phase-4-orientierung.md) | standard | pending |

@@ -3,6 +3,11 @@
   position: absolute;
   // left/top zeigen auf die Mitte des Knotens, nicht auf seine linke obere Ecke.
   translate: -50% -50%;
+  // Gegen den Kartenmaßstab (ADR-022): der Knoten liegt in der skalierten
+  // Weltebene, soll aber seine Bildschirmgröße behalten — sonst rutscht das
+  // Antippziel beim Herauszoomen unter 44 px. Eigenständige `scale`-Angabe
+  // statt `transform`, damit das `translate` darüber erhalten bleibt.
+  scale: var(--map-inverse-scale, 1);
   // Über der Routenebene, damit Knoten anklickbar bleiben.
   z-index: 1;
 }
