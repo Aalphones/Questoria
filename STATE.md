@@ -1,9 +1,26 @@
 # STATE
 
-**Aktiver Plan:** [docs/planning/2026-08-18_sammelkarten-und-druckbogen/](docs/planning/2026-08-18_sammelkarten-und-druckbogen/README.md)
-— freigegeben am 18.08.2026, sechs Phasen, **noch nicht begonnen.**
+**Aktiver Plan:** [docs/planning/2026-08-31_karten-ueberarbeitung/](docs/planning/2026-08-31_karten-ueberarbeitung/README.md)
+— freigegeben am 31.08.2026, sechs Phasen.
 
-**Phase:** 0/6 — Einstieg über `/implement`.
+**Phase:** 1/6 — Kartenausschnitt und Zoom-Boden.
+
+**Nächster Schritt:** `phase-1-kartenausschnitt-und-zoom.md` umsetzen.
+
+Worum es geht: Sternen- und Weltenkarten bekommen die Struktur aus dem
+Karten-Konzept vom 31.08.2026 — Nebel als eigene weiche Schicht statt beiger
+Kachelklötze, Herauszoomen bis zur Gesamtansicht, vier Marker-Zustände,
+Minikarte, ein gemeinsames Kartenpanel. Dazu werden die sechs Kartenbilder neu
+erzeugt. Die Farbwelt bleibt Pergament; die dunkel-kosmische Palette des
+Konzepts wird bewusst nicht übernommen (Begründung in der Plan-README).
+
+---
+
+## Im Backlog: Sammelkarten und Druckbogen (freigegeben 18.08.2026)
+
+[docs/planning/2026-08-18_sammelkarten-und-druckbogen/](docs/planning/2026-08-18_sammelkarten-und-druckbogen/README.md)
+— sechs Phasen, **noch nicht begonnen.** Am 31.08.2026 zugunsten der
+Karten-Überarbeitung zurückgestellt.
 
 🟡 **Vorher zu klären:** Phase 6 dieses Plans baut `pokemon_lesen` von 6 auf ≥11
 Karten aus. Die Welt heißt seit dem 23.08.2026 `pokemon`, und ihr Content ist
