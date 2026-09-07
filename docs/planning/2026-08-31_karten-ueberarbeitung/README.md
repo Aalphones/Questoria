@@ -52,7 +52,7 @@ Sie bleibt.
 | 2 | [Nebel als eigene Schicht](phase-2-nebel-als-schicht.md) | heikel | **complete** |
 | 3 | [Drei Marker-Zustände](phase-3-marker-zustaende.md) | standard | **complete** |
 | 4 | [Orientierung: Minikarte und Legende](phase-4-orientierung.md) | standard | **complete** |
-| 5 | [Panels und schmale Karten](phase-5-panels-und-schmale-karten.md) | standard | pending |
+| 5 | [Panels und schmale Karten](phase-5-panels-und-schmale-karten.md) | standard | **complete** |
 | 6 | [Kartenbilder neu erzeugen](phase-6-kartenbilder.md) | standard | pending |
 
 Phase 1 und 2 hängen zusammen (beide fassen die Flächenberechnung an) und

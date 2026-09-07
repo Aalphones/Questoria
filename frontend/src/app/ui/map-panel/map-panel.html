@@ -1,0 +1,37 @@
+<!-- Nur auf schmalen Karten sichtbar; dort verdeckt das offene Panel sonst die
+     Karte darunter (siehe map-panel.scss). -->
+<button
+  type="button"
+  class="map-panel__toggle"
+  [attr.aria-expanded]="panelOpen()"
+  (click)="togglePanel()"
+>
+  <span class="map-panel__burger" aria-hidden="true"></span>
+  <span class="map-panel__toggle-title">{{ title() }}</span>
+  @if (progressTotal(); as total) {
+    <span class="map-panel__toggle-progress">{{ progressDone() ?? 0 }}/{{ total }}</span>
+  }
+</button>
+
+<div class="map-panel__body">
+  <span class="map-panel__tag">{{ tag() }}</span>
+  <h1 class="map-panel__title">{{ title() }}</h1>
+  <p class="map-panel__hint">{{ hint() }}</p>
+
+  @if (progressTotal(); as total) {
+    <div class="map-panel__progress">
+      <span class="map-panel__progress-label">{{ progressDone() ?? 0 }} von {{ total }} Orten erkundet</span>
+      <div
+        class="map-panel__progress-track"
+        role="progressbar"
+        [attr.aria-valuenow]="progressDone() ?? 0"
+        aria-valuemin="0"
+        [attr.aria-valuemax]="total"
+      >
+        <div class="map-panel__progress-fill" [style.inline-size.%]="progressPercent()"></div>
+      </div>
+    </div>
+  }
+
+  <ng-content />
+</div>

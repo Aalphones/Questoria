@@ -139,9 +139,10 @@
   }
 
   // Reine Deko (AK 5) — trägt keine Information, daher aria-hidden im Template.
+  // Oben links: unten links sitzt seit Phase 5 das Karten-Panel (AK4).
   &__compass {
     position: absolute;
-    inset-block-end: var(--space-4);
+    inset-block-start: var(--space-4);
     inset-inline-start: var(--space-4);
     display: grid;
     place-items: center;

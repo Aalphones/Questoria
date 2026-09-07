@@ -5,7 +5,6 @@ import {
   effect,
   inject,
   input,
-  signal,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
@@ -27,6 +26,7 @@ import { Hud } from '../../ui/hud/hud';
 import { MapCanvas, TILE_SIZE, resolveTileOrigin } from '../../ui/map-canvas/map-canvas';
 import { MapCanvasPoint, MapCanvasTile } from '../../ui/map-canvas/map-canvas.types';
 import { MapPoint } from '../../ui/map-canvas/map-point/map-point';
+import { MapPanel } from '../../ui/map-panel/map-panel';
 
 /** Geltungsbereich der Kachel-Freischaltung im Spielstand (ADR-020). */
 const REVEAL_SCOPE = 'arc_overview';
@@ -38,7 +38,7 @@ const REVEAL_SCOPE = 'arc_overview';
  */
 @Component({
   selector: 'qst-timeline',
-  imports: [RouterLink, Hud, ContentError, MapCanvas, MapPoint],
+  imports: [RouterLink, Hud, ContentError, MapCanvas, MapPoint, MapPanel],
   templateUrl: './timeline.html',
   styleUrl: './timeline.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -79,13 +79,6 @@ export class Timeline {
   }
 
   protected readonly starIndexes = [0, 1, 2] as const;
-
-  /**
-   * Nur auf schmalen Karten wirksam: dort startet das Info-Panel zugeklappt,
-   * damit es die Etappen nicht verdeckt. Ab der Schwelle in `_breakpoints.scss`
-   * zeigt das Stylesheet den Inhalt unabhängig von diesem Zustand.
-   */
-  protected readonly panelOpen = signal<boolean>(false);
 
   private readonly isEpisodeCompleted = (episodeId: string): boolean =>
     this.progressService.isEpisodeCompleted(this.themeId(), episodeId);
@@ -194,10 +187,6 @@ export class Timeline {
 
   protected starsLabel(mapId: string): string {
     return `${this.starsOf(mapId)} von 3 Sternen`;
-  }
-
-  protected togglePanel(): void {
-    this.panelOpen.update((isOpen: boolean) => !isOpen);
   }
 
   protected confirmReset(dialog: HTMLDialogElement): void {

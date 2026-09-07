@@ -3,12 +3,11 @@
 **Aktiver Plan:** [docs/planning/2026-08-31_karten-ueberarbeitung/](docs/planning/2026-08-31_karten-ueberarbeitung/README.md)
 — freigegeben am 31.08.2026, sechs Phasen.
 
-**Phase:** 5/6 — Panels und schmale Karten. Phase 1–4 sind umgesetzt, Phase 4
-noch nicht committet; keine der vier Phasen am Bildschirm abgenommen.
+**Phase:** 6/6 — Kartenbilder neu erzeugen. Phase 1–5 sind umgesetzt und
+committet; keine der fünf Phasen am Bildschirm abgenommen.
 
-**Nächster Schritt:** Phase 4 committen (`mode-committing`), dann
-`phase-5-panels-und-schmale-karten.md` umsetzen. Rating „standard" —
-`sonnet` reicht, `opusplan` ist hier nicht nötig.
+**Nächster Schritt:** Phase 5 committen (`mode-committing`), dann
+`phase-6-kartenbilder.md` umsetzen. Rating „standard" — `sonnet` reicht.
 
 Worum es geht: Sternen- und Weltenkarten bekommen die Struktur aus dem
 Karten-Konzept vom 31.08.2026 — Nebel als eigene weiche Schicht statt beiger

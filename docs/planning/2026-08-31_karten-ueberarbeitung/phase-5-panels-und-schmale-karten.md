@@ -1,5 +1,7 @@
 # Phase 5 — Panels und schmale Karten
 
+**Status:** complete
+
 **Rating:** standard — zwei fast gleiche Panels werden ein Bauteil, ein dritter
 Screen bekommt es dazu.
 
@@ -120,29 +122,51 @@ gedriftet (die Etappenkarte hat eine Legende, die Planetenkarte nicht).
 
 ## Checkliste
 
-- [ ] `ui/map-panel/` anlegen: `map-panel.ts`, `.html`, `.scss` (E1). Vorlage
+- [x] `ui/map-panel/` anlegen: `map-panel.ts`, `.html`, `.scss` (E1). Vorlage
       für Struktur und Klassennamen: `ui/task-card/`.
-- [ ] Aufklappzustand als `signal<boolean>` im Bauteil, Vorgabe: auf breiter
+- [x] Aufklappzustand als `signal<boolean>` im Bauteil, Vorgabe: auf breiter
       Karte offen, auf schmaler zu. Die Unterscheidung macht CSS, nicht
       TypeScript — der Zustand steuert nur das Ausklappen, die Sichtbarkeit
       des Ausklapp-Knopfes hängt am Container-Query.
-- [ ] `map-panel.scss`: breite Karte = Kasten links unten; Container-Query
+- [x] `map-panel.scss`: breite Karte = Kasten links unten; Container-Query
       unter `$map-narrow` = Leiste unten (E3). **Der Container-Query-Block
       wird ergänzt, die bestehende Regel nicht ersetzt** — der breite Fall soll
       sich nicht ändern.
-- [ ] `timeline.html` / `.scss`: Panel durch `<qst-map-panel>` ersetzen,
-      „Fortschritt zurücksetzen" als projizierter Inhalt. Panel-CSS entfernen.
-- [ ] `timeline.html` / `.scss`: `timeline__legend` und ihr CSS entfernen (E4).
-- [ ] `main-hub.html` / `.scss`: dasselbe, „Weiterspielen" als projizierter
+- [x] `timeline.html` / `.scss`: Panel durch `<qst-map-panel>` ersetzt,
+      „Fortschritt zurücksetzen" als projizierter Inhalt. Panel-CSS entfernt.
+- [x] `timeline.html` / `.scss`: `timeline__legend` und ihr CSS entfernt (E4).
+- [x] `main-hub.html` / `.scss`: dasselbe, „Weiterspielen" als projizierter
       Inhalt. Das Erfolge-Panel bleibt, wie es ist — es ist kein Kartenpanel.
-- [ ] `map.html` / `.ts` / `.scss`: `<qst-map-panel>` neu einhängen.
-      Zwischenstand aus `nodeStateMap()` zählen (`done`-Knoten mit
-      `episode_ref` / alle Knoten mit `episode_ref`).
-- [ ] `docs/code-map.md`: `ui/map-panel/` in die Tabelle „Gemeinsame UI"
-      aufnehmen; die Zeilen zu Main-Hub, Timeline und Map entsprechend kürzen.
-- [ ] `docs/design/README.md` → „Bewusste Abweichungen vom Prototyp": einen
-      Punkt ergänzen, dass die Kartenpanels seit dem 31.08.2026 ein gemeinsames
-      Bauteil sind und auf schmalen Karten unten statt oben sitzen.
-- [ ] `npm run lint`, `npm run build` im Frontend.
+- [x] `map.html` / `.ts` / `.scss`: `<qst-map-panel>` neu eingehängt.
+      Zwischenstand aus `nodeStateMap()` gezählt (`done`-Knoten mit
+      `episode_ref` / alle Knoten mit `episode_ref`, neuer `mapProgress`).
+- [x] `docs/code-map.md`: `ui/map-panel/` in die Tabelle „Gemeinsame UI"
+      aufgenommen; die Zeilen zu Main-Hub, Timeline und Map entsprechend
+      gekürzt/ergänzt.
+- [x] `docs/design/README.md` → „Bewusste Abweichungen vom Prototyp": Punkt 15
+      ergänzt.
+- [x] `npm run lint`, `npm run build` im Frontend — beide grün (Build nur mit
+      vorbestehenden Budget-Warnungen, keine Fehler; `timeline.scss` lag schon
+      vorher 3,14 kB über dem 4-kB-Budget und ist durch diese Phase auf 512 B
+      Überschreitung gesunken, `map.scss` liegt wie vorher hauchdünn drüber).
+
+## Abweichung vom Plan
+
+**Kompassrose der Ortskarte verschoben.** Das Panel sitzt jetzt laut AK4 unten
+links — genau dort, wo bisher die reine Deko-Kompassrose lag (`map.scss`). Die
+Kompassrose ist nach oben links gewandert (dort war seit dem Wechsel des
+Panels von oben nach unten wieder Platz); im Plan nicht erwähnt, weil die
+Kollision erst beim Zusammenbau auffiel.
 
 ## Report-Back
+
+Phase 5 ist umgesetzt: `ui/map-panel/` ersetzt die drei auseinandergedrifteten
+Panel-Kopien (zwei fast gleiche, eine fehlende) durch ein Bauteil mit
+Fortschrittsbalken (`role="progressbar"`) und einem für alle drei Ebenen
+gleichen Ausklapp-/Bottom-Sheet-Verhalten unter 42rem Kartenbreite. Die
+Etappenkarten-Legende ist ersatzlos weg — die Erklärung läuft seit Phase 4 über
+den Legenden-Dialog der Kartenfläche. `npm run lint` und `npm run build` sind
+grün (Budget-Warnungen vorbestehend, siehe Checkliste).
+
+Am Bildschirm noch nicht geprüft — steht in der Plan-README unter „Smoke-Checkliste"
+Punkte 5–7.

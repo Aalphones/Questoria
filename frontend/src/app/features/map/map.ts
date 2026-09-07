@@ -18,6 +18,7 @@ import { Hud } from '../../ui/hud/hud';
 import { MapCanvas, TILE_SIZE, resolveTileOrigin } from '../../ui/map-canvas/map-canvas';
 import { MapCanvasPoint, MapCanvasTile } from '../../ui/map-canvas/map-canvas.types';
 import { MapPoint } from '../../ui/map-canvas/map-point/map-point';
+import { MapPanel } from '../../ui/map-panel/map-panel';
 
 /**
  * Ortskarte eines Arcs unter `theme/:themeId/map/:mapId` — die Orte, an denen
@@ -28,7 +29,7 @@ import { MapPoint } from '../../ui/map-canvas/map-point/map-point';
  */
 @Component({
   selector: 'qst-map',
-  imports: [RouterLink, Hud, ContentError, MapCanvas, MapPoint],
+  imports: [RouterLink, Hud, ContentError, MapCanvas, MapPoint, MapPanel],
   templateUrl: './map.html',
   styleUrl: './map.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -66,6 +67,17 @@ export class MapScreen {
     const map = this.mapEntry();
 
     return map === null ? new Map() : nodeStates(map, this.isEpisodeCompleted, this.stageState());
+  });
+
+  /** Zwischenstand fürs Karten-Panel: erkundete Orte / Orte mit eigener Episode. */
+  protected readonly mapProgress = computed<{ done: number; total: number }>(() => {
+    const nodesWithEpisode = (this.mapEntry()?.nodes ?? []).filter(
+      (node: MapNode) => node.episode_ref !== undefined,
+    );
+    const states = this.nodeStateMap();
+    const done = nodesWithEpisode.filter((node: MapNode) => states.get(node.id) === 'done').length;
+
+    return { done, total: nodesWithEpisode.length };
   });
 
   /** Reihenfolge aus dem Content — dieselbe, auf der `nodeStates` schon läuft. */

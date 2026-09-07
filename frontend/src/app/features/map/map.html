@@ -73,6 +73,14 @@
           <span class="map__compass-label map__compass-label--w">W</span>
           <span class="map__compass-needle"></span>
         </div>
+
+        <qst-map-panel
+          [tag]="loadedWorld.title + ' · ' + loadedWorld.subject"
+          [title]="loadedMap.name"
+          hint="Tippe auf einen Ort, um dorthin zu gehen."
+          [progressDone]="mapProgress().done"
+          [progressTotal]="mapProgress().total"
+        />
       </qst-map-canvas>
     </div>
 

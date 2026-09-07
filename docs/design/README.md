@@ -155,6 +155,14 @@ weichen in der Umsetzung ab — jeweils mit Grund:
     Nebenbefund derselben Phase: die Farbkarten aus dem Design existierten
     bis dahin gar nicht — gebaut waren Textpillen. Sie sind jetzt nachgezogen.
 
+15. **Die Kartenpanels sind seit dem 31.08.2026 ein gemeinsames Bauteil.** Der
+    Prototyp zeigt drei verschiedene Info-Panels (eins je Kartenebene, eins
+    fehlte ganz auf der Ortskarte). Produktiv teilen sich alle drei
+    `ui/map-panel/` — Tag, Titel, Hinweis, optional Zwischenstand mit Balken.
+    Auf schmalen Karten (< 42rem Kartenbreite) sitzt es als Leiste am unteren
+    statt am oberen Rand und klappt nach oben auf, statt den oberen Kartenrand
+    zu verdecken (Karten-Überarbeitung, Phase 5).
+
 ## Offene Punkte
 
 - ✅ **Node-Größen sind im Prototyp px-Werte** (`size: 200`, `width: 132`),

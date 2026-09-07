@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { Observable, catchError, forkJoin, map, of, startWith, switchMap } from 'rxjs';
@@ -14,6 +14,7 @@ import { ImageSlot } from '../../ui/image-slot/image-slot';
 import { MapCanvas, TILE_SIZE, resolveTileOrigin } from '../../ui/map-canvas/map-canvas';
 import { MapCanvasPoint, MapCanvasTile } from '../../ui/map-canvas/map-canvas.types';
 import { MapPoint } from '../../ui/map-canvas/map-point/map-point';
+import { MapPanel } from '../../ui/map-panel/map-panel';
 import { ThemeCard } from './theme-card/theme-card';
 
 /**
@@ -27,7 +28,7 @@ import { ThemeCard } from './theme-card/theme-card';
  */
 @Component({
   selector: 'qst-main-hub',
-  imports: [RouterLink, MapCanvas, MapPoint, ThemeCard, ImageSlot],
+  imports: [RouterLink, MapCanvas, MapPoint, MapPanel, ThemeCard, ImageSlot],
   templateUrl: './main-hub.html',
   styleUrl: './main-hub.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -202,19 +203,8 @@ export class MainHub {
     return latestThemeId;
   });
 
-  /**
-   * Nur auf schmalen Karten wirksam: dort startet das Info-Panel zugeklappt,
-   * damit es die Welten nicht verdeckt. Ab der Schwelle in `_breakpoints.scss`
-   * zeigt das Stylesheet den Inhalt unabhängig von diesem Zustand.
-   */
-  protected readonly panelOpen = signal<boolean>(false);
-
   chooseTheme(themeId: string): void {
     void this.router.navigate(['theme', themeId, 'level']);
-  }
-
-  protected togglePanel(): void {
-    this.panelOpen.update((isOpen: boolean) => !isOpen);
   }
 
   protected statusLabel(themeId: string): string {
