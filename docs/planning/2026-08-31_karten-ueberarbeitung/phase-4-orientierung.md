@@ -1,5 +1,7 @@
 # Phase 4 — Orientierung: Minikarte und Legende
 
+**Status:** complete
+
 **Rating:** standard — neue Anzeige, aber alle Zahlen dafür liegen in der
 Kartenfläche bereits vor.
 
@@ -104,32 +106,52 @@ Kartenbreite ist, nicht die Fensterbreite.
 
 ## Checkliste
 
-- [ ] `map-canvas.ts`: `showMinimap = input<boolean>(true)`.
-- [ ] `map-canvas.ts`: `translateX` / `translateY` von `private` auf
+- [x] `map-canvas.ts`: `showMinimap = input<boolean>(true)`.
+- [x] `map-canvas.ts`: `translateX` / `translateY` von `private` auf
       `protected` (E3).
-- [ ] `map-canvas.ts`: `computed` `viewportRect` (E3) und `minimapTiles`
+- [x] `map-canvas.ts`: `computed` `viewportRect` (E3) und `minimapTiles`
       (Rechtecke aller Kacheln plus Flag „freigeschaltet").
-- [ ] `map-canvas.ts`: `computed` `zoomAnnouncement` — Text für die
+- [x] `map-canvas.ts`: `computed` `zoomAnnouncement` — Text für die
       `aria-live`-Region (E4), zwei Zustände genügen.
-- [ ] `map-canvas.html`: `<aside class="map-canvas__minimap">` **außerhalb**
+- [x] `map-canvas.html`: `<aside class="map-canvas__minimap">` **außerhalb**
       von `.map-canvas__world` einhängen, sonst wird sie mitverschoben und
       mitskaliert. Darin die `<svg>` mit `viewBox` = `visibleBounds`.
-- [ ] `map-canvas.html`: `<p class="visually-hidden" aria-live="polite">` mit
+- [x] `map-canvas.html`: `<p class="visually-hidden" aria-live="polite">` mit
       `zoomAnnouncement`. `.visually-hidden` steht bereits global in
       `frontend/src/styles.scss` (geprüft am 31.08.2026, vier Nutzer) — nichts
       neu anlegen.
-- [ ] `map-canvas.html`: Knopf „Was bedeuten die Zeichen?" in
-      `__zoom-controls` ergänzen, plus `<dialog class="map-canvas__legend">`.
-      Die vier Zustände als `<dl>`, jeder mit demselben Symbol wie auf der
-      Karte.
-- [ ] `map-canvas.scss`: `__minimap` positionieren (oben rechts, Abstand
+- [x] `map-canvas.html`: Knopf „Was bedeuten die Zeichen?" in
+      `__zoom-controls` ergänzt, plus `<dialog class="map-canvas__legend">`.
+      Die vier Zustände als `<dl>`, jeder mit einem eigenen Symbol (Fragezeichen-
+      Scheibe, gestrichelter Ring, Häkchen, pulsierender Punkt — dieselbe
+      Formsprache wie `map.scss`, kein Sprite-Bild, da `map-canvas` die
+      Illustrationen der Screens nicht kennt).
+- [x] `map-canvas.scss`: `__minimap` positioniert (oben rechts, Abstand
       `--space-4`, Hintergrund `--color-map-label-bg`, Schatten `--shadow-md`);
       `__legend` als Dialog wie `map.scss → &__hint-dialog`.
-- [ ] `map-canvas.scss`: `@container (max-width: #{bp.$map-narrow})` blendet
+- [x] `map-canvas.scss`: `@container (max-width: #{bp.$map-narrow})` blendet
       `__minimap` aus (E6). `@use '../../../styles/breakpoints' as bp;` am
-      Dateikopf ergänzen.
-- [ ] `docs/code-map.md`, Zeile „Kartenfläche": Minikarte und Legenden-Dialog
-      nachtragen.
-- [ ] `npm run lint`, `npm run build` im Frontend.
+      Dateikopf ergänzt.
+- [x] `docs/code-map.md`, Zeile „Kartenfläche": Minikarte und Legenden-Dialog
+      nachgetragen.
+- [x] `npm run lint`, `npm run build` im Frontend — beide grün (Build nur mit
+      vorbestehenden Budget-Warnungen, keine Fehler; `map-canvas.scss` ist
+      jetzt selbst 218 Bytes über dem 4-kB-Budget, reine Warnung).
+
+## Abweichung vom Plan
+
+**AK4/Checkliste vs. E2:** E2 nennt „ein Rechteck pro freigeschalteter
+Kachel" für die Minikarte; `minimapTiles` liefert stattdessen **alle**
+Kacheln mit einem `unlocked`-Flag. Grund: AK4 verlangt ausdrücklich, dass
+freigeschaltete und gesperrte Kacheln in der Minikarte unterscheidbar sind —
+das geht nur, wenn beide gezeichnet werden. Die Checkliste selbst trug diese
+Fassung schon vor, E2 war die ältere, engere Formulierung.
+
+**Minimap-Punktfarbe:** `MapCanvasPoint` trägt keinen Zustand (done/current/
+hinted/unknown) — nur `dimmedPointIds` (gesperrtes Routen-Ende) ist als
+Eingang vorhanden. Die Minikarte zeigt Knoten deshalb zweifarbig
+(`--color-map-route` / `--color-map-route-locked`, dieselben Tokens wie die
+Routenlinien), nicht in allen vier Zuständen. Ein viertes/drittes Eingangs-
+Signal hätte den Kontrakt erweitert, was der Plan nicht vorsieht.
 
 ## Report-Back

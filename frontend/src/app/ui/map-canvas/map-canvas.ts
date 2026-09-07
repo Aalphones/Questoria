@@ -39,6 +39,12 @@ const FOG_BLUR_HALO = 190;
 /** Erst ab dieser Bewegung gilt eine Berührung als Ziehen statt als Tipp. */
 const DRAG_THRESHOLD_PX = 6;
 
+/** Toleranz beim Vergleich von `scale` mit `fitScale` für die Zoom-Ansage (Rundungsfehler). */
+const ZOOM_ANNOUNCE_EPSILON = 0.001;
+
+/** Radius der Knotenpunkte in der Minikarte, in Weltpixeln. */
+const MINIMAP_POINT_RADIUS = TILE_SIZE * 0.05;
+
 /**
  * Zoomschritte sind multiplikativ, nicht additiv: ein fester Summand fühlt
  * sich am herausgezoomten Ende träge und am hineingezoomten ruckartig an,
@@ -94,6 +100,8 @@ export class MapCanvas {
   /** Punkt, auf den beim Laden/Wechsel animiert zentriert wird — `null` heißt keine Zentrierung. */
   readonly focusPointId = input<string | null>(null);
   readonly focusZoom = input<number>(1.6);
+  /** Minikarte oben rechts einblenden — Anzeige, kein Bedienelement (E4). */
+  readonly showMinimap = input<boolean>(true);
 
   protected readonly tilesById = computed<ReadonlyMap<string, MapCanvasTile>>(
     () => new Map(this.tiles().map((tile: MapCanvasTile) => [tile.id, tile])),
@@ -331,13 +339,14 @@ export class MapCanvas {
     () => (this.viewportHeight() - this.worldHeight() * this.scale()) / 2 + this.panY(),
   );
 
-  private readonly translateX = computed<number>(
+  /** `protected` statt `private` (E3) — die Minikarte im Template rechnet den sichtbaren Ausschnitt daraus. */
+  protected readonly translateX = computed<number>(
     () =>
       clampWorldEdge(this.rawWorldLeft(), this.viewportWidth(), this.worldWidth() * this.scale()) -
       this.worldOriginOffset().x * this.scale(),
   );
 
-  private readonly translateY = computed<number>(
+  protected readonly translateY = computed<number>(
     () =>
       clampWorldEdge(this.rawWorldTop(), this.viewportHeight(), this.worldHeight() * this.scale()) -
       this.worldOriginOffset().y * this.scale(),
@@ -348,6 +357,81 @@ export class MapCanvas {
   );
 
   protected readonly tileSize = TILE_SIZE;
+
+  /**
+   * Sichtbarer Ausschnitt in Weltkoordinaten (E3) — dieselbe Rechnung, die das
+   * Konzept vorgibt. `translateX/Y` sind hier absolute Weltpixel-Offsets
+   * (siehe `worldTransform`), keine relativen zu `worldOriginOffset` — die
+   * Formel braucht deshalb keinen zweiten Term.
+   */
+  protected readonly viewportRect = computed<MinimapRect>(() => {
+    const scale = this.scale();
+
+    return {
+      x: -this.translateX() / scale,
+      y: -this.translateY() / scale,
+      width: this.viewportWidth() / scale,
+      height: this.viewportHeight() / scale,
+    };
+  });
+
+  /** Ein Rechteck je Kachel für die Minikarte — anders als `fogTileRects` auch die gesperrten (AK 4). */
+  protected readonly minimapTiles = computed<readonly MinimapTileRect[]>(() => {
+    const unlocked = this.unlockedTileSet();
+
+    return this.tiles().map((tile: MapCanvasTile) => {
+      const origin = tileWorldOrigin(tile);
+
+      return {
+        id: tile.id,
+        x: origin.x,
+        y: origin.y,
+        width: TILE_SIZE,
+        height: TILE_SIZE,
+        unlocked: unlocked.has(tile.id),
+      };
+    });
+  });
+
+  /** Ein Punkt je Knoten für die Minikarte (E2) — `dimmed` steht hier für „gesperrtes Ende", dieselbe Information wie bei den Routen. */
+  protected readonly minimapPoints = computed<readonly MinimapPoint[]>(() => {
+    const tilesById = this.tilesById();
+    const dimmed = new Set<string>(this.dimmedPointIds());
+    const points: MinimapPoint[] = [];
+
+    for (const point of this.points()) {
+      const world = pointWorldPosition(point, tilesById);
+
+      if (world === null) {
+        continue; // Content-Tippfehler: Punkt zeigt auf unbekannte Kachel
+      }
+
+      points.push({ id: point.id, x: world.x, y: world.y, dimmed: dimmed.has(point.id) });
+    }
+
+    return points;
+  });
+
+  protected readonly minimapPointRadius = MINIMAP_POINT_RADIUS;
+
+  /** `viewBox` der Minikarte — dieselbe Fläche wie der Nebel (`fogArea`), als String für die Template-Bindung. */
+  protected readonly minimapViewBox = computed<string>(() => {
+    const area = this.fogArea();
+
+    return `${area.x} ${area.y} ${area.width} ${area.height}`;
+  });
+
+  /**
+   * Textauskunft für Hilfstechnik (E4) — zwei Zustände genügen: entweder ist
+   * die ganze Karte zu sehen (Anschlag bei `fitScale`), oder ein Ausschnitt.
+   */
+  protected readonly zoomAnnouncement = computed<string>(() =>
+    this.scale() <= this.fitScale() + ZOOM_ANNOUNCE_EPSILON ? 'Ganze Karte sichtbar' : 'Ausschnitt vergrößert',
+  );
+
+  protected openLegend(dialog: HTMLDialogElement): void {
+    dialog.showModal();
+  }
 
   protected onPointerDown(event: PointerEvent): void {
     this.suppressNextClick = false;
@@ -664,6 +748,27 @@ interface FogRect {
   readonly y: number;
   readonly width: number;
   readonly height: number;
+}
+
+/** Ein Rechteck ohne Kennung — für den sichtbaren Ausschnitt in der Minikarte (E3). */
+interface MinimapRect {
+  readonly x: number;
+  readonly y: number;
+  readonly width: number;
+  readonly height: number;
+}
+
+/** Eine Kachel in der Minikarte, mit Freischalt-Flag statt einer vorgefilterten Liste (AK 4). */
+interface MinimapTileRect extends FogRect {
+  readonly unlocked: boolean;
+}
+
+/** Ein Knoten in der Minikarte (E2). */
+interface MinimapPoint {
+  readonly id: string;
+  readonly x: number;
+  readonly y: number;
+  readonly dimmed: boolean;
 }
 
 function tileWorldOrigin(tile: MapCanvasTile): { x: number; y: number } {

@@ -1,3 +1,5 @@
+@use '../../../styles/breakpoints' as bp;
+
 :host {
   display: block;
   position: relative;
@@ -72,6 +74,134 @@
     }
   }
 
+  // Reine Anzeige (E4) — kein Klick-/Ziehbereich, deshalb `pointer-events: none`
+  // zusätzlich zum `aria-hidden` im Template.
+  &__minimap {
+    position: absolute;
+    inset-block-start: var(--space-4);
+    inset-inline-end: var(--space-4);
+    inline-size: 8.5rem;
+    block-size: 8.5rem;
+    border-radius: var(--radius-md);
+    background: var(--color-map-label-bg);
+    box-shadow: var(--shadow-md);
+    overflow: clip;
+    pointer-events: none;
+    z-index: 2;
+
+    svg {
+      inline-size: 100%;
+      block-size: 100%;
+    }
+  }
+
+  &__minimap-tile {
+    fill: var(--color-map-chart-bg);
+
+    &--locked {
+      fill: var(--color-map-fog);
+    }
+  }
+
+  &__minimap-point {
+    fill: var(--color-map-route);
+
+    &--dimmed {
+      fill: var(--color-map-route-locked);
+    }
+  }
+
+  &__minimap-viewport {
+    fill: none;
+    stroke: var(--color-accent);
+    stroke-width: 3;
+    vector-effect: non-scaling-stroke;
+  }
+
+  &__legend {
+    max-inline-size: 26rem;
+    padding: var(--space-6);
+    border: none;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+
+    &::backdrop {
+      background: color-mix(in srgb, var(--palette-ink) 55%, transparent);
+    }
+  }
+
+  &__legend-list {
+    margin: 0 0 var(--space-4);
+  }
+
+  &__legend-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding-block: var(--space-2);
+
+    dt {
+      font-family: var(--font-heading);
+      font-weight: var(--font-heading-weight);
+      color: var(--color-text);
+    }
+
+    dd {
+      margin: 0;
+      color: var(--color-text-muted);
+      font-size: var(--font-size-detail);
+    }
+  }
+
+  &__legend-icon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    inline-size: 1.75rem;
+    block-size: 1.75rem;
+    border-radius: 50%;
+    font-family: var(--font-heading);
+    font-weight: var(--font-heading-weight);
+    font-size: var(--font-size-detail);
+
+    &--unknown {
+      background: var(--color-map-fog-deep);
+      color: var(--color-text-muted);
+    }
+
+    &--discovered {
+      border: var(--ring-map-hinted) dashed var(--color-progress-current-strong);
+      background: var(--color-map-label-bg);
+    }
+
+    &--explored {
+      background: var(--color-progress-done-strong);
+      color: var(--color-text-on-accent);
+    }
+
+    &--current {
+      background: var(--color-progress-current-strong);
+      animation: eqPulse var(--duration-pulse) var(--easing-standard) infinite;
+    }
+  }
+
+  &__legend-close {
+    min-block-size: var(--size-touch-target);
+    padding-inline: var(--space-4);
+    border: none;
+    border-radius: var(--radius-pill);
+    background: var(--color-accent-soft);
+    color: var(--color-accent-soft-text);
+    font-family: var(--font-body);
+    font-weight: 600;
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 2px solid var(--color-focus-ring);
+      outline-offset: 2px;
+    }
+  }
+
   &__zoom-controls {
     position: absolute;
     inset-block-end: var(--space-4);
@@ -104,5 +234,14 @@
       outline: 2px solid var(--color-focus-ring);
       outline-offset: 2px;
     }
+  }
+}
+
+@container (max-width: #{bp.$map-narrow}) {
+  // Auf einer schmalen Karte ist der Ausschnitt ohnehin fast die ganze Karte
+  // (E6) — Zoom- und Legenden-Knopf bleiben, wie bei der Kompassrose auf der
+  // Ortskarte (map.scss).
+  .map-canvas__minimap {
+    display: none;
   }
 }

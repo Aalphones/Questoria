@@ -71,6 +71,41 @@
 
 <ng-content />
 
+@if (showMinimap()) {
+  <aside class="map-canvas__minimap" aria-hidden="true">
+    <svg [attr.viewBox]="minimapViewBox()">
+      @for (tile of minimapTiles(); track tile.id) {
+        <rect
+          class="map-canvas__minimap-tile"
+          [class.map-canvas__minimap-tile--locked]="!tile.unlocked"
+          [attr.x]="tile.x"
+          [attr.y]="tile.y"
+          [attr.width]="tile.width"
+          [attr.height]="tile.height"
+        />
+      }
+      @for (point of minimapPoints(); track point.id) {
+        <circle
+          class="map-canvas__minimap-point"
+          [class.map-canvas__minimap-point--dimmed]="point.dimmed"
+          [attr.cx]="point.x"
+          [attr.cy]="point.y"
+          [attr.r]="minimapPointRadius"
+        />
+      }
+      <rect
+        class="map-canvas__minimap-viewport"
+        [attr.x]="viewportRect().x"
+        [attr.y]="viewportRect().y"
+        [attr.width]="viewportRect().width"
+        [attr.height]="viewportRect().height"
+      />
+    </svg>
+  </aside>
+}
+
+<p class="visually-hidden" aria-live="polite">{{ zoomAnnouncement() }}</p>
+
 <div class="map-canvas__zoom-controls">
   <button
     type="button"
@@ -96,4 +131,46 @@
   >
     +
   </button>
+  <button
+    type="button"
+    class="map-canvas__zoom-button"
+    (click)="openLegend(legendDialog)"
+    aria-label="Was bedeuten die Zeichen?"
+  >
+    ?
+  </button>
 </div>
+
+<dialog #legendDialog class="map-canvas__legend">
+  <dl class="map-canvas__legend-list">
+    <div class="map-canvas__legend-item">
+      <span class="map-canvas__legend-icon map-canvas__legend-icon--unknown" aria-hidden="true">?</span>
+      <div>
+        <dt>Unbekannt</dt>
+        <dd>Dieser Ort ist noch nicht in Sicht.</dd>
+      </div>
+    </div>
+    <div class="map-canvas__legend-item">
+      <span class="map-canvas__legend-icon map-canvas__legend-icon--discovered" aria-hidden="true"></span>
+      <div>
+        <dt>Entdeckt</dt>
+        <dd>Der Name ist bekannt, der Weg dahin noch nicht frei.</dd>
+      </div>
+    </div>
+    <div class="map-canvas__legend-item">
+      <span class="map-canvas__legend-icon map-canvas__legend-icon--explored" aria-hidden="true">✓</span>
+      <div>
+        <dt>Erkundet</dt>
+        <dd>Hier war schon jemand — geschafft.</dd>
+      </div>
+    </div>
+    <div class="map-canvas__legend-item">
+      <span class="map-canvas__legend-icon map-canvas__legend-icon--current" aria-hidden="true"></span>
+      <div>
+        <dt>Aktuell</dt>
+        <dd>Hier geht es gerade weiter.</dd>
+      </div>
+    </div>
+  </dl>
+  <button type="button" class="map-canvas__legend-close" (click)="legendDialog.close()">Schließen</button>
+</dialog>

@@ -3,10 +3,11 @@
 **Aktiver Plan:** [docs/planning/2026-08-31_karten-ueberarbeitung/](docs/planning/2026-08-31_karten-ueberarbeitung/README.md)
 — freigegeben am 31.08.2026, sechs Phasen.
 
-**Phase:** 4/6 — Orientierung: Minikarte und Legende. Phase 1–3 sind umgesetzt
-und committet, am Bildschirm noch nicht abgenommen.
+**Phase:** 5/6 — Panels und schmale Karten. Phase 1–4 sind umgesetzt, Phase 4
+noch nicht committet; keine der vier Phasen am Bildschirm abgenommen.
 
-**Nächster Schritt:** `phase-4-orientierung.md` umsetzen. Rating „standard" —
+**Nächster Schritt:** Phase 4 committen (`mode-committing`), dann
+`phase-5-panels-und-schmale-karten.md` umsetzen. Rating „standard" —
 `sonnet` reicht, `opusplan` ist hier nicht nötig.
 
 Worum es geht: Sternen- und Weltenkarten bekommen die Struktur aus dem
