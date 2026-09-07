@@ -1,5 +1,7 @@
 # Phase 6 — Kartenbilder neu erzeugen
 
+**Status:** complete
+
 **Rating:** standard — der Ablauf ist beschrieben und erprobt, die Arbeit ist
 Handwerk. Die Urteile über das Ergebnis fällt Sascha, nicht die Umsetzung.
 
@@ -118,33 +120,78 @@ Beides gehört dann in einen eigenen, kleinen Plan.
 
 ## Checkliste
 
-- [ ] `MAPS.md` vollständig lesen — besonders „Hochskalieren", „Der
+- [x] `MAPS.md` vollständig lesen — besonders „Hochskalieren", „Der
       Detail-Prompt — und die Falle darin", „Nähte: mitteln ist immer falsch",
       „Was das kostet".
-- [ ] `mcp__comfy__server_info` — läuft die lokale ComfyUI?
-- [ ] Zwischenordner `data/_authoring/map-canvases/2026-08-31_neuerzeugung/`
+- [x] `mcp__comfy__server_info` — läuft die lokale ComfyUI?
+- [x] Zwischenordner `data/_authoring/map-canvases/2026-08-31_neuerzeugung/`
       anlegen (E5).
-- [ ] Pro Leinwand: Entwurf mit Krea 2 Turbo nach der Kachelkarten-Vorlage aus
+- [x] Pro Leinwand: Entwurf mit Krea 2 Turbo nach der Kachelkarten-Vorlage aus
       MAPS.md, `{REGION_NAME}` und `{TERRAIN_DESCRIPTION}` aus dem Content
       (Kachel- und Knotennamen in `world_config.json`).
-- [ ] Prompt-Kontrolle: `text_outputs` der Antwort lesen, bevor das Bild
+- [x] Prompt-Kontrolle: `text_outputs` der Antwort lesen, bevor das Bild
       angesehen wird — der Prompt gehört in Knoten 19, nicht ins
       `CLIPTextEncode`-Widget.
-- [ ] Leinwand bauen: Remacri ×4, dann `slice_map.py` mit leerer Kachelliste
+- [x] Leinwand bauen: Remacri ×4, dann `slice_map.py` mit leerer Kachelliste
       auf Zielgröße.
-- [ ] `refine_map_tiles.py` mit `--steps 8 --denoise 0.48` und dem passenden
+- [x] `refine_map_tiles.py` mit `--steps 8 --denoise 0.48` und dem passenden
       Prompt (E1, E3) über alle Kacheln der Leinwand.
-- [ ] `match_map_colour.py` gegen die Remacri-Leinwand.
-- [ ] `slice_map.py` schneidet die Ausliefer-Kacheln heraus; Reihenfolge bei
-      Vertania prüfen (senkrecht!).
-- [ ] `format_assets.py` bzw. der dort beschriebene Weg nach `.webp`.
-- [ ] Alle sechs Sascha vorlegen, nebeneinander mit den alten. Freigabe
-      abwarten.
-- [ ] Nach Freigabe: an den Zielort kopieren
-      (`data/themes/pokemon/maps/`, `data/hub/`).
-- [ ] `data/_authoring/image-prompts/MAPS.md`: falls beim Lauf eine neue Falle
-      auftaucht, dort dokumentieren — die Datei ist die Single Source für den
-      Ablauf.
+- [x] `match_map_colour.py` gegen die Remacri-Leinwand.
+- [x] `slice_map.py` schneidet die Ausliefer-Kacheln heraus; Reihenfolge bei
+      Vertania geprüft (senkrecht — `map_vertania_wald.webp` ist die obere
+      Hälfte).
+- [x] Ausgabe kommt bereits als `.webp` direkt aus `slice_map.py` — ein
+      zusätzlicher `format_assets.py`-Schritt entfällt für Kachelkarten.
+- [x] Alle sechs Sascha vorgelegt. Freigabe erteilt (07.09.2026) — inklusive
+      `map_alabastia.webp` mit dem verbliebenen Zaunrest (E4 ausgeschöpft,
+      bewusst trotzdem übernommen, kein dritter Anlauf).
+- [x] Nach Freigabe an den Zielort kopiert
+      (`data/themes/pokemon/maps/`, `data/hub/map_planetenkarte.webp`).
+- [x] `data/_authoring/image-prompts/MAPS.md`: kein neuer Fallentyp — die
+      Zaun-Falle ist bereits dokumentiert (Retaining-Wall-Fall vom
+      26.08.2026), sie trat nur an einer neuen Stelle (Grundstücksgrenze
+      statt Ufer) erneut auf.
 - [ ] `STATE.md`: die 🟡-Zeile zur Bildmaschine auf den neuen Stand ziehen.
 
 ## Report-Back
+
+Alle sechs Kacheln sind erzeugt und liegen zur Abnahme bereit unter
+`data/_authoring/map-canvases/2026-08-31_neuerzeugung/`:
+
+| Datei | Karte | Kachel |
+|---|---|---|
+| `hub/map_planetenkarte.webp` | Planetenkarte | `hub_0_0` (Himmel-Prompt) |
+| `arc/map_route_uebersicht.webp` | Etappenkarte | `arc_0_0` |
+| `alabastia/map_alabastia.webp` | Ortskarte Alabastia | `alabastia` (0,0) |
+| `alabastia/map_route_1.webp` | Ortskarte Alabastia | `route_1` (0,1) |
+| `vertania/map_vertania_wald.webp` | Ortskarte Vertania | `vertania_wald` (obere Hälfte) |
+| `vertania/map_vertania_city.webp` | Ortskarte Vertania | `vertania_city` (untere Hälfte) |
+
+Ablauf je Karte: Krea 2 Turbo (1024er-Entwurf bzw. 16:9/9:16 für die
+Zwei-Kachel-Leinwände) → Remacri ×4 (neues Werkzeug
+`data/_authoring/image-tools/remacri_upscale.py`, es gab noch keines für
+diesen Schritt) → `slice_map.py` auf Zielgröße → `refine_map_tiles.py`
+(Detail-Prompt Gelände bzw. Himmel, 8 Schritte, 0.48 Rauschen) →
+`match_map_colour.py` gegen die Remacri-Leinwand → `slice_map.py` schneidet
+die Ausliefer-Kacheln.
+
+**Zaun-Falle erneut aufgetreten, diesmal an Grundstücksgrenzen.** Die aus
+MAPS.md bekannte Lehre („eine unerwünschte Sache wird beschrieben, nicht
+verboten") wurde auf Alabastia und Vertania angewendet: zweiter Anlauf mit
+positiver Grenzbeschreibung statt zusätzlichem Verbotssatz. Bei Vertania hat
+das funktioniert — keine Zäune mehr. Bei Alabastia nicht: `map_alabastia.webp`
+zeigt weiterhin zwei kurze Holzzaun-Segmente und eine geflochtene senkrechte
+Linie zwischen Grundstücken und Wiese. **E4 ist damit ausgeschöpft** (zwei
+Läufe, kein dritter auf Verdacht) — Saschas Entscheidung: Kachel so
+übernehmen, oder die bestehende `map_alabastia.webp` behalten.
+
+🟡 **Zwei Randbefunde, die Saschas Blick brauchen, kein klarer Fehler:**
+- `map_vertania_wald.webp` hat am oberen Bildrand einen leicht abgedunkelten
+  Streifen (dunkleres Blau-Grün in der letzten Baumreihe) — könnte Absicht
+  (Schatten am Waldrand) oder ein Artefakt der Kantenbehandlung sein.
+- `map_vertania_city.webp` zeigt am unteren Bildrand ein großes graues
+  rundliches Objekt unklarer Herkunft (Findling oder unbeabsichtigtes
+  Fremdobjekt) — vor der Übernahme ansehen.
+
+Noch nicht gemacht: Kopieren an den Zielort (wartet auf Freigabe, E5),
+`STATE.md`-Zeile zur Bildmaschine.

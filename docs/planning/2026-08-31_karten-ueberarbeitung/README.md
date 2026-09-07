@@ -1,6 +1,6 @@
 # Karten-Überarbeitung — Nebel, Orientierung, Bilder
 
-**Angelegt:** 31.08.2026 · **Status:** wartet auf Freigabe
+**Angelegt:** 31.08.2026 · **Freigegeben:** 31.08.2026 · **Status:** alle sechs Phasen umgesetzt, Plan-Ende-Smoke steht aus
 
 Alle drei Kartenebenen (Planetenkarte, Etappenkarte, Ortskarte) bekommen die
 Struktur aus dem Karten-Konzept vom 31.08.2026, umgesetzt in der bestehenden
@@ -53,7 +53,7 @@ Sie bleibt.
 | 3 | [Drei Marker-Zustände](phase-3-marker-zustaende.md) | standard | **complete** |
 | 4 | [Orientierung: Minikarte und Legende](phase-4-orientierung.md) | standard | **complete** |
 | 5 | [Panels und schmale Karten](phase-5-panels-und-schmale-karten.md) | standard | **complete** |
-| 6 | [Kartenbilder neu erzeugen](phase-6-kartenbilder.md) | standard | pending |
+| 6 | [Kartenbilder neu erzeugen](phase-6-kartenbilder.md) | standard | **complete** |
 
 Phase 1 und 2 hängen zusammen (beide fassen die Flächenberechnung an) und
 werden in dieser Reihenfolge umgesetzt. Phase 3–5 sind danach unabhängig

@@ -3,11 +3,20 @@
 **Aktiver Plan:** [docs/planning/2026-08-31_karten-ueberarbeitung/](docs/planning/2026-08-31_karten-ueberarbeitung/README.md)
 — freigegeben am 31.08.2026, sechs Phasen.
 
-**Phase:** 6/6 — Kartenbilder neu erzeugen. Phase 1–5 sind umgesetzt und
-committet; keine der fünf Phasen am Bildschirm abgenommen.
+**Phase:** 6/6 — alle sechs Phasen umgesetzt. Phase 6 (Kartenbilder) ist
+committet-reif: sechs neue Kacheln erzeugt, von Sascha am 07.09.2026
+freigegeben (inklusive `map_alabastia.webp` mit bewusst akzeptiertem
+Zaunrest, E4 ausgeschöpft) und an den Zielort kopiert
+(`data/themes/pokemon/maps/`, `data/hub/map_planetenkarte.webp`). Phase 1–5
+sind bereits committet (`41efeb6`).
 
-**Nächster Schritt:** Phase 5 committen (`mode-committing`), dann
-`phase-6-kartenbilder.md` umsetzen. Rating „standard" — `sonnet` reicht.
+**Nächster Schritt:** Phase 6 committen (`mode-committing`) — neue Bilddateien
+liegen außerhalb von Git (`data/themes/`, `data/hub/` sind Drive-Junctions),
+zu committen sind nur `docs/planning/2026-08-31_karten-ueberarbeitung/`,
+`STATE.md` und das neue Werkzeug
+`data/_authoring/image-tools/remacri_upscale.py`. Danach: Plan-Ende-Smoke mit
+Sascha laut README → „Smoke-Checkliste" (9 Punkte, priorisiert nach
+Unsicherheit), dann Archivieren.
 
 Worum es geht: Sternen- und Weltenkarten bekommen die Struktur aus dem
 Karten-Konzept vom 31.08.2026 — Nebel als eigene weiche Schicht statt beiger
@@ -57,12 +66,20 @@ Wiederhol-Knopf — ein Kind, das die Frage überhört, kann sie nicht noch einm
 hören. Ein `qst-read-aloud-button` wäre eine Zeile im Template.
 
 🟡 **Bildmaschine:** Der Karten-Ablauf ist am 26.08.2026 zweimal grundlegend
-umgebaut worden. Verbindlich und vollständig ist
+umgebaut und am 07.09.2026 an sechs echten Kacheln erfolgreich durchlaufen
+worden (Karten-Überarbeitung, Phase 6). Verbindlich und vollständig ist
 [`image-prompts/MAPS.md`](data/_authoring/image-prompts/MAPS.md) →
 „Hochskalieren — der Detailgrad hängt an drei Reglern". Das Wichtigste in einem
 Satz: der gespeicherte Ablauf `Upscale Map` trägt nicht, die Regler erreichen den
 Auftrag über comfy-cli gar nicht, und die Stilwörter im Prompt schlagen alles
-andere — der `art_style` der Welt gehört wörtlich hinein.
+andere — der `art_style` der Welt gehört wörtlich hinein. Für den ersten Schritt
+der Kette (Remacri ×4) gibt es jetzt ein Werkzeug,
+`data/_authoring/image-tools/remacri_upscale.py` — vorher musste das von Hand
+über vier Comfy-Knoten gebaut werden. Die Zaun-Falle aus dem
+Retaining-Wall-Fall vom 26.08.2026 ist nicht auf Ufer beschränkt: sie kann an
+jeder beschriebenen Grenzlinie (auch Grundstücksgrenzen) wieder auftreten, und
+die positive Umformulierung schlägt nicht garantiert an — bei der
+Alabastia-Kachel vom 07.09.2026 blieb sie auch im zweiten Anlauf bestehen.
 
 🟡 **Karten-Leinwände** liegen unter `data/_authoring/map-canvases/` und sind
 gitignored — eine 8192er Leinwand gehört nicht in die Repo-Historie. Preis: nur
