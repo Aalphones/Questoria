@@ -95,9 +95,12 @@
   --color-map-chart-bg: var(--palette-moss-300);
   --color-map-chart-line: color-mix(in srgb, var(--palette-neutral-100) 42%, transparent);
   --color-map-label-bg: var(--palette-neutral-100);
-  // Rahmenfläche hinter einer eingepassten Karte (Phase 3, Kontrakt
-  // „einpassen, nicht beschneiden") — Passepartout, kein Grau.
-  --color-map-frame-bg: var(--color-surface);
+  // Nebel über gesperrter Fläche (Phase 2, ADR-023) — zwei Lagen, Kern kräftig,
+  // Hof schwach, damit es nach Dunst aussieht statt nach Weichzeichner.
+  --color-map-fog: var(--palette-neutral-300);
+  --color-map-fog-deep: color-mix(in srgb, var(--palette-neutral-500) 45%, var(--palette-parchment-deep));
+  // Fläche außerhalb der Karte, sichtbar erst seit ADR-022 (Herauszoomen bis zum Anschlag).
+  --color-map-void: color-mix(in srgb, var(--palette-ink) 10%, var(--palette-parchment-deep));
 
   // ── Lernstufen ───────────────────────────────────────────────────────────
   // Drei Farbstufen von ruhig nach kräftig (Design Abschnitt 3). Die Farbe

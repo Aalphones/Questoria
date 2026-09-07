@@ -27,6 +27,15 @@ const NATIVE_SCALE = 1;
 /** Sichtbarer Nebelrand um die freigeschaltete Fläche, damit „hier geht es weiter" lesbar ist. */
 const FOG_MARGIN = TILE_SIZE;
 
+/**
+ * Zwei Nebellagen statt einer, damit es nach Dunst aussieht und nicht nach
+ * Weichzeichner (ADR-023): eine enge, kräftige Lage (Kern) und eine weite,
+ * schwache (Hof). Beide in Weltpixeln, damit die Nebelkante beim Hineinzoomen
+ * mit der Karte mitwächst — der Nebel gehört zur Welt, nicht zur Oberfläche.
+ */
+const FOG_BLUR_CORE = 48;
+const FOG_BLUR_HALO = 190;
+
 /** Erst ab dieser Bewegung gilt eine Berührung als Ziehen statt als Tipp. */
 const DRAG_THRESHOLD_PX = 6;
 
@@ -161,6 +170,35 @@ export class MapCanvas {
       bottom: Math.min(all.bottom, unlocked.bottom + FOG_MARGIN),
     };
   });
+
+  /** Ein Rechteck je freigeschalteter Kachel, in Weltkoordinaten — die Löcher der Nebelmaske (ADR-023). */
+  protected readonly fogTileRects = computed<readonly FogRect[]>(() =>
+    this.unlockedTiles().map((tile: MapCanvasTile) => {
+      const origin = tileWorldOrigin(tile);
+
+      return { id: tile.id, x: origin.x, y: origin.y, width: TILE_SIZE, height: TILE_SIZE };
+    }),
+  );
+
+  /** Die volle Nebelfläche (= `visibleBounds`), als SVG-Rechteck statt Kanten. */
+  protected readonly fogArea = computed<FogRect>(() => {
+    const bounds = this.visibleBounds();
+
+    if (bounds === null) {
+      return { id: 'fog-area', x: 0, y: 0, width: TILE_SIZE, height: TILE_SIZE };
+    }
+
+    return {
+      id: 'fog-area',
+      x: bounds.left,
+      y: bounds.top,
+      width: bounds.right - bounds.left,
+      height: bounds.bottom - bounds.top,
+    };
+  });
+
+  protected readonly fogBlurCore = FOG_BLUR_CORE;
+  protected readonly fogBlurHalo = FOG_BLUR_HALO;
 
   protected readonly worldWidth = computed<number>(() => {
     const bounds = this.visibleBounds();
@@ -617,6 +655,15 @@ interface WorldRect {
   readonly top: number;
   readonly right: number;
   readonly bottom: number;
+}
+
+/** Ein Rechteck in Weltkoordinaten für die SVG-Nebelmaske (ADR-023). */
+interface FogRect {
+  readonly id: string;
+  readonly x: number;
+  readonly y: number;
+  readonly width: number;
+  readonly height: number;
 }
 
 function tileWorldOrigin(tile: MapCanvasTile): { x: number; y: number } {

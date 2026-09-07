@@ -3,23 +3,14 @@
   [class.map-canvas__world--animated]="!isInteracting()"
   [style.transform]="worldTransform()"
 >
-  @for (tile of tiles(); track tile.id) {
-    @if (unlockedTileSet().has(tile.id)) {
-      <qst-image-slot
-        class="map-canvas__background-tile"
-        [src]="tile.url"
-        [label]="tile.id"
-        [style.left.px]="tile.col * tileSize"
-        [style.top.px]="tile.row * tileSize"
-      />
-    } @else {
-      <div
-        class="map-canvas__background-tile map-canvas__background-tile--fog"
-        [style.left.px]="tile.col * tileSize"
-        [style.top.px]="tile.row * tileSize"
-        aria-hidden="true"
-      ></div>
-    }
+  @for (tile of unlockedTiles(); track tile.id) {
+    <qst-image-slot
+      class="map-canvas__background-tile"
+      [src]="tile.url"
+      [label]="tile.id"
+      [style.left.px]="tile.col * tileSize"
+      [style.top.px]="tile.row * tileSize"
+    />
   }
 
   <svg class="map-canvas__routes" aria-hidden="true">
@@ -30,6 +21,49 @@
         [attr.d]="route.path"
       />
     }
+  </svg>
+
+  <svg class="map-canvas__fog" aria-hidden="true">
+    <defs>
+      <filter id="qst-fog-blur-core" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur [attr.stdDeviation]="fogBlurCore" />
+      </filter>
+      <filter id="qst-fog-blur-halo" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur [attr.stdDeviation]="fogBlurHalo" />
+      </filter>
+      <mask id="qst-fog-core">
+        <rect [attr.x]="fogArea().x" [attr.y]="fogArea().y" [attr.width]="fogArea().width" [attr.height]="fogArea().height" fill="white" />
+        <g filter="url(#qst-fog-blur-core)">
+          @for (rect of fogTileRects(); track rect.id) {
+            <rect [attr.x]="rect.x" [attr.y]="rect.y" [attr.width]="rect.width" [attr.height]="rect.height" fill="black" />
+          }
+        </g>
+      </mask>
+      <mask id="qst-fog-halo">
+        <rect [attr.x]="fogArea().x" [attr.y]="fogArea().y" [attr.width]="fogArea().width" [attr.height]="fogArea().height" fill="white" />
+        <g filter="url(#qst-fog-blur-halo)">
+          @for (rect of fogTileRects(); track rect.id) {
+            <rect [attr.x]="rect.x" [attr.y]="rect.y" [attr.width]="rect.width" [attr.height]="rect.height" fill="black" />
+          }
+        </g>
+      </mask>
+    </defs>
+    <rect
+      class="map-canvas__fog-rect map-canvas__fog-rect--halo"
+      [attr.x]="fogArea().x"
+      [attr.y]="fogArea().y"
+      [attr.width]="fogArea().width"
+      [attr.height]="fogArea().height"
+      mask="url(#qst-fog-halo)"
+    />
+    <rect
+      class="map-canvas__fog-rect map-canvas__fog-rect--core"
+      [attr.x]="fogArea().x"
+      [attr.y]="fogArea().y"
+      [attr.width]="fogArea().width"
+      [attr.height]="fogArea().height"
+      mask="url(#qst-fog-core)"
+    />
   </svg>
 
   <ng-content select="qst-map-point" />

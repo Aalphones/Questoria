@@ -6,6 +6,7 @@
   overflow: clip; // ADR-017: niemals `hidden`
   container-type: inline-size; // Bezugsgröße für Panel-Breakpoints der Screens
   touch-action: none; // sonst scrollt der Browser statt die Karte zu ziehen
+  background: var(--color-map-void); // Fläche außerhalb der Karte, voll herausgezoomt
 }
 
 .map-canvas {
@@ -28,10 +29,6 @@
     position: absolute;
     inline-size: 1024px;
     block-size: 1024px;
-
-    &--fog {
-      background: color-mix(in srgb, var(--color-map-frame-bg) 85%, var(--palette-ink));
-    }
   }
 
   &__routes {
@@ -40,6 +37,26 @@
     inset-inline-start: 0;
     overflow: visible;
     pointer-events: none;
+  }
+
+  &__fog {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  &__fog-rect {
+    &--core {
+      fill: var(--color-map-fog);
+      fill-opacity: 0.96;
+    }
+
+    &--halo {
+      fill: var(--color-map-fog-deep);
+      fill-opacity: 0.5;
+    }
   }
 
   &__route {

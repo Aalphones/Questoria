@@ -115,38 +115,52 @@ Hof-Weichzeichnung — nicht der Rückbau auf Kacheln.
 
 ## Checkliste
 
-- [ ] `map-canvas.html`: den `@else`-Zweig der Kachel-Schleife (das
+- [x] `map-canvas.html`: den `@else`-Zweig der Kachel-Schleife (das
       `--fog`-`div`) ersatzlos entfernen. Für gesperrte Kacheln wird nichts
       mehr gezeichnet.
-- [ ] `map-canvas.scss`: `.map-canvas__background-tile--fog` entfernen.
-- [ ] `--color-map-frame-bg` aus `_tokens.scss` (Zeile 100) entfernen. Geprüft
+- [x] `map-canvas.scss`: `.map-canvas__background-tile--fog` entfernen.
+- [x] `--color-map-frame-bg` aus `_tokens.scss` (Zeile 100) entfernen. Geprüft
       am 31.08.2026: die Nebel-Regel ist der **einzige** Nutzer im ganzen
       Frontend, das Token ist danach tot.
-- [ ] `_tokens.scss`: die drei Token aus E5 in der Zweck-Ebene ergänzen,
+- [x] `_tokens.scss`: die drei Token aus E5 in der Zweck-Ebene ergänzen,
       direkt bei den übrigen `--color-map-*` (dort ab Zeile 90).
-- [ ] `map-canvas.ts`: Konstanten `FOG_BLUR_CORE = 48`, `FOG_BLUR_HALO = 190`
+- [x] `map-canvas.ts`: Konstanten `FOG_BLUR_CORE = 48`, `FOG_BLUR_HALO = 190`
       mit einem Satz Kommentar, warum zwei Lagen (E3).
-- [ ] `map-canvas.ts`: `computed` `fogTileRects` — ein Rechteck je
+- [x] `map-canvas.ts`: `computed` `fogTileRects` — ein Rechteck je
       freigeschalteter Kachel in Weltkoordinaten
       (`{ x: col * TILE_SIZE, y: row * TILE_SIZE }`), plus `fogArea` aus
       `visibleBounds` für das Vollrechteck.
-- [ ] `map-canvas.html`: `<svg class="map-canvas__fog">` zwischen der
+- [x] `map-canvas.html`: `<svg class="map-canvas__fog">` zwischen der
       Routen-`<svg>` und `<ng-content select="qst-map-point" />` einhängen
       (E4). Zwei `<mask>` mit festen IDs (`qst-fog-core`, `qst-fog-halo`), zwei
       `<filter>` mit den Konstanten aus E3, zwei gefüllte `<rect>`.
       `aria-hidden="true"`, `pointer-events: none`.
-- [ ] `map-canvas.scss`: `.map-canvas__fog` positionieren wie
+- [x] `map-canvas.scss`: `.map-canvas__fog` positionieren wie
       `.map-canvas__routes` (absolut, `overflow: visible`, keine Zeigerevents);
       Füllfarben der beiden Rechtecke über `fill: var(--color-map-fog)` bzw.
       `var(--color-map-fog-deep)` und die Deckkraft aus E3.
-- [ ] `map-canvas.scss`: `:host` bekommt
+- [x] `map-canvas.scss`: `:host` bekommt
       `background: var(--color-map-void);` (E5).
 - [ ] Auf dem Tablet ziehen und zoomen, auf Ruckeln achten (🟡 oben). Ruckelt
       es: `will-change: opacity` auf `.map-canvas__fog` und `FOG_BLUR_HALO` auf
-      `96`; im Report-Back vermerken.
-- [ ] `docs/decisions/023-nebel-als-eigene-schicht.md` schreiben.
-- [ ] `docs/code-map.md`, Zeile „Kartenfläche": Nebel als eigene Schicht
+      `96`; im Report-Back vermerken. **Noch nicht geprüft — Teil der
+      Smoke-Checkliste, agentenlose Session prüft nicht selbst am Gerät.**
+- [x] `docs/decisions/023-nebel-als-eigene-schicht.md` schreiben.
+- [x] `docs/code-map.md`, Zeile „Kartenfläche": Nebel als eigene Schicht
       nachtragen (bisher steht dort nichts dazu).
-- [ ] `npm run lint`, `npm run build` im Frontend.
+- [x] `npm run lint`, `npm run build` im Frontend — beide grün, keine der
+      Build-Budget-Warnungen betrifft `map-canvas`.
 
 ## Report-Back
+
+Umgesetzt wie geplant (E1–E5), keine Abweichung. Kachel-Schleife im Template
+rendert jetzt nur noch `unlockedTiles()` direkt statt über `@if`/`@else` —
+eine Zeile weniger Verzweigung, gleiche Wirkung. Die zwei `<mask>`-IDs
+(`qst-fog-core`, `qst-fog-halo`) sind pro Komponenteninstanz fest verdrahtet;
+das ist unkritisch, weil pro Bildschirm immer nur eine `qst-map-canvas`-Instanz
+lebt (Planeten-, Etappen- oder Ortskarte, nie zwei gleichzeitig).
+
+**Unsicherste Stelle:** das Ruckel-Risiko aus E3/🟡 — `feGaussianBlur` über die
+volle sichtbare Fläche ist am Schreibtisch nicht zu beurteilen, das ist ein
+Tablet-Befund. Steht offen in der Smoke-Checkliste der Plan-README, Punkt 1
+und 7.

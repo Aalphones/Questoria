@@ -3,11 +3,11 @@
 **Aktiver Plan:** [docs/planning/2026-08-31_karten-ueberarbeitung/](docs/planning/2026-08-31_karten-ueberarbeitung/README.md)
 — freigegeben am 31.08.2026, sechs Phasen.
 
-**Phase:** 2/6 — Nebel als eigene Schicht. Phase 1 ist umgesetzt und
-committet, am Bildschirm aber noch nicht abgenommen.
+**Phase:** 3/6 — Drei Marker-Zustände. Phase 1 und 2 sind umgesetzt und
+committet, am Bildschirm noch nicht abgenommen.
 
-**Nächster Schritt:** `phase-2-nebel-als-schicht.md` umsetzen. Sie ist
-ebenfalls „heikel" — `/model opusplan` ist die passende Stufe.
+**Nächster Schritt:** `phase-3-marker-zustaende.md` umsetzen. Rating
+„standard" — `sonnet` reicht, `opusplan` ist hier nicht nötig.
 
 Worum es geht: Sternen- und Weltenkarten bekommen die Struktur aus dem
 Karten-Konzept vom 31.08.2026 — Nebel als eigene weiche Schicht statt beiger
