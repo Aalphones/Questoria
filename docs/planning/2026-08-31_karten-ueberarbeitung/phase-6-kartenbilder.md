@@ -195,3 +195,40 @@ Läufe, kein dritter auf Verdacht) — Saschas Entscheidung: Kachel so
 
 Noch nicht gemacht: Kopieren an den Zielort (wartet auf Freigabe, E5),
 `STATE.md`-Zeile zur Bildmaschine.
+
+## Nachtrag — Planetenkarte neu gebaut (07.09.2026)
+
+Sascha hat die erste Fassung von `map_planetenkarte.webp` am Bildschirm
+gesehen: eine einzelne dominante Nebel-Wirbelform, die sich nie an eine
+zweite, unabhängig erzeugte Nachbarkachel anschließen ließe. Berechtigt —
+siehe die neue Vorlage „Himmel-Leinwand" in `MAPS.md`. Neu gebaut über
+dieselbe Kette (Remacri ×4 → `slice_map.py` auf Zielgröße →
+`refine_map_tiles.py` mit `DETAIL_PROMPT_SKY.txt` → `match_map_colour.py` →
+`slice_map.py`), diesmal mit gleichmäßig verteilten Nebelbändern ohne
+Zentrum. Drei Fehlversuche auf dem Weg dahin (Foto-Look, dann Tapeten-Raster)
+sind in MAPS.md dokumentiert. Freigegeben und kopiert.
+
+Zusätzlich, ebenfalls von Sascha angestoßen, aber **nicht Teil des
+ursprünglichen Plan-Kontrakts**: der Weltknoten auf der Planetenkarte
+(`data/themes/pokemon/cover.webp`, eingeblendet über `main_hub.json` →
+`installed_themes[0]`) zeigte einen kreisrund zugeschnittenen
+Wiesen-Screenshot statt eines Planeten und wirkte bei nahem Zoom viel zu
+groß. Behoben:
+
+- `cover.webp` neu erzeugt — ein erfundener, gestreifter Fantasieplanet ohne
+  Kontinente. Zwei Fehlversuche zeigten unaufgefordert echte Erdkontinente
+  (Afrika, Asien, Europa erkennbar) trotz expliziten „muss nicht wie die Erde
+  aussehen" — die Anweisung, etwas zu vermeiden, hat es eher angezogen.
+  Funktioniert hat erst der Wechsel zu einem Motiv ohne Kontinent-Konzept
+  (wirbelnde Farbbänder wie ein Gasriese statt einer Landkarte-Ähnlichkeit).
+  Ist jetzt eine weitere Bestätigung der MAPS.md-Grundregel: nicht verbieten,
+  anders beschreiben.
+- `main_hub.json` → `installed_themes[0].size`: `20` → `12` (Einheit `cqw` =
+  Anteil der sichtbaren Kartenbreite, nicht der Weltbreite — bei starkem
+  Zoom wird ein hoher Wert unverhältnismäßig groß, siehe
+  `map-point.ts`). Reine Schätzung, keine Feinabstimmung — braucht Sascha
+  am Bildschirm.
+
+Dieser Nachtrag gehört nicht zu den ursprünglichen sechs Kartenkacheln (AK 1–8
+oben), ist aber am selben Tag im selben Zuge entstanden und wird hier
+mitgeführt statt in einem separaten Mini-Plan.

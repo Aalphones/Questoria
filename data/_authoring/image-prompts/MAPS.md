@@ -88,6 +88,58 @@ density across the whole square frame. No border, no frame, no legend, no
 compass rose, no text and no labels.
 ```
 
+## Vorlage — Himmel-Leinwand (Planetenkarte)
+
+**Lücke, entdeckt am 07.09.2026.** Für Himmel-Kacheln gab es bisher nur den
+Detail-Prompt zum Nachschärfen (`DETAIL_PROMPT_SKY.txt`), keine Vorlage für
+den ersten Entwurf. Ein ad-hoc formulierter Entwurf ohne diese Vorlage lief
+prompt in eine dominante zentrale Wirbelform — eine Heldenaufnahme, an die
+sich keine zweite, unabhängig erzeugte Nachbarkachel je anschließen lässt.
+Ein Kachelraster lebt davon, dass jede Kachel für sich gleichmäßig aussieht;
+ein Bild mit einem einzigen komposition-tragenden Zentrum ist das Gegenteil
+davon, selbst wenn es (wie hier) vorerst nur eine einzige Kachel gibt.
+
+```
+A flat vector illustration of deep space, drawn as a hand-painted cel-animation
+background, not a photograph and not a telescope image. No horizon, no ground,
+no planet surface. {ART_STYLE}. The frame is filled edge to edge with
+irregular, organically shaped nebula wisps and thin curling dust-lane
+filaments of many different sizes, each with its own unique curling outline,
+overlapping loosely and drifting at random angles and positions like real gas
+clouds, never repeating the same shape twice and never lining up into rows,
+columns or any visible grid. No single large cloud, no spiral, no swirl, no
+radial symmetry and no shape that reads as a centrepiece. Colour changes
+happen as flat stepped bands of solid colour, never as a smooth photographic
+gradient and never converging toward the middle. Stars are drawn as simple
+flat four-pointed sparkle shapes or plain dots in a few sizes, painted flat
+with a crisp outline, scattered at random across the entire image with
+roughly even overall density from corner to corner but no regular spacing, no
+clustering, no empty patches. The scene continues right up to all four edges
+of the image and is cut off flatly by the frame, so it could plausibly
+continue into a neighbouring section, without looking like a repeating tile
+or wallpaper pattern. No planets, no ships, no people, no text, no border, no
+frame, no legend, no compass rose and no labels.
+```
+
+Zwei Fehlversuche auf dem Weg dahin, beide lehrreich:
+
+- **Nur „gleichmäßig verteilt, kein Zentrum" verlangt, ohne den Cel-Stil hart
+  zu erzwingen** → technisch gleichmäßig, aber ein fotorealistisches
+  Hubble-Bild. Krea 2 greift bei „deep space" von sich aus zum Foto-Look,
+  sobald der Stil nicht in jedem Satz mit Gegenbegriffen belegt wird
+  („not a photograph", „flat cel-shading … no gradients … no grain … no lens
+  flare").
+- **„Like flat printed wallpaper" als Bild für Gleichmäßigkeit benutzt** →
+  das Modell nimmt das wörtlich und malt ein echtes Rapport-Muster mit
+  identischen Wolkenformen im Raster. Gleichmäßige **Dichte** ist nicht
+  dasselbe wie gleichmäßige **Form** — deshalb in der Vorlage oben
+  ausdrücklich „never repeating the same shape twice" und „without looking
+  like a repeating tile" gegeneinander gestellt.
+
+Der übrige Ablauf (Remacri ×4, `slice_map.py` auf Zielgröße,
+`refine_map_tiles.py` mit `DETAIL_PROMPT_SKY.txt`, `match_map_colour.py`)
+ist identisch zur Gelände-Kette weiter unten.
+
 ### Die Vorlage nicht um eigene Verbote erweitern
 
 Krea 2 fährt ohne Führung (Stärke 1.0) und hat deshalb **keinen** Negativ-Zweig —

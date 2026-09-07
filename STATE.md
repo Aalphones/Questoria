@@ -3,20 +3,26 @@
 **Aktiver Plan:** [docs/planning/2026-08-31_karten-ueberarbeitung/](docs/planning/2026-08-31_karten-ueberarbeitung/README.md)
 — freigegeben am 31.08.2026, sechs Phasen.
 
-**Phase:** 6/6 — alle sechs Phasen umgesetzt. Phase 6 (Kartenbilder) ist
-committet-reif: sechs neue Kacheln erzeugt, von Sascha am 07.09.2026
-freigegeben (inklusive `map_alabastia.webp` mit bewusst akzeptiertem
-Zaunrest, E4 ausgeschöpft) und an den Zielort kopiert
-(`data/themes/pokemon/maps/`, `data/hub/map_planetenkarte.webp`). Phase 1–5
-sind bereits committet (`41efeb6`).
+**Phase:** 6/6 — alle sechs Phasen umgesetzt. Phase 6 (Kartenbilder) ist fertig:
+sechs Kacheln erzeugt und freigegeben (inklusive `map_alabastia.webp` mit
+bewusst akzeptiertem Zaunrest, E4 ausgeschöpft), die Planetenkarte danach auf
+Saschas Befund hin **neu gebaut** (erste Fassung war eine nicht erweiterbare
+Nebel-Heldenaufnahme — siehe Nachtrag in `phase-6-kartenbilder.md`), plus
+ungeplant der Weltknoten (`cover.webp` neuer Fantasieplanet statt
+Wiesen-Ausschnitt, `size` in `main_hub.json` 20→12). Alles kopiert/gesetzt,
+`data/hub/`, `data/themes/pokemon/maps/`, `data/themes/pokemon/cover.webp`
+sind aktuell. Phase 1–5 committet (`41efeb6`).
 
-**Nächster Schritt:** Phase 6 committen (`mode-committing`) — neue Bilddateien
-liegen außerhalb von Git (`data/themes/`, `data/hub/` sind Drive-Junctions),
-zu committen sind nur `docs/planning/2026-08-31_karten-ueberarbeitung/`,
-`STATE.md` und das neue Werkzeug
-`data/_authoring/image-tools/remacri_upscale.py`. Danach: Plan-Ende-Smoke mit
-Sascha laut README → „Smoke-Checkliste" (9 Punkte, priorisiert nach
-Unsicherheit), dann Archivieren.
+**Nächster Schritt:** Phase 6 committen (`mode-committing`) — zu committen:
+`docs/planning/2026-08-31_karten-ueberarbeitung/`, `STATE.md`,
+`data/_authoring/image-prompts/MAPS.md` (neue Himmel-Vorlage),
+`data/_authoring/image-tools/remacri_upscale.py` (neu),
+`data/hub/map_planetenkarte.webp`, `data/main_hub.json`. `cover.webp` liegt
+außerhalb von Git (Drive-Junction). Danach: Plan-Ende-Smoke mit Sascha laut
+README → „Smoke-Checkliste" — jetzt auch die neue Planetenkarte und der
+Weltknoten am Bildschirm, plus die zwei noch offenen 🟡-Randbefunde bei
+Vertania (abgedunkelter Rand bei `map_vertania_wald.webp`, unklares graues
+Objekt unten bei `map_vertania_city.webp`). Danach Archivieren.
 
 Worum es geht: Sternen- und Weltenkarten bekommen die Struktur aus dem
 Karten-Konzept vom 31.08.2026 — Nebel als eigene weiche Schicht statt beiger
