@@ -125,6 +125,39 @@ export function derivedUnlockedTileIds(
   return unlocked;
 }
 
+/** Sichtbarkeit eines Knotens — unabhängig von `ProgressState`, siehe ADR-024. */
+export type RevealState = 'revealed' | 'hinted' | 'unknown';
+
+/**
+ * Was auf der Karte zu sehen ist, nicht was spielbar ist (ADR-024). `done`
+ * und `current` sind `revealed`; genau der erste gesperrte Knoten nach dem
+ * letzten sichtbaren ist `hinted` (Name + entsättigtes Bild als Köder), jeder
+ * weitere ist `unknown` (nur eine Fragezeichen-Scheibe). `orderedIds` ist die
+ * Content-Reihenfolge, dieselbe, auf der `nodeStates`/`stageStates` laufen.
+ */
+export function nodeRevealStates(
+  orderedIds: readonly string[],
+  states: ReadonlyMap<string, ProgressState>,
+): Map<string, RevealState> {
+  const reveals = new Map<string, RevealState>();
+  let hintedAssigned = false;
+
+  for (const id of orderedIds) {
+    const state = states.get(id) ?? 'locked';
+
+    if (state === 'done' || state === 'current') {
+      reveals.set(id, 'revealed');
+    } else if (!hintedAssigned) {
+      reveals.set(id, 'hinted');
+      hintedAssigned = true;
+    } else {
+      reveals.set(id, 'unknown');
+    }
+  }
+
+  return reveals;
+}
+
 /** Abgerundeter Durchschnitt der Sterne der geschafften Orte einer Karte. */
 export function stageStars(
   map: MapEntry,

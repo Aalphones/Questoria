@@ -11,36 +11,55 @@
     <qst-map-canvas class="timeline__canvas" [tiles]="tiles()" [unlockedTileIds]="unlockedTileIds()" [points]="points()" [routes]="loadedWorld.arc_overview.routes" [dimmedPointIds]="lockedStageIds()" [focusPointId]="focusStageId()">
     @for (stage of loadedWorld.arc_overview.stages; track stage.map_id; let stageIndex = $index) {
       <qst-map-point [x]="pointX(stage.tile_id, stage.x)" [y]="pointY(stage.tile_id, stage.y)" [size]="stage.size">
-        <div class="timeline__stage-wrapper">
-          @if (isReachable(stage.map_id)) {
-            <a
-              class="timeline__stage"
-              [class.timeline__stage--done]="stateOf(stage.map_id) === 'done'"
-              [class.timeline__stage--current]="stateOf(stage.map_id) === 'current'"
-              [style.--stage-shape]="stage.shape"
-              [style.--stage-aspect]="stage.aspect"
-              [routerLink]="['/theme', themeId(), 'map', stage.map_id]"
-            >
-              <span class="timeline__chip">{{ stageIndex + 1 }}</span>
-            </a>
-          } @else {
-            <div class="timeline__stage timeline__stage--locked" [style.--stage-shape]="stage.shape" [style.--stage-aspect]="stage.aspect">
-              <span class="timeline__chip">{{ stageIndex + 1 }}</span>
-            </div>
-          }
+        @if (revealOf(stage.map_id) === 'unknown') {
+          <div
+            class="timeline__stage-unknown"
+            aria-hidden="true"
+            [style.--stage-shape]="stage.shape"
+            [style.--stage-aspect]="stage.aspect"
+          >
+            <span class="timeline__stage-unknown-mark">?</span>
+          </div>
+        } @else {
+          <div class="timeline__stage-wrapper">
+            @if (revealOf(stage.map_id) === 'hinted') {
+              <button
+                type="button"
+                class="timeline__stage timeline__stage--hinted"
+                [style.--stage-shape]="stage.shape"
+                [style.--stage-aspect]="stage.aspect"
+              >
+                <span class="timeline__chip">{{ stageIndex + 1 }}</span>
+              </button>
+            } @else {
+              <a
+                class="timeline__stage"
+                [class.timeline__stage--done]="stateOf(stage.map_id) === 'done'"
+                [class.timeline__stage--current]="stateOf(stage.map_id) === 'current'"
+                [style.--stage-shape]="stage.shape"
+                [style.--stage-aspect]="stage.aspect"
+                [routerLink]="['/theme', themeId(), 'map', stage.map_id]"
+              >
+                <span class="timeline__chip">{{ stageIndex + 1 }}</span>
+                @if (stateOf(stage.map_id) === 'done') {
+                  <span class="timeline__stage-badge" aria-hidden="true">✓</span>
+                }
+              </a>
+            }
 
-          <span class="timeline__label">
-            <span class="timeline__label-name">{{ stage.name }}</span>
-            <span class="timeline__label-stars" [attr.aria-label]="starsLabel(stage.map_id)">
-              @for (starIndex of starIndexes; track starIndex) {
-                <span class="timeline__star" [class.timeline__star--filled]="starIndex < starsOf(stage.map_id)"></span>
+            <span class="timeline__label">
+              <span class="timeline__label-name">{{ stage.name }}</span>
+              <span class="timeline__label-stars" [attr.aria-label]="starsLabel(stage.map_id)">
+                @for (starIndex of starIndexes; track starIndex) {
+                  <span class="timeline__star" [class.timeline__star--filled]="starIndex < starsOf(stage.map_id)"></span>
+                }
+              </span>
+              @if (revealOf(stage.map_id) === 'hinted') {
+                <span class="timeline__label-status">noch verschlossen</span>
               }
             </span>
-            @if (stateOf(stage.map_id) === 'locked') {
-              <span class="timeline__label-status">Verschlossen</span>
-            }
-          </span>
-        </div>
+          </div>
+        }
       </qst-map-point>
     }
 

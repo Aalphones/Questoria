@@ -5,7 +5,13 @@ import { MapEntry, MapNode, WorldConfig } from '../../models/content.types';
 import { ProgressState } from '../../models/game-state.types';
 import { ContentService } from '../../services/content.service';
 import { GameStateService } from '../../services/game-state.service';
-import { derivedUnlockedTileIds, nodeStates, stageStates } from '../../services/progress.rules';
+import {
+  derivedUnlockedTileIds,
+  nodeRevealStates,
+  nodeStates,
+  RevealState,
+  stageStates,
+} from '../../services/progress.rules';
 import { ProgressService } from '../../services/progress.service';
 import { ContentError } from '../../ui/content-error/content-error';
 import { Hud } from '../../ui/hud/hud';
@@ -61,6 +67,15 @@ export class MapScreen {
 
     return map === null ? new Map() : nodeStates(map, this.isEpisodeCompleted, this.stageState());
   });
+
+  /** Reihenfolge aus dem Content — dieselbe, auf der `nodeStates` schon läuft. */
+  private readonly orderedNodeIds = computed<readonly string[]>(
+    () => this.mapEntry()?.nodes.map((node: MapNode) => node.id) ?? [],
+  );
+
+  protected readonly revealStateMap = computed<Map<string, RevealState>>(() =>
+    nodeRevealStates(this.orderedNodeIds(), this.nodeStateMap()),
+  );
 
   protected readonly points = computed<readonly MapCanvasPoint[]>(() =>
     (this.mapEntry()?.nodes ?? []).map((node: MapNode) => ({
@@ -150,10 +165,8 @@ export class MapScreen {
     return this.nodeStateMap().get(nodeId) ?? 'locked';
   }
 
-  protected isReachable(nodeId: string): boolean {
-    const state = this.stateOf(nodeId);
-
-    return state === 'done' || state === 'current';
+  protected revealOf(nodeId: string): RevealState {
+    return this.revealStateMap().get(nodeId) ?? 'unknown';
   }
 
   protected nodeImageUrl(illustration: string): string {

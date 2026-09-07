@@ -170,6 +170,10 @@
   --size-map-compass: 100px;
   --size-map-compass-needle-inline: 10px;
   --size-map-compass-needle-block: 54px;
+  // Plakette „geschafft" auf dem Sprite und gestrichelter Ring des entdeckten
+  // Zustands (Phase 3, ADR-024) — je einmal auf Ortskarte und Etappenkarte.
+  --size-map-badge: 22px;
+  --ring-map-hinted: 3px;
   --ring-map-node: 10px;
   --ring-map-point: 6px;
   --stroke-map-route: 7px;

@@ -36,8 +36,24 @@
     }
   }
 
-  // Echtes PNG-Sprite statt eines reinen Punkts (AK 7 Gesamtplan) — Zustände
-  // bleiben dieselben drei wie beim vorherigen CSS-Kreis.
+  // Umhüllt das Sprite, damit Plakette (done) und gestrichelter Ring (hinted)
+  // relativ dazu sitzen können, ohne die Bildschirmgröße des Sprites selbst
+  // zu ändern (Phase 3, ADR-024).
+  &__node-image-wrap {
+    position: relative;
+    display: block;
+
+    &--hinted {
+      border: var(--ring-map-hinted) dashed var(--color-progress-current-strong);
+      border-radius: 50%;
+      padding: var(--space-1);
+    }
+  }
+
+  // Echtes PNG-Sprite statt eines reinen Punkts (AK 7 Gesamtplan). Vier
+  // Zustände seit ADR-024: geschafft/aktuell bleiben wie zuvor, „gesperrt"
+  // ist der halb entsättigte Köder des entdeckten Zustands geworden —
+  // ganz unsichtbare Orte zeigen gar kein Sprite mehr (`&__node-unknown`).
   &__node-image {
     display: block;
     inline-size: var(--size-map-point);
@@ -56,13 +72,54 @@
       animation: eqPulse var(--duration-pulse) var(--easing-standard) infinite;
     }
 
-    &--locked {
+    &--hinted {
       opacity: 0.72;
-      filter: grayscale(1);
+      filter: saturate(0.5);
     }
   }
 
+  // Häkchen-Plakette am Sprite eines geschafften Orts — Form-Signal zusätzlich
+  // zur Farbe (AK 5, Graustufen-Probe).
+  &__node-badge {
+    position: absolute;
+    inset-block-end: calc(var(--size-map-badge) * -0.2);
+    inset-inline-end: calc(var(--size-map-badge) * -0.2);
+    display: grid;
+    place-items: center;
+    inline-size: var(--size-map-badge);
+    block-size: var(--size-map-badge);
+    border-radius: 50%;
+    background: var(--color-progress-done-strong);
+    box-shadow: var(--shadow-sm);
+    color: var(--color-text-on-accent);
+    font-size: var(--font-size-detail);
+    line-height: 1;
+  }
+
+  // Unbekannter Ort: kein Sprite, kein Name — nur eine Scheibe mit Fragezeichen.
+  // Für Hilfstechnik unsichtbar (E4): kein Button/Link, `aria-hidden`.
+  &__node-unknown {
+    display: grid;
+    place-items: center;
+    inline-size: var(--size-map-point);
+    block-size: var(--size-map-point);
+    border-radius: 50%;
+    background: var(--color-map-fog-deep);
+    box-shadow: var(--shadow-sm);
+  }
+
+  &__node-unknown-mark {
+    font-family: var(--font-heading);
+    font-weight: var(--font-heading-weight);
+    font-size: var(--font-size-card-title);
+    color: var(--color-text-muted);
+  }
+
   &__label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
     padding: var(--space-1) var(--space-3);
     border-radius: var(--radius-pill);
     background: var(--color-map-label-bg);
@@ -72,6 +129,13 @@
     font-size: var(--font-size-control);
     color: var(--color-text);
     white-space: nowrap;
+  }
+
+  &__label-status {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: var(--font-size-kicker);
+    color: var(--color-text-muted);
   }
 
   // Reine Deko (AK 5) — trägt keine Information, daher aria-hidden im Template.

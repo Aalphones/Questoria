@@ -110,35 +110,63 @@ Darstellungsfrage.
 
 ## Checkliste
 
-- [ ] `progress.rules.ts`: `RevealState` und `nodeRevealStates` ergänzen (E2),
+- [x] `progress.rules.ts`: `RevealState` und `nodeRevealStates` ergänzen (E2),
       mit Doc-Kommentar in der Tonlage der Nachbarfunktionen.
-- [ ] `map.ts`: `revealStateMap` als `computed` über
+- [x] `map.ts`: `revealStateMap` als `computed` über
       `mapEntry()?.nodes.map(n => n.id)` und `nodeStateMap()`; Methode
       `revealOf(nodeId): RevealState` analog zu `stateOf`.
-- [ ] `map.html`: die drei Zweige (`episode_ref` + erreichbar / nicht
+- [x] `map.html`: die drei Zweige (`episode_ref` + erreichbar / nicht
       erreichbar / Hinweis-Knoten) auf die vier Darstellungen aus E3 umbauen.
       Der `unknown`-Zweig zeichnet einen `<div>` ohne Bild und ohne Namen.
       Der Hinweis-Knoten (`episode_ref === undefined`) zählt als `revealed` —
       er ist laut `progress.rules.ts` immer `done`.
-- [ ] `map.scss`: `&__node-image--locked` (Graustufen) durch
+- [x] `map.scss`: `&__node-image--locked` (Graustufen) durch
       `&__node-image--hinted` (halbe Sättigung + gestrichelter Ring) ersetzen;
       `&__node-unknown` neu (Scheibe, Fragezeichen, `--color-map-fog-deep`);
       Häkchen-Plakette für `done`.
       **Bestehende Regeln ergänzen, nicht ersetzen**, wo sie weiter tragen —
       der Diff soll überwiegend aus Einfügungen bestehen.
-- [ ] `timeline.ts` / `timeline.html` / `timeline.scss`: dieselben vier
+- [x] `timeline.ts` / `timeline.html` / `timeline.scss`: dieselben vier
       Zustände für Etappen. Die Etappe trägt zusätzlich Sterne — bei `hinted`
       leere Sterne zeigen, bei `unknown` gar keine.
-- [ ] `_tokens.scss`: falls für gestrichelten Ring und Plakette Werte doppelt
+- [x] `_tokens.scss`: falls für gestrichelten Ring und Plakette Werte doppelt
       auftauchen, je ein Zweck-Token ergänzen (`--ring-map-hinted`,
       `--size-map-badge`). Einmalige Werte bleiben in der Komponente, aber als
       Token-Referenz, nie als roher Wert.
-- [ ] Graustufen-Gegenprobe aus AK 5 machen und im Report-Back festhalten.
-- [ ] `docs/decisions/024-drei-marker-zustaende.md` schreiben — insbesondere
+- [x] Graustufen-Gegenprobe aus AK 5 machen und im Report-Back festhalten.
+- [x] `docs/decisions/024-drei-marker-zustaende.md` schreiben — insbesondere
       die Trennung „spielbar" (ProgressState) von „sichtbar" (RevealState).
-- [ ] `docs/code-map.md`: Zeilen „Timeline" und „Map" um den Reveal-Zustand
+- [x] `docs/code-map.md`: Zeilen „Timeline" und „Map" um den Reveal-Zustand
       ergänzen; die Zeile zu `services/progress.rules.ts` in der Tabelle
       „Zentrale Services" um `nodeRevealStates` erweitern.
-- [ ] `npm run lint`, `npm run build` im Frontend.
+- [x] `npm run lint`, `npm run build` im Frontend.
 
 ## Report-Back
+
+**Umgesetzt wie geplant** (E1–E5), keine Abweichungen. `isReachable` ist in
+`map.ts` und `timeline.ts` entfallen — mit `revealed` == immer spielbar
+brauchte das Template die Prüfung nicht mehr doppelt.
+
+Timeline-Etappen waren vorher farbige Formen ohne Bild, kein Sprite — der
+gestrichelte Ring und die Plakette sitzen dort auf einem echten `<button>`
+statt einem Bild-Wrapper; halbe Sättigung wirkt auf die Hintergrundfarbe der
+Form (`filter: saturate(0.5)`), nicht auf ein Bild.
+
+**Graustufen-Gegenprobe:** konstruktiv geprüft, kein echter Screenshot —
+dafür fehlt hier ein laufender Client. Alle vier Zustände tragen ihr Signal
+strukturell, nicht nur farblich: Häkchen-Plakette (Form, Position), größer +
+Puls-Animation (Bewegung/Größe), gestrichelter Rand (Linienstil), Scheibe mit
+Fragezeichen (kein Sprite, eigenes Symbol). Eine echte Graustufen-Probe am
+Bildschirm gehört in Saschas Abnahme (README-Smoke-Checkliste).
+
+`npm run lint` und `npm run build` liefen sauber durch (Build-Exit 0).
+`map.scss`/`timeline.scss` melden Budget-Warnungen (4 kB Sollwert
+überschritten) — das betrifft bereits vor dieser Phase vier weitere
+Komponenten (`result`, `hud`, `profile`, `pokemon-catch`) und ist kein neuer
+Fehler, nur eine bestehende, zu knappe Budgetgrenze.
+
+**Unsicherste Stelle:** `timeline.scss` `&__stage` ist jetzt sowohl `<a>` als
+auch `<button>` — der Button-Reset (`appearance: none`, `padding: 0`,
+`font: inherit`) ist neu und in keinem Browser hier getestet. Sitzt die
+Zahlen-Chip nicht mittig oder hat der Button einen sichtbaren nativen Rand,
+ist das die erste Stelle zum Nachschauen.

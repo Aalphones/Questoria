@@ -15,6 +15,8 @@ import { ContentService } from '../../services/content.service';
 import { GameStateService } from '../../services/game-state.service';
 import {
   derivedUnlockedTileIds,
+  nodeRevealStates,
+  RevealState,
   stageStars,
   stageStates,
   worldProgress,
@@ -97,6 +99,15 @@ export class Timeline {
     return world === null ? new Map() : stageStates(world, this.isEpisodeCompleted);
   });
 
+  /** Reihenfolge aus dem Content — dieselbe, auf der `stageStates` schon läuft. */
+  private readonly orderedStageIds = computed<readonly string[]>(
+    () => this.world()?.arc_overview.stages.map((stage) => stage.map_id) ?? [],
+  );
+
+  protected readonly revealStateMap = computed<Map<string, RevealState>>(() =>
+    nodeRevealStates(this.orderedStageIds(), this.stageStateMap()),
+  );
+
   protected readonly points = computed<readonly MapCanvasPoint[]>(() =>
     (this.world()?.arc_overview.stages ?? []).map((stage) => ({
       id: stage.map_id,
@@ -171,10 +182,8 @@ export class Timeline {
     return this.stageStateMap().get(mapId) ?? 'locked';
   }
 
-  protected isReachable(mapId: string): boolean {
-    const state = this.stateOf(mapId);
-
-    return state === 'done' || state === 'current';
+  protected revealOf(mapId: string): RevealState {
+    return this.revealStateMap().get(mapId) ?? 'unknown';
   }
 
   protected starsOf(mapId: string): number {

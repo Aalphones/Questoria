@@ -19,9 +19,27 @@
       >
         @for (node of loadedMap.nodes; track node.id) {
           <qst-map-point [x]="pointX(node.tile_id, node.x)" [y]="pointY(node.tile_id, node.y)">
-            @if (node.episode_ref; as episodeRef) {
-              @if (isReachable(node.id)) {
-                <a class="map__node-wrapper" [routerLink]="['/theme', themeId(), 'episode', episodeRef]">
+            @if (revealOf(node.id) === 'unknown') {
+              <div class="map__node-unknown" aria-hidden="true">
+                <span class="map__node-unknown-mark">?</span>
+              </div>
+            } @else if (revealOf(node.id) === 'hinted') {
+              <button type="button" class="map__node-wrapper">
+                <span class="map__node-image-wrap map__node-image-wrap--hinted">
+                  <img
+                    class="map__node-image map__node-image--hinted"
+                    [src]="nodeImageUrl(node.illustration)"
+                    [alt]="node.illustration_label"
+                  />
+                </span>
+                <span class="map__label">
+                  <span class="map__label-name">{{ node.name }}</span>
+                  <span class="map__label-status">noch verschlossen</span>
+                </span>
+              </button>
+            } @else if (node.episode_ref; as episodeRef) {
+              <a class="map__node-wrapper" [routerLink]="['/theme', themeId(), 'episode', episodeRef]">
+                <span class="map__node-image-wrap">
                   <img
                     class="map__node-image"
                     [class.map__node-image--done]="stateOf(node.id) === 'done'"
@@ -29,18 +47,12 @@
                     [src]="nodeImageUrl(node.illustration)"
                     [alt]="node.illustration_label"
                   />
-                  <span class="map__label">{{ node.name }}</span>
-                </a>
-              } @else {
-                <div class="map__node-wrapper">
-                  <img
-                    class="map__node-image map__node-image--locked"
-                    [src]="nodeImageUrl(node.illustration)"
-                    [alt]="node.illustration_label"
-                  />
-                  <span class="map__label">{{ node.name }}</span>
-                </div>
-              }
+                  @if (stateOf(node.id) === 'done') {
+                    <span class="map__node-badge" aria-hidden="true">✓</span>
+                  }
+                </span>
+                <span class="map__label">{{ node.name }}</span>
+              </a>
             } @else {
               <button
                 type="button"
