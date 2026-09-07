@@ -87,8 +87,11 @@ allein aus `tiles` und `unlockedTileIds` — die Screens ändern dafür nichts.
    und so weit hinein, dass eine Kachel ihre native Größe erreicht.
 2. Gesperrte Bereiche zeigen keine sichtbaren Kachelkanten mehr. Der Übergang
    von freigeschalteter Fläche zu Nebel ist weich.
-3. Knotenpunkte behalten beim Zoomen ihre Bildschirmgröße; das Antippziel
-   bleibt in jedem Zoomstand mindestens 44 × 44 px.
+3. ~~Knotenpunkte behalten beim Zoomen ihre Bildschirmgröße~~ — **revidiert
+   07.09.2026:** Knotenpunkte wachsen/schrumpfen jetzt bewusst mit der Karte
+   (wirken sonst wie ein bildschirmfestes Overlay statt Teil der Welt,
+   Sascha live getestet). Geblieben ist nur die Untergrenze: das Antippziel
+   fällt in keinem Zoomstand unter 44 × 44 px.
 4. Jeder Knoten zeigt einen von vier unterscheidbaren Zuständen: unbekannt,
    entdeckt, erkundet, aktuell — jeder mit Form/Symbol, nicht nur Farbe.
 5. Oben rechts zeigt eine Minikarte die gesamte Karte und darin ein Rechteck,
@@ -113,10 +116,11 @@ Reihenfolge bewusst: oben stehen die Stellen, an denen ich unsicher bin.
    Verlauf, keine geraden Kanten im 1024er-Raster. *(Unsicher: die Weichheit
    der Maske ist ein fester Pixelwert, der bei starkem Zoom mitskaliert und
    dann zu weich oder zu hart aussehen kann.)*
-3. 🟡 **Beim Zoomen auf einen Ort achten.** Erwartung: das Ortssymbol bleibt
-   gleich groß, während die Karte darunter wächst. *(Unsicher: die
-   Gegenskalierung sitzt auf jedem Knoten einzeln und kann bei der aktuellen
-   `cqw`-Größenrechnung doppelt greifen.)*
+3. ✅ **Beim Zoomen auf einen Ort achten** (revidiert 07.09.2026 — siehe AK 3).
+   Erwartung jetzt: das Ortssymbol wächst/schrumpft mit der Karte, bleibt
+   aber nie unter 44 px. Am Bildschirm bestätigt, dass die alte
+   Gegenskalierung (konstante Bildschirmgröße) sich falsch anfühlte —
+   deshalb entfernt, nicht weiter unsicher.
 4. Zwei Finger auf dem Tablet: Zoomen und Schieben gleichzeitig, dann loslassen
    und einen Ort antippen. Der Ort muss öffnen, nicht die Karte springen.
 5. Minikarte: ziehen und zoomen, das Rechteck darin muss passen. Bei voller

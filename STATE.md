@@ -13,16 +13,20 @@ Wiesen-Ausschnitt, `size` in `main_hub.json` 20→12). Alles kopiert/gesetzt,
 `data/hub/`, `data/themes/pokemon/maps/`, `data/themes/pokemon/cover.webp`
 sind aktuell. Phase 1–5 committet (`41efeb6`).
 
-**Nächster Schritt:** Phase 6 committen (`mode-committing`) — zu committen:
-`docs/planning/2026-08-31_karten-ueberarbeitung/`, `STATE.md`,
-`data/_authoring/image-prompts/MAPS.md` (neue Himmel-Vorlage),
-`data/_authoring/image-tools/remacri_upscale.py` (neu),
-`data/hub/map_planetenkarte.webp`, `data/main_hub.json`. `cover.webp` liegt
-außerhalb von Git (Drive-Junction). Danach: Plan-Ende-Smoke mit Sascha laut
-README → „Smoke-Checkliste" — jetzt auch die neue Planetenkarte und der
-Weltknoten am Bildschirm, plus die zwei noch offenen 🟡-Randbefunde bei
-Vertania (abgedunkelter Rand bei `map_vertania_wald.webp`, unklares graues
-Objekt unten bei `map_vertania_city.webp`). Danach Archivieren.
+Zusätzlich, beim Live-Test entdeckt und behoben (`5ab5dce`): Kartenpunkte
+hielten ihre Bildschirmgröße gegen den Zoom fest (Phase-3-Vorgabe) — fühlte
+sich am Bildschirm falsch an, wirkte wie ein bildschirmfestes Overlay statt
+Teil der Welt. Jetzt wachsen/schrumpfen Knotenpunkte bewusst mit der Karte;
+geblieben ist nur die 44-px-Antippziel-Untergrenze. Betrifft alle drei
+Kartenscreens (`main-hub`, `map`, `timeline`), Build + Lint grün. README-AK 3
+und die Smoke-Checkliste sind entsprechend korrigiert.
+
+**Nächster Schritt:** Plan-Ende-Smoke mit Sascha laut README →
+„Smoke-Checkliste" — inklusive der neuen Planetenkarte, dem neuen Weltknoten
+und dem geänderten Zoom-Verhalten der Kartenpunkte auf allen drei
+Kartenebenen. Noch offene 🟡-Randbefunde bei Vertania (abgedunkelter Rand bei
+`map_vertania_wald.webp`, unklares graues Objekt unten bei
+`map_vertania_city.webp`). Danach Archivieren.
 
 Worum es geht: Sternen- und Weltenkarten bekommen die Struktur aus dem
 Karten-Konzept vom 31.08.2026 — Nebel als eigene weiche Schicht statt beiger
