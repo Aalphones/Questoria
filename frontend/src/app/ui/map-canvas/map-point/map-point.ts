@@ -4,8 +4,13 @@ import { ChangeDetectionStrategy, Component, ElementRef, effect, inject, input }
  * Setzt ein beliebiges Kind auf eine Weltposition (Pixel) der Kartenfläche.
  *
  * Die Größe kommt als Anteil der sichtbaren Bildschirmbreite (`cqw`) heraus,
- * nicht der Weltbreite — ein Punkt bleibt dadurch bei jedem Zoomstand gleich
- * gut antippbar, statt mit der Karte mitzuschrumpfen/-wachsen.
+ * bezogen auf die unskalierte Kartenfläche — ein Knoten ist dadurch Teil der
+ * Welt und wächst/schrumpft beim Zoomen mit ihr, wie ein Objekt auf dem
+ * Terrain (Sascha, 07.09.2026: „ein Planet, der beim Zoomen seine Größe
+ * ändert, widerspricht dem Pan&Zoom"). Ein Mindestmaß gegen zu kleine
+ * Antippziele beim Herauszoomen setzt `--map-min-tap-size` in
+ * `map-canvas.ts`, verrechnet über `min-inline-size`/`min-block-size` an der
+ * jeweiligen Größenangabe der Screens.
  */
 @Component({
   selector: 'qst-map-point',

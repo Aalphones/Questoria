@@ -37,7 +37,12 @@
     position: relative;
     // Durchmesser kommt von qst-map-point als Anteil der Kartenbreite; ohne
     // size-Angabe im Content fällt der Knoten auf das Ortskarten-Maß zurück.
+    // Wächst/schrumpft mit der Karte (kein Gegen-Zoom mehr, siehe
+    // map-point.scss) — der Mindest-Boden hält das Antippziel über
+    // --size-touch-target, auch weit herausgezoomt.
     inline-size: var(--map-point-size, var(--size-map-point));
+    min-inline-size: calc(var(--size-touch-target) * var(--map-inverse-scale, 1));
+    min-block-size: calc(var(--size-touch-target) * var(--map-inverse-scale, 1));
     aspect-ratio: 1;
     border-radius: var(--radius-pill);
     overflow: hidden;

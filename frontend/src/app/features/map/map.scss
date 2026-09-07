@@ -54,10 +54,15 @@
   // Zustände seit ADR-024: geschafft/aktuell bleiben wie zuvor, „gesperrt"
   // ist der halb entsättigte Köder des entdeckten Zustands geworden —
   // ganz unsichtbare Orte zeigen gar kein Sprite mehr (`&__node-unknown`).
+  // Wächst/schrumpft mit der Karte (kein Gegen-Zoom mehr, siehe
+  // map-point.scss) — der Mindest-Boden hält das Antippziel über
+  // --size-touch-target, auch weit herausgezoomt.
   &__node-image {
     display: block;
     inline-size: var(--size-map-point);
     block-size: var(--size-map-point);
+    min-inline-size: calc(var(--size-touch-target) * var(--map-inverse-scale, 1));
+    min-block-size: calc(var(--size-touch-target) * var(--map-inverse-scale, 1));
     object-fit: contain;
     filter: drop-shadow(var(--shadow-md));
 
@@ -103,6 +108,8 @@
     place-items: center;
     inline-size: var(--size-map-point);
     block-size: var(--size-map-point);
+    min-inline-size: calc(var(--size-touch-target) * var(--map-inverse-scale, 1));
+    min-block-size: calc(var(--size-touch-target) * var(--map-inverse-scale, 1));
     border-radius: 50%;
     background: var(--color-map-fog-deep);
     box-shadow: var(--shadow-sm);

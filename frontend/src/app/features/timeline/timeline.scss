@@ -34,6 +34,10 @@
     gap: var(--space-2);
   }
 
+  // Wächst/schrumpft mit der Karte (kein Gegen-Zoom mehr, siehe
+  // map-point.scss) — der Mindest-Boden hält das Antippziel über
+  // --size-touch-target, auch weit herausgezoomt; --stage-aspect hält dabei
+  // die Kartenform statt eines gestauchten Quadrats.
   &__stage {
     appearance: none;
     position: relative;
@@ -42,6 +46,8 @@
     justify-content: center;
     inline-size: var(--map-point-size);
     block-size: calc(var(--map-point-size) * var(--stage-aspect));
+    min-inline-size: calc(var(--size-touch-target) * var(--map-inverse-scale, 1));
+    min-block-size: calc(var(--size-touch-target) * var(--map-inverse-scale, 1) * var(--stage-aspect));
     padding: 0;
     border: none;
     border-radius: var(--stage-shape);
@@ -105,6 +111,8 @@
     justify-content: center;
     inline-size: var(--map-point-size);
     block-size: calc(var(--map-point-size) * var(--stage-aspect));
+    min-inline-size: calc(var(--size-touch-target) * var(--map-inverse-scale, 1));
+    min-block-size: calc(var(--size-touch-target) * var(--map-inverse-scale, 1) * var(--stage-aspect));
     border-radius: var(--stage-shape);
     background: var(--color-map-fog-deep);
     box-shadow: var(--shadow-sm);

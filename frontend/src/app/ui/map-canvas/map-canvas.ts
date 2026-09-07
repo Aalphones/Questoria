@@ -314,9 +314,15 @@ export class MapCanvas {
   });
 
   /**
-   * Kehrwert des Maßstabs, damit Kartenknoten ihre Bildschirmgröße behalten,
-   * statt mit der Karte zu wachsen und zu schrumpfen — sonst fällt ein
-   * Antippziel beim Herauszoomen unter die 44-Pixel-Grenze.
+   * Kehrwert des Maßstabs — seit 07.09.2026 nicht mehr, um Kartenknoten
+   * gegen den Zoom festzuhalten (das ließ sie wie ein bildschirmfestes
+   * Overlay statt wie Teil der Welt wirken, siehe `map-point.scss`), sondern
+   * als Baustein für `--map-min-tap-size`: die Weltpixel-Größe, die nach dem
+   * Hochskalieren durch `worldTransform()` genau `--size-touch-target` auf
+   * dem Schirm ergibt. Die Screens setzen das als `min-inline-size` /
+   * `min-block-size` neben ihre eigentliche, mit der Karte mitwachsende
+   * Größe — ein Antippziel darf beim Herauszoomen kleiner *wirken*, aber nie
+   * kleiner *werden* als das Mindestmaß.
    *
    * Als Custom Property auf dem Host, nicht als Style-Bindung im Template:
    * Angulars Bindung auf Custom Properties ist nicht zugesichert (dieselbe
